@@ -41,4 +41,4 @@ The September 26 release is under `exports/2026-09-26-threejs-release/`:
 - `Urchin Skipper 3D TEMP.zip` and its extracted folder: local/Wi-Fi edition with isolated port 5198 and portable launcher.
 - Both ZIPs passed CRC and production-file byte comparisons; SHA-256 sidecars are included. The extracted portable launcher served the correct 3D edition and production JavaScript successfully.
 
-The source is prepared for publication to the independent repository's `main` branch. [Release verification receipt](docs/review/release-verification-2026-09-26.json) records the tested build, browser matrix, performance sample and export hashes.
+The source is published to the independent repository's `main` branch; the verified game implementation is [ab66c5d](https://github.com/lucidfir-ops/UrchinSkipper3D/commit/ab66c5d). The production edition is running locally on port 5184. [Release verification receipt](docs/review/release-verification-2026-09-26.json) records the tested build, browser matrix, performance sample and export hashes.
