@@ -1,0 +1,276 @@
+/* Information windows own scrolling; their corner grips own resizing. */
+#clock,
+#navigation,
+#frankAboard {
+  --window-anchor-x: center;
+}
+#electronics,
+#speedPanel,
+#throttlePanel,
+#fuelPanel,
+#testInfo,
+#groundLegend,
+#actionFeedback {
+  --window-anchor-x: right;
+}
+#message,
+#help,
+#groundLegend {
+  --window-anchor-y: bottom;
+}
+body:has(#testInfo:not([hidden])) #electronics {
+  --window-anchor-y: bottom;
+}
+body.touch-playing #clock {
+  --window-anchor-x: right;
+}
+body.touch-playing #message {
+  --window-anchor-x: center;
+}
+@media (max-width: 700px) {
+  body.touch-playing #navigation {
+    --window-anchor-x: right;
+  }
+}
+@media (max-height: 500px) and (min-width: 701px) {
+  body.touch-playing #message {
+    --window-anchor-x: right;
+    --window-anchor-y: top;
+  }
+}
+@media (max-width: 700px) and (min-height: 501px) {
+  body.touchscreen #frankAboard {
+    --window-anchor-x: left;
+  }
+}
+@media (max-height: 500px) {
+  body.touchscreen #frankAboard {
+    --window-anchor-x: right;
+  }
+  body.touchscreen.intro-playing #helmPanel[data-hud-window] {
+    top: 8px;
+    left: 8px;
+    width: calc(30vw - 16px);
+    max-width: none;
+  }
+}
+body
+  :is(
+    #helmPanel,
+    #speedPanel,
+    #throttlePanel,
+    #fuelPanel,
+    #frankAboard,
+    #message,
+    #clock,
+    #electronics,
+    #navigation,
+    #help,
+    #groundLegend,
+    #testInfo,
+    #actionFeedback
+  ) {
+  box-sizing: border-box;
+  pointer-events: auto;
+  overflow: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-x pan-y;
+  scrollbar-width: thin;
+  scrollbar-color: #a6c6b8 #112f3e;
+  overflow-wrap: anywhere;
+  max-height: min(40dvh, var(--window-max-height, 90dvh));
+  padding-bottom: 28px;
+}
+.instrument-window {
+  position: fixed;
+  z-index: 30;
+  right: 12px;
+  width: 170px;
+  padding: 8px 10px 28px;
+  border: 1px solid #73938e80;
+  border-radius: 7px;
+  background: #092330ed;
+  color: #e5ede3;
+  font-variant-numeric: tabular-nums;
+}
+#speedPanel {
+  top: 76px;
+}
+#throttlePanel {
+  top: 174px;
+}
+#fuelPanel {
+  top: 272px;
+}
+.instrument-window strong,
+.instrument-window output,
+.instrument-window small {
+  display: block;
+}
+.instrument-window output {
+  margin: 3px 0;
+  color: #f4e4b8;
+  font-size: 21px;
+}
+.instrument-window small {
+  color: #c5d9d0;
+  font-size: 10px;
+}
+.instrument-window meter {
+  width: 100%;
+  height: 9px;
+  accent-color: #8fd2ba;
+}
+#throttlePanel meter {
+  accent-color: #f0c978;
+}
+.instrument-window.warn {
+  border-color: #e2b775;
+}
+.instrument-window.danger {
+  border-color: #ee9569;
+  color: #ffc0a6;
+}
+body #helmPanel[data-hud-window] {
+  padding: 0 0 28px;
+  gap: 8px;
+  border: 1px solid #73938e60;
+  border-radius: 7px;
+  background: #092330ed;
+  max-height: min(60dvh, var(--window-max-height, 90dvh));
+}
+body #helmPanel #hud {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+  pointer-events: auto;
+  border: 0;
+  background: transparent;
+}
+body #helmPanel #divers {
+  flex-shrink: 0;
+  max-width: none;
+  padding: 0 5px;
+}
+body #helmPanel #divers button {
+  min-width: 0;
+  flex: 1 0 120px;
+  max-width: 100%;
+  touch-action: pan-x pan-y;
+}
+body [data-hud-window][data-window-sized] {
+  width: var(--window-width) !important;
+  height: var(--window-height) !important;
+  max-width: var(--window-max-width, calc(100vw - 16px)) !important;
+  max-height: var(--window-max-height, calc(100dvh - 16px)) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+}
+.hud-resize {
+  position: fixed;
+  z-index: 39;
+  width: 28px;
+  height: 28px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #89b2a7;
+  border-radius: 5px;
+  color: #ead49e;
+  background: #183b49;
+  font: 18px system-ui;
+  cursor: nwse-resize;
+  touch-action: none !important;
+  user-select: none;
+}
+body:has(.panel:not([hidden])) :is(.instrument-window, .hud-resize) {
+  display: none;
+}
+body.hud-locked :is(.hud-resize, .hud-move, .hud-close) {
+  display: none !important;
+}
+body.touch-playing :is(#touchHudToggle, #touchLockToggle) {
+  position: fixed;
+  z-index: 260;
+  top: max(112px, calc(env(safe-area-inset-top) + 104px));
+  right: max(8px, env(safe-area-inset-right));
+  width: 64px;
+  min-height: 44px;
+  padding: 4px;
+  margin: 0;
+  font-size: 11px;
+  border: 1px solid #e8ce98;
+  border-radius: 5px;
+  background: #183b49;
+  color: #ffedc9;
+}
+body.touch-playing #touchLockToggle {
+  top: max(164px, calc(env(safe-area-inset-top) + 156px));
+}
+body.touch-playing #electronics {
+  right: 80px;
+}
+body.touch-playing :is(#speedPanel, #throttlePanel, #fuelPanel) {
+  right: 80px;
+  width: 142px;
+}
+body.touch-playing #speedPanel {
+  top: 72px;
+}
+body.touch-playing #throttlePanel {
+  top: 174px;
+}
+body.touch-playing #fuelPanel {
+  top: 276px;
+}
+body.touch-playing #helmPanel[data-hud-window] {
+  max-height: calc(100dvh - 160px - var(--touch-bottom));
+}
+@media (max-width: 700px) and (min-height: 501px) {
+  body.touchscreen.intro-playing #helmPanel[data-hud-window] {
+    top: 8px;
+    left: 8px;
+    width: calc(100vw - 86px);
+    max-width: none;
+    max-height: 160px;
+  }
+}
+@media (max-width: 700px) {
+  body.touch-playing #helmPanel[data-hud-window] {
+    max-height: calc(100dvh - 300px - var(--touch-bottom));
+  }
+  body.touch-playing #navigation {
+    top: 164px;
+  }
+  body.touch-playing #electronics {
+    top: 260px;
+    right: 8px;
+    max-width: 155px;
+  }
+}
+@media (max-height: 500px) and (min-width: 701px) {
+  body.touch-playing #navigation {
+    left: 46vw;
+    transform: none;
+    width: calc(54vw - 196px);
+    --window-anchor-x: left;
+  }
+  body.touch-playing #electronics {
+    top: 128px;
+  }
+  body.touch-playing #message {
+    bottom: auto;
+  }
+}
+body.touch-playing #message :is(.pickup-detail, .control-status) {
+  display: block;
+}
+body.hud-hidden
+  :is([data-hud-window], .hud-resize, #offscreen, #testMap, #openAlmanac, #audioHint) {
+  display: none !important;
+}
+/* Never leave an empty helm shell when the chosen assist preset hides it. */
+body #helmPanel:has(#hud[hidden]):has(#divers[hidden]) {
+  display: none;
+}

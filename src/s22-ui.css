@@ -1,0 +1,516 @@
+:root {
+  --touch-scale: 1;
+}
+.touch-stick {
+  overflow: hidden;
+  isolation: isolate;
+}
+.touch-stick > span,
+.touch-stick > i {
+  z-index: 2;
+}
+.command-fill {
+  position: absolute;
+  z-index: -1;
+  opacity: 0.8;
+}
+[data-stick='helm'] .command-fill {
+  width: 100%;
+  height: calc(var(--command, 0) * 50%);
+  bottom: 50%;
+  background: linear-gradient(to top, #278d7955, #6defae);
+}
+[data-stick='helm'][data-direction='negative'] .command-fill {
+  top: 50%;
+  bottom: auto;
+  background: linear-gradient(#ba683555, #ffc075);
+}
+[data-stick='rudder'] .command-fill {
+  left: 50%;
+  height: 100%;
+  width: calc(var(--command, 0) * 50%);
+  background: linear-gradient(to right, #288e8455, #64e7c9);
+}
+[data-stick='rudder'][data-direction='negative'] .command-fill {
+  left: auto;
+  right: 50%;
+  background: linear-gradient(to left, #b5516c55, #ff91aa);
+}
+.command-arrow {
+  position: absolute;
+  top: 7%;
+  color: #fff7d4;
+  font: bold 23px system-ui;
+  text-shadow: 0 1px 3px #001b24;
+}
+[data-stick='rudder'] .command-arrow {
+  top: auto;
+  bottom: 4%;
+}
+.touch-helm,
+.touch-actions,
+.touch-steering {
+  zoom: var(--touch-scale);
+}
+.touch-actions {
+  min-width: 0;
+}
+body #diverPanel,
+body #currentReadout {
+  position: fixed;
+  box-sizing: border-box;
+  pointer-events: auto;
+  overflow: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-x pan-y;
+  scrollbar-width: thin;
+  background: #092330d9;
+  border: 1px solid #73938e60;
+  border-radius: 6px;
+  padding: 5px 5px 28px;
+  z-index: 30;
+  max-height: min(40dvh, var(--window-max-height, 90dvh));
+}
+body #diverPanel {
+  left: 12px;
+  top: 325px;
+  width: 370px;
+}
+body #diverPanel #divers {
+  position: static;
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+  gap: 4px;
+}
+body #diverPanel #divers[hidden] {
+  display: none;
+}
+body #diverPanel #divers button {
+  min-width: 0;
+  width: 50%;
+  flex: 1;
+  margin: 0;
+  touch-action: pan-x pan-y;
+}
+body #currentReadout {
+  right: 12px;
+  top: 205px;
+  width: 230px;
+  padding-top: 8px;
+}
+body #helmPanel:has(#hud[hidden]) {
+  display: none;
+}
+body.in-port :is(#diverPanel, #currentReadout) {
+  display: none;
+}
+/* Keep the existing helm controls at the same bottom offset. Use the space
+   already reserved beneath them for a short, separate row of instruments. */
+body.touch-playing #diverPanel[data-hud-window] {
+  top: auto;
+  left: 6px;
+  bottom: max(6px, env(safe-area-inset-bottom));
+  width: calc(60vw - 9px);
+  height: 44px;
+  max-height: 44px;
+  padding: 1px;
+  --window-anchor-y: bottom;
+}
+body.touch-playing #helmPanel[data-hud-window],
+body.touch-playing.intro-playing #helmPanel[data-hud-window] {
+  top: auto;
+  left: auto;
+  right: 6px;
+  bottom: max(6px, env(safe-area-inset-bottom));
+  width: calc(40vw - 9px);
+  max-width: none;
+  height: 44px;
+  max-height: 44px;
+  padding: 1px 4px;
+  --window-anchor-y: bottom;
+  --window-anchor-x: right;
+}
+body.touch-playing #helmPanel #hud {
+  padding: 0;
+  max-width: none;
+  font-size: calc(10px * var(--ui-scale));
+  line-height: 1.3;
+}
+body.touch-playing #hud > span {
+  display: block;
+}
+body.touch-playing #diverPanel #divers button {
+  max-width: none;
+  padding: 0 3px;
+  font-size: calc(9px * var(--ui-scale));
+  line-height: 1.2;
+}
+body.touch-playing .diver-detail {
+  display: block;
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+body.touch-playing .nitrogen-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 1px 0 0;
+}
+body.touch-playing .nitrogen-bar {
+  flex: 1;
+  height: 6px;
+  gap: 1px;
+}
+body.touch-playing .nitrogen-info small {
+  font-size: inherit;
+  line-height: 1;
+}
+body.touch-playing #diverPanel .portrait-only button {
+  padding: 0;
+  border-radius: 50%;
+  background: #12343c;
+}
+body.touch-playing #diverPanel .portrait-only svg,
+body.touch-playing #diverPanel .portrait-only img {
+  height: 38px;
+  width: 48px;
+}
+body.touch-playing #currentReadout {
+  top: 215px;
+  right: 8px;
+  width: 170px;
+  font-size: calc(10px * var(--ui-scale));
+}
+body.touch-playing #currentReadout .health-instrument {
+  display: none;
+}
+body.touch-playing #currentReadout .current-instrument {
+  font-size: inherit;
+}
+body.touch-playing
+  :is(
+    #clock,
+    #electronics,
+    #navigation,
+    #message,
+    #frankAboard,
+    #groundLegend,
+    #help,
+    #actionFeedback
+  ) {
+  font-size: calc(11px * var(--ui-scale));
+}
+body #frankAboard {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  text-shadow:
+    -1px -1px 2px #061c29,
+    1px 1px 2px #061c29,
+    0 0 5px #061c29;
+}
+body.touchscreen #frankAboard {
+  top: 34px;
+  left: 8px;
+  right: auto;
+  transform: none;
+  width: calc(100vw - 88px);
+  max-height: min(220px, 35dvh);
+}
+.frank-helm {
+  display: none;
+}
+body.touch-playing #groundLegend,
+body.touch-playing #help,
+body.touch-playing #actionFeedback {
+  display: block;
+}
+body.touch-playing #help {
+  max-width: 170px;
+  max-height: 80px;
+  bottom: 270px;
+  font-size: calc(9px * var(--ui-scale));
+}
+body.touch-playing #groundLegend {
+  top: 330px;
+  right: 8px;
+  bottom: auto;
+  max-width: 145px;
+}
+body.touch-playing #actionFeedback {
+  top: 350px;
+  left: 8px;
+  max-width: 180px;
+}
+body.touch-playing #message {
+  max-height: 85px;
+}
+.hud-move,
+.hud-close {
+  position: fixed;
+  z-index: 39;
+  width: 24px;
+  height: 24px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #89b2a799;
+  border-radius: 4px;
+  background: #123440c9;
+  color: #ffecb7;
+  font: 16px system-ui;
+  touch-action: none !important;
+  user-select: none;
+}
+.hud-move {
+  cursor: move;
+}
+body:has(.panel:not([hidden])) :is(.hud-move, .hud-close) {
+  display: none;
+}
+body.hud-hidden :is(.hud-move, .hud-close, #diverPanel, #currentReadout) {
+  display: none !important;
+}
+body [data-hud-window][data-window-moved] {
+  left: var(--window-left) !important;
+  top: var(--window-top) !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+}
+.assist-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 20px;
+  min-height: 0;
+  overflow: auto;
+}
+.assist-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex: none;
+}
+#playtest .assist-presets button {
+  width: auto;
+  margin: 0;
+}
+.assist-groups {
+  overflow: visible;
+}
+.assist-row {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+}
+#playtest .assist-row .assist-info {
+  flex: 1;
+  text-align: left;
+}
+#playtest .assist-row [role='switch'] {
+  width: 64px;
+  flex-shrink: 0;
+}
+.assist-row [aria-checked='true'] {
+  border-color: #9ed7ba;
+  color: #d4ffe3;
+  background: #215044;
+}
+.assist-explanation {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  padding: 14px;
+  background: #123541;
+  border: 1px solid #86aaa3;
+  line-height: 1.6;
+}
+body.touchscreen #playtest .assist-layout {
+  overflow: visible;
+}
+@media (max-width: 700px) {
+  .assist-layout {
+    display: flex;
+    flex-direction: column;
+  }
+  .assist-explanation {
+    order: -1;
+    position: static;
+  }
+}
+@media (max-height: 500px) and (min-width: 701px) {
+  body.touchscreen #frankAboard {
+    width: 42vw;
+    max-height: 44dvh;
+  }
+  body.touch-playing #currentReadout {
+    top: 112px;
+    right: 185px;
+  }
+  body.touch-playing #groundLegend {
+    top: 32px;
+    right: 195px;
+  }
+  body.touch-playing #help {
+    top: 70px;
+    left: 8px;
+    bottom: auto;
+  }
+  body.touch-playing #actionFeedback {
+    top: 145px;
+    left: 8px;
+  }
+}
+
+.keycap[role='button'] {
+  cursor: pointer;
+}
+.keycap[role='button']:focus {
+  outline: 2px solid #ffdda1;
+}
+.binding-picker {
+  color: #f4e8cb;
+  background: #143744;
+  border: 1px solid #d9be84;
+  width: min(480px, calc(100vw - 32px));
+  max-height: calc(100dvh - 80px);
+  padding: 16px;
+}
+.binding-picker::backdrop {
+  background: #03161dd9;
+}
+.binding-picker-list {
+  max-height: 48dvh;
+  overflow: auto;
+  touch-action: pan-y;
+}
+.binding-picker button {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  margin: 4px 0;
+  padding: 8px;
+  background: #204653;
+  color: #fff3d0;
+  border: 1px solid #81a9a0;
+}
+body.touch-playing #diverPanel[data-hud-window] {
+  padding: 1px 16px;
+}
+body.touch-playing #helmPanel[data-hud-window],
+body.touch-playing.intro-playing #helmPanel[data-hud-window] {
+  padding: 1px 17px;
+}
+.compact-window-control {
+  width: 16px;
+  height: 16px;
+  font-size: 11px;
+  border-color: #89b2a755;
+}
+body.intro-playing :is(#help, #groundLegend, #currentReadout, #actionFeedback) {
+  display: none;
+}
+body.sandbox.intro-playing::after {
+  display: none;
+}
+body.touch-playing #groundLegend {
+  max-height: 80px;
+}
+@media (max-width: 700px) {
+  body.touch-playing #currentReadout {
+    top: 144px;
+    left: 8px;
+    right: auto;
+    width: 160px;
+  }
+  body.touch-playing #navigation {
+    top: 144px;
+    right: 8px;
+    width: 170px;
+  }
+  body.touch-playing #electronics {
+    top: 76px;
+    left: 8px;
+    right: auto;
+    max-width: 160px;
+  }
+  body.touch-playing #groundLegend {
+    top: 238px;
+    left: 8px;
+    right: auto;
+    width: 160px;
+  }
+  body.touch-playing #message {
+    top: 238px;
+    bottom: auto;
+    left: auto;
+    right: 8px;
+    transform: none;
+    width: 166px;
+    --window-anchor-x: right;
+    --window-anchor-y: top;
+  }
+}
+@media (max-height: 500px) and (min-width: 701px) {
+  body.touch-playing #currentReadout {
+    top: 90px;
+    left: 8px;
+    right: auto;
+    width: 185px;
+  }
+}
+
+body:has(.panel:not([hidden])) :is(#diverPanel, #currentReadout) {
+  visibility: hidden;
+}
+@media (max-height: 500px) and (min-width: 701px) {
+  body.touch-playing #groundLegend {
+    top: 34px;
+    left: 8px;
+    right: auto;
+    width: 185px;
+    max-width: 185px;
+    max-height: 60px;
+    --window-anchor-x: left;
+    --window-anchor-y: top;
+  }
+  body.touch-playing #currentReadout {
+    top: 108px;
+  }
+  body.touch-playing #electronics {
+    top: 8px;
+    left: 208px;
+    right: auto;
+    max-width: 145px;
+    max-height: 70px;
+    --window-anchor-x: left;
+  }
+  body.touch-playing #message {
+    top: 94px;
+    right: 80px;
+    width: 225px;
+    max-height: 74px;
+  }
+}
+
+@media (max-width: 700px) {
+  body.large-touch-controls .touch-gears {
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: calc((100vw - 36px) / 2 / var(--touch-scale));
+  }
+  body.large-touch-controls .touch-steering {
+    max-width: calc((100vw - 36px) / 2 / var(--touch-scale));
+  }
+}
+
+body.touchscreen #frankAboard {
+  --window-anchor-x: left;
+}
+@media (max-width: 700px) {
+  body.touch-playing #electronics {
+    --window-anchor-x: left;
+  }
+}

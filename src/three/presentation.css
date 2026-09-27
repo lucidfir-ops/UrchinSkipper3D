@@ -1,0 +1,812 @@
+/* Three-dimensional edition. Presentation only: inherited controls, saved layout,
+   information entitlements and the approved harbour composition stay authoritative. */
+:root {
+  --ink: #081f2b;
+  --foam: #f2eee2;
+  --amber: #e5bf78;
+  --line: #63988f;
+  --marine-panel: linear-gradient(145deg, #102e3aed, #071d28f5);
+  --marine-border: #b2c9bb35;
+  --marine-shadow: 0 12px 40px #01131e35, inset 0 1px #ffffff08;
+}
+body {
+  background: #143d4d;
+  font-family: 'Avenir Next', 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+button,
+input,
+select {
+  font-family: inherit;
+}
+button {
+  border-radius: 5px;
+  border-color: #9eb7aa50;
+  background: linear-gradient(130deg, #21424ad9, #14303de8);
+  color: var(--foam);
+  box-shadow: inset 0 1px #ffffff06;
+  transition:
+    background 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+button:hover {
+  background: #285052;
+  border-color: #b4d4bf;
+}
+button:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+button:disabled {
+  cursor: default;
+}
+.eyebrow,
+.instrument-label {
+  color: #a4c2b4;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+}
+::selection {
+  background: #7faf9a;
+  color: #092632;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #76988a80 #081e2850;
+}
+
+/* A readable, bounded title card leaves the living coast in view. */
+body #startup {
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 28px 4vw;
+  border: 0;
+  border-radius: 0;
+  background: linear-gradient(90deg, #0418239c, #04182316 48%, transparent 72%);
+  box-shadow: none;
+  overflow: hidden;
+  pointer-events: none;
+}
+body #startup .title-art {
+  display: none;
+}
+body #startup .title-copy {
+  position: relative;
+  grid-column: auto;
+  align-self: auto;
+  justify-self: auto;
+  width: min(385px, calc((100vw - 48px) / var(--ui-scale)));
+  max-width: none;
+  max-height: calc((100dvh - 56px) / var(--ui-scale));
+  margin: 0;
+  padding: 25px 28px 19px;
+  border: 1px solid #d2dbc242;
+  border-top-color: #e5c88780;
+  border-radius: 7px;
+  background: linear-gradient(150deg, #102d39ed, #071e2bec);
+  box-shadow:
+    0 18px 90px #00121f4a,
+    inset 0 1px #ffffff0d;
+  overflow-y: auto;
+  pointer-events: auto;
+  text-align: left;
+  backdrop-filter: blur(16px);
+}
+body #startup h1 {
+  position: static;
+  display: block;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip-path: none;
+  margin: 13px 0 16px;
+  color: #f4efdf;
+  font-size: clamp(42px, 4.8vw, 66px);
+  font-weight: 760;
+  line-height: 0.89;
+  letter-spacing: -0.055em;
+  text-shadow: 0 2px 20px #001b2733;
+}
+body #startup h1 .edition-3d {
+  display: inline-block;
+  margin-left: 5px;
+  font-size: 0.35em;
+  font-weight: 450;
+  color: #e5c887;
+  letter-spacing: -0.02em;
+}
+body #startup .title-copy > .eyebrow {
+  display: block;
+  color: #d3c098;
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  line-height: 1.8;
+}
+body #startup .title-copy > p:not(#controllerStatus) {
+  display: block;
+  margin: 0 0 17px;
+  color: #becdc5;
+  font-size: 12px;
+  line-height: 1.65;
+}
+body #startup #controllerStatus {
+  min-height: 0;
+  margin: 0 0 14px;
+  color: #87b9aa;
+  font-size: 10px;
+  line-height: 1.5;
+}
+body #startup .title-navigation {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 0 9px;
+  border-top: 1px solid #a9c2b521;
+  padding-top: 7px;
+}
+body #startup .title-navigation button {
+  width: auto;
+  min-height: 28px;
+  padding: 3px 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  color: #c1cfc4;
+  box-shadow: none;
+  font-size: 10px;
+}
+body #startup .title-navigation button:disabled {
+  opacity: 0.35;
+}
+body #startup .title-choices {
+  display: grid;
+  width: 100%;
+  max-width: none;
+  gap: 5px;
+}
+body #startup .title-choices button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  min-height: 34px;
+  margin: 0;
+  padding: 8px 12px;
+  border-width: 1px;
+  border-color: #93b4a52c;
+  background: #183743b0;
+  font-size: 11px;
+  line-height: 1.3;
+  text-align: left;
+}
+body #startup .title-choices button:nth-child(n + 5) {
+  min-height: 29px;
+  padding-block: 6px;
+  background: #112c373a;
+  color: #b9c9bf;
+  font-size: 10px;
+}
+body #startup .title-choices button:first-child {
+  min-height: 41px;
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0.015em;
+}
+body #startup .title-choices button:first-child::after {
+  content: '↗';
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1;
+}
+body #startup .title-choices button.selected,
+body #startup .title-choices button:focus-visible {
+  border-color: #f3d7a4;
+  background: linear-gradient(115deg, #e7c888, #cba96e);
+  color: #102e39;
+  outline: 1px solid #f9ebc052;
+  outline-offset: 2px;
+  box-shadow: 0 3px 15px #d5b27018;
+}
+body #startup .title-copy > small {
+  display: block;
+  margin-top: 13px;
+  font-size: 9px;
+  line-height: 1.55;
+  color: #89a699;
+}
+
+/* Familiar content with a more measured hierarchy and quieter surfaces. */
+body #playtest:not(.wharf-panel) {
+  border-color: #bbcfb752;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #173744f7, #0b2533fc 55%, #081f2bfc);
+  box-shadow:
+    0 25px 100px #00141fb3,
+    inset 0 1px #ffffec0d;
+}
+body #playtest:not(.wharf-panel) h2 {
+  font-weight: 550;
+  color: #f2eddc;
+  letter-spacing: -0.035em;
+}
+body #playtest:not(.wharf-panel) .day-heading {
+  padding-bottom: 14px;
+  border-bottom: 1px solid #c2d5b922;
+}
+body #playtest:not(.wharf-panel) .day-heading h2 {
+  margin-top: 8px;
+  line-height: 1.1;
+}
+body #playtest:not(.wharf-panel) .career-detail {
+  background: #061c264d;
+  border-color: #bdd5bc22;
+  border-radius: 7px;
+}
+body #playtest:not(.wharf-panel) button.selected {
+  border-color: #dec18b;
+  color: #ffebbb;
+  background: linear-gradient(110deg, #3d5652, #203f47);
+  box-shadow:
+    inset 3px 0 #e5bf78,
+    0 3px 14px #00141f33;
+}
+body #playtest .day-footer {
+  color: #98b1a7;
+  font-size: 11px;
+  line-height: 1.55;
+}
+body #playtest .screen-navigation button {
+  border-color: #9db9ac32;
+  background: #0c263060;
+}
+body #playtest.wharf-panel .wharf-heading {
+  border: 1px solid #d0d9b93d;
+  background: linear-gradient(120deg, #0a2634ee, #15383ae5);
+  box-shadow: 0 8px 35px #06213045;
+}
+body #playtest.wharf-panel .wharf-place {
+  border-color: #e4cd9da6;
+  background: linear-gradient(140deg, #133540ef, #092733f2);
+  box-shadow:
+    0 5px 20px #05233377,
+    inset 0 1px #f7e5b711;
+  color: #f4e8ca;
+}
+body #playtest.wharf-panel .wharf-place.selected {
+  background: #e6cc94;
+  color: #11333c;
+  outline-color: #fff0c3;
+}
+
+/* Instrument appearance is independent of the player's saved placement. */
+body
+  :is(
+    #helmPanel[data-hud-window],
+    #diverPanel,
+    #currentReadout,
+    #clock,
+    #message,
+    #help,
+    #navigation,
+    #groundLegend,
+    #actionFeedback,
+    #electronics,
+    .instrument-window,
+    .standalone-instrument
+  ) {
+  border: 1px solid var(--marine-border);
+  border-radius: 7px;
+  background: var(--marine-panel);
+  box-shadow: var(--marine-shadow);
+  color: #e4e9dc;
+}
+body #helmPanel #hud {
+  background: transparent;
+  box-shadow: none;
+  border: 0;
+}
+body #clock b {
+  font-weight: 400;
+  letter-spacing: 0.025em;
+  color: #f0e6ca;
+}
+body #clock span {
+  color: #a6beb1;
+}
+body #message {
+  border-left: 2px solid #8bb8a1;
+}
+body #message strong {
+  color: #f5e8c8;
+  font-weight: 550;
+}
+body #diverPanel #divers button {
+  border-color: #a6c7b333;
+  background: #17343d6b;
+  color: #c9d7c9;
+}
+body #diverPanel #divers button.selected {
+  border-color: #d8bc84;
+  background: linear-gradient(155deg, #385349, #1c3940);
+  color: #f4e2b4;
+}
+body .hud-resize,
+body .hud-move,
+body .hud-close {
+  background: #102d37;
+  border-color: #92b19b55;
+  color: #bdcbb4;
+  box-shadow: none;
+}
+body #touchMenu,
+body #openAlmanac {
+  border-color: #bbd2b75c;
+  background: #0c2936ee;
+  color: #e3ddc6;
+  box-shadow: 0 3px 18px #00182330;
+}
+body #offscreen button {
+  background: #0c2a36ec;
+  border-color: #e0c89080;
+  color: #f3e8c8;
+}
+body #voyage {
+  background: radial-gradient(ellipse, #123d45d9, #041b2af7);
+}
+body #voyage strong {
+  font-weight: 450;
+  letter-spacing: -0.025em;
+}
+
+@media (max-height: 700px) {
+  body #startup {
+    padding: 16px 3vw;
+  }
+  body #startup .title-copy {
+    max-height: calc((100dvh - 32px) / var(--ui-scale));
+    padding: 18px 23px 15px;
+    width: min(352px, calc((100vw - 32px) / var(--ui-scale)));
+  }
+  body #startup h1 {
+    margin: 10px 0 13px;
+    font-size: 48px;
+  }
+  body #startup .title-copy > p:not(#controllerStatus) {
+    margin-bottom: 10px;
+    font-size: 11px;
+  }
+  body #startup .title-choices {
+    gap: 4px;
+  }
+  body #startup .title-choices button {
+    min-height: 30px;
+    padding-block: 6px;
+  }
+  body #startup .title-choices button:nth-child(n + 5) {
+    min-height: 27px;
+  }
+}
+@media (max-width: 700px) {
+  body #startup,
+  body.touchscreen #startup {
+    align-items: center;
+    justify-content: center;
+    padding: 16px 12px;
+    background: #051e2b40;
+  }
+  body #startup .title-copy,
+  body.touchscreen #startup .title-copy {
+    align-self: center;
+    width: min(352px, calc((100vw - 28px) / var(--ui-scale)));
+    max-height: calc((100dvh - 38px) / var(--ui-scale));
+    margin: 0;
+  }
+  body #startup h1 {
+    font-size: 48px;
+  }
+  body #startup .title-choices button {
+    min-height: 40px;
+  }
+  body #startup .title-choices button:nth-child(n + 5) {
+    min-height: 36px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  button {
+    transition: none;
+  }
+}
+/* Career loading may retain the harbour body class while the title is open. */
+body.three-title #game {
+  visibility: visible;
+}
+body.three-title {
+  background: #143d4d;
+}
+body #startup[hidden] {
+  display: none !important;
+}
+body:has(#startup:not([hidden]))
+  :is(
+    #helmPanel,
+    #diverPanel,
+    #clock,
+    #currentReadout,
+    #message,
+    #help,
+    #navigation,
+    #groundLegend,
+    #electronics,
+    #actionFeedback,
+    #offscreen,
+    #almanacPanel,
+    #audioHint,
+    #keyboardHelm,
+    #touchMenu,
+    .standalone-instrument,
+    .instrument-window,
+    .hud-resize,
+    .hud-move,
+    .hud-close
+  ) {
+  visibility: hidden;
+}
+/* These are the same working instruments, expressed as one marine interface.
+   Purchased specialty clock faces retain their individual artwork. */
+body
+  :is(.instrument-dial, .instrument-compass, .digital-clock, .depth-instrument, .command-instrument)
+  > .instrument-texture {
+  display: none;
+}
+body
+  [data-hud-window][data-presentation='graphic']:is(
+    .standalone-instrument,
+    #speedPanel,
+    #fuelPanel,
+    #currentReadout,
+    #throttlePanel
+  ) {
+  background: var(--marine-panel);
+  border: 1px solid var(--marine-border);
+  box-shadow: var(--marine-shadow);
+  border-radius: 7px;
+}
+body .instrument-dial,
+body .instrument-compass {
+  background: radial-gradient(circle at 50% 52%, #16323e 0 42%, #527c7350 43% 44%, transparent 45%);
+}
+body .instrument-dial text,
+body .instrument-compass text {
+  fill: #e2e6d7;
+  font-family: 'Avenir Next', 'Segoe UI', sans-serif;
+  letter-spacing: 0.04em;
+}
+body .instrument-dial .dial-value {
+  font-family: ui-monospace, monospace;
+  font-size: 14px;
+}
+body .digital-clock,
+body .depth-instrument {
+  background: transparent;
+}
+body .digital-clock output {
+  color: #f09378;
+  text-shadow: 0 0 14px #f0937822;
+  font-weight: 500;
+}
+body .digital-clock small {
+  color: #a9bfae;
+  letter-spacing: 0.12em;
+}
+body .depth-instrument {
+  color: #b9cec0;
+  font-family: inherit;
+}
+body .depth-instrument output {
+  background: transparent;
+  color: #b7dfce;
+  font-weight: 450;
+  text-shadow: none;
+}
+body .command-instrument {
+  padding: 9% 10%;
+  color: #a9c1b2;
+  text-shadow: none;
+}
+body .command-instrument strong {
+  font-weight: 550;
+  color: #dfdeca;
+  letter-spacing: 0.09em;
+}
+body .command-track {
+  background: linear-gradient(90deg, #b98672, #d3ceb2 50%, #699e88);
+}
+body .command-track i {
+  background: #fff1c9;
+  box-shadow: 0 0 3px #001d22;
+}
+body .helm-status {
+  padding-top: 3px;
+  color: #b7cbbb;
+}
+body .bag-stack {
+  border-color: #b0b99575;
+  border-radius: 0 0 4px 4px;
+}
+body .load-crate {
+  color: #e3ddc1;
+  text-shadow: none;
+}
+body #playtest.intro-panel {
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  width: min(930px, calc((100vw - 48px) / var(--ui-scale)));
+  height: auto;
+  max-height: calc((100dvh - 48px) / var(--ui-scale));
+  padding: 28px 30px;
+}
+body #playtest.intro-panel .intro-copy {
+  max-width: 820px;
+}
+body #playtest.intro-panel .intro-copy p {
+  font-size: 14px;
+  line-height: 1.7;
+}
+body #playtest.intro-panel .intro-choices {
+  margin-top: 10px;
+}
+@media (max-width: 700px), (max-height: 500px) {
+  body #playtest.intro-panel,
+  body.touchscreen #playtest.intro-panel {
+    inset: 12px auto auto 12px;
+    transform: none;
+    width: calc((100vw - 24px) / var(--ui-scale));
+    height: auto;
+    max-height: calc((100dvh - 24px) / var(--ui-scale));
+    padding: 18px;
+  }
+}
+
+body:not(.touch-playing) .helm-graphic {
+  height: 100px;
+}
+body:not(.touch-playing) #helmPanel #hud {
+  padding: 10px 12px 0;
+}
+body:not(.touch-playing) #diverPanel {
+  padding: 7px 7px 22px;
+}
+body:not(.touch-playing) #diverPanel #divers {
+  gap: 6px;
+}
+body:not(.touch-playing) #diverPanel #divers button {
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+body:not(.touch-playing) #message {
+  padding: 11px 13px 22px;
+  font-size: 11px;
+  line-height: 1.45;
+}
+body:not(.touch-playing) #message strong {
+  font-size: 16px;
+  line-height: 1.35;
+  margin-bottom: 3px;
+}
+body:not(.touch-playing) #message .pickup-detail,
+body:not(.touch-playing) #message .control-status {
+  font-size: 10px;
+}
+body #groundLegend {
+  padding: 10px 11px 24px;
+}
+body #groundLegend .ground-legend {
+  gap: 4px 7px;
+  font-size: 10px;
+}
+body #groundLegend .ground-legend > span {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+}
+#rendererNotice {
+  position: fixed;
+  z-index: 1000;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(430px, calc(100vw - 36px));
+  padding: 23px 26px;
+  border: 1px solid #dabe86;
+  border-radius: 8px;
+  background: #0c2735f5;
+  color: #f3e6c7;
+  box-shadow: 0 20px 90px #00131ec2;
+  font-size: 15px;
+  line-height: 1.65;
+  text-align: center;
+}
+
+@media (max-height: 559px) {
+  body:not(.touch-playing) .helm-graphic {
+    height: 70px;
+  }
+  body:not(.touch-playing) .helm-status {
+    font-size: 10px;
+    line-height: 1.3;
+    padding-top: 2px;
+  }
+  body:not(.touch-playing) #helmPanel #hud {
+    padding: 8px 10px 0;
+  }
+  body:not(.touch-playing) #diverPanel #divers button {
+    font-size: 10px;
+    line-height: 1.3;
+    padding: 7px 6px;
+  }
+  body:not(.touch-playing) .nitrogen-info small {
+    font-size: 9px;
+    line-height: 1.25;
+  }
+  body:not(.touch-playing) #message {
+    padding: 10px 12px 20px;
+  }
+  body:not(.touch-playing) #message strong {
+    font-size: 14px;
+    line-height: 1.25;
+  }
+  body:not(.touch-playing) #openAlmanac {
+    min-height: 30px;
+    padding: 5px 7px;
+    font-size: 10px;
+  }
+  body:not(.touch-playing) #navigation {
+    font-size: 10px;
+    padding: 8px 10px 18px;
+  }
+  body:not(.touch-playing) #navigation small {
+    font-size: 9px;
+  }
+  body:not(.touch-playing) #groundLegend {
+    padding: 9px 8px 20px;
+  }
+  body:not(.touch-playing) #groundLegend .ground-legend {
+    gap: 4px 3px;
+    font-size: 9px;
+  }
+}
+/* A lost WebGL canvas can show a browser-generated white error tile. Keep the
+   app's calm fallback surface visible until the context is restored. */
+body:has(#rendererNotice) #game {
+  visibility: hidden;
+}
+/* Keep the inherited physical touch target size when title text is scaled. */
+body.touchscreen #startup .title-choices button,
+body.touchscreen #startup .title-navigation button {
+  min-height: max(44px, calc(44px / var(--ui-scale)));
+}
+
+/* Fresh touch defaults reserve the working boat's column. Saved layouts still
+   win; these type/padding rules keep every cue readable in its compact window. */
+body.touch-playing #message {
+  padding: 6px 10px 12px;
+  font-size: 11px;
+  line-height: 1.25;
+}
+body.touch-playing #message strong {
+  font-size: 14px;
+  line-height: 1.25;
+  margin-bottom: 2px;
+}
+body.touch-playing #message .pickup-detail {
+  font-size: 10px;
+  line-height: 1.2;
+}
+body.touch-playing #message .control-status {
+  font-size: 9px;
+  line-height: 1.2;
+}
+body.touch-playing #groundLegend {
+  padding: 6px 7px 12px;
+  max-height: none;
+}
+body.touch-playing #groundLegend .ground-legend {
+  font-size: 8.5px;
+  gap: 3px;
+  margin: 4px 0;
+}
+body.touch-playing #groundLegend .ground-legend > span {
+  font-size: 9px;
+  letter-spacing: 0.06em;
+}
+body.touch-playing #actionFeedback {
+  padding: 6px 8px 12px;
+  font-size: 10px;
+  line-height: 1.3;
+}
+body.touch-playing #electronics {
+  padding: 5px 8px 10px;
+}
+body.touch-playing #electronics .weather-instrument {
+  font-size: 9px;
+  line-height: 1.3;
+}
+body.touch-playing #navigation {
+  padding: 6px 8px 12px;
+  font-size: 9px;
+  line-height: 1.2;
+}
+body.touch-playing #navigation small {
+  font-size: 8px;
+  line-height: 1.25;
+}
+@media (max-height: 500px) {
+  body.touch-playing #frankAboard {
+    padding: 8px 10px 20px;
+    font-size: 11px;
+  }
+  body.touch-playing #frankAboard .frank-line {
+    gap: 7px;
+  }
+  body.touch-playing #frankAboard .frank-line img {
+    width: 34px;
+    height: 44px;
+  }
+  body.touch-playing #frankAboard .frank-line p {
+    margin: 3px 0;
+    line-height: 1.35;
+  }
+  body.touch-playing #frankAboard .frank-buttons {
+    gap: 5px;
+  }
+  body.touch-playing #frankAboard .frank-buttons button {
+    min-height: 44px;
+    padding: 5px;
+    font-size: 10px;
+  }
+}
+
+/* The compact lesson keeps its optional controls reference beside the boat. */
+@media (max-height: 500px) {
+  body.touch-playing #help {
+    padding: 6px 8px 12px;
+    font-size: 9px;
+    line-height: 1.2;
+  }
+}
+
+/* The lesson copy must remain distinct from labels painted on the water. */
+body #frankAboard {
+  background: #102d39;
+  color: #e4e9dc;
+  border: 1px solid var(--marine-border);
+  box-shadow: var(--marine-shadow);
+}
+/* Explicit controls stay above the boat drag target, including at maximum zoom.
+   z-index applies to these flex/grid children without changing their placement. */
+body.touch-playing #touchControls > :is(.touch-helm, .touch-actions, .touch-steering) {
+  z-index: 1;
+}
+body.touch-playing #touchControls #touchBoat {
+  z-index: 0;
+}
+@media (orientation: portrait) and (max-width: 700px) {
+  /* 44px at default size; deliberate user touch scaling still scales these. */
+  body.touch-playing #touchControls :is(.touch-gears, .touch-steering) button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  body.touch-playing #touchControls .touch-actions button {
+    min-width: calc(44px * var(--touch-scale));
+    min-height: calc(44px * var(--touch-scale));
+  }
+  body.touch-playing #touchControls .touch-stick {
+    width: 74px;
+    height: 74px;
+  }
+}

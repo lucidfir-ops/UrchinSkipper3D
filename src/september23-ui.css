@@ -1,0 +1,161 @@
+/* Touch size and transparency are independent of information/menu scaling. */
+:root {
+  --touch-opacity: 1;
+}
+body.touch-playing #touchControls > :is(.touch-helm, .touch-actions, .touch-steering) {
+  opacity: var(--touch-opacity);
+}
+.touch-options-detail input[type='range'] {
+  width: 100%;
+  min-height: 44px;
+}
+.touch-options-detail label {
+  display: block;
+  font-weight: 600;
+}
+.touch-preview {
+  padding: 12px;
+  border-radius: 8px;
+  background: repeating-linear-gradient(150deg, #235c63 0 20px, #194650 20px 40px);
+  overflow: hidden;
+}
+.touch-preview > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 110px;
+  opacity: var(--touch-opacity);
+}
+.touch-preview-stick,
+.touch-preview-button {
+  display: grid;
+  place-items: center;
+  border: 1px solid #91bcb2;
+  background: #102f3ce6;
+  color: #edf1d7;
+  font-size: calc(11px * var(--touch-scale));
+  padding: calc(7px * var(--touch-scale));
+}
+.touch-preview-stick {
+  width: calc(60px * var(--touch-scale));
+  height: calc(60px * var(--touch-scale));
+  border-radius: 50%;
+  flex: none;
+}
+.touch-preview-button {
+  border-radius: 8px;
+}
+body.touch-playing #touchControls .touch-actions {
+  zoom: 1;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: calc(4px * var(--touch-scale));
+  max-width: calc(400px * var(--touch-scale));
+}
+body.touch-playing #touchControls .touch-actions button {
+  min-width: 0;
+  min-height: calc(44px * var(--touch-scale));
+  padding: calc(6px * var(--touch-scale)) calc(4px * var(--touch-scale));
+  font-size: calc(12px * var(--touch-scale));
+  overflow-wrap: anywhere;
+}
+@media (orientation: portrait) and (max-width: 700px) {
+  body.touch-playing #touchControls {
+    bottom: max(54px, calc(48px + env(safe-area-inset-bottom)));
+  }
+  body.touch-playing #touchControls .touch-actions {
+    justify-self: center;
+    width: min(100%, calc((100vw - 12px) * var(--touch-scale)));
+    max-width: none;
+  }
+  body.touch-playing #touchControls .touch-actions button {
+    min-height: calc(36px * var(--touch-scale));
+    font-size: calc(10px * var(--touch-scale));
+    padding: calc(4px * var(--touch-scale));
+  }
+  body.touch-playing #touchControls :is(.touch-helm, .touch-steering) {
+    min-width: 0;
+    max-width: calc((100vw - 24px) / 2 / var(--touch-scale));
+    width: 100%;
+  }
+  body.touch-playing #touchControls .touch-gears {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+/* The harbour itself has zoom:1. Inverse scaled menu hit sizes must not leak
+   into its header. The approved artwork and three rows stay in place. */
+body #playtest.wharf-panel .wharf-heading {
+  min-height: 0;
+  height: auto;
+  padding: 8px 12px;
+  gap: 6px 16px;
+  align-items: center;
+}
+body #playtest.wharf-panel .wharf-heading h2 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 4px 0 0;
+  font-size: clamp(13px, calc(20px * var(--ui-scale)), 28px);
+  line-height: 1.2;
+}
+body #playtest.wharf-panel .wharf-heading .screen-navigation {
+  display: inline-flex;
+  flex: none;
+  gap: 4px;
+  margin: 0;
+}
+body #playtest.wharf-panel .wharf-heading button {
+  min-height: 44px;
+  height: 44px;
+  min-width: 44px;
+  padding: 5px 8px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.1;
+}
+body #playtest.wharf-panel .wharf-money {
+  font-size: clamp(16px, calc(26px * var(--ui-scale)), 32px);
+  line-height: 1.2;
+}
+body #playtest.wharf-panel .wharf-heading :is(small, .eyebrow) {
+  font-size: clamp(10px, calc(12px * var(--ui-scale)), 15px);
+}
+@media (max-width: 700px) {
+  body #playtest.wharf-panel .wharf-heading {
+    left: 8px;
+    width: calc(100vw - 16px);
+    padding: 6px 8px;
+  }
+  body #playtest.wharf-panel .wharf-heading h2 {
+    font-size: clamp(12px, calc(16px * var(--ui-scale)), 18px);
+    flex-wrap: nowrap;
+  }
+  body #playtest.wharf-panel .wharf-money {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+  }
+}
+/* Orders remain usable on a narrow window with touch, keyboard or a pad. */
+@media (max-width: 700px) {
+  #playtest.orders-panel .orders-layout {
+    grid-template-columns: minmax(0, 1fr);
+    overflow-y: auto;
+    align-items: start;
+    flex: 1 1 auto;
+  }
+  #playtest.orders-panel .compass {
+    max-width: 200px;
+  }
+  #playtest.orders-panel .orders-help {
+    min-width: 0;
+    max-height: none;
+    overflow: visible;
+  }
+  #playtest.orders-panel button {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}

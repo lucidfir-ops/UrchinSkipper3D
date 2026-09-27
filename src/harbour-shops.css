@@ -1,0 +1,214 @@
+/* Bible §23: retain the approved full-screen scene and three-by-three layout.
+   Compact screens pan the same composition; artwork and buttons move together. */
+body #playtest.wharf-panel {
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  max-height: none;
+  display: block;
+  margin: 0;
+  padding: 0;
+  zoom: 1;
+  transform: none;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  overflow: auto;
+  touch-action: pan-x pan-y;
+  overscroll-behavior: contain;
+}
+.wharf-content {
+  position: relative;
+  width: max(100%, 740px);
+  height: max(100%, 520px);
+  padding: 16px 24px;
+  box-sizing: border-box;
+  background: url('/assets/harbour/harbour-training-mode-v1.png') center / cover;
+}
+@media (max-width: 700px), (max-height: 500px) {
+  .wharf-content {
+    width: max(100%, 832px, calc(100dvh * 1.6));
+  }
+}
+body #playtest.wharf-panel .wharf-heading {
+  position: sticky;
+  top: auto;
+  left: 24px;
+  z-index: 4;
+  width: calc(100vw - 48px);
+  min-height: 80px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  flex-wrap: wrap;
+  background: #102d39cf;
+}
+body #playtest.wharf-panel .wharf-scene.choices {
+  position: absolute;
+  inset: 80px 0 48px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  grid-template-areas: 'office conditions settings' 'outfit crew fleet' 'help chart workshop';
+  align-items: center;
+  justify-items: center;
+  width: auto;
+  height: auto;
+  min-height: 0;
+  padding: 12px;
+  margin: 0;
+  overflow: visible;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+body #playtest.wharf-panel .wharf-place {
+  position: static;
+  transform: none;
+  max-width: 90%;
+  width: auto;
+  min-height: 44px;
+  margin: 0;
+  padding: 9px 14px;
+  font-size: calc(clamp(13px, 1.6vw, 17px) * var(--ui-scale));
+  touch-action: pan-x pan-y;
+}
+body #playtest.wharf-panel .day-footer {
+  position: absolute;
+  bottom: 16px;
+  left: 24px;
+  width: auto;
+  max-width: calc(100vw - 110px);
+  margin: 0;
+  padding: 7px 12px;
+  background: #102d39de;
+}
+body:has(#playtest.wharf-panel:not([hidden])) #touchFullscreen {
+  top: auto;
+  bottom: max(8px, env(safe-area-inset-bottom));
+}
+.frank-scout-hint {
+  color: #ffdf91;
+  font-weight: 700;
+  line-height: 1.5;
+}
+body #playtest.shop-panel .shop-toolbar {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+body #playtest.shop-panel .shop-toolbar .your-boat-button {
+  background: #27655f;
+  border: 2px solid #a1e0c5;
+  color: #f7ffe8;
+  font-weight: bold;
+}
+body #playtest.shop-panel .shop-purchase-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  padding: 8px;
+  background: #102d39;
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+  border-top: 1px solid #819d8d;
+}
+body #playtest.shop-panel .shop-purchase-footer button {
+  margin: 0;
+  min-width: min(100%, 230px);
+}
+body #playtest.shop-panel .shop-row {
+  position: relative;
+  min-width: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+}
+body #playtest.shop-panel .shop-row.is-preview {
+  border-color: #c9b67d;
+  background: #193d48;
+}
+body #playtest.shop-panel .shop-row .shop-inspect {
+  width: 100%;
+  height: 100%;
+  min-height: 56px;
+  margin: 0;
+}
+body #playtest.shop-panel .shop-row.is-preview .shop-inspect {
+  padding-right: 66px;
+}
+body #playtest.shop-panel .shop-inline-buy {
+  position: absolute;
+  top: 6px;
+  right: 5px;
+  width: 56px;
+  min-height: 44px;
+  margin: 0;
+  padding: 5px;
+  color: #ffe7ac;
+  border-color: #e8c58a;
+}
+body #playtest.shop-panel .shop-inline-detail {
+  display: none;
+}
+body #playtest.shop-panel .shop-choices {
+  gap: 8px;
+  align-content: start;
+}
+body #playtest.shop-panel .shop-choices > button {
+  grid-column: 1 / -1;
+}
+@media (max-width: 700px) {
+  body #playtest.wharf-panel .wharf-heading h2 {
+    font-size: 18px;
+  }
+  body #playtest.wharf-panel .wharf-money {
+    font-size: 19px;
+  }
+  body #playtest.wharf-panel .wharf-money small {
+    font-size: 11px;
+  }
+  body.touchscreen #playtest.shop-panel .career-layout {
+    display: block;
+  }
+  body.touchscreen #playtest.shop-panel .career-layout > .career-detail {
+    display: none;
+  }
+  body.touchscreen #playtest.shop-panel .boat-pairs .is-preview .shop-inspect {
+    padding-right: 8px;
+    padding-bottom: 56px;
+  }
+  body.touchscreen #playtest.shop-panel .boat-pairs .shop-inline-buy {
+    top: auto;
+    bottom: 6px;
+  }
+  body.touchscreen #playtest.shop-panel .shop-inline-detail {
+    display: block;
+    grid-column: 1 / -1;
+    max-height: calc(38dvh / var(--ui-scale));
+    padding: 10px;
+    overflow: auto;
+    overscroll-behavior: contain;
+    touch-action: pan-x pan-y;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  body.touchscreen #playtest.shop-panel .shop-row .shop-inspect {
+    height: auto;
+  }
+  body.touchscreen #playtest.shop-panel .shop-inline-detail .vessel-preview {
+    max-height: 180px;
+  }
+}
+
+body #playtest.shop-panel .shop-toolbar button {
+  width: auto;
+  min-width: 160px;
+  text-align: center;
+}
+body #playtest.shop-panel .shop-purchase-footer button {
+  width: auto;
+  text-align: center;
+}

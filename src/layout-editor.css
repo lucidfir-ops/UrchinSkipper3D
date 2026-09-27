@@ -1,0 +1,352 @@
+/* Touch handles are available only in the explicitly selected touch mode. */
+body:not(.touchscreen) :is(.hud-move, .hud-close, .hud-resize) {
+  display: none !important;
+}
+body:not(.touchscreen) [data-hud-window] {
+  padding-bottom: 8px;
+}
+.navigation-window {
+  position: fixed;
+  z-index: 30;
+  right: 12px;
+  padding: 8px;
+  border: 1px solid #73938e80;
+  border-radius: 7px;
+  background: #092330ed;
+  color: #e5ede3;
+  overflow: auto;
+  pointer-events: auto;
+  --window-anchor-x: right;
+}
+.navigation-window strong {
+  display: block;
+  font-size: 11px;
+}
+.minimap-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.minimap-zoom {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.minimap-zoom button {
+  width: 28px;
+  min-height: 28px;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+.minimap-zoom output {
+  min-width: 25px;
+  text-align: center;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.navigation-window small {
+  display: block;
+  font-size: 11px;
+  color: #d3ded1;
+}
+#minimapPanel {
+  bottom: 64px;
+  width: min(240px, 28vw);
+  --window-anchor-y: bottom;
+}
+.minimap-chart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.minimap-chart :is(canvas, svg) {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  margin: 4px 0;
+}
+#sounderPanel {
+  top: 200px;
+  width: 180px;
+}
+#sounderPanel output {
+  display: block;
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+}
+#sounderPanel.shallow {
+  border-color: #ffb16c;
+  color: #ffd19c;
+}
+body:has(#minimapPanel:not([hidden])) #groundLegend {
+  right: 264px;
+}
+body:has(.panel:not([hidden]))
+  :is(#minimapPanel, #sounderPanel, #speedPanel, #throttlePanel, #fuelPanel) {
+  display: none;
+}
+body.touch-playing #minimapPanel {
+  right: 80px;
+  top: 72px;
+  bottom: auto;
+  width: 128px;
+  padding: 5px 5px 20px;
+  --window-anchor-y: top;
+}
+body.touch-playing #sounderPanel {
+  right: 216px;
+  top: 72px;
+  width: 142px;
+  padding-bottom: 20px;
+}
+body.touch-playing #sounderPanel output {
+  font-size: 18px;
+}
+body.touch-playing:has(#minimapPanel:not([hidden])) #groundLegend {
+  right: 8px;
+}
+body .panel.layout-panel {
+  inset: calc(12px / var(--ui-scale));
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 16px;
+  overflow: hidden;
+}
+.layout-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(340px, 2fr);
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+  align-items: stretch;
+}
+.layout-sidebars {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+  min-height: 0;
+}
+.layout-scroll-card {
+  min-height: 0;
+  height: 100%;
+  max-height: 100%;
+  padding: 8px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  border: 1px solid #73938e80;
+  border-radius: 7px;
+  background: #0d303ce8;
+  scrollbar-color: #c5b17b #163742;
+  scrollbar-width: thin;
+}
+.layout-scroll-card > .choices {
+  flex: none;
+  overflow: visible;
+}
+.layout-scroll-card h3 {
+  position: sticky;
+  z-index: 1;
+  top: -8px;
+  margin: -8px -8px 6px;
+  padding: 8px;
+  background: #0d303c;
+  color: #f1d7a0;
+  font-size: 12px;
+}
+.layout-adjustments {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+body .panel .layout-adjustments button {
+  width: 100%;
+  margin: 0;
+  min-height: 44px;
+  padding: 6px;
+}
+.layout-preview {
+  position: relative;
+  width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  border: 1px solid #7aaba7;
+  border-radius: 6px;
+  background-color: #174451;
+  background-image:
+    linear-gradient(#88bcb415 1px, transparent 1px),
+    linear-gradient(90deg, #88bcb415 1px, transparent 1px);
+  background-size: 10% 10%;
+  touch-action: none;
+  overscroll-behavior: contain;
+}
+.layout-preview.layout-screen-unlocked {
+  touch-action: pan-y;
+  overscroll-behavior: auto;
+}
+body .panel .layout-card {
+  position: absolute;
+  min-height: 0;
+  min-width: 0;
+  margin: 0;
+  padding: 3px;
+  overflow: hidden;
+  font-size: 10px;
+  background: #082633d9;
+  border: 1px solid #8ab3a8;
+  touch-action: none;
+  cursor: move;
+}
+.layout-card strong,
+.layout-card span {
+  display: block;
+  overflow-wrap: anywhere;
+}
+body .panel .layout-card.layout-off {
+  background: #354247b0;
+  border-style: dashed;
+  color: #b4bdbc;
+}
+body .panel .layout-card.layout-chosen {
+  z-index: 2;
+  border: 2px solid #ffd69a;
+  background: #335a62;
+}
+.layout-picker {
+  height: auto;
+  overflow: visible;
+}
+body .panel .layout-picker button {
+  padding: 6px;
+  margin: 4px 0;
+  font-size: 12px;
+}
+.layout-picker .layout-chosen {
+  color: #ffdfa8;
+}
+.layout-tools {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 0;
+  overflow: visible;
+}
+body .panel .layout-tools button {
+  width: 100%;
+  flex: none;
+  margin: 0;
+  padding: 6px;
+  font-size: 12px;
+}
+body .panel p.layout-instructions {
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+@media (max-width: 700px) {
+  body.touch-playing #sounderPanel {
+    top: 84px;
+    left: 8px;
+    right: auto;
+    width: 136px;
+    --window-anchor-x: left;
+  }
+  body.touch-playing:has(#sounderPanel:not([hidden])) #electronics {
+    top: 8px;
+    max-width: 136px;
+    max-height: 60px;
+  }
+  body.touch-playing:has(#sounderPanel:not([hidden])) #currentReadout {
+    top: 202px;
+    width: 136px;
+    max-height: 60px;
+  }
+  body.touch-playing:has(#minimapPanel:not([hidden])) #navigation {
+    top: 270px;
+    width: 164px;
+    max-height: 60px;
+  }
+  body.touch-playing:has(#minimapPanel:not([hidden])) #message {
+    top: 350px;
+    width: 120px;
+    max-height: 80px;
+  }
+  body.touch-playing:has(#sounderPanel:not([hidden])) #groundLegend {
+    top: 282px;
+    width: 136px;
+    max-height: 60px;
+  }
+  body.touch-playing.intro-playing #minimapPanel {
+    top: 270px;
+    right: 8px;
+    width: 112px;
+  }
+  body.touch-playing.intro-playing #sounderPanel {
+    top: 270px;
+  }
+  body.touch-playing.intro-playing:has(#minimapPanel:not([hidden])) #message {
+    top: 380px;
+    left: 8px;
+    right: auto;
+    width: 136px;
+    --window-anchor-x: left;
+  }
+  .layout-workspace {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(150px, 1fr) minmax(148px, 32dvh);
+    flex: 1;
+    min-height: 0;
+  }
+  .layout-sidebars {
+    grid-template-columns: 1fr 1fr;
+    min-height: 0;
+  }
+  .layout-scroll-card {
+    max-height: 32dvh;
+  }
+}
+@media (max-height: 500px) and (min-width: 701px) {
+  body.touch-playing #minimapPanel {
+    top: 72px;
+    width: 88px;
+    height: 100px;
+    padding: 4px 4px 12px;
+  }
+  body.touch-playing #minimapPanel .minimap-chart canvas {
+    width: 68px;
+    max-width: 100%;
+    margin: 2px 0;
+  }
+  body.touch-playing #minimapPanel > small {
+    display: none;
+  }
+  body.touch-playing #minimapPanel strong {
+    font-size: 9px;
+  }
+  body.touch-playing:has(#minimapPanel:not([hidden])) #message {
+    left: 208px;
+    right: auto;
+    width: 145px;
+    --window-anchor-x: left;
+  }
+  body.touch-playing.intro-playing #sounderPanel {
+    left: calc(42vw + 24px);
+    right: auto;
+    top: 72px;
+    width: 136px;
+    --window-anchor-x: left;
+  }
+}
+body.touchscreen #playtest .layout-card {
+  min-height: 0;
+}

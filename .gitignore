@@ -1,0 +1,17 @@
+node_modules/
+dist/
+exports/
+.browser-cache/
+.npm-cache/
+test-results/
+.runtime/
+*.log
+.DS_Store
+
+.player-data/
+recordings/
+careers/
+# Copied historical 2D maintenance recipes are not part of this release.
+scripts/backup-project.py
+scripts/archive-device-acceptance.py
+scripts/audit-storage.py

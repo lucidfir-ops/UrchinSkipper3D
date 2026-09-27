@@ -1,0 +1,270 @@
+{
+  "generatedBy": "scripts/extract-boat-sheets.js",
+  "canvas": {
+    "width": 1024,
+    "height": 1536,
+    "format": "RGBA PNG",
+    "orientation": "bow up"
+  },
+  "note": "Exact grid artwork extracted non-destructively. Pale background removal is edge-connected so enclosed white boat paint is retained.",
+  "boats": [
+    {
+      "filename": "nine-ships-01-r1-c1.png",
+      "source": "Nine Ships Reference Sheet.png",
+      "row": 1,
+      "column": 1
+    },
+    {
+      "filename": "nine-ships-02-r1-c2.png",
+      "source": "Nine Ships Reference Sheet.png",
+      "row": 1,
+      "column": 2
+    },
+    {
+      "filename": "nine-ships-03-r1-c3.png",
+      "source": "Nine Ships Reference Sheet.png",
+      "row": 1,
+      "column": 3
+    },
+    {
+      "filename": "nine-ships-04-r2-c1.png",
+      "source": "Nine Ships Reference Sheet.png",
+      "row": 2,
+      "column": 1
+    },
+    {
+      "filename": "nine-ships-05-r2-c2.png",
+      "source": "Nine Ships Reference Sheet.png",
+      "row": 2,
+      "column": 2
+    },
+    {
+      "filename": "nine-ships-06-r2-c3.png",
+      "source": "Nine Ships Reference Sheet.png",
+      "row": 2,
+      "column": 3
+    },
+    {
+      "filename": "nine-ships-07-r3-c1.png",
+      "source": "Nine Ships Reference Sheet.png",
+      "row": 3,
+      "column": 1
+    },
+    {
+      "filename": "nine-ships-08-r3-c2.png",
+      "source": "Nine Ships Reference Sheet.png",
+      "row": 3,
+      "column": 2
+    },
+    {
+      "filename": "nine-ships-09-r3-c3.png",
+      "source": "Nine Ships Reference Sheet.png",
+      "row": 3,
+      "column": 3
+    },
+    {
+      "filename": "design-asset-01-r1-c1.png",
+      "source": "Top-Down Boat Design Asset Sheet.png",
+      "row": 1,
+      "column": 1
+    },
+    {
+      "filename": "design-asset-02-r1-c2.png",
+      "source": "Top-Down Boat Design Asset Sheet.png",
+      "row": 1,
+      "column": 2
+    },
+    {
+      "filename": "design-asset-03-r1-c3.png",
+      "source": "Top-Down Boat Design Asset Sheet.png",
+      "row": 1,
+      "column": 3
+    },
+    {
+      "filename": "design-asset-04-r1-c4.png",
+      "source": "Top-Down Boat Design Asset Sheet.png",
+      "row": 1,
+      "column": 4
+    },
+    {
+      "filename": "design-asset-05-r2-c1.png",
+      "source": "Top-Down Boat Design Asset Sheet.png",
+      "row": 2,
+      "column": 1
+    },
+    {
+      "filename": "design-asset-06-r2-c2.png",
+      "source": "Top-Down Boat Design Asset Sheet.png",
+      "row": 2,
+      "column": 2
+    },
+    {
+      "filename": "design-asset-07-r2-c3.png",
+      "source": "Top-Down Boat Design Asset Sheet.png",
+      "row": 2,
+      "column": 3
+    },
+    {
+      "filename": "design-asset-08-r2-c4.png",
+      "source": "Top-Down Boat Design Asset Sheet.png",
+      "row": 2,
+      "column": 4
+    },
+    {
+      "filename": "design-asset-09-r3-c1.png",
+      "source": "Top-Down Boat Design Asset Sheet.png",
+      "row": 3,
+      "column": 1
+    },
+    {
+      "filename": "design-asset-10-r3-c2.png",
+      "source": "Top-Down Boat Design Asset Sheet.png",
+      "row": 3,
+      "column": 2
+    },
+    {
+      "filename": "design-asset-11-r3-c3.png",
+      "source": "Top-Down Boat Design Asset Sheet.png",
+      "row": 3,
+      "column": 3
+    },
+    {
+      "filename": "design-asset-12-r3-c4.png",
+      "source": "Top-Down Boat Design Asset Sheet.png",
+      "row": 3,
+      "column": 4
+    },
+    {
+      "filename": "design-asset-13-r4-c1.png",
+      "source": "Top-Down Boat Design Asset Sheet.png",
+      "row": 4,
+      "column": 1
+    },
+    {
+      "filename": "design-asset-14-r4-c2.png",
+      "source": "Top-Down Boat Design Asset Sheet.png",
+      "row": 4,
+      "column": 2
+    },
+    {
+      "filename": "design-asset-15-r4-c3.png",
+      "source": "Top-Down Boat Design Asset Sheet.png",
+      "row": 4,
+      "column": 3
+    },
+    {
+      "filename": "design-asset-16-r4-c4.png",
+      "source": "Top-Down Boat Design Asset Sheet.png",
+      "row": 4,
+      "column": 4
+    },
+    {
+      "filename": "design-collection-01-r1-c1.png",
+      "source": "Top-Down Boat Design Collection.png",
+      "row": 1,
+      "column": 1
+    },
+    {
+      "filename": "design-collection-02-r1-c2.png",
+      "source": "Top-Down Boat Design Collection.png",
+      "row": 1,
+      "column": 2
+    },
+    {
+      "filename": "design-collection-03-r1-c3.png",
+      "source": "Top-Down Boat Design Collection.png",
+      "row": 1,
+      "column": 3
+    },
+    {
+      "filename": "design-collection-04-r2-c1.png",
+      "source": "Top-Down Boat Design Collection.png",
+      "row": 2,
+      "column": 1
+    },
+    {
+      "filename": "design-collection-05-r2-c2.png",
+      "source": "Top-Down Boat Design Collection.png",
+      "row": 2,
+      "column": 2
+    },
+    {
+      "filename": "design-collection-06-r2-c3.png",
+      "source": "Top-Down Boat Design Collection.png",
+      "row": 2,
+      "column": 3
+    },
+    {
+      "filename": "design-collection-07-r3-c1.png",
+      "source": "Top-Down Boat Design Collection.png",
+      "row": 3,
+      "column": 1
+    },
+    {
+      "filename": "design-collection-08-r3-c2.png",
+      "source": "Top-Down Boat Design Collection.png",
+      "row": 3,
+      "column": 2
+    },
+    {
+      "filename": "design-collection-09-r3-c3.png",
+      "source": "Top-Down Boat Design Collection.png",
+      "row": 3,
+      "column": 3
+    },
+    {
+      "filename": "workboat-blueprint-01-r1-c1.png",
+      "source": "Top-Down Workboat Blueprint Grid.png",
+      "row": 1,
+      "column": 1
+    },
+    {
+      "filename": "workboat-blueprint-02-r1-c2.png",
+      "source": "Top-Down Workboat Blueprint Grid.png",
+      "row": 1,
+      "column": 2
+    },
+    {
+      "filename": "workboat-blueprint-03-r1-c3.png",
+      "source": "Top-Down Workboat Blueprint Grid.png",
+      "row": 1,
+      "column": 3
+    },
+    {
+      "filename": "workboat-blueprint-04-r2-c1.png",
+      "source": "Top-Down Workboat Blueprint Grid.png",
+      "row": 2,
+      "column": 1
+    },
+    {
+      "filename": "workboat-blueprint-05-r2-c2.png",
+      "source": "Top-Down Workboat Blueprint Grid.png",
+      "row": 2,
+      "column": 2
+    },
+    {
+      "filename": "workboat-blueprint-06-r2-c3.png",
+      "source": "Top-Down Workboat Blueprint Grid.png",
+      "row": 2,
+      "column": 3
+    },
+    {
+      "filename": "workboat-blueprint-07-r3-c1.png",
+      "source": "Top-Down Workboat Blueprint Grid.png",
+      "row": 3,
+      "column": 1
+    },
+    {
+      "filename": "workboat-blueprint-08-r3-c2.png",
+      "source": "Top-Down Workboat Blueprint Grid.png",
+      "row": 3,
+      "column": 2
+    },
+    {
+      "filename": "workboat-blueprint-09-r3-c3.png",
+      "source": "Top-Down Workboat Blueprint Grid.png",
+      "row": 3,
+      "column": 3
+    }
+  ]
+}

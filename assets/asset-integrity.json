@@ -1,0 +1,638 @@
+{
+  "description": "Canonical unchanged artwork after designer-authorized duplicate cleanup. Former paths record provenance; SHA-256 values were measured from the originals and verified byte-for-byte against the surviving files before removal.",
+  "assets": [
+    {
+      "path": "public/assets/brand/channelmaster-title.png",
+      "sha256": "5df727e211fbbcc888808566c5d35496657b5cb0127b3cc49f00127d63113510",
+      "bytes": 2592147,
+      "formerPaths": [
+        "assets/assets/Channelmaster_ Urchin Skipper.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/channel master.png",
+      "sha256": "45d14d91d8831340f875479fb26c07ff39adcd06f18b8fc0611bc4608b3c9ef3",
+      "bytes": 1208610,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/channel master.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/channel master2.png",
+      "sha256": "230f835418979635ebee533125758714d63c75b8deaad1b3b34e32076672fad2",
+      "bytes": 1582737,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/channel master2.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/coastal workhorse.png",
+      "sha256": "e63b04358220619e9f9d6d281fb48a2912fc0c224def4fe68810e1b4a7a00b2c",
+      "bytes": 1494491,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/coastal workhorse.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/coastal workhorse2.png",
+      "sha256": "b56d386df69e4aff0922157a39416b2a7305cb50e625aac6fe5b9f0aa26db59c",
+      "bytes": 1542599,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/coastal workhorse2.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/dfoboat1.png",
+      "sha256": "1b294ed48c25e34255b51dcb6f7cccfad8212ec4ea43d4041d93f88d592b4140",
+      "bytes": 983867,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/dfoboat1.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/dfoboat2.png",
+      "sha256": "63ac9ebb1d6d998c10b89173a96120aeb6a0afa8f4671a08facec5b0d0787881",
+      "bytes": 1217094,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/dfoboat2.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/dfoboat3.png",
+      "sha256": "88d8760bda03b3f4b3248c91864197031ac8469863f4763c7d6df54cc68936c8",
+      "bytes": 1088126,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/dfoboat3.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/harbour workhorse.png",
+      "sha256": "45da761cede74ac5e4da8d73fd2519aa3954e57c9081cc103b66f911e612682b",
+      "bytes": 2152001,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/harbour workhorse.png",
+        "assets/source/workboat-overhead-v1.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/harbour workhorse3.png",
+      "sha256": "127952e034882a8a5d072e5be26e1b8c6171d57df1bbfab7f8f7b1a033e29004",
+      "bytes": 1335542,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/harbour workhorse3.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/island tender.png",
+      "sha256": "2d32f03c680817a0c00b3604a0abc84f8ce333f1385b8a41a323f63b023c2002",
+      "bytes": 1127542,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/island tender.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/island tender2.png",
+      "sha256": "b2a687366f148579a9e664046f8c094e70f2cc3461779525d9fd37666e5ade28",
+      "bytes": 1109935,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/island tender2.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/nine-ships-03-r1-c3.png",
+      "sha256": "589ef43f7c4006dc99134fc6729d3922eef7e08c26421a892f6260ee52493741",
+      "bytes": 1361168,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/nine-ships-03-r1-c3.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/nine-ships-06-r2-c3.png",
+      "sha256": "f4253f1d4a17d87499146459cb1ec7af8c7ddfa9fb84a9aeb0dcd1cb37bb72dc",
+      "bytes": 1461813,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/nine-ships-06-r2-c3.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/nine-ships-07-r3-c1.png",
+      "sha256": "483df35f6f2ca0c8b80a72ecdaa8ac97cbcfec5bb94d9d5919ab993291602ee0",
+      "bytes": 1396756,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/nine-ships-07-r3-c1.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/nine-ships-08-r3-c2.png",
+      "sha256": "0e643cfdbfe7589bd9423c40a4e4fb9503b130a8caae2c714bb6ef4137d33230",
+      "bytes": 1601791,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/nine-ships-08-r3-c2.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/nine-ships-09-r3-c3.png",
+      "sha256": "a5cb833a32027086e36157ed88df12c032bc396bf77321a8a5f59ada1d826425",
+      "bytes": 1570729,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/nine-ships-09-r3-c3.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/reef runner.png",
+      "sha256": "003e884f49a56cbab033f8661497ecaa65eea959c6c036849427aa4a8f018625",
+      "bytes": 1376568,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/reef runner.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/reef runner2.png",
+      "sha256": "a53527994e88a12ad9293797c0fc3e1b8501e6dfaa9f685a26606a87c499e8d9",
+      "bytes": 1393428,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/reef runner2.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/rival1.png",
+      "sha256": "3a171def53bf346c89b0dfca483fd62f36dc2b51a80ab7f45d062c55805617aa",
+      "bytes": 1359614,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/rival1.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/rival11.png",
+      "sha256": "68c15b6ae8d65b8db4e2f878484644e4ab8824f79670c27582b07785785e72ab",
+      "bytes": 1016208,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/rival11.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/rival12.png",
+      "sha256": "7f1da387e45e5314bbbb303f0c3a254a3382c9247df186df0cc1b1b2e52e658b",
+      "bytes": 1310778,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/rival12.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/rival13.png",
+      "sha256": "fb4f516228e2447f7d223d3643913ecd5e6e1e3721095ab6185e5e3c7ce2facd",
+      "bytes": 1153736,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/rival13.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/rival14.png",
+      "sha256": "39b3cbabca9974fd87846adc6dd7a0f58db48e07be8e453cd4fc4eb15267a423",
+      "bytes": 1206140,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/rival14.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/rival2.png",
+      "sha256": "d4ceb010f2373d374d63ee2bec5c7603c9ada6bdf389c556a6a7ba9aa9099cd9",
+      "bytes": 1334913,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/rival2.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/rival3.png",
+      "sha256": "817558588fd4e498e26303e5b459502412bdc84395457d4a2e49f38140a972b5",
+      "bytes": 1142733,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/rival3.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/rival4.png",
+      "sha256": "879f29ebc25f89276dc1cf944ec9d1e8af7cd02839a47f7c291aeb05d88e1cf1",
+      "bytes": 1075059,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/rival4.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/rival5.png",
+      "sha256": "81d5761d9e1f41dc581d7a8c91e4ce74cf404204d1aaf37002b01828ee9d35b7",
+      "bytes": 1366821,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/rival5.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/rival6.png",
+      "sha256": "4b1718a70f97da82fbd5a4023994b4b4384f8380fd9bc7e08a5437f592ae509c",
+      "bytes": 1222972,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/rival6.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/rival7.png",
+      "sha256": "4f8a69cf25cd8fbcc5fd6249ff8b8fafda1a9d8b792371adc5922d0061d5efcc",
+      "bytes": 1551646,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/rival7.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/rival8.png",
+      "sha256": "06e1b99703416a39cedd7ba87499659392078e72f882c1b7f8e35c2713769b0e",
+      "bytes": 1430721,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/rival8.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/rival9.png",
+      "sha256": "c68c76118d910c1fd472274431b3c799d93c7a62539cb94bb84dfcb00ceb38f3",
+      "bytes": 1574315,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/rival9.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/shoal skipper.png",
+      "sha256": "91d70c873fedc35f0de6d4d203977b9626b4ffbaabf87c0a600fa9cd6c18288a",
+      "bytes": 1304384,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/shoal skipper.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/shoal skipper2.png",
+      "sha256": "b8743c92ffbbd95860559ac462f74c3a14330f2a56e5ecaf3c36c241e53e3e2f",
+      "bytes": 1581050,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/shoal skipper2.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/taxi1.png",
+      "sha256": "d7e9836a195b300e534ca6ac39ee8a228d7a10e6de2c9604c6d03d9775d15395",
+      "bytes": 1155623,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/taxi1.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/taxi3.png",
+      "sha256": "0b0ab3400367c1c4e807a628d91ae2a970f2657a314ebadad17752f92361ef70",
+      "bytes": 1302729,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/taxi3.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/taxi4.png",
+      "sha256": "29ca680ec527d8378eb2f1f0771bba07c10d5bd05d71407b6e284704949406fc",
+      "bytes": 1148166,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/taxi4.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet/taxi5.png",
+      "sha256": "4b270a9f8bab618a3f3982aaba06bb265a136c03f0bdeff16c3f0e0226103250",
+      "bytes": 1219319,
+      "formerPaths": [
+        "assets/source/boat-sheet-individuals/taxi5.png"
+      ]
+    },
+    {
+      "path": "public/assets/charts/nautical-material-atlas.png",
+      "sha256": "9082cdb1277f448a05a2bcbcc7715723f8e25b444e23bc9f40c471ae18ab5b87",
+      "bytes": 2981858,
+      "formerPaths": [
+        "assets/source/charts/nautical-material-atlas.png"
+      ]
+    },
+    {
+      "path": "public/assets/harbour/frank-v1.png",
+      "sha256": "2b3d29a2e2f52e26c89f8e9daff60ae461f45ab52724e3794f6837853636d495",
+      "bytes": 2517232,
+      "formerPaths": [
+        "assets/source/frank-v1.png"
+      ]
+    },
+    {
+      "path": "public/assets/harbour/harbour-training-mode-v1.png",
+      "sha256": "4ca36e0d72c9acd46158f036037ded19ce9a18907bfbeede96f7e664cb7e5dc2",
+      "bytes": 2039183,
+      "formerPaths": [
+        "assets/source/harbour-training-mode-v1.png"
+      ]
+    },
+    {
+      "path": "public/assets/harbour/harbour-v1.png",
+      "sha256": "69f1622d03679725dd950d6ed1465ed3f8b9859c4248749a3cd73509c1958a5d",
+      "bytes": 2099060,
+      "formerPaths": [
+        "assets/source/harbour-v1.png"
+      ]
+    },
+    {
+      "path": "public/assets/crew/remaining-atlas.png",
+      "sha256": "7aded2f98d69f056a5324fee14b93be2b0b682d94ba61d7d50550fc93f0adb95",
+      "bytes": 3161591,
+      "formerPaths": [
+        "assets/source/september21/crew-atlas.png"
+      ]
+    },
+    {
+      "path": "public/assets/instruments/atlas.png",
+      "sha256": "5fc176dd1af17bd482941d5ce11729a0a349b8d2ba82af3400d10825443b29ac",
+      "bytes": 2514710,
+      "formerPaths": [
+        "assets/source/september21/instrument-atlas.png"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/channel-master-top.svg",
+      "sha256": "6b5938efde68e3180a6ae50897e6acf57d55a386c4684c0d1ee024b47eb55c6f",
+      "bytes": 388760,
+      "formerPaths": [
+        "assets/vectors/channel-master-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/channel-master2-top.svg",
+      "sha256": "0de46de123c857e1c73d43d5797ed960e7a6d9bbebb8c863db678511331ddad9",
+      "bytes": 374003,
+      "formerPaths": [
+        "assets/vectors/channel-master2-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/coastal-workhorse-top.svg",
+      "sha256": "c3fb8748839883787035e439cdfb9ec24c13ac6388ee707aeec1eb398bf8dac0",
+      "bytes": 524328,
+      "formerPaths": [
+        "assets/vectors/coastal-workhorse-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/coastal-workhorse2-top.svg",
+      "sha256": "b8b69a9d06838b416c7a7b17f21cef2922a88e75f1137f2a54ffebd9c823c335",
+      "bytes": 382584,
+      "formerPaths": [
+        "assets/vectors/coastal-workhorse2-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/dfoboat1-top.svg",
+      "sha256": "0a01ab8d128f57cdfdf23c6f7abd13f8232e30b690502056ef8a1c1db7f36072",
+      "bytes": 277957,
+      "formerPaths": [
+        "assets/vectors/dfoboat1-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/dfoboat2-top.svg",
+      "sha256": "c8ad93bca2401f3f64f88a9b56ec7a72075cb99f150bcf115587b13babf68927",
+      "bytes": 421712,
+      "formerPaths": [
+        "assets/vectors/dfoboat2-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/dfoboat3-top.svg",
+      "sha256": "ce1e0bfe27aa222ebf9f8c4a6014da82ff4855be6edc934703ae00062ae56483",
+      "bytes": 484946,
+      "formerPaths": [
+        "assets/vectors/dfoboat3-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/harbour-workhorse-top.svg",
+      "sha256": "8f47fc264264bc61a50f3e2e0824f4c1a1546538759ee4e62de89ee83e36d704",
+      "bytes": 465512,
+      "formerPaths": [
+        "assets/vectors/harbour-workhorse-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/harbour-workhorse3-top.svg",
+      "sha256": "689703bc5114d17010f3fd56293579086597a0ee6909f3a4b896dd244ed7a4e6",
+      "bytes": 274589,
+      "formerPaths": [
+        "assets/vectors/harbour-workhorse3-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/island-tender-top.svg",
+      "sha256": "4ed68ea5472c552d30d22418369e62eae50239d035a21f0f9fe774f8d3ab19aa",
+      "bytes": 407033,
+      "formerPaths": [
+        "assets/vectors/island-tender-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/island-tender2-top.svg",
+      "sha256": "62201b962c3da79545dae91480478d9fe6e746ee92da209f54125d557d5c72b4",
+      "bytes": 386328,
+      "formerPaths": [
+        "assets/vectors/island-tender2-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/nine-ships-03-r1-c3-top.svg",
+      "sha256": "82d34e89fe4e294341e48ad20bb88d364682bf2062d925fab4d988f1c162a6e4",
+      "bytes": 366609,
+      "formerPaths": [
+        "assets/vectors/nine-ships-03-r1-c3-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/nine-ships-06-r2-c3-top.svg",
+      "sha256": "a61475c1bbef8cf8272fcea1a25794a8f4a4c5d58dcba4f0b9c1a42f71b030a1",
+      "bytes": 472550,
+      "formerPaths": [
+        "assets/vectors/nine-ships-06-r2-c3-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/reef-runner-top.svg",
+      "sha256": "741ae9b20eab6e3b7bbe4c4e1787b439d642cd5fd36319086a8202f9442796dd",
+      "bytes": 619744,
+      "formerPaths": [
+        "assets/vectors/reef-runner-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/reef-runner2-top.svg",
+      "sha256": "282287590ba653172cd4537f272e0053d27d14703693de2a080a0ac281f46900",
+      "bytes": 442708,
+      "formerPaths": [
+        "assets/vectors/reef-runner2-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/rival1-top.svg",
+      "sha256": "8863d1750c353b3ce090780c2cf819440bde7717c6e601eea0d7b2b0fe8888f2",
+      "bytes": 510596,
+      "formerPaths": [
+        "assets/vectors/rival1-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/rival11-top.svg",
+      "sha256": "3332c4edcb236b34697c1379422d7b69cf36a55a5687c3af216779f6c30557b1",
+      "bytes": 279612,
+      "formerPaths": [
+        "assets/vectors/rival11-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/rival12-top.svg",
+      "sha256": "2415e8922ef7bddbea33d05638f065bdfc0378db52d1358ecb8eb1c115a40723",
+      "bytes": 460986,
+      "formerPaths": [
+        "assets/vectors/rival12-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/rival13-top.svg",
+      "sha256": "e8698575c2539b7838a886ae3207a2b6c646dcf13c48732fc65304007eed0842",
+      "bytes": 266092,
+      "formerPaths": [
+        "assets/vectors/rival13-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/rival14-top.svg",
+      "sha256": "362e72cf1e228f1f6004ab4d27e5ad7fb53343e48a85785e03422b6f3da22efd",
+      "bytes": 401756,
+      "formerPaths": [
+        "assets/vectors/rival14-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/rival2-top.svg",
+      "sha256": "f9284f5139b53802990170b0d913a9746b02d5c5cc198d765b7a1b99d9b36d47",
+      "bytes": 424728,
+      "formerPaths": [
+        "assets/vectors/rival2-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/rival3-top.svg",
+      "sha256": "c970c21355681e0fff51b3f2d9f60ceff6d2cde16eafe752c725917b3921295f",
+      "bytes": 470053,
+      "formerPaths": [
+        "assets/vectors/rival3-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/rival4-top.svg",
+      "sha256": "4621781b3c0093cc19c7968d65b8517f339d5367e1550d5acbe725f288bd8027",
+      "bytes": 309815,
+      "formerPaths": [
+        "assets/vectors/rival4-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/rival5-top.svg",
+      "sha256": "e1da3a9fb454c91e562eadcd5411bd20f37c6850776ebd290cbd387557cc6c5e",
+      "bytes": 496666,
+      "formerPaths": [
+        "assets/vectors/rival5-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/rival6-top.svg",
+      "sha256": "f99ceec560cb55634144209bfeb4d419963a19df4ab3b98a6b11657ba8a3d394",
+      "bytes": 368815,
+      "formerPaths": [
+        "assets/vectors/rival6-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/rival7-top.svg",
+      "sha256": "39328e1be5c884c9dc9b13c1358df0b638562e6272e12104d30715c3b1c8c906",
+      "bytes": 491541,
+      "formerPaths": [
+        "assets/vectors/rival7-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/rival8-top.svg",
+      "sha256": "6b26b58bacbe87deb1e4e6facb392ed99c3756d18b3250da0a38a4dafb8c5c14",
+      "bytes": 408222,
+      "formerPaths": [
+        "assets/vectors/rival8-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/rival9-top.svg",
+      "sha256": "51a637d6e780528c11b930a087edf8a012c25c5c8745fb2207433f1317d8b701",
+      "bytes": 367414,
+      "formerPaths": [
+        "assets/vectors/rival9-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/shoal-skipper-top.svg",
+      "sha256": "54f231be2fecd015a4b7a07006da82ea1c7aad3d3f105b929a86c976bfdf06d0",
+      "bytes": 424023,
+      "formerPaths": [
+        "assets/vectors/shoal-skipper-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/shoal-skipper2-top.svg",
+      "sha256": "520d084d2aca0f1b739d3f1ed777ce7282c9ac8ebaf0cfb77227268b00b6fd40",
+      "bytes": 503067,
+      "formerPaths": [
+        "assets/vectors/shoal-skipper2-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/taxi1-top.svg",
+      "sha256": "8c2025f93ac5f52321b63e0ade287596ed314f3c2b10d553e5f356259848e819",
+      "bytes": 342544,
+      "formerPaths": [
+        "assets/vectors/taxi1-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/taxi3-top.svg",
+      "sha256": "de6dc7d72291849c3ccdff39fe87687e8fd68dfb91c025cdf1ff92c6a355f1d2",
+      "bytes": 478639,
+      "formerPaths": [
+        "assets/vectors/taxi3-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/taxi4-top.svg",
+      "sha256": "0f99c3a92befe672ac886513e1850b4849ba2403a35bc0721b4b83f46d11738e",
+      "bytes": 373343,
+      "formerPaths": [
+        "assets/vectors/taxi4-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/taxi5-top.svg",
+      "sha256": "124bac56d6ee7087e56b3f951c8ec7fb2b422e52a03fc3d88fd0ff1fe5f7088e",
+      "bytes": 312461,
+      "formerPaths": [
+        "assets/vectors/taxi5-top.svg"
+      ]
+    },
+    {
+      "path": "public/assets/fleet-vector/urchin-workboat-top.svg",
+      "sha256": "f53175cda05e8f5baa0baee38710965818b3434dd928fd8a4f0995455597bf3e",
+      "bytes": 562151,
+      "formerPaths": [
+        "assets/vectors/urchin-workboat-top.svg"
+      ]
+    }
+  ]
+}

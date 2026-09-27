@@ -1,0 +1,403 @@
+/* September 12 screen refinements stay with the features that own them. */
+.forecast-scrubber {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.forecast-scrubber input {
+  min-width: 0;
+  flex: 1;
+}
+.trigger-badge {
+  display: inline-block;
+  min-width: 30px;
+  padding: 4px 6px;
+  border: 1px solid #c4d7cc;
+  border-radius: 9px 9px 4px 4px;
+  color: #f0e7c8;
+  background: #284c54;
+  text-align: center;
+  font: 700 12px system-ui;
+  white-space: nowrap;
+}
+.catch-sheet {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 0 15px;
+}
+.crew-level {
+  display: inline-block;
+  color: #f2d89c;
+  font: 600 14px system-ui;
+  white-space: nowrap;
+}
+.crew-progress {
+  border-top: 1px solid #6a938777;
+  margin-top: 12px;
+}
+.frank-lesson {
+  min-height: 0;
+  max-height: 65vh;
+  flex: 1 1 auto;
+}
+/* Keep the original header footprint and all neighbours in place. Use the
+   panel's right padding for the enlargement so the offload clock stays clear. */
+.area-preview {
+  overflow: visible;
+  position: relative;
+  border-color: transparent;
+  box-shadow: none;
+}
+.area-preview canvas {
+  position: absolute;
+  right: -28px;
+  top: 0;
+  width: 126px;
+  height: 126px;
+  border: 1px solid #809b8b;
+  border-radius: 5px;
+  box-shadow: 0 3px 12px #07192366;
+  z-index: 1;
+}
+@media (max-height: 700px) {
+  .area-preview canvas {
+    right: -22px;
+    width: 99px;
+    height: 99px;
+  }
+}
+
+/* September 13: artwork is the harbour, with services placed on the scene. */
+#playtest.wharf-panel {
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 16px 24px;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  box-shadow: none;
+}
+.wharf-heading {
+  position: relative;
+  z-index: 1;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #102d39cf;
+}
+.wharf-scene.choices {
+  position: absolute;
+  inset: 80px 0 48px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+#playtest.wharf-panel .day-footer {
+  grid-row: 3;
+  z-index: 1;
+  justify-self: start;
+  background: #102d39de;
+  padding: 7px 12px;
+  border-radius: 6px;
+}
+#playtest.wharf-panel .place-conditions {
+  top: 22%;
+  left: 40%;
+}
+#playtest.wharf-panel .place-workshop {
+  left: 63%;
+  bottom: 16%;
+}
+#playtest.wharf-panel .place-chart {
+  bottom: 16%;
+  left: 39%;
+}
+#playtest.wharf-panel .place-settings {
+  bottom: 6%;
+  right: 4%;
+}
+#playtest.wharf-panel .place-office {
+  top: 34%;
+}
+#playtest.wharf-panel .place-crew {
+  top: 57%;
+}
+#playtest.wharf-panel .place-fleet {
+  top: 56%;
+}
+#playtest.wharf-panel .place-outfit {
+  top: 33%;
+}
+.title-choices {
+  display: grid;
+  gap: 6px;
+  max-width: 320px;
+}
+.title-choices button {
+  margin: 0;
+  min-height: 35px;
+  padding: 7px 14px;
+  text-align: left;
+}
+.title-choices .selected {
+  color: #112b36;
+  background: #edce94;
+  outline: 2px solid #fff1cc;
+}
+#startup .title-copy {
+  padding-top: 3vh;
+  padding-bottom: 3vh;
+}
+#startup h1 {
+  font-size: clamp(32px, 5vw, 64px);
+}
+#startup #controllerStatus {
+  font-size: 12px;
+  max-width: 340px;
+  margin: 8px 0;
+}
+#electronics {
+  top: 14px;
+  right: 14px;
+  max-width: 250px;
+}
+#groundLegend {
+  bottom: 18px;
+  right: 14px;
+}
+.fuel-instrument.fuel-dial {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  padding: 0;
+  margin: 4px 0;
+  background: transparent;
+}
+.fuel-dial svg {
+  width: 66px;
+  height: 51px;
+  flex-shrink: 0;
+}
+.fuel-dial span {
+  max-width: 175px;
+  font-size: 12px;
+}
+.fuel-dial b {
+  display: block;
+  color: #ffd38b;
+  font-size: 11px;
+}
+#divers button {
+  white-space: pre-line;
+  line-height: 1.4;
+}
+#actionFeedback {
+  max-height: 96px;
+  overflow: hidden;
+}
+#playtest.bindings-panel {
+  left: 3vw;
+  right: 3vw;
+  width: auto;
+}
+.bindings-panel .menu-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 18px;
+  min-height: 0;
+}
+.controller-diagrams {
+  min-width: 0;
+  overflow: auto;
+}
+.controller-diagrams svg {
+  width: 100%;
+}
+.binding-row {
+  display: grid;
+  grid-template-columns: 1fr minmax(110px, 35%);
+  gap: 8px;
+  align-items: center;
+}
+.binding-row button {
+  font-size: 13px;
+}
+.binding-views {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.binding-views button[aria-pressed='true'] {
+  background: #466366;
+  border-color: #ffdc9c;
+  color: #ffdc9c;
+}
+.keyboard-diagram {
+  display: grid;
+  gap: 5px;
+}
+.keyboard-row {
+  display: flex;
+  gap: 3px;
+}
+.keycap {
+  min-width: 0;
+  min-height: 48px;
+  padding: 4px 2px;
+  border: 1px solid #445d65;
+  border-bottom-width: 3px;
+  border-radius: 5px;
+  background: #122730;
+  color: #71868b;
+  text-align: center;
+}
+.keycap strong {
+  display: block;
+  font-size: 11px;
+}
+.keycap span {
+  display: block;
+  font-size: 9px;
+  line-height: 1.15;
+  margin-top: 4px;
+  overflow-wrap: normal;
+}
+.keycap.bound {
+  background: #28474e;
+  color: #ecdfba;
+  border-color: #88a19c;
+}
+.keycap.active {
+  background: #5b5736;
+  border-color: #ffd38b;
+}
+.bindings-panel .binding-caption {
+  font-size: 12px;
+  margin: 14px 0 0;
+}
+@media (max-height: 700px) and (min-width: 701px) {
+  .bindings-panel > p {
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+  .binding-views {
+    margin-bottom: 10px;
+  }
+  .binding-views button {
+    min-height: 34px;
+    padding: 5px 9px;
+  }
+  .keyboard-diagram {
+    gap: 4px;
+  }
+  .keycap {
+    min-height: 35px;
+    padding: 3px 1px;
+  }
+  .keycap strong {
+    font-size: 10px;
+  }
+  .keycap span {
+    font-size: 8px;
+    margin-top: 2px;
+  }
+  .bindings-panel .binding-caption {
+    font-size: 10px;
+    margin-top: 8px;
+  }
+}
+@media (max-width: 700px) {
+  .bindings-panel .menu-body {
+    grid-template-columns: 1fr;
+    overflow: auto;
+  }
+  .controller-diagrams {
+    overflow: visible;
+  }
+  .bindings-panel .choices {
+    overflow: visible;
+  }
+}
+.binding-row select {
+  width: 100%;
+  min-height: 38px;
+  background: #153746;
+  color: #f5e6c2;
+  border: 1px solid #94aaa6;
+  border-radius: 5px;
+}
+.bindings-panel small {
+  display: block;
+  margin-top: 8px;
+}
+.buyer-notice {
+  color: #f5d692;
+}
+#playtest.orders-panel .orders-help {
+  overflow: auto;
+  max-height: 65vh;
+}
+body.sandbox::after {
+  content: 'TEST MODE · NOT SAVED';
+}
+@media (max-height: 650px) {
+  #playtest.wharf-panel {
+    padding: 10px 16px;
+  }
+  #startup .title-copy > p:first-of-type {
+    display: none;
+  }
+  #startup h1 {
+    margin-bottom: 4px;
+  }
+  .title-choices {
+    gap: 4px;
+  }
+  .title-choices button {
+    min-height: 30px;
+    padding: 5px 12px;
+  }
+  #divers button {
+    font-size: 10px;
+  }
+}
+
+.radio-history {
+  white-space: pre-line;
+  overflow: auto;
+  max-height: 55vh;
+}
+
+.bindings-panel .choices,
+.binding-row,
+.binding-row button {
+  min-width: 0;
+}
+
+.test-mode-icon {
+  width: 27px;
+  height: 18px;
+  vertical-align: middle;
+  margin-left: 10px;
+}
+#divers.portrait-only button {
+  width: 64px;
+  min-width: 64px;
+  padding: 3px;
+  border-radius: 50%;
+}
+#divers.portrait-only svg,
+#divers.portrait-only img {
+  display: block;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+}
+#divers.portrait-only .selected {
+  outline: 3px solid #f5cf87;
+  outline-offset: 3px;
+}

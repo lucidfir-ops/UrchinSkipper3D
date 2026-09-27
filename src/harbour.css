@@ -1,0 +1,238 @@
+/* The harbour is a place, with sea instruments reserved for the working view. */
+body.in-port {
+  background: #173f47 url('/assets/harbour/harbour-training-mode-v1.png') center / cover fixed;
+}
+body.in-port #game,
+body.in-port #weatherVeil,
+body.in-port #hud,
+body.in-port #diverHud,
+body.in-port #offscreen,
+body.in-port #message,
+body.in-port #help,
+body.in-port #clock,
+body.in-port #testMap,
+body.in-port #groundLegend,
+body.in-port #testInfo {
+  visibility: hidden;
+}
+#playtest.wharf-panel {
+  inset: 14px;
+  margin: auto;
+  transform: none;
+  width: min(1180px, calc(100vw - 28px));
+  height: min(760px, calc(100dvh - 28px));
+  max-height: calc(100dvh - 28px);
+  padding: 16px;
+  background: #13333dec;
+  display: grid;
+  grid-template-rows: auto minmax(160px, 1fr) auto auto;
+  gap: 10px;
+}
+#playtest.wharf-panel[hidden] {
+  display: none;
+}
+.wharf-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.wharf-heading h2 {
+  margin: 4px 0 0;
+  font-size: clamp(19px, 2.5vw, 30px);
+}
+.wharf-money {
+  font-size: 25px;
+  text-align: right;
+  color: #f3d69e;
+  white-space: nowrap;
+}
+.wharf-money small {
+  display: block;
+  font-size: 13px;
+  color: #c4d6ce;
+}
+.wharf-scene.choices {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  grid-template-areas: 'office conditions outfit' 'help crew fleet' 'settings chart workshop';
+  align-items: center;
+  justify-items: center;
+  padding: 12px;
+  min-height: 0;
+  max-height: none;
+  overflow: hidden;
+  background: url('/assets/harbour/harbour-training-mode-v1.png') center / cover;
+  border-radius: 10px;
+  border: 1px solid #658a86;
+}
+#playtest.wharf-panel .wharf-place {
+  position: static;
+  width: auto;
+  max-width: 90%;
+  margin: 0;
+  white-space: normal;
+  min-height: 42px;
+  padding: 9px 14px;
+  border: 1px solid #e5c991;
+  box-shadow: 0 3px 12px #071f32a0;
+  background: #102f3bec;
+  color: #ffecd0;
+  font-size: clamp(13px, 1.6vw, 17px);
+}
+#playtest.wharf-panel .wharf-place.selected {
+  background: #f3d59c;
+  color: #153943;
+  outline: 3px solid #fff3d4;
+  outline-offset: 3px;
+}
+.place-chart {
+  grid-area: chart;
+  left: 39%;
+  bottom: 9%;
+  font-weight: 800;
+}
+.place-office {
+  grid-area: office;
+  left: 4%;
+  top: 26%;
+}
+.place-crew {
+  grid-area: crew;
+  left: 37%;
+  top: 49%;
+}
+.place-fleet {
+  grid-area: fleet;
+  right: 5%;
+  top: 46%;
+}
+.place-outfit {
+  grid-area: outfit;
+  right: 6%;
+  top: 22%;
+}
+.place-help {
+  grid-area: help;
+  left: 6%;
+  bottom: 14%;
+}
+.place-conditions {
+  grid-area: conditions;
+  left: 38%;
+  top: 8%;
+}
+.place-settings {
+  grid-area: settings;
+  right: 5%;
+  bottom: 9%;
+}
+.place-workshop {
+  grid-area: workshop;
+}
+.wharf-readiness {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1fr;
+  gap: 14px;
+  font-size: 12px;
+  color: #b8d1cc;
+}
+.wharf-readiness strong {
+  display: block;
+  color: #f1dfb8;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.frank-portrait {
+  float: left;
+  width: 130px;
+  height: 150px;
+  object-fit: cover;
+  margin: 0 18px 8px 0;
+  border-radius: 8px;
+}
+.workshop-panel button[data-action='sandbox'],
+.workshop-panel button[data-action='leave'] {
+  background: #713a31;
+  border-color: #e58b64;
+}
+body.sandbox::after {
+  content: 'UNSAVED TEST CAREER';
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  padding: 3px 16px;
+  background: #963e32;
+  color: #fff1cc;
+  font: bold 12px system-ui;
+  pointer-events: none;
+}
+@media (max-height: 650px) {
+  #playtest.wharf-panel {
+    padding: 10px;
+    gap: 6px;
+  }
+  .wharf-heading h2 {
+    font-size: 19px;
+  }
+  .wharf-readiness {
+    font-size: 11px;
+  }
+  .wharf-readiness strong {
+    font-size: 12px;
+  }
+  .wharf-place {
+    font-size: 12px;
+    min-height: 38px;
+    padding: 7px 10px;
+  }
+}
+
+body.in-port #helmPanel,
+body.in-port #navigation,
+body.in-port #actionFeedback {
+  visibility: hidden;
+}
+
+#playtest.wharf-panel .place-conditions {
+  left: 39%;
+}
+body.in-port #touchMenu {
+  display: none;
+}
+
+body.in-port #electronics {
+  visibility: hidden;
+}
+
+.frank-lesson {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 20px;
+  overflow: auto;
+}
+.frank-lesson p {
+  white-space: pre-line;
+  font-size: 15px;
+}
+.frank-lesson .frank-portrait {
+  margin: 0;
+  float: none;
+}
+@media (max-height: 650px) {
+  .frank-lesson {
+    grid-template-columns: 100px 1fr;
+    gap: 14px;
+  }
+  .frank-lesson .frank-portrait {
+    width: 100px;
+    height: 125px;
+  }
+  .frank-lesson p {
+    font-size: 13px;
+  }
+}

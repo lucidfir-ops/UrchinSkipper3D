@@ -1,0 +1,44 @@
+URCHIN SKIPPER 3D — HOW TO PLAY
+
+Skipper the boat while two autonomous divers collect urchins. Start with Frank's tutorial and Easy difficulty.
+
+Buy a boat, choose Sail and a nearby ground. Use the chart and sounder to find sheltered seabed around 5-20 m deep. Set each diver’s Orders, then press Deploy / board. An available diver aboard deploys even when the other portrait is selected.
+
+Watch bubbles and orange floats. Bring the boat's port side (left facing the bow) slowly alongside a float, clear of the hull and stern. Press Bag once and stay alongside: the catch comes aboard and a fresh bag sends that diver back down. If they cannot continue, their bubble tells you why. Deploy/board instead brings the nearby diver aboard with any bag. Neither pickup action needs portrait selection; selection chooses between available aboard divers and sets individual orders.
+
+Recover both divers before leaving. Cross the harbour edge shown on the chart; follow its Leave by time to reach offload by 19:00. Catch sells automatically; refuel, rest and upgrade.
+
+Sailing with an unavailable diver and sleeping/resting away today now ask for confirmation. Later coasts offer better quality and more unmarked ground; Frank warns you to upgrade your boat when you buy access. Taxis make straight runs at bubbles, so keep surfaced divers close and recover promptly.
+
+DEVELOPMENT TOOLS
+Accounts → Borrow up to $5,000 can be repeated without a total cap while the game is in development; debt and interest still apply. Pause → Debug mode → Godmode prevents new boat damage, diver injuries and fuel use. It starts off, saves your choice and shows a banner when enabled. Existing losses, current, weather and diving readiness still apply.
+
+DEFAULT KEYBOARD
+W/S throttle; A/D rudder; Space neutral; Enter centre rudder.
+Tab select diver; O orders; 1 deploy/board; 2 bag/send down; 3 recall near bubbles.
+M chart; +/- zoom; Escape menu.
+
+DEFAULT XBOX CONTROLLER
+Left stick up/down throttle; right stick left/right rudder; D-pad left/right neutral.
+LB select diver; B orders; Y deploy/board; X bag/send down; A nearby recall.
+L3 chart; triggers zoom; Menu pause.
+
+TOUCH
+Open Touchscreen Options and enable touch mode; use the labelled sticks and buttons.
+
+Throttle and rudder stay set when released. Neutral does not stop drift. Follow on-screen prompts if an action is unavailable. Controls can be remapped in Settings.
+
+NEW WORKING-DAY OPTIONS
+Before sailing, visit Harbour office → Buyer market to choose an optional
+quality/volume order. Pause → Deck catch shows each recovered bag’s quality
+and lets you dump it overboard over its original hauling time. Pause →
+Equipment switches controls fitted gear; enabled boat lights come on after
+dark. Local Chart can save a recent diver sample as a personal mark and show
+its bearing/distance. Gameplay Speed now defaults to +50%.
+
+Crew report new sampled quality and slow picking, especially on unmarked ground. Set a minimum quality and maximum bag time in Orders. Repeated unchanged reports stay quiet; crew have different chatter habits. Fatigue builds during work and mostly clears overnight.
+
+Home Coast storms are weak enough for the loaded starter rudder boat to reverse into deeper water. Later coasts get much worse: check Forecast before fishing. Falling tide can leave you stuck; wait on the water for it to rise or Pause → Radio for rescue for a paid tow. Taxis sometimes pass straight through worked water; an actual surface strike can injure or kill a diver.
+
+3D GRAPHICS
+Settings → 3D graphics cycles High, Balanced and Battery. These affect visual resolution and shadow detail, never the simulation. Use a browser with WebGL 2 and hardware acceleration.

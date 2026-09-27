@@ -1,0 +1,1066 @@
+/* September 20: landscape sizing. Keep authored UI scale and constrain media. */
+#landscapeNotice {
+  display: none;
+}
+body [data-hud-window][data-default-position] {
+  position: fixed;
+  left: var(--default-left) !important;
+  top: var(--default-top) !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  width: var(--default-width) !important;
+  height: var(--default-height) !important;
+  max-width: none !important;
+  max-height: none !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+}
+body [data-hud-window][data-seethrough='on'],
+body [data-hud-window][data-see-through='on'] {
+  opacity: 0.25 !important;
+}
+[data-presentation='text'] .instrument-graphic,
+[data-presentation='graphic'] .instrument-text {
+  display: none;
+}
+.standalone-instrument {
+  position: fixed;
+  z-index: 30;
+  box-sizing: border-box;
+  padding: 5px;
+  border: 1px solid #738f8b;
+  border-radius: 7px;
+  background: #0c2029ee;
+  overflow: auto;
+  color: #e5e9d8;
+}
+.standalone-instrument[hidden] {
+  display: none;
+}
+body.hud-hidden .standalone-instrument,
+body:has(.panel:not([hidden])) .standalone-instrument {
+  display: none;
+}
+.instrument-graphic {
+  height: 100%;
+  min-height: 0;
+}
+.instrument-dial,
+.instrument-compass,
+.timepiece-face {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: 160px;
+  min-height: 50px;
+}
+.instrument-dial text,
+.instrument-compass text {
+  fill: #e0e8d2;
+  font: 9px system-ui;
+}
+.instrument-dial .dial-value {
+  font:
+    bold 15px ui-monospace,
+    monospace;
+}
+.digital-clock {
+  box-sizing: border-box;
+  height: 100%;
+  min-height: 45px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 4px solid #33383a;
+  border-radius: 7px;
+  background: #08090a;
+}
+.digital-clock small {
+  color: #b3b6ad;
+  font: 9px system-ui;
+}
+.digital-clock output {
+  color: #ff4b3f;
+  font:
+    bold clamp(18px, 2.8vw, 36px) ui-monospace,
+    monospace;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 5px #ff332b55;
+}
+.depth-instrument {
+  height: 100%;
+  box-sizing: border-box;
+  padding: 4px;
+  background: #85a98c;
+  border: 5px solid #262b2e;
+  border-radius: 6px;
+  color: #102d29;
+  font:
+    bold 10px ui-monospace,
+    monospace;
+}
+.depth-instrument output {
+  display: block;
+  text-align: center;
+  font-size: clamp(20px, 3vw, 34px);
+  line-height: 1.1;
+}
+.depth-instrument.shallow {
+  background: #fac181;
+}
+.depth-scale {
+  height: 6px;
+  background: #163c39;
+  margin: 4px 0;
+}
+.depth-scale i {
+  display: block;
+  height: 100%;
+  background: #e4ead4;
+}
+.command-instrument {
+  padding: 2px;
+  font-size: 9px;
+}
+.command-instrument output {
+  font-size: 14px;
+  margin: 0;
+}
+.command-instrument small {
+  font-size: 8px;
+}
+.command-track {
+  position: relative;
+  height: 8px;
+  margin: 4px 0;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #d2765c, #dbd9a5 50%, #4eaa83);
+}
+.command-track i {
+  position: absolute;
+  top: -3px;
+  height: 14px;
+  width: 3px;
+  background: #fffbe0;
+}
+.helm-graphic {
+  display: flex;
+  height: 115px;
+}
+.helm-graphic svg {
+  width: 50%;
+}
+.helm-status {
+  font-size: 12px;
+  line-height: 1.45;
+}
+.weather-instrument {
+  font-size: 11px;
+}
+.weather-instrument strong,
+.weather-instrument meter {
+  display: block;
+  width: 100%;
+}
+body :is(#speedPanel, #throttlePanel, #fuelPanel, #currentReadout)[data-hud-window] {
+  padding: 4px;
+}
+body [data-presentation='text'] .nitrogen-bar,
+body [data-presentation='text'] .fuel-dial svg {
+  display: none;
+}
+.minimap-text {
+  display: none;
+}
+body #minimapPanel:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+}
+body #minimapPanel .minimap-heading,
+body #minimapPanel > small {
+  flex: none;
+}
+body #minimapPanel .minimap-chart {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+body #minimapPanel .minimap-chart :is(canvas, svg) {
+  height: 100%;
+  width: 100%;
+  min-height: 0;
+  object-fit: contain;
+  margin: 0;
+}
+body #minimapPanel[data-presentation='text'] .minimap-chart {
+  display: none;
+}
+.diver-meters {
+  display: flex;
+  gap: 6px;
+  height: auto;
+  font-size: 10px;
+}
+.diver-meters label {
+  width: 50%;
+}
+.diver-meters meter {
+  width: 70%;
+  height: 8px;
+}
+.diver-meters[hidden] {
+  display: none;
+}
+[data-presentation='text'] .minimap-chart {
+  display: none;
+}
+[data-presentation='text'] .minimap-text {
+  display: block;
+}
+body.touch-playing #help {
+  font-size: 10px;
+  line-height: 1.25;
+  padding: 3px;
+}
+body.intro-playing #help:not([hidden]) {
+  display: block;
+}
+body.intro-playing #help[hidden] {
+  display: none;
+}
+#hud .instrument-text > span,
+#hud .instrument-graphic > span {
+  display: block;
+}
+body.touch-playing #hud .instrument-graphic,
+body.touch-playing #hud .instrument-text {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 8px;
+}
+body.touch-playing #helmPanel[data-presentation='text'] .instrument-graphic,
+body.touch-playing #helmPanel[data-presentation='graphic'] .instrument-text {
+  display: none;
+}
+body.touchscreen:not(.touch-playing) {
+  --touch-bottom: max(4px, env(safe-area-inset-bottom));
+}
+.crew-card :is(svg, .crew-portrait-image) {
+  display: block;
+  width: min(100%, 88px);
+  height: 82px;
+  object-fit: cover;
+  margin: 0 auto 5px;
+  border-radius: 6px;
+}
+.crew-profile > :is(svg, .crew-portrait-image) {
+  width: clamp(64px, 12vw, 150px);
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 8px;
+  flex: 0 0 auto;
+}
+.crew-profile > div {
+  min-width: 0;
+}
+.crew-card {
+  overflow: hidden;
+}
+.portrait-only .crew-portrait-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+body #touchFullscreen {
+  display: none !important;
+}
+body.touch-playing #touchMenu,
+body.touch-playing #touchHudToggle,
+body.touch-playing #touchLockToggle {
+  top: max(6px, env(safe-area-inset-top));
+  bottom: auto;
+  width: 72px;
+  min-height: 38px;
+  height: 38px;
+  padding: 4px;
+  font-size: 11px;
+  line-height: 1.15;
+}
+body.touch-playing #touchMenu {
+  right: 6px;
+}
+body.touch-playing #touchHudToggle {
+  right: 84px;
+}
+body.touch-playing #touchLockToggle {
+  right: 162px;
+}
+body #playtest.layout-panel {
+  display: flex;
+  flex-direction: column;
+  inset: auto;
+  left: calc(12px / var(--ui-scale));
+  top: calc(12px / var(--ui-scale));
+  width: calc((100vw - 24px) / var(--ui-scale));
+  height: calc((100dvh - 24px) / var(--ui-scale));
+  max-height: none;
+  padding: 10px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+body #playtest.layout-panel[hidden] {
+  display: none;
+}
+.layout-title {
+  flex: none;
+  cursor: move;
+  touch-action: none;
+}
+.layout-title small {
+  font-size: 10px;
+  font-weight: normal;
+}
+body #playtest .layout-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  gap: 8px;
+}
+.layout-preview-wrap {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+body #playtest .layout-sidebars {
+  min-height: 0;
+  overflow: hidden;
+  gap: 6px;
+}
+body #playtest .layout-scroll-card {
+  height: 100%;
+  max-height: none;
+  overflow: auto;
+  box-sizing: border-box;
+}
+body #playtest .layout-scroll-card .choices {
+  flex: none;
+  height: auto;
+  overflow: visible;
+}
+body #playtest .layout-adjustments {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+body #playtest .layout-adjustments button {
+  touch-action: none;
+  min-height: 36px;
+}
+body #playtest .layout-adjustments button:last-child {
+  grid-column: 1 / -1;
+}
+body #playtest .layout-card {
+  cursor: pointer;
+}
+body #playtest .layout-instructions {
+  flex: none;
+  margin: 0 0 6px;
+  font-size: 11px;
+}
+body #playtest.layout-panel h2 {
+  margin: 0 0 6px;
+  font-size: 19px;
+}
+body #playtest[data-screen='fleetboard'] .career-layout {
+  display: block;
+  overflow: auto;
+}
+body #playtest[data-screen='fleetboard'] .career-choices {
+  display: none;
+}
+body #playtest[data-screen='fleetboard'] .career-detail {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px;
+}
+.fleet-report {
+  padding: 12px;
+  border: 1px solid #709b9655;
+  border-radius: 8px;
+}
+body #playtest[data-screen='fleetboard'] .career-detail > p {
+  grid-column: 1 / -1;
+}
+body #playtest[data-screen='conditions'] .expedition-layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+body #playtest[data-screen='conditions'] .forecast-detail {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+body #playtest[data-screen='conditions'] {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  top: calc(8px / var(--ui-scale));
+  bottom: auto;
+  height: calc((100dvh - 16px) / var(--ui-scale));
+  max-height: calc((100dvh - 16px) / var(--ui-scale));
+}
+body #playtest[data-screen='conditions'][hidden] {
+  display: none;
+}
+body #playtest[data-screen='conditions'] :is(.day-heading, .day-footer) {
+  flex: none;
+}
+body #playtest[data-screen='conditions'] :is(.expedition-layout, .career-detail) {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  height: auto;
+  overflow: hidden;
+  max-height: none;
+  margin: 0;
+}
+body #playtest[data-screen='conditions'] .expedition-copy {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+body #playtest[data-screen='conditions'] .expedition-choices {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  overflow: auto;
+  max-height: 100px;
+  margin-top: 8px;
+}
+body #playtest[data-screen='conditions'] .expedition-choices button {
+  flex: 1;
+  min-width: 170px;
+}
+body #playtest[data-screen='conditions'] h2 {
+  font-size: clamp(17px, 2.5vw, 26px);
+  margin: 5px 0;
+}
+body.fit-screen #playtest.wharf-panel {
+  overflow: hidden;
+  background: #143b44;
+}
+body.fit-screen #playtest.wharf-panel .wharf-content {
+  width: 1280px;
+  height: 800px;
+  min-width: 0;
+  min-height: 0;
+  transform: scale(var(--harbour-fit));
+  transform-origin: top left;
+  left: calc((100vw - 1280px * var(--harbour-fit)) / 2);
+  top: calc((100dvh - 800px * var(--harbour-fit)) / 2);
+}
+body.fit-screen #playtest.wharf-panel .wharf-heading {
+  width: 1232px;
+}
+body.fit-screen #playtest.wharf-panel .wharf-place {
+  font-size: 18px;
+  min-height: 60px;
+}
+body.fit-screen #playtest.wharf-panel .day-footer {
+  max-width: 1150px;
+}
+@media (max-height: 500px) {
+  .digital-clock output {
+    font-size: 24px;
+  }
+  .digital-clock {
+    border-width: 3px;
+  }
+  .depth-instrument {
+    border-width: 3px;
+    padding: 2px;
+    font-size: 8px;
+  }
+  .depth-instrument output {
+    font-size: 22px;
+  }
+  .depth-scale {
+    margin: 2px 0;
+    height: 4px;
+  }
+  .depth-instrument small {
+    font-size: 8px;
+    white-space: nowrap;
+  }
+  .command-instrument {
+    font-size: 8px;
+    padding: 0;
+  }
+  .command-instrument output {
+    font-size: 11px;
+    line-height: 1;
+  }
+  .command-track {
+    height: 5px;
+    margin: 3px 0;
+  }
+  .command-track i {
+    height: 9px;
+    top: -2px;
+  }
+  .command-instrument small {
+    font-size: 7px;
+  }
+  body.touch-playing #minimapPanel .minimap-chart :is(canvas, svg) {
+    width: 100%;
+    height: auto;
+  }
+  body.touch-playing #minimapPanel .minimap-heading {
+    flex-wrap: wrap;
+    gap: 2px;
+  }
+  body.touch-playing #minimapPanel .minimap-heading strong {
+    font-size: 8px;
+  }
+  body.touch-playing #minimapPanel .minimap-zoom {
+    width: 100%;
+    gap: 2px;
+  }
+  body.touch-playing #minimapPanel .minimap-zoom button {
+    min-height: 24px;
+    width: 24px;
+  }
+  body.touch-playing #minimapPanel .minimap-zoom output {
+    min-width: 22px;
+  }
+  body.touch-playing.intro-playing #frankAboard {
+    font-size: 11px;
+  }
+  body.touch-playing.intro-playing #frankAboard h3 {
+    font-size: 13px;
+    margin: 2px 0;
+  }
+  body.touch-playing.intro-playing #groundLegend {
+    font-size: 8px;
+    padding: 2px;
+  }
+  .crew-profile {
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .crew-profile > .crew-portrait-image {
+    width: 80px;
+  }
+  body #playtest.layout-panel h2 small {
+    display: none;
+  }
+  body #playtest .layout-picker button,
+  body #playtest .layout-tools button {
+    min-height: 36px;
+    font-size: 11px;
+    padding: 4px;
+  }
+}
+/* September 21: portraits, borderless instruments and small-device layouts. */
+.crew-atlas {
+  background-image: url('/assets/crew/remaining-atlas.png');
+  background-size: 400% 700%;
+  aspect-ratio: 1;
+}
+.crew-stats {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.crew-stats :is(th, td) {
+  padding: 8px 5px;
+  border-bottom: 1px solid #81b7b633;
+  text-align: left;
+}
+.crew-stats caption {
+  text-align: left;
+  color: #e6ca8d;
+  margin: 12px 0;
+}
+body
+  [data-hud-window][data-presentation='graphic']:is(
+    .standalone-instrument,
+    #speedPanel,
+    #fuelPanel,
+    #currentReadout,
+    #throttlePanel
+  ) {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  overflow: hidden;
+}
+.instrument-texture {
+  pointer-events: none;
+}
+.digital-clock,
+.depth-instrument {
+  position: relative;
+  border: 0;
+  background: transparent;
+  isolation: isolate;
+}
+.digital-clock > .instrument-texture,
+.depth-instrument > .instrument-texture {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+.digital-clock {
+  padding: 18% 14%;
+}
+.depth-instrument {
+  padding: 18% 16%;
+}
+.hull-condition {
+  width: 100%;
+  height: 100%;
+}
+.load-crate {
+  height: 100%;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-shadow: 0 1px 3px #000;
+}
+.bag-stack {
+  flex: 1;
+  min-height: 16px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 3px;
+  width: 85%;
+  border: 2px solid #b9a27f;
+  border-top: 0;
+  padding: 4px;
+  background: #4b4c4522;
+}
+.bag-stack i {
+  border: 1px dashed #bca67855;
+  border-radius: 30% 30% 12% 12%;
+}
+.bag-stack i.loaded {
+  border: 1px solid #d4ad67;
+  background: repeating-linear-gradient(45deg, #bc874a 0 2px, #997043 2px 4px);
+  box-shadow: inset 2px 2px 3px #ead49188;
+}
+.load-crate output {
+  font: bold 14px ui-monospace;
+}
+.load-crate small {
+  font-size: 10px;
+}
+body #minimapPanel[data-presentation='chart'] {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  overflow: hidden;
+}
+/* Saved/custom windows must never cover the route back to menus. */
+body #touchMenu {
+  z-index: 50;
+}
+body #minimapPanel[data-presentation='chart'] :is(.minimap-heading, .minimap-text, small) {
+  display: none;
+}
+body #minimapPanel[data-presentation='chart'] .minimap-chart {
+  border: 0;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.boat-blueprint {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  aspect-ratio: 1;
+  background: #092532;
+  border: 1px solid #578299;
+}
+.boat-blueprint > svg {
+  width: 100%;
+  height: 100%;
+}
+.fitting-slot {
+  position: absolute;
+  width: 27%;
+  padding: 5px;
+  background: #102c3e;
+  border: 1px solid #52717e;
+  font-size: 10px;
+  color: #889ba4;
+}
+.fitting-slot strong,
+.fitting-slot span {
+  display: block;
+}
+.fitting-slot.installed {
+  border-color: #b8dbd9;
+  color: #dcefe8;
+  background: #204a58;
+}
+body.tiny-mode [data-hud-window] {
+  font-size: 9px !important;
+  line-height: 1.1;
+}
+body.tiny-mode [data-hud-window] :is(p, strong, small, span) {
+  font-size: inherit;
+}
+body.tiny-mode .instrument-dial,
+body.tiny-mode .instrument-compass {
+  min-height: 24px;
+}
+body.tiny-mode .digital-clock output,
+body.tiny-mode .depth-instrument output {
+  font-size: 18px;
+}
+@media (orientation: portrait) and (max-width: 700px) {
+  body.touchscreen #landscapeNotice {
+    display: none !important;
+  }
+  body #playtest .layout-workspace {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(100px, 1fr) minmax(0, 1.3fr);
+  }
+  body #playtest .layout-sidebars {
+    grid-template-columns: 1fr 1fr;
+  }
+  body.touch-playing :is(#touchLeft, #touchRight) {
+    transform: scale(0.78);
+  }
+  body.touch-playing #touchActions {
+    max-width: calc(100vw - 12px);
+  }
+  body.touch-playing #frankAboard {
+    font-size: 11px;
+  }
+  body #playtest :is(.career-layout, .day-layout, .expedition-layout, .departure-layout) {
+    grid-template-columns: 1fr;
+    overflow: auto;
+  }
+  body #playtest .crew-profile {
+    gap: 10px;
+  }
+  body #playtest .crew-profile > .crew-portrait-image {
+    width: 90px;
+  }
+  body #playtest .day-heading {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+#keyboardHelm {
+  position: fixed;
+  z-index: 35;
+  bottom: 6px;
+  left: 6px;
+  right: 6px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  pointer-events: none;
+}
+#keyboardHelm[hidden],
+body.hud-hidden #keyboardHelm {
+  display: none;
+}
+.keyboard-cluster {
+  width: 225px;
+  flex: none;
+}
+.key-cross {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 3px;
+}
+.key-north {
+  grid-column: 2;
+  grid-row: 1;
+}
+.key-west {
+  grid-column: 1;
+  grid-row: 2;
+}
+.key-south {
+  grid-column: 2;
+  grid-row: 2;
+}
+.key-east {
+  grid-column: 3;
+  grid-row: 2;
+}
+.helm-key {
+  border: 1px solid #a3ada899;
+  border-radius: 5px;
+  background: #13262cc7;
+  padding: 4px;
+  text-align: center;
+  color: #edf0dc;
+  font: 10px system-ui;
+}
+.helm-key kbd,
+.helm-key span {
+  display: block;
+}
+.helm-key kbd {
+  font: bold 11px ui-monospace;
+  color: #f5d092;
+}
+.helm-key.pressed {
+  background: #556c5b;
+  border-color: #fff0bd;
+}
+.helm-key.command-level {
+  background: linear-gradient(
+    to top,
+    #668b61bb var(--command-level),
+    #13262cc7 var(--command-level)
+  );
+}
+#keyboardHelm button {
+  pointer-events: auto;
+  min-height: 0;
+}
+body:has(#keyboardHelm:not([hidden])) #touchMenu {
+  display: none;
+}
+.keyboard-extra {
+  display: flex;
+  gap: 3px;
+  margin-top: 3px;
+}
+.keyboard-extra > .helm-key {
+  flex: 1;
+}
+.keyboard-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-self: end;
+  gap: 3px;
+  max-width: 310px;
+}
+@media (max-width: 900px) {
+  .keyboard-cluster {
+    width: 180px;
+  }
+  .helm-key {
+    font-size: 8px;
+    padding: 2px;
+  }
+  .helm-key kbd {
+    font-size: 9px;
+  }
+}
+@media (orientation: portrait) and (max-width: 700px) {
+  body.touch-playing .touch-actions {
+    left: 50%;
+    bottom: 108px;
+    transform: translateX(-50%);
+    width: calc(100vw - 12px);
+    max-width: none;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3px;
+  }
+  body.touch-playing .touch-actions button {
+    min-height: 32px;
+    font-size: 9px;
+    padding: 3px;
+  }
+  body.touch-playing .touch-stick {
+    width: 92px;
+    height: 92px;
+  }
+  body.touch-playing .touch-helm,
+  body.touch-playing .touch-steering {
+    bottom: 54px;
+  }
+  body.touch-playing .touch-gears button,
+  body.touch-playing .touch-steering > button {
+    font-size: 9px;
+    min-height: 26px;
+    padding: 3px;
+  }
+}
+
+.command-instrument {
+  position: relative;
+  isolation: isolate;
+  padding: 12%;
+  text-shadow: 0 1px 2px #000;
+}
+.command-instrument > .instrument-texture {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+.depth-instrument output {
+  color: #a3efc6;
+  text-shadow: 0 0 3px #071b16;
+  background: #16332ae6;
+}
+
+body .standalone-instrument,
+body #throttlePanel {
+  container-type: size;
+}
+body .digital-clock,
+body .depth-instrument,
+body .command-instrument {
+  min-height: 0;
+  border: 0;
+  padding: 12% 10%;
+  box-sizing: border-box;
+  height: 100%;
+}
+body .digital-clock output,
+body .depth-instrument output,
+body.tiny-mode .digital-clock output,
+body.tiny-mode .depth-instrument output {
+  font-size: min(27cqw, 37cqh);
+  line-height: 1;
+}
+body .digital-clock {
+  display: block;
+  padding: 0;
+  overflow: hidden;
+}
+body .digital-clock output,
+body.tiny-mode .digital-clock output {
+  position: absolute;
+  left: 12%;
+  top: 43%;
+  width: 76%;
+  text-align: center;
+  font-size: min(20cqw, 22cqh);
+  white-space: nowrap;
+  letter-spacing: 0;
+}
+body .depth-instrument small,
+body .digital-clock small {
+  font-size: min(10cqw, 12cqh);
+  white-space: nowrap;
+}
+body .digital-clock small {
+  position: absolute;
+  top: 28%;
+  left: 12%;
+  width: 76%;
+  text-align: center;
+  font-size: min(8cqw, 9cqh);
+}
+body .depth-scale {
+  height: 3cqh;
+  margin: 3cqh 0;
+}
+body .command-instrument,
+body .command-instrument :is(strong, small),
+body.tiny-mode .command-instrument :is(strong, small) {
+  font-size: min(8cqw, 10cqh);
+  line-height: 1;
+}
+body .command-instrument output {
+  font-size: 14cqh;
+}
+body .command-track {
+  height: 5cqh;
+  margin: 4cqh 0;
+}
+body .command-track i {
+  height: 9cqh;
+  top: -2cqh;
+}
+body .load-crate {
+  box-sizing: border-box;
+}
+body .load-crate output {
+  font-size: min(17cqw, 19cqh);
+  line-height: 1.1;
+}
+body .load-crate small {
+  font-size: min(9cqw, 10cqh);
+}
+body .timepiece-face {
+  min-height: 0;
+}
+@media (orientation: portrait) and (max-width: 700px) {
+  body.touch-playing #touchControls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+    bottom: 54px;
+    padding: 0 6px;
+    align-items: end;
+  }
+  body.touch-playing #touchControls .touch-actions {
+    grid-column: 1/-1;
+    grid-row: 1;
+    position: static;
+    left: auto;
+    bottom: auto;
+    transform: none;
+    width: 100%;
+    zoom: 1;
+  }
+  body.touch-playing #touchControls .touch-helm {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  body.touch-playing #touchControls .touch-steering {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  body.touch-playing #touchControls button {
+    font-size: 10px;
+    min-height: 36px;
+    padding: 4px;
+  }
+  body.touch-playing #touchControls .touch-gears {
+    gap: 3px;
+  }
+  body.touch-playing #touchControls .touch-gears button {
+    min-width: 38px;
+    font-size: 9px;
+  }
+}
+/* Content preparation covers controls until all required local artwork is ready. */
+#preparation:not([hidden]) {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  color: #f7eccd;
+  background: #102f39;
+}
+#preparation strong {
+  font-size: clamp(22px, 5vw, 36px);
+}
+#preparation p {
+  max-width: 32em;
+}

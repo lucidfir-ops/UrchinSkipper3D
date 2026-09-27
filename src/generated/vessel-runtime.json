@@ -1,0 +1,964 @@
+{
+  "raster:basic": {
+    "url": "./assets/fleet-runtime/sep22/raster-basic.png",
+    "frame": {
+      "x": 256,
+      "y": 16,
+      "width": 512,
+      "height": 1452
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/harbour%20workhorse.png",
+    "sourceSha256": "45da761cede74ac5e4da8d73fd2519aa3954e57c9081cc103b66f911e612682b"
+  },
+  "raster:basic-sister": {
+    "url": "./assets/fleet-runtime/sep22/raster-basic-sister.png",
+    "frame": {
+      "x": 222,
+      "y": 87,
+      "width": 702,
+      "height": 1432
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/harbour%20workhorse3.png",
+    "sourceSha256": "127952e034882a8a5d072e5be26e1b8c6171d57df1bbfab7f8f7b1a033e29004"
+  },
+  "raster:thruster": {
+    "url": "./assets/fleet-runtime/sep22/raster-thruster.png",
+    "frame": {
+      "x": 215,
+      "y": 106,
+      "width": 701,
+      "height": 1353
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/coastal%20workhorse.png",
+    "sourceSha256": "e63b04358220619e9f9d6d281fb48a2912fc0c224def4fe68810e1b4a7a00b2c"
+  },
+  "raster:thruster-sister": {
+    "url": "./assets/fleet-runtime/sep22/raster-thruster-sister.png",
+    "frame": {
+      "x": 100,
+      "y": 82,
+      "width": 824,
+      "height": 1444
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/coastal%20workhorse2.png",
+    "sourceSha256": "b56d386df69e4aff0922157a39416b2a7305cb50e625aac6fe5b9f0aa26db59c"
+  },
+  "raster:sterndrive": {
+    "url": "./assets/fleet-runtime/sep22/raster-sterndrive.png",
+    "frame": {
+      "x": 100,
+      "y": 84,
+      "width": 593,
+      "height": 1379
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/reef%20runner.png",
+    "sourceSha256": "003e884f49a56cbab033f8661497ecaa65eea959c6c036849427aa4a8f018625"
+  },
+  "raster:sterndrive-sister": {
+    "url": "./assets/fleet-runtime/sep22/raster-sterndrive-sister.png",
+    "frame": {
+      "x": 147,
+      "y": 23,
+      "width": 598,
+      "height": 1447
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/reef%20runner2.png",
+    "sourceSha256": "a53527994e88a12ad9293797c0fc3e1b8501e6dfaa9f685a26606a87c499e8d9"
+  },
+  "raster:outboard": {
+    "url": "./assets/fleet-runtime/sep22/raster-outboard.png",
+    "frame": {
+      "x": 175,
+      "y": 148,
+      "width": 457,
+      "height": 1341
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/island%20tender.png",
+    "sourceSha256": "2d32f03c680817a0c00b3604a0abc84f8ce333f1385b8a41a323f63b023c2002"
+  },
+  "raster:outboard-sister": {
+    "url": "./assets/fleet-runtime/sep22/raster-outboard-sister.png",
+    "frame": {
+      "x": 416,
+      "y": 33,
+      "width": 462,
+      "height": 1443
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/island%20tender2.png",
+    "sourceSha256": "b2a687366f148579a9e664046f8c094e70f2cc3461779525d9fd37666e5ade28"
+  },
+  "raster:jet": {
+    "url": "./assets/fleet-runtime/sep22/raster-jet.png",
+    "frame": {
+      "x": 238,
+      "y": 77,
+      "width": 686,
+      "height": 1436
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/shoal%20skipper.png",
+    "sourceSha256": "91d70c873fedc35f0de6d4d203977b9626b4ffbaabf87c0a600fa9cd6c18288a"
+  },
+  "raster:jet-sister": {
+    "url": "./assets/fleet-runtime/sep22/raster-jet-sister.png",
+    "frame": {
+      "x": 290,
+      "y": 57,
+      "width": 634,
+      "height": 1427
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/shoal%20skipper2.png",
+    "sourceSha256": "b8743c92ffbbd95860559ac462f74c3a14330f2a56e5ecaf3c36c241e53e3e2f"
+  },
+  "raster:twinjet": {
+    "url": "./assets/fleet-runtime/sep22/raster-twinjet.png",
+    "frame": {
+      "x": 191,
+      "y": 136,
+      "width": 628,
+      "height": 1295
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/channel%20master.png",
+    "sourceSha256": "45d14d91d8831340f875479fb26c07ff39adcd06f18b8fc0611bc4608b3c9ef3"
+  },
+  "raster:twinjet-sister": {
+    "url": "./assets/fleet-runtime/sep22/raster-twinjet-sister.png",
+    "frame": {
+      "x": 187,
+      "y": 144,
+      "width": 737,
+      "height": 1324
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/channel%20master2.png",
+    "sourceSha256": "230f835418979635ebee533125758714d63c75b8deaad1b3b34e32076672fad2"
+  },
+  "raster:rival-1": {
+    "url": "./assets/fleet-runtime/sep22/raster-rival-1.png",
+    "frame": {
+      "x": 243,
+      "y": 30,
+      "width": 670,
+      "height": 1408
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/rival1.png",
+    "sourceSha256": "3a171def53bf346c89b0dfca483fd62f36dc2b51a80ab7f45d062c55805617aa"
+  },
+  "raster:rival-2": {
+    "url": "./assets/fleet-runtime/sep22/raster-rival-2.png",
+    "frame": {
+      "x": 242,
+      "y": 45,
+      "width": 551,
+      "height": 1409
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/rival2.png",
+    "sourceSha256": "d4ceb010f2373d374d63ee2bec5c7603c9ada6bdf389c556a6a7ba9aa9099cd9"
+  },
+  "raster:rival-3": {
+    "url": "./assets/fleet-runtime/sep22/raster-rival-3.png",
+    "frame": {
+      "x": 98,
+      "y": 39,
+      "width": 526,
+      "height": 1434
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/rival3.png",
+    "sourceSha256": "817558588fd4e498e26303e5b459502412bdc84395457d4a2e49f38140a972b5"
+  },
+  "raster:rival-4": {
+    "url": "./assets/fleet-runtime/sep22/raster-rival-4.png",
+    "frame": {
+      "x": 278,
+      "y": 135,
+      "width": 487,
+      "height": 1328
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/rival4.png",
+    "sourceSha256": "879f29ebc25f89276dc1cf944ec9d1e8af7cd02839a47f7c291aeb05d88e1cf1"
+  },
+  "raster:rival-5": {
+    "url": "./assets/fleet-runtime/sep22/raster-rival-5.png",
+    "frame": {
+      "x": 314,
+      "y": 60,
+      "width": 607,
+      "height": 1466
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/rival5.png",
+    "sourceSha256": "81d5761d9e1f41dc581d7a8c91e4ce74cf404204d1aaf37002b01828ee9d35b7"
+  },
+  "raster:rival-6": {
+    "url": "./assets/fleet-runtime/sep22/raster-rival-6.png",
+    "frame": {
+      "x": 181,
+      "y": 50,
+      "width": 609,
+      "height": 1402
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/rival6.png",
+    "sourceSha256": "4b1718a70f97da82fbd5a4023994b4b4384f8380fd9bc7e08a5437f592ae509c"
+  },
+  "raster:rival-7": {
+    "url": "./assets/fleet-runtime/sep22/raster-rival-7.png",
+    "frame": {
+      "x": 98,
+      "y": 47,
+      "width": 609,
+      "height": 1479
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/rival7.png",
+    "sourceSha256": "4f8a69cf25cd8fbcc5fd6249ff8b8fafda1a9d8b792371adc5922d0061d5efcc"
+  },
+  "raster:rival-8": {
+    "url": "./assets/fleet-runtime/sep22/raster-rival-8.png",
+    "frame": {
+      "x": 99,
+      "y": 100,
+      "width": 640,
+      "height": 1421
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/rival8.png",
+    "sourceSha256": "06e1b99703416a39cedd7ba87499659392078e72f882c1b7f8e35c2713769b0e"
+  },
+  "raster:rival-9": {
+    "url": "./assets/fleet-runtime/sep22/raster-rival-9.png",
+    "frame": {
+      "x": 98,
+      "y": 116,
+      "width": 665,
+      "height": 1322
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/rival9.png",
+    "sourceSha256": "c68c76118d910c1fd472274431b3c799d93c7a62539cb94bb84dfcb00ceb38f3"
+  },
+  "raster:rival-11": {
+    "url": "./assets/fleet-runtime/sep22/raster-rival-11.png",
+    "frame": {
+      "x": 363,
+      "y": 135,
+      "width": 496,
+      "height": 1354
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/rival11.png",
+    "sourceSha256": "68c15b6ae8d65b8db4e2f878484644e4ab8824f79670c27582b07785785e72ab"
+  },
+  "raster:rival-12": {
+    "url": "./assets/fleet-runtime/sep22/raster-rival-12.png",
+    "frame": {
+      "x": 99,
+      "y": 70,
+      "width": 605,
+      "height": 1393
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/rival12.png",
+    "sourceSha256": "7f1da387e45e5314bbbb303f0c3a254a3382c9247df186df0cc1b1b2e52e658b"
+  },
+  "raster:rival-13": {
+    "url": "./assets/fleet-runtime/sep22/raster-rival-13.png",
+    "frame": {
+      "x": 120,
+      "y": 12,
+      "width": 534,
+      "height": 1494
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/rival13.png",
+    "sourceSha256": "fb4f516228e2447f7d223d3643913ecd5e6e1e3721095ab6185e5e3c7ce2facd"
+  },
+  "raster:rival-14": {
+    "url": "./assets/fleet-runtime/sep22/raster-rival-14.png",
+    "frame": {
+      "x": 153,
+      "y": 70,
+      "width": 774,
+      "height": 1393
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/rival14.png",
+    "sourceSha256": "39b3cbabca9974fd87846adc6dd7a0f58db48e07be8e453cd4fc4eb15267a423"
+  },
+  "raster:taxi-1": {
+    "url": "./assets/fleet-runtime/sep22/raster-taxi-1.png",
+    "frame": {
+      "x": 135,
+      "y": 62,
+      "width": 526,
+      "height": 1458
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/taxi1.png",
+    "sourceSha256": "d7e9836a195b300e534ca6ac39ee8a228d7a10e6de2c9604c6d03d9775d15395"
+  },
+  "raster:taxi-3": {
+    "url": "./assets/fleet-runtime/sep22/raster-taxi-3.png",
+    "frame": {
+      "x": 262,
+      "y": 10,
+      "width": 503,
+      "height": 1458
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/taxi3.png",
+    "sourceSha256": "0b0ab3400367c1c4e807a628d91ae2a970f2657a314ebadad17752f92361ef70"
+  },
+  "raster:taxi-4": {
+    "url": "./assets/fleet-runtime/sep22/raster-taxi-4.png",
+    "frame": {
+      "x": 384,
+      "y": 151,
+      "width": 519,
+      "height": 1344
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/taxi4.png",
+    "sourceSha256": "29ca680ec527d8378eb2f1f0771bba07c10d5bd05d71407b6e284704949406fc"
+  },
+  "raster:taxi-5": {
+    "url": "./assets/fleet-runtime/sep22/raster-taxi-5.png",
+    "frame": {
+      "x": 300,
+      "y": 12,
+      "width": 563,
+      "height": 1458
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/taxi5.png",
+    "sourceSha256": "4b270a9f8bab618a3f3982aaba06bb265a136c03f0bdeff16c3f0e0226103250"
+  },
+  "raster:dfo-1": {
+    "url": "./assets/fleet-runtime/sep22/raster-dfo-1.png",
+    "frame": {
+      "x": 307,
+      "y": 109,
+      "width": 514,
+      "height": 1314
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/dfoboat1.png",
+    "sourceSha256": "1b294ed48c25e34255b51dcb6f7cccfad8212ec4ea43d4041d93f88d592b4140"
+  },
+  "raster:dfo-2": {
+    "url": "./assets/fleet-runtime/sep22/raster-dfo-2.png",
+    "frame": {
+      "x": 259,
+      "y": 58,
+      "width": 665,
+      "height": 1468
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/dfoboat2.png",
+    "sourceSha256": "63ac9ebb1d6d998c10b89173a96120aeb6a0afa8f4671a08facec5b0d0787881"
+  },
+  "raster:dfo-3": {
+    "url": "./assets/fleet-runtime/sep22/raster-dfo-3.png",
+    "frame": {
+      "x": 265,
+      "y": 55,
+      "width": 659,
+      "height": 1410
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/dfoboat3.png",
+    "sourceSha256": "88d8760bda03b3f4b3248c91864197031ac8469863f4763c7d6df54cc68936c8"
+  },
+  "raster:nine-03-r1-c3": {
+    "url": "./assets/fleet-runtime/sep22/raster-nine-03-r1-c3.png",
+    "frame": {
+      "x": 285,
+      "y": 47,
+      "width": 623,
+      "height": 1479
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/nine-ships-03-r1-c3.png",
+    "sourceSha256": "589ef43f7c4006dc99134fc6729d3922eef7e08c26421a892f6260ee52493741"
+  },
+  "raster:nine-06-r2-c3": {
+    "url": "./assets/fleet-runtime/sep22/raster-nine-06-r2-c3.png",
+    "frame": {
+      "x": 184,
+      "y": 47,
+      "width": 740,
+      "height": 1453
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/nine-ships-06-r2-c3.png",
+    "sourceSha256": "f4253f1d4a17d87499146459cb1ec7af8c7ddfa9fb84a9aeb0dcd1cb37bb72dc"
+  },
+  "raster:nine-07-r3-c1": {
+    "url": "./assets/fleet-runtime/sep22/raster-nine-07-r3-c1.png",
+    "frame": {
+      "x": 98,
+      "y": 36,
+      "width": 652,
+      "height": 1464
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/nine-ships-07-r3-c1.png",
+    "sourceSha256": "483df35f6f2ca0c8b80a72ecdaa8ac97cbcfec5bb94d9d5919ab993291602ee0"
+  },
+  "raster:nine-08-r3-c2": {
+    "url": "./assets/fleet-runtime/sep22/raster-nine-08-r3-c2.png",
+    "frame": {
+      "x": 98,
+      "y": 143,
+      "width": 638,
+      "height": 1383
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/nine-ships-08-r3-c2.png",
+    "sourceSha256": "0e643cfdbfe7589bd9423c40a4e4fb9503b130a8caae2c714bb6ef4137d33230"
+  },
+  "raster:nine-09-r3-c3": {
+    "url": "./assets/fleet-runtime/sep22/raster-nine-09-r3-c3.png",
+    "frame": {
+      "x": 98,
+      "y": 47,
+      "width": 628,
+      "height": 1479
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/nine-ships-09-r3-c3.png",
+    "sourceSha256": "a5cb833a32027086e36157ed88df12c032bc396bf77321a8a5f59ada1d826425"
+  },
+  "vector:basic": {
+    "url": "./assets/fleet-runtime/sep22/vector-basic.png",
+    "frame": {
+      "x": 363,
+      "y": 208,
+      "width": 1073,
+      "height": 2812
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/harbour-workhorse-top.svg",
+    "sourceSha256": "8f47fc264264bc61a50f3e2e0824f4c1a1546538759ee4e62de89ee83e36d704"
+  },
+  "vector:basic-sister": {
+    "url": "./assets/fleet-runtime/sep22/vector-basic-sister.png",
+    "frame": {
+      "x": 411,
+      "y": 208,
+      "width": 977,
+      "height": 2894
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/harbour-workhorse3-top.svg",
+    "sourceSha256": "689703bc5114d17010f3fd56293579086597a0ee6909f3a4b896dd244ed7a4e6"
+  },
+  "vector:thruster": {
+    "url": "./assets/fleet-runtime/sep22/vector-thruster.png",
+    "frame": {
+      "x": 316,
+      "y": 208,
+      "width": 1120,
+      "height": 2894
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/coastal-workhorse-top.svg",
+    "sourceSha256": "c3fb8748839883787035e439cdfb9ec24c13ac6388ee707aeec1eb398bf8dac0"
+  },
+  "vector:thruster-sister": {
+    "url": "./assets/fleet-runtime/sep22/vector-thruster-sister.png",
+    "frame": {
+      "x": 363,
+      "y": 175,
+      "width": 1073,
+      "height": 2860
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/coastal-workhorse2-top.svg",
+    "sourceSha256": "b8b69a9d06838b416c7a7b17f21cef2922a88e75f1137f2a54ffebd9c823c335"
+  },
+  "vector:sterndrive": {
+    "url": "./assets/fleet-runtime/sep22/vector-sterndrive.png",
+    "frame": {
+      "x": 377,
+      "y": 202,
+      "width": 1046,
+      "height": 2958
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/reef-runner-top.svg",
+    "sourceSha256": "741ae9b20eab6e3b7bbe4c4e1787b439d642cd5fd36319086a8202f9442796dd"
+  },
+  "vector:sterndrive-sister": {
+    "url": "./assets/fleet-runtime/sep22/vector-sterndrive-sister.png",
+    "frame": {
+      "x": 358,
+      "y": 208,
+      "width": 1078,
+      "height": 2894
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/reef-runner2-top.svg",
+    "sourceSha256": "282287590ba653172cd4537f272e0053d27d14703693de2a080a0ac281f46900"
+  },
+  "vector:outboard": {
+    "url": "./assets/fleet-runtime/sep22/vector-outboard.png",
+    "frame": {
+      "x": 363,
+      "y": 204,
+      "width": 1073,
+      "height": 3057
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/island-tender-top.svg",
+    "sourceSha256": "4ed68ea5472c552d30d22418369e62eae50239d035a21f0f9fe774f8d3ab19aa"
+  },
+  "vector:outboard-sister": {
+    "url": "./assets/fleet-runtime/sep22/vector-outboard-sister.png",
+    "frame": {
+      "x": 435,
+      "y": 208,
+      "width": 929,
+      "height": 3053
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/island-tender2-top.svg",
+    "sourceSha256": "62201b962c3da79545dae91480478d9fe6e746ee92da209f54125d557d5c72b4"
+  },
+  "vector:jet": {
+    "url": "./assets/fleet-runtime/sep22/vector-jet.png",
+    "frame": {
+      "x": 363,
+      "y": 207,
+      "width": 1073,
+      "height": 2895
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/shoal-skipper-top.svg",
+    "sourceSha256": "54f231be2fecd015a4b7a07006da82ea1c7aad3d3f105b929a86c976bfdf06d0"
+  },
+  "vector:jet-sister": {
+    "url": "./assets/fleet-runtime/sep22/vector-jet-sister.png",
+    "frame": {
+      "x": 346,
+      "y": 208,
+      "width": 1108,
+      "height": 2894
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/shoal-skipper2-top.svg",
+    "sourceSha256": "520d084d2aca0f1b739d3f1ed777ce7282c9ac8ebaf0cfb77227268b00b6fd40"
+  },
+  "vector:twinjet": {
+    "url": "./assets/fleet-runtime/sep22/vector-twinjet.png",
+    "frame": {
+      "x": 321,
+      "y": 213,
+      "width": 1157,
+      "height": 2889
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/channel-master-top.svg",
+    "sourceSha256": "6b5938efde68e3180a6ae50897e6acf57d55a386c4684c0d1ee024b47eb55c6f"
+  },
+  "vector:twinjet-sister": {
+    "url": "./assets/fleet-runtime/sep22/vector-twinjet-sister.png",
+    "frame": {
+      "x": 321,
+      "y": 213,
+      "width": 1157,
+      "height": 2895
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/channel-master2-top.svg",
+    "sourceSha256": "0de46de123c857e1c73d43d5797ed960e7a6d9bbebb8c863db678511331ddad9"
+  },
+  "vector:rival-1": {
+    "url": "./assets/fleet-runtime/sep22/vector-rival-1.png",
+    "frame": {
+      "x": 363,
+      "y": 208,
+      "width": 1073,
+      "height": 2894
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/rival1-top.svg",
+    "sourceSha256": "8863d1750c353b3ce090780c2cf819440bde7717c6e601eea0d7b2b0fe8888f2"
+  },
+  "vector:rival-2": {
+    "url": "./assets/fleet-runtime/sep22/vector-rival-2.png",
+    "frame": {
+      "x": 363,
+      "y": 208,
+      "width": 1073,
+      "height": 2894
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/rival2-top.svg",
+    "sourceSha256": "f9284f5139b53802990170b0d913a9746b02d5c5cc198d765b7a1b99d9b36d47"
+  },
+  "vector:rival-3": {
+    "url": "./assets/fleet-runtime/sep22/vector-rival-3.png",
+    "frame": {
+      "x": 296,
+      "y": 208,
+      "width": 1068,
+      "height": 2894
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/rival3-top.svg",
+    "sourceSha256": "c970c21355681e0fff51b3f2d9f60ceff6d2cde16eafe752c725917b3921295f"
+  },
+  "vector:rival-4": {
+    "url": "./assets/fleet-runtime/sep22/vector-rival-4.png",
+    "frame": {
+      "x": 411,
+      "y": 208,
+      "width": 977,
+      "height": 2894
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/rival4-top.svg",
+    "sourceSha256": "4621781b3c0093cc19c7968d65b8517f339d5367e1550d5acbe725f288bd8027"
+  },
+  "vector:rival-5": {
+    "url": "./assets/fleet-runtime/sep22/vector-rival-5.png",
+    "frame": {
+      "x": 322,
+      "y": 208,
+      "width": 1042,
+      "height": 2894
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/rival5-top.svg",
+    "sourceSha256": "e1da3a9fb454c91e562eadcd5411bd20f37c6850776ebd290cbd387557cc6c5e"
+  },
+  "vector:rival-6": {
+    "url": "./assets/fleet-runtime/sep22/vector-rival-6.png",
+    "frame": {
+      "x": 284,
+      "y": 208,
+      "width": 1152,
+      "height": 3053
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/rival6-top.svg",
+    "sourceSha256": "f99ceec560cb55634144209bfeb4d419963a19df4ab3b98a6b11657ba8a3d394"
+  },
+  "vector:rival-7": {
+    "url": "./assets/fleet-runtime/sep22/vector-rival-7.png",
+    "frame": {
+      "x": 346,
+      "y": 208,
+      "width": 1108,
+      "height": 2894
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/rival7-top.svg",
+    "sourceSha256": "39328e1be5c884c9dc9b13c1358df0b638562e6272e12104d30715c3b1c8c906"
+  },
+  "vector:rival-8": {
+    "url": "./assets/fleet-runtime/sep22/vector-rival-8.png",
+    "frame": {
+      "x": 346,
+      "y": 208,
+      "width": 1108,
+      "height": 2812
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/rival8-top.svg",
+    "sourceSha256": "6b26b58bacbe87deb1e4e6facb392ed99c3756d18b3250da0a38a4dafb8c5c14"
+  },
+  "vector:rival-9": {
+    "url": "./assets/fleet-runtime/sep22/vector-rival-9.png",
+    "frame": {
+      "x": 318,
+      "y": 213,
+      "width": 1160,
+      "height": 3048
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/rival9-top.svg",
+    "sourceSha256": "51a637d6e780528c11b930a087edf8a012c25c5c8745fb2207433f1317d8b701"
+  },
+  "vector:rival-11": {
+    "url": "./assets/fleet-runtime/sep22/vector-rival-11.png",
+    "frame": {
+      "x": 413,
+      "y": 208,
+      "width": 973,
+      "height": 3053
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/rival11-top.svg",
+    "sourceSha256": "3332c4edcb236b34697c1379422d7b69cf36a55a5687c3af216779f6c30557b1"
+  },
+  "vector:rival-12": {
+    "url": "./assets/fleet-runtime/sep22/vector-rival-12.png",
+    "frame": {
+      "x": 363,
+      "y": 208,
+      "width": 1073,
+      "height": 2894
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/rival12-top.svg",
+    "sourceSha256": "2415e8922ef7bddbea33d05638f065bdfc0378db52d1358ecb8eb1c115a40723"
+  },
+  "vector:rival-13": {
+    "url": "./assets/fleet-runtime/sep22/vector-rival-13.png",
+    "frame": {
+      "x": 411,
+      "y": 208,
+      "width": 977,
+      "height": 3053
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/rival13-top.svg",
+    "sourceSha256": "e8698575c2539b7838a886ae3207a2b6c646dcf13c48732fc65304007eed0842"
+  },
+  "vector:rival-14": {
+    "url": "./assets/fleet-runtime/sep22/vector-rival-14.png",
+    "frame": {
+      "x": 363,
+      "y": 208,
+      "width": 1073,
+      "height": 3053
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/rival14-top.svg",
+    "sourceSha256": "362e72cf1e228f1f6004ab4d27e5ad7fb53343e48a85785e03422b6f3da22efd"
+  },
+  "vector:taxi-1": {
+    "url": "./assets/fleet-runtime/sep22/vector-taxi-1.png",
+    "frame": {
+      "x": 363,
+      "y": 204,
+      "width": 1073,
+      "height": 3057
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/taxi1-top.svg",
+    "sourceSha256": "8c2025f93ac5f52321b63e0ade287596ed314f3c2b10d553e5f356259848e819"
+  },
+  "vector:taxi-3": {
+    "url": "./assets/fleet-runtime/sep22/vector-taxi-3.png",
+    "frame": {
+      "x": 435,
+      "y": 208,
+      "width": 929,
+      "height": 2894
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/taxi3-top.svg",
+    "sourceSha256": "de6dc7d72291849c3ccdff39fe87687e8fd68dfb91c025cdf1ff92c6a355f1d2"
+  },
+  "vector:taxi-4": {
+    "url": "./assets/fleet-runtime/sep22/vector-taxi-4.png",
+    "frame": {
+      "x": 413,
+      "y": 208,
+      "width": 973,
+      "height": 3053
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/taxi4-top.svg",
+    "sourceSha256": "0f99c3a92befe672ac886513e1850b4849ba2403a35bc0721b4b83f46d11738e"
+  },
+  "vector:taxi-5": {
+    "url": "./assets/fleet-runtime/sep22/vector-taxi-5.png",
+    "frame": {
+      "x": 411,
+      "y": 208,
+      "width": 977,
+      "height": 2812
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/taxi5-top.svg",
+    "sourceSha256": "124bac56d6ee7087e56b3f951c8ec7fb2b422e52a03fc3d88fd0ff1fe5f7088e"
+  },
+  "vector:dfo-1": {
+    "url": "./assets/fleet-runtime/sep22/vector-dfo-1.png",
+    "frame": {
+      "x": 363,
+      "y": 204,
+      "width": 1073,
+      "height": 3057
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/dfoboat1-top.svg",
+    "sourceSha256": "0a01ab8d128f57cdfdf23c6f7abd13f8232e30b690502056ef8a1c1db7f36072"
+  },
+  "vector:dfo-2": {
+    "url": "./assets/fleet-runtime/sep22/vector-dfo-2.png",
+    "frame": {
+      "x": 435,
+      "y": 208,
+      "width": 929,
+      "height": 3053
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/dfoboat2-top.svg",
+    "sourceSha256": "c8ad93bca2401f3f64f88a9b56ec7a72075cb99f150bcf115587b13babf68927"
+  },
+  "vector:dfo-3": {
+    "url": "./assets/fleet-runtime/sep22/vector-dfo-3.png",
+    "frame": {
+      "x": 435,
+      "y": 208,
+      "width": 929,
+      "height": 3053
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet-vector/dfoboat3-top.svg",
+    "sourceSha256": "ce1e0bfe27aa222ebf9f8c4a6014da82ff4855be6edc934703ae00062ae56483"
+  },
+  "vector:nine-03-r1-c3": {
+    "url": "./assets/fleet-runtime/sep22/raster-nine-03-r1-c3.png",
+    "frame": {
+      "x": 285,
+      "y": 47,
+      "width": 623,
+      "height": 1479
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/nine-ships-03-r1-c3.png",
+    "sourceSha256": "589ef43f7c4006dc99134fc6729d3922eef7e08c26421a892f6260ee52493741"
+  },
+  "vector:nine-06-r2-c3": {
+    "url": "./assets/fleet-runtime/sep22/raster-nine-06-r2-c3.png",
+    "frame": {
+      "x": 184,
+      "y": 47,
+      "width": 740,
+      "height": 1453
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/nine-ships-06-r2-c3.png",
+    "sourceSha256": "f4253f1d4a17d87499146459cb1ec7af8c7ddfa9fb84a9aeb0dcd1cb37bb72dc"
+  },
+  "vector:nine-07-r3-c1": {
+    "url": "./assets/fleet-runtime/sep22/raster-nine-07-r3-c1.png",
+    "frame": {
+      "x": 98,
+      "y": 36,
+      "width": 652,
+      "height": 1464
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/nine-ships-07-r3-c1.png",
+    "sourceSha256": "483df35f6f2ca0c8b80a72ecdaa8ac97cbcfec5bb94d9d5919ab993291602ee0"
+  },
+  "vector:nine-08-r3-c2": {
+    "url": "./assets/fleet-runtime/sep22/raster-nine-08-r3-c2.png",
+    "frame": {
+      "x": 98,
+      "y": 143,
+      "width": 638,
+      "height": 1383
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/nine-ships-08-r3-c2.png",
+    "sourceSha256": "0e643cfdbfe7589bd9423c40a4e4fb9503b130a8caae2c714bb6ef4137d33230"
+  },
+  "vector:nine-09-r3-c3": {
+    "url": "./assets/fleet-runtime/sep22/raster-nine-09-r3-c3.png",
+    "frame": {
+      "x": 98,
+      "y": 47,
+      "width": 628,
+      "height": 1479
+    },
+    "width": 320,
+    "height": 640,
+    "original": "./assets/fleet/nine-ships-09-r3-c3.png",
+    "sourceSha256": "a5cb833a32027086e36157ed88df12c032bc396bf77321a8a5f59ada1d826425"
+  }
+}
