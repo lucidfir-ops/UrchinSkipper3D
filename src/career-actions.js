@@ -121,7 +121,10 @@ export function careerActions(ui, w) {
     case 'equipment-controls':
       return [
         ...(c.fleet[w.boat.configuration]?.equipment || [])
-          .filter((id) => UPGRADES.find((u) => u.id === id)?.slot !== 'timepiece')
+          .filter((id) => {
+            const item = UPGRADES.find((u) => u.id === id);
+            return item?.slot !== 'timepiece' && !item?.fixed;
+          })
           .map((id) =>
             action(
               `switch-${id}`,

@@ -10,6 +10,10 @@ import { departureBoat } from '../departure-transition.js';
 import { trafficPose } from '../traffic-view.js';
 import { alongsidePoint } from '../patrol.js';
 import { CatchLoad, catchNetTexture } from './catch-load.js';
+import { fleetProfile } from './fleet-profiles.js';
+import { trafficProfile } from './traffic-profiles.js';
+import { waterColumnMaterials, waterTurbidity, submergedContrast } from './water-optics.js';
+import { diverMotion } from '../diver-motion.js';
 
 // Presentation only. The existing 2D simulation remains the sole authority for
 // position, heading, hull contacts, load, crew states and recovery eligibility.
@@ -136,7 +140,7 @@ function surfaceTexture() {
   texture.anisotropy = 4;
   return texture;
 }
-function makeMaterials() {
+export function makeMaterials() {
   const deckMap = surfaceTexture(),
     netMap = catchNetTexture();
   const standard = (color, roughness = 0.65, metalness = 0) =>
@@ -188,7 +192,8 @@ function makeMaterials() {
       emissiveIntensity: 0.45,
     }),
     suit: standard('#17282b', 0.86),
-    tank: standard('#b9c8bc', 0.4, 0.6),
+    tank: standard('#dedfcd', 0.52, 0.22),
+    diveTrim: standard('#d3c54c', 0.72),
     mask: standard('#538b91', 0.1, 0.42),
     catchNet: new THREE.MeshStandardMaterial({
       color: '#e66f77',
@@ -199,32 +204,50 @@ function makeMaterials() {
     }),
   };
 }
-function hullOutline(width, length, y = 0, factor = 1) {
-  const controls = [
-    [0, -0.5],
-    [0.19, -0.415],
-    [0.365, -0.27],
-    [0.475, -0.07],
-    [0.5, 0.28],
-    [0.485, 0.43],
-    [0.38, 0.49],
-    [-0.38, 0.49],
-    [-0.485, 0.43],
-    [-0.5, 0.28],
-    [-0.475, -0.07],
-    [-0.365, -0.27],
-    [-0.19, -0.415],
-  ].map(([x, z]) => new THREE.Vector3(x * width * factor, y, z * length * factor));
+function hullOutline(width, length, y = 0, factor = 1, form = 'alloy') {
+  const controls = (
+    form === 'landing'
+      ? [
+          [0, -0.5],
+          [0.4, -0.5],
+          [0.48, -0.42],
+          [0.5, -0.2],
+          [0.5, 0.3],
+          [0.48, 0.46],
+          [0.38, 0.49],
+          [-0.38, 0.49],
+          [-0.48, 0.46],
+          [-0.5, 0.3],
+          [-0.5, -0.2],
+          [-0.48, -0.42],
+          [-0.4, -0.5],
+        ]
+      : [
+          [0, -0.5],
+          [0.19, -0.415],
+          [0.365, -0.27],
+          [0.475, -0.07],
+          [0.5, 0.28],
+          [0.485, 0.43],
+          [0.38, 0.49],
+          [-0.38, 0.49],
+          [-0.485, 0.43],
+          [-0.5, 0.28],
+          [-0.475, -0.07],
+          [-0.365, -0.27],
+          [-0.19, -0.415],
+        ]
+  ).map(([x, z]) => new THREE.Vector3(x * width * factor, y, z * length * factor));
   return new THREE.CatmullRomCurve3(controls, true, 'centripetal').getPoints(72).slice(0, -1);
 }
-function hullSurface(width, length, levels) {
+function hullSurface(width, length, levels, form) {
   const vertices = [],
     indices = [],
     uv = [];
   const count = 72;
   for (let j = 0; j < levels.length; j++) {
     const [height, factor] = levels[j];
-    const points = hullOutline(width, length, height, factor);
+    const points = hullOutline(width, length, height, factor, form);
     for (let i = 0; i < count; i++) {
       const p = points[i];
       vertices.push(p.x, p.y, p.z);
@@ -246,8 +269,8 @@ function hullSurface(width, length, levels) {
   geometry.computeVertexNormals();
   return geometry;
 }
-function deckShape(width, length, scale = 1) {
-  const points = hullOutline(width, length, 0, scale);
+function deckShape(width, length, scale = 1, form) {
+  const points = hullOutline(width, length, 0, scale, form);
   const shape = new THREE.Shape(points.map((p) => new THREE.Vector2(p.x, -p.z)));
   return shape;
 }
@@ -293,10 +316,21 @@ function makeDiver(materials, deck = false) {
   const torso = sphere(group, materials.suit, 0.31, 0, 0.88, 0, [0.82, 1.35, 0.66]);
   sphere(group, materials.suit, 0.205, 0, 1.44, -0.035);
   box(group, materials.mask, 0.29, 0.1, 0.055, 0, 1.45, -0.211, 0.025);
+  group.userData.limbs = [];
   for (const side of [-1, 1]) {
-    rod(group, materials.suit, [side * 0.15, 0.66, 0], [side * 0.18, 0.16, 0.045], 0.105);
-    rod(group, materials.suit, [side * 0.28, 1.12, 0], [side * 0.36, 0.73, -0.11], 0.085);
-    box(group, materials.rubber, 0.17, 0.1, 0.43, side * 0.18, 0.11, -0.11, 0.035);
+    const leg = new THREE.Group(),
+      arm = new THREE.Group();
+    leg.userData.dynamic = arm.userData.dynamic = true;
+    leg.position.set(side * 0.15, 0.66, 0);
+    arm.position.set(side * 0.28, 1.12, 0);
+    // Safety-yellow shoulder panels retain a small, plausible silhouette in
+    // the first metres of green water without enlarging the person or glowing.
+    sphere(arm, materials.diveTrim, 0.12, side * 0.025, -0.015, 0, [0.85, 0.65, 1]);
+    rod(leg, materials.suit, [0, 0, 0], [side * 0.03, -0.5, 0.045], 0.105);
+    box(leg, materials.rubber, 0.17, 0.1, 0.43, side * 0.03, -0.55, -0.11, 0.035);
+    rod(arm, materials.suit, [0, 0, 0], [side * 0.08, -0.39, -0.11], 0.085);
+    group.add(leg, arm);
+    group.userData.limbs.push({ leg, arm, side });
   }
   cylinder(group, materials.tank, 0.16, 0.59, 0, 0.96, 0.26);
   for (const y of [0.8, 1.12]) ring(group, materials.rubber, 0.162, 0.025, 0, y, 0.26);
@@ -339,6 +373,14 @@ function makeSurfaceDiver(materials, id = 0) {
   mergeStatic(swimmer);
   swimmer.position.set(-0.56, 0, 0.02);
   group.add(swimmer);
+  const body = makeDiver(materials, true);
+  body.traverse((o) => {
+    if (o.isMesh) {
+      o.renderOrder = 2;
+      o.castShadow = false;
+    }
+  });
+  group.add(body);
   const float = new THREE.Group();
   sphere(float, materials.orange, 0.42, 0, 0.04, 0, [1, 0.54, 1]);
   ring(float, materials.roof, 0.29, 0.033, 0, 0.235, 0);
@@ -358,8 +400,24 @@ function makeSurfaceDiver(materials, id = 0) {
     0.023,
   );
   group.add(float);
+  const liftBag = sphere(group, materials.catchNet, 0.38, 0.58, -0.38, 0, [1, 0.9, 1]);
+  liftBag.renderOrder = 2;
+  liftBag.castShadow = false;
+  const liftLine = cylinder(group, materials.rope, 0.016, 1, 0.58, 0.05, 0);
+  liftLine.renderOrder = 2;
+  liftLine.castShadow = false;
+  liftBag.visible = liftLine.visible = false;
   group.visible = false;
-  return { group, swimmer, float };
+  return {
+    group,
+    swimmer,
+    float,
+    body,
+    liftBag,
+    liftLine,
+    ropeEnd: new THREE.Vector3(),
+    ropeDirection: new THREE.Vector3(),
+  };
 }
 function coil(parent, material, x, y, z, size = 0.3) {
   for (let i = 0; i < 4; i++) ring(parent, material, size - i * 0.045, 0.026, x, y + i * 0.009, z);
@@ -461,53 +519,256 @@ function windows(parent, materials, width, cabinZ, cabinLength, cabinTop) {
   box(parent, materials.darkMetal, 0.13, 0.045, 0.04, 0.08, cabinTop - 1.12, rear + 0.14, 0.015);
 }
 
-function makeVessel(spec, definition, materials, role = 'player') {
-  const group = new THREE.Group(),
-    length = spec.length || 10,
-    width = spec.width || 4;
-  const small = definition.id.startsWith('outboard');
-  const premium = definition.id.startsWith('twinjet');
-  const taxi = role === 'taxi',
-    authority = role === 'dfo';
-  const accent = materials.blue.clone();
-  accent.color.set(authority ? '#b73c32' : taxi ? '#d9a447' : definition.accent || '#456c67');
+function canopy(parent, materials, width, length, height, z) {
+  const geometry = new THREE.PlaneGeometry(width, length, 8, 2);
+  geometry.rotateX(-Math.PI / 2);
+  const position = geometry.attributes.position;
+  for (let i = 0; i < position.count; i++)
+    position.setY(i, height + Math.cos((position.getX(i) / width) * Math.PI) * 0.28);
+  geometry.computeVertexNormals();
+  mesh(parent, geometry, materials, 0, 0, z);
+}
+
+function addTrafficDetails(group, spec, materials, profile, accent) {
+  const { width, length } = spec;
+  if (profile.canopy) {
+    canopy(group, accent, width * 0.72, length * 0.24, 2.02, length * 0.28);
+    for (const side of [-1, 1])
+      for (const z of [length * 0.18, length * 0.38])
+        rod(
+          group,
+          materials.metal,
+          [side * width * 0.35, 0.95, z],
+          [side * width * 0.35, 2.05, z],
+          0.035,
+        );
+  }
+  if (profile.landingPad) {
+    box(group, materials.teal, width * 0.71, 0.035, length * 0.25, 0, 0.97, length * 0.3, 0.04);
+    ring(group, materials.rope, width * 0.29, 0.025, 0, 1.0, length * 0.3);
+    for (const x of [-0.22, 0.22])
+      box(group, materials.roof, 0.08, 0.017, 0.55, x, 1.025, length * 0.3);
+    box(group, materials.roof, 0.46, 0.017, 0.08, 0, 1.025, length * 0.3);
+  }
+  if (profile.sailingRig) {
+    rod(group, materials.metal, [0, 0.95, -length * 0.08], [0, 7.2, -length * 0.08], 0.045);
+    rod(group, materials.metal, [0, 3, -length * 0.08], [0, 3, length * 0.24], 0.035);
+    for (const side of [-1, 1])
+      rod(
+        group,
+        materials.rope,
+        [side * width * 0.43, 1, length * 0.12],
+        [0, 6.9, -length * 0.08],
+        0.015,
+      );
+    rod(group, materials.rope, [0, 7.1, -length * 0.08], [0, 1.15, -length * 0.45], 0.016);
+    // Furled blue sail keeps the original mast and rig readable from above.
+    box(group, accent, 0.2, 0.22, length * 0.3, 0, 3.05, length * 0.08, 0.055);
+  }
+  if (profile.outriggers) {
+    for (const side of [-1, 1]) {
+      sphere(group, materials.metal, 0.8, side * width * 0.48, 0.5, length * 0.2, [0.4, 0.7, 2.9]);
+      box(group, accent, 0.24, 0.12, length * 0.27, side * width * 0.49, 0.98, length * 0.2, 0.04);
+    }
+    cylinder(group, materials.mask, 0.3, 0.14, 0, 1.02, length * 0.3);
+  }
+  if (profile.machinery) {
+    for (const x of [-width * 0.27, width * 0.27]) {
+      cylinder(group, materials.darkMetal, 0.23, 1.2, x, 1.52, length * 0.23);
+      ring(group, accent, 0.24, 0.06, x, 2.14, length * 0.23);
+    }
+    ring(group, accent, width * 0.24, 0.095, 0, 3.94, -length * 0.15);
+    sphere(group, materials.darkMetal, 0.4, 0, 3.88, -length * 0.15, [1, 0.5, 1]);
+  }
+}
+
+function makeOpenVessel(spec, definition, materials, profile) {
+  const { width, length } = spec,
+    group = new THREE.Group(),
+    accent = materials.blue.clone();
+  accent.color.set(profile.trim);
   group.userData.ownedMaterial = accent;
-  const deckY = 0.88,
-    cabinZ = -length * 0.125;
-  const cabinLength = length * (taxi ? 0.53 : small ? 0.28 : 0.35);
-  const cabinWidth = width * 0.69,
-    cabinTop = deckY + (small ? 1.85 : premium ? 2.65 : 2.18);
+  group.userData.profile = { id: definition.id, ...profile };
   mesh(
     group,
     hullSurface(width, length, [
-      [-1.25, 0.52],
-      [-0.6, 0.8],
-      [-0.1, 0.94],
-      [0.65, 1],
-      [1.02, 0.99],
+      [-0.8, 0.57],
+      [-0.1, 0.9],
+      [0.6, 1],
+      [1.03, 0.94],
     ]),
-    materials.hull,
-  );
-  mesh(
-    group,
-    hullSurface(width, length, [
-      [-0.65, 0.8],
-      [-0.13, 0.94],
-      [0.075, 0.965],
-    ]),
-    materials.bottom,
-  );
-  mesh(
-    group,
-    hullSurface(width * 1.003, length * 1.003, [
-      [0.35, 0.978],
-      [0.57, 0.994],
-    ]),
-    accent,
+    profile.oars ? materials.rope : materials.darkMetal,
   );
   const deck = mesh(
     group,
-    new THREE.ShapeGeometry(deckShape(width, length, 0.965), 36),
+    new THREE.ShapeGeometry(deckShape(width, length, 0.91), 36),
+    profile.oars ? materials.rope : materials.deck,
+    0,
+    0.88,
+    0,
+  );
+  deck.rotation.x = -Math.PI / 2;
+  tube(
+    group,
+    profile.oars ? accent : materials.rubber,
+    hullOutline(width, length, 1.02, 0.94).map((p) => [p.x, p.y, p.z]),
+    profile.oars ? 0.07 : width * 0.085,
+    true,
+  );
+  if (profile.oars) {
+    for (const z of [-length * 0.27, length * 0.31])
+      canopy(group, accent, width * 0.85, length * 0.22, 2.05, z);
+    for (const side of [-1, 1])
+      for (let i = 0; i < 9; i++) {
+        const z = length * (-0.2 + i * 0.052);
+        rod(
+          group,
+          materials.rope,
+          [side * width * 0.37, 1, z],
+          [side * width * 0.78, 0.45, z + length * 0.06],
+          0.035,
+        );
+        box(
+          group,
+          materials.rope,
+          0.34,
+          0.055,
+          0.11,
+          side * width * 0.76,
+          0.47,
+          z + length * 0.06,
+          0.02,
+        );
+        rod(group, accent, [side * width * 0.38, 0.9, z], [side * width * 0.38, 1.3, z], 0.025);
+      }
+    for (const end of [-1, 1]) {
+      rod(
+        group,
+        materials.rope,
+        [0, 0.9, end * length * 0.46],
+        [0, 1.75, end * length * 0.49],
+        0.09,
+      );
+      ring(group, materials.rope, 0.18, 0.045, 0, 1.8, end * length * 0.47).rotation.x = 0;
+    }
+  } else {
+    box(group, materials.roof, width * 0.35, 0.77, length * 0.18, 0, 1.22, -length * 0.12, 0.11);
+    box(group, materials.glass, width * 0.34, 0.45, 0.06, 0, 1.83, -length * 0.2, 0.045);
+    for (const side of [-1, 1]) {
+      box(
+        group,
+        materials.darkMetal,
+        0.55,
+        0.58,
+        0.65,
+        side * width * 0.19,
+        0.62,
+        length * 0.52,
+        0.12,
+      );
+      box(group, materials.metal, 0.13, 0.7, 0.18, side * width * 0.19, -0.01, length * 0.54, 0.03);
+      for (const z of [length * 0.06, length * 0.24])
+        box(group, materials.rubber, 0.42, 0.4, 0.48, side * width * 0.19, 1.07, z, 0.07);
+    }
+    rod(
+      group,
+      materials.metal,
+      [-width * 0.32, 0.9, length * 0.37],
+      [-width * 0.32, 2.0, length * 0.37],
+      0.04,
+    );
+    rod(
+      group,
+      materials.metal,
+      [-width * 0.32, 2.0, length * 0.37],
+      [width * 0.32, 2.0, length * 0.37],
+      0.04,
+    );
+    rod(
+      group,
+      materials.metal,
+      [width * 0.32, 2.0, length * 0.37],
+      [width * 0.32, 0.9, length * 0.37],
+      0.04,
+    );
+  }
+  group.userData.radar = new THREE.Group();
+  group.add(group.userData.radar);
+  group.userData.deckCrew = [];
+  group.userData.catchBins = [];
+  group.userData.catchLoad = new CatchLoad(group, materials.catchNet, materials.rope);
+  mergeStatic(group);
+  return group;
+}
+
+export function makeVessel(spec, definition, materials, role = 'player') {
+  const group = new THREE.Group(),
+    length = spec.length || 10,
+    width = spec.width || 4;
+  const profile = definition.profile || fleetProfile(definition.id, role);
+  if (profile.oars || profile.openConsole)
+    return makeOpenVessel(spec, definition, materials, profile);
+  group.userData.profile = { id: definition.id, ...profile };
+  const catamaran = profile.type === 'catamaran';
+  const small = definition.id.startsWith('outboard');
+  const premium = definition.id.startsWith('twinjet');
+  const accent = materials.blue.clone();
+  accent.color.set(profile.trim);
+  group.userData.ownedMaterial = accent;
+  const deckY = 0.88,
+    cabinZ = -length * 0.125;
+  const cabinLength = length * profile.cabin;
+  const cabinWidth = width * profile.cabinWidth,
+    cabinTop = deckY + profile.cabinHeight;
+  group.userData.stations = { deckY, cabinTop, cabinZ, cabinLength, cabinWidth };
+  const hullGroup = new THREE.Group();
+  group.add(hullGroup);
+  mesh(
+    hullGroup,
+    hullSurface(
+      width,
+      length,
+      [
+        [-1.25, 0.52],
+        [-0.6, 0.8],
+        [-0.1, 0.94],
+        [0.65, 1],
+        [1.02, 0.99],
+      ],
+      profile.type,
+    ),
+    materials.hull,
+  );
+  mesh(
+    hullGroup,
+    hullSurface(
+      width,
+      length,
+      [
+        [-0.65, 0.8],
+        [-0.13, 0.94],
+        [0.075, 0.965],
+      ],
+      profile.type,
+    ),
+    materials.bottom,
+  );
+  mesh(
+    hullGroup,
+    hullSurface(
+      width * 1.003,
+      length * 1.003,
+      [
+        [0.35, 0.978],
+        [0.57, 0.994],
+      ],
+      profile.type,
+    ),
+    accent,
+  );
+  const deck = mesh(
+    hullGroup,
+    new THREE.ShapeGeometry(deckShape(width, length, 0.965, profile.type), 36),
     materials.deck,
     0,
     deckY,
@@ -515,19 +776,84 @@ function makeVessel(spec, definition, materials, role = 'player') {
   );
   deck.rotation.x = -Math.PI / 2;
   tube(
-    group,
+    hullGroup,
     materials.metal,
-    hullOutline(width, length, 1.05, 0.986).map((p) => [p.x, p.y, p.z]),
+    hullOutline(width, length, 1.05, 0.986, profile.type).map((p) => [p.x, p.y, p.z]),
     0.065,
     true,
   );
   tube(
-    group,
+    hullGroup,
     materials.rubber,
-    hullOutline(width, length, 0.67, 1.005).map((p) => [p.x, p.y, p.z]),
+    hullOutline(width, length, 0.67, 1.005, profile.type).map((p) => [p.x, p.y, p.z]),
     0.066,
     true,
   );
+  if (catamaran) {
+    hullGroup.scale.x = 0.29;
+    hullGroup.position.x = -width * 0.345;
+    const secondHull = hullGroup.clone();
+    secondHull.position.x = width * 0.345;
+    group.add(secondHull);
+    box(
+      group,
+      materials.hull,
+      width * 0.7,
+      0.26,
+      length * 0.7,
+      0,
+      deckY - 0.17,
+      length * 0.075,
+      0.08,
+    );
+    box(
+      group,
+      materials.deck,
+      width * 0.68,
+      0.035,
+      length * 0.68,
+      0,
+      deckY + 0.01,
+      length * 0.075,
+      0.04,
+    );
+  }
+  if (profile.type === 'timber' || profile.timberDeck) {
+    const timber = materials.deck.clone();
+    group.userData.extraMaterials = [timber];
+    timber.color.set('#8a6849');
+    const woodDeck = mesh(
+      group,
+      new THREE.ShapeGeometry(deckShape(width, length, 0.94), 36),
+      timber,
+      0,
+      deckY + 0.035,
+      0,
+    );
+    woodDeck.rotation.x = -Math.PI / 2;
+    for (let x = -width * 0.38; x <= width * 0.38; x += 0.12) {
+      const fraction = Math.abs(x) / (width * 0.5);
+      box(
+        group,
+        materials.darkMetal,
+        0.009,
+        0.008,
+        length * (0.73 - fraction * 0.17),
+        x,
+        deckY + 0.057,
+        length * 0.04,
+      );
+    }
+  }
+  if (profile.type === 'rib' || profile.type === 'tug') {
+    tube(
+      group,
+      profile.type === 'rib' ? accent : materials.rubber,
+      hullOutline(width * 0.94, length * 0.98, 0.78, 0.98).map((p) => [p.x, p.y, p.z]),
+      width * (profile.type === 'rib' ? 0.065 : 0.038),
+      true,
+    );
+  }
   // Thin welded bulwarks, with scuppers along the large working deck.
   for (const side of [-1, 1]) {
     box(
@@ -567,6 +893,44 @@ function makeVessel(spec, definition, materials, role = 'player') {
     0.13,
   );
   windows(group, materials, cabinWidth, cabinZ, cabinLength, cabinTop);
+  if (definition.id !== 'basic') {
+    for (const side of [-1, 1]) {
+      box(
+        group,
+        accent,
+        0.075,
+        0.18,
+        cabinLength,
+        side * (cabinWidth / 2 + 0.025),
+        cabinTop - 0.08,
+        cabinZ,
+        0.018,
+      );
+      box(
+        group,
+        accent,
+        0.11,
+        0.06,
+        length * 0.52,
+        side * width * 0.473,
+        1.078,
+        length * 0.16,
+        0.018,
+      );
+    }
+    box(
+      group,
+      accent,
+      cabinWidth,
+      0.16,
+      0.07,
+      0,
+      cabinTop - 0.07,
+      cabinZ + cabinLength * 0.5 + 0.025,
+      0.018,
+    );
+  }
+
   // Broad roof corners are rounded in plan as on the original aluminium cabin.
   const roofShape = new THREE.Shape(),
     rw = cabinWidth + 0.25,
@@ -642,6 +1006,112 @@ function makeVessel(spec, definition, materials, role = 'player') {
       0.025,
     );
   }
+  // Family-specific workboat structures, drawn from the retained fleet art.
+  // They never alter the shared deck-load or collision geometry.
+  if (profile.type === 'tug') {
+    for (const side of [-1, 1]) {
+      cylinder(
+        group,
+        materials.darkMetal,
+        0.16,
+        1.35,
+        side * width * 0.31,
+        cabinTop - 0.32,
+        cabinZ + cabinLength * 0.4,
+      );
+      cylinder(
+        group,
+        accent,
+        0.185,
+        0.18,
+        side * width * 0.31,
+        cabinTop + 0.23,
+        cabinZ + cabinLength * 0.4,
+      );
+    }
+    box(
+      group,
+      accent,
+      cabinWidth + 0.15,
+      0.08,
+      0.27,
+      0,
+      cabinTop + 0.16,
+      cabinZ - cabinLength * 0.5,
+      0.035,
+    );
+  }
+  if (definition.id === 'jet') {
+    for (const side of [-1, 1]) {
+      rod(
+        group,
+        materials.metal,
+        [side * width * 0.43, 0.95, length * 0.4],
+        [side * width * 0.43, 2.0, length * 0.4],
+        0.055,
+      );
+    }
+    rod(
+      group,
+      materials.metal,
+      [-width * 0.43, 2.0, length * 0.4],
+      [width * 0.43, 2.0, length * 0.4],
+      0.065,
+    );
+    box(
+      group,
+      materials.roof,
+      0.48,
+      0.1,
+      0.4,
+      -cabinWidth * 0.23,
+      cabinTop + 0.13,
+      cabinZ - 0.3,
+      0.035,
+    );
+  }
+  if (profile.type === 'landing') {
+    box(group, accent, width * 0.7, 0.09, 0.18, 0, 1.05, -length * 0.46, 0.025);
+    for (const x of [-width * 0.33, width * 0.33])
+      rod(group, materials.darkMetal, [x, 1.08, -length * 0.45], [x, 1.28, -length * 0.31], 0.025);
+    box(
+      group,
+      materials.darkMetal,
+      cabinWidth + 0.12,
+      0.09,
+      0.42,
+      0,
+      cabinTop + 0.13,
+      cabinZ - cabinLength * 0.45,
+      0.025,
+    );
+  }
+  if (profile.type === 'utility') {
+    for (const side of [-1, 1]) {
+      box(
+        group,
+        materials.metal,
+        0.055,
+        0.055,
+        cabinLength * 0.75,
+        side * cabinWidth * 0.28,
+        cabinTop + 0.18,
+        cabinZ,
+        0.012,
+      );
+      box(
+        group,
+        accent,
+        0.065,
+        0.2,
+        0.15,
+        side * cabinWidth * 0.28,
+        cabinTop + 0.12,
+        cabinZ + cabinLength * 0.3,
+        0.012,
+      );
+    }
+  }
   const mastZ = cabinZ - cabinLength * 0.19;
   cylinder(group, materials.metal, 0.06, 1.5, 0, cabinTop + 0.86, mastZ);
   rod(
@@ -714,27 +1184,42 @@ function makeVessel(spec, definition, materials, role = 'player') {
     cabinZ + 0.46,
   );
   // Bow pulpit follows the hull rather than approximating it with a rectangle.
-  const bowRail = hullOutline(width, length, 1.65, 0.925).filter((p) => p.z < -length * 0.15);
-  tube(
-    group,
-    materials.metal,
-    bowRail.map((p) => [p.x, p.y, p.z]),
-    0.034,
-  );
-  for (let i = 0; i < bowRail.length; i += 8)
-    rod(
+  for (const offset of catamaran ? [-width * 0.345, width * 0.345] : [0]) {
+    const bowRail = hullOutline(
+      catamaran ? width * 0.29 : width,
+      length,
+      1.65,
+      0.925,
+      profile.type,
+    ).filter((p) => p.z < -length * 0.15);
+    tube(
       group,
       materials.metal,
-      [bowRail[i].x, 1, bowRail[i].z],
-      [bowRail[i].x, 1.65, bowRail[i].z],
-      0.028,
+      bowRail.map((p) => [p.x + offset, p.y, p.z]),
+      0.034,
     );
-  const bowZ = -length * 0.375;
-  box(group, materials.metal, 0.19, 0.12, 0.7, 0, 1.03, -length * 0.46, 0.025);
-  rod(group, materials.darkMetal, [0, 0.97, -length * 0.37], [0, 1.11, -length * 0.498], 0.035);
-  cylinder(group, materials.metal, 0.14, 0.19, 0, 1.14, bowZ);
-  rod(group, materials.metal, [-0.25, 1.2, bowZ], [0.25, 1.2, bowZ], 0.1);
-  coil(group, materials.rope, -width * 0.17, 0.96, bowZ + 0.26, width * 0.076);
+    for (let i = 0; i < bowRail.length; i += 8)
+      rod(
+        group,
+        materials.metal,
+        [bowRail[i].x + offset, 1, bowRail[i].z],
+        [bowRail[i].x + offset, 1.65, bowRail[i].z],
+        0.028,
+      );
+  }
+  const bowZ = -length * 0.375,
+    anchorX = catamaran ? -width * 0.345 : 0;
+  box(group, materials.metal, 0.19, 0.12, 0.7, anchorX, 1.03, -length * 0.46, 0.025);
+  rod(
+    group,
+    materials.darkMetal,
+    [anchorX, 0.97, -length * 0.37],
+    [anchorX, 1.11, -length * 0.498],
+    0.035,
+  );
+  cylinder(group, materials.metal, 0.14, 0.19, anchorX, 1.14, bowZ);
+  rod(group, materials.metal, [anchorX - 0.25, 1.2, bowZ], [anchorX + 0.25, 1.2, bowZ], 0.1);
+  coil(group, materials.rope, anchorX - width * 0.04, 0.96, bowZ + 0.26, width * 0.06);
   for (const side of [-1, 1]) {
     cleat(group, materials, side * width * 0.37, 1.09, length * 0.42);
     cleat(group, materials, side * width * 0.3, 1.09, -length * 0.33);
@@ -835,27 +1320,59 @@ function makeVessel(spec, definition, materials, role = 'player') {
     cabinZ + cabinLength / 2 + 0.14,
   );
   lifeRing.rotation.x = 0;
-  for (const x of [-width * 0.27, -width * 0.27 + 0.36])
-    rod(group, materials.metal, [x, 1.07, length * 0.493], [x, -0.42, length * 0.54], 0.029);
-  for (let i = 0; i < 4; i++)
+  const ladderX = -width * 0.51,
+    ladderZ = length * 0.08;
+  for (const z of [ladderZ - 0.23, ladderZ + 0.23])
+    rod(group, materials.metal, [ladderX + 0.09, 1.24, z], [ladderX - 0.14, -0.55, z], 0.034);
+  for (let i = 0; i < 5; i++)
     rod(
       group,
       materials.metal,
-      [-width * 0.27, 0.9 - i * 0.32, length * 0.51],
-      [-width * 0.27 + 0.36, 0.9 - i * 0.32, length * 0.51],
-      0.026,
+      [ladderX - 0.1, 1.02 - i * 0.31, ladderZ - 0.23],
+      [ladderX - 0.1, 1.02 - i * 0.31, ladderZ + 0.23],
+      0.033,
     );
+  box(group, accent, 0.16, 0.05, 0.7, ladderX + 0.14, 1.085, ladderZ, 0.025);
   if (small) {
-    box(group, materials.darkMetal, 0.57, 0.76, 0.7, 0.25, 0.57, length * 0.52, 0.13);
-    box(group, materials.metal, 0.19, 0.8, 0.25, 0.25, -0.08, length * 0.54, 0.045);
-    box(group, accent, 0.48, 0.065, 0.58, 0.25, 0.96, length * 0.52, 0.025);
+    for (const x of profile.motors === 2 ? [-width * 0.19, width * 0.19] : [0]) {
+      box(group, materials.darkMetal, 0.57, 0.76, 0.7, x, 0.57, length * 0.52, 0.13);
+      box(group, materials.metal, 0.19, 0.8, 0.25, x, -0.08, length * 0.54, 0.045);
+      box(group, accent, 0.48, 0.065, 0.58, x, 0.96, length * 0.52, 0.025);
+    }
   } else if (definition.id.includes('jet')) {
-    for (const x of premium ? [-0.65, 0.65] : [0]) {
+    for (const x of premium ? [-width * 0.345, width * 0.345] : [0]) {
       cylinder(group, materials.darkMetal, 0.22, 0.34, x, -0.03, length * 0.51).rotation.x =
         Math.PI / 2;
       box(group, materials.metal, 0.47, 0.35, 0.08, x, 0.03, length * 0.53, 0.055);
     }
+  } else if (definition.id.startsWith('sterndrive')) {
+    box(group, materials.darkMetal, 0.35, 0.63, 0.34, 0, 0.05, length * 0.51, 0.045);
+    cylinder(group, materials.metal, 0.16, 0.42, 0, -0.26, length * 0.55).rotation.x = Math.PI / 2;
   }
+  if (profile.solar) {
+    box(group, materials.metal, width * 0.68, 0.08, length * 0.12, 0, 1.65, length * 0.43, 0.035);
+    for (const side of [-1, 1]) {
+      box(
+        group,
+        materials.glass,
+        width * 0.3,
+        0.035,
+        length * 0.105,
+        side * width * 0.16,
+        1.705,
+        length * 0.43,
+        0.01,
+      );
+      rod(
+        group,
+        materials.metal,
+        [side * width * 0.3, deckY, length * 0.43],
+        [side * width * 0.3, 1.6, length * 0.43],
+        0.03,
+      );
+    }
+  }
+  addTrafficDetails(group, spec, materials, profile, accent);
   const nameMap = labelTexture(definition.name || 'Urchin Skipper');
   const nameMaterial = new THREE.MeshStandardMaterial({
     map: nameMap,
@@ -897,11 +1414,178 @@ function makeVessel(spec, definition, materials, role = 'player') {
   bins.forEach((bin, i) => {
     bin.visible = i === 0;
   });
-  bins[0].position.set(width * 0.12, deckY, -length * 0.36);
+  bins[0].position.set(catamaran ? width * 0.345 : width * 0.12, deckY, -length * 0.36);
   bins[0].scale.setScalar(0.6);
   group.userData.catchLoad = new CatchLoad(group, materials.catchNet, materials.rope);
   mergeStatic(group);
   return group;
+}
+
+export function addFittings(vessel, spec, materials, installed) {
+  const { length, width } = spec,
+    { cabinTop, cabinZ, cabinLength } = vessel.userData.stations;
+  const fittings = new THREE.Group();
+  fittings.name = 'Installed working systems';
+  fittings.userData.dynamic = true;
+  vessel.add(fittings);
+  vessel.userData.fittings = {};
+  for (const id of installed) {
+    const station = new THREE.Group();
+    station.name = `Installed · ${id}`;
+    vessel.userData.fittings[id] = station;
+    fittings.add(station);
+    if (id === 'hoist') {
+      const x = -width * 0.38,
+        z = length * 0.1;
+      box(station, materials.blue, 0.38, 0.43, 0.5, x + 0.2, 1.27, z, 0.04);
+      cylinder(station, materials.metal, 0.14, 0.38, x - 0.11, 1.45, z).rotation.z = Math.PI / 2;
+      tube(
+        station,
+        materials.rubber,
+        [
+          [x + 0.2, 1.2, z],
+          [x + 0.28, 1.07, z + 0.2],
+          [x, 1.03, z + 0.4],
+          [x, 1.8, z],
+        ],
+        0.025,
+      );
+    } else if (id === 'engine') {
+      box(station, materials.darkMetal, width * 0.32, 0.15, 0.66, 0, 0.99, length * 0.27, 0.04);
+      for (let i = 0; i < 7; i++)
+        box(
+          station,
+          materials.metal,
+          width * 0.27,
+          0.025,
+          0.027,
+          0,
+          1.08,
+          length * 0.27 - 0.24 + i * 0.08,
+        );
+      for (const side of [-1, 1])
+        cylinder(
+          station,
+          materials.metal,
+          0.075,
+          0.24,
+          side * width * 0.31,
+          0.7,
+          length * 0.49,
+        ).rotation.x = Math.PI / 2;
+    } else if (id === 'fuel-system') {
+      box(station, materials.roof, 0.36, 0.28, 0.27, width * 0.32, 1.14, length * 0.28, 0.035);
+      for (const dz of [-0.08, 0.08])
+        cylinder(station, materials.orange, 0.07, 0.23, width * 0.32, 1.41, length * 0.28 + dz);
+    } else if (id === 'tank') {
+      box(station, materials.metal, 0.52, 0.62, 1.03, width * 0.32, 1.22, length * 0.38, 0.065);
+      for (const z of [0.34, 0.42])
+        box(station, materials.darkMetal, 0.54, 0.64, 0.05, width * 0.32, 1.23, length * z);
+      cylinder(station, materials.orange, 0.05, 0.07, width * 0.32, 1.57, length * 0.37);
+    } else if (id === 'nitrox') {
+      for (let i = 0; i < 2; i++) {
+        cylinder(
+          station,
+          materials.tank,
+          0.14,
+          0.78,
+          width * 0.31,
+          1.3,
+          length * (0.15 + i * 0.045),
+        );
+        cylinder(
+          station,
+          materials.green,
+          0.145,
+          0.14,
+          width * 0.31,
+          1.51,
+          length * (0.15 + i * 0.045),
+        );
+      }
+    } else if (id === 'lights') {
+      for (const side of [-1, 1]) {
+        rod(
+          station,
+          materials.metal,
+          [side * width * 0.27, cabinTop, cabinZ],
+          [side * width * 0.27, cabinTop + 0.34, cabinZ],
+          0.03,
+        );
+        box(
+          station,
+          materials.darkMetal,
+          0.28,
+          0.2,
+          0.18,
+          side * width * 0.27,
+          cabinTop + 0.38,
+          cabinZ,
+          0.035,
+        );
+        box(
+          station,
+          materials.lamp,
+          0.22,
+          0.13,
+          0.025,
+          side * width * 0.27,
+          cabinTop + 0.38,
+          cabinZ + 0.1,
+          0.02,
+        );
+      }
+    } else if (['plotter', 'scanner', 'forecast'].includes(id)) {
+      const x = (['plotter', 'scanner', 'forecast'].indexOf(id) - 1) * 0.32;
+      box(
+        station,
+        materials.darkMetal,
+        0.28,
+        0.25,
+        0.1,
+        x,
+        1.74,
+        cabinZ + cabinLength * 0.5 + 0.15,
+        0.025,
+      );
+      box(
+        station,
+        materials.teal,
+        0.23,
+        0.18,
+        0.013,
+        x,
+        1.75,
+        cabinZ + cabinLength * 0.5 + 0.207,
+        0.01,
+      );
+    } else if (id === 'stabilizer') {
+      for (const side of [-1, 1])
+        rod(
+          station,
+          materials.metal,
+          [side * width * 0.42, 1.07, length * 0.32],
+          [side * width * 0.47, 2.35, length * 0.13],
+          0.06,
+        );
+    } else if (id === 'bowthruster') {
+      for (const side of [-1, 1])
+        ring(
+          station,
+          materials.darkMetal,
+          0.16,
+          0.045,
+          side * width * 0.31,
+          0.15,
+          -length * 0.31,
+        ).rotation.z = Math.PI / 2;
+    }
+  }
+  for (const station of fittings.children) {
+    mergeStatic(station);
+    station.userData.dynamic = true;
+  }
+  mergeStatic(fittings);
 }
 
 function foamTexture() {
@@ -1255,7 +1939,7 @@ function setDepartureAlpha(group, alpha) {
     entry.material.opacity = entry.opacity * alpha;
   }
 }
-function disposeGroup(group) {
+export function disposeGroup(group) {
   const geometries = new Set();
   group.traverse((object) => {
     if (object.geometry && !SHARED.has(object.geometry)) geometries.add(object.geometry);
@@ -1264,6 +1948,7 @@ function disposeGroup(group) {
   for (const geometry of geometries) geometry.dispose();
   for (const entry of group.userData.fadeMaterials || []) entry.material.dispose();
   group.userData.ownedMaterial?.dispose();
+  for (const material of group.userData.extraMaterials || []) material.dispose();
   if (group.userData.nameMaterial) {
     group.userData.nameMaterial.map.dispose();
     group.userData.nameMaterial.dispose();
@@ -1275,6 +1960,7 @@ export class VesselView {
   constructor(scene) {
     this.scene = scene;
     this.materials = makeMaterials();
+    this.column = waterColumnMaterials(this.materials);
     this.boat = null;
     this.identity = '';
     this.traffic = new Map();
@@ -1327,7 +2013,7 @@ export class VesselView {
     scene.add(this.lightRig);
     this.rivalDivers = new Map();
     for (let i = 0; i < 2; i++) {
-      const visual = makeSurfaceDiver(this.materials, i);
+      const visual = makeSurfaceDiver(this.column.materials, i);
       scene.add(visual.group);
       this.divers.push(visual);
     }
@@ -1338,10 +2024,12 @@ export class VesselView {
     const boat = departureBoat(world),
       spec = boatSpec(world),
       range = visibilityRange(world);
-    const identity = `${boat.configuration}:${spec.length}:${spec.width}`;
+    const installed = world.career?.fleet[boat.configuration]?.equipment || [];
+    const identity = `${boat.configuration}:${spec.length}:${spec.width}:${installed.join(',')}`;
     if (!this.boat || this.identity !== identity) {
       if (this.boat) disposeGroup(this.boat);
       this.boat = makeVessel(spec, boatDefinition(boat.configuration), this.materials);
+      addFittings(this.boat, spec, this.materials, installed);
       prepareDepartureFade(this.boat);
       this.scene.add(this.boat);
       this.identity = identity;
@@ -1351,20 +2039,109 @@ export class VesselView {
     this.position(this.boat, boat, surfaceY, wave);
     setDepartureAlpha(this.boat, boat.alpha);
     this.boat.userData.radar.rotation.y = this.elapsed * 1.1;
+    this.column.uniforms.uColumnTime.value = this.elapsed;
+    this.column.uniforms.uColumnTurbidity.value = waterTurbidity(world);
+    this.column.uniforms.uColumnLight.value = world.weather?.sunlight ?? 1;
+    this.boat.userData.radar.visible = installed.includes('radar');
     for (let i = 0; i < 2; i++) {
       const d = world.divers[i],
         crew = this.boat.userData.deckCrew[i],
         visual = this.divers[i];
       crew.visible = !!d && d.state === 'ready';
       crew.rotation.x = Math.sin(this.elapsed * 0.7 + i) * 0.022;
-      visual.group.visible =
-        !!d && Math.hypot(d.x - boat.x, d.y - boat.y) <= range && d.state === 'surface';
-      if (visual.group.visible) {
-        visual.group.position.set(d.x, surfaceY + Math.sin(this.elapsed * 1.8 + i) * 0.065, d.y);
-        visual.group.rotation.y = d.direction || 0;
-        visual.float.visible = d.state === 'surface';
-        visual.swimmer.rotation.z = Math.sin(this.elapsed * 1.5 + i) * 0.035;
+      if (!d) {
+        visual.group.visible = false;
+        continue;
       }
+      const pose = diverMotion(world, d);
+      crew.visible = pose.phase === 'aboard';
+      visual.group.userData.motion = pose;
+      visual.group.visible =
+        pose.phase !== 'aboard' &&
+        !['fatality', 'dead', 'lost'].includes(d.state) &&
+        Math.hypot(pose.x - boat.x, pose.y - boat.y) <= range &&
+        (pose.depth < 5 || pose.aboard);
+      if (!visual.group.visible) continue;
+      visual.group.position.set(pose.x, surfaceY, pose.y);
+      visual.group.rotation.y = -pose.heading;
+      visual.swimmer.visible = false;
+      visual.body.visible = true;
+      visual.body.position.set(
+        0,
+        pose.height +
+          (!pose.underwater && !pose.aboard ? Math.sin(this.elapsed * 1.8 + i) * 0.04 : 0),
+        0,
+      );
+      visual.body.rotation.x = pose.pitch;
+      visual.float.visible = d.state === 'surface' && pose.phase !== 'boarding';
+      visual.float.position.x = 0.58;
+      // The net sack comes out of the sea before boarding finishes. Its
+      // progress reads the existing hook timer; accounting stays in simulation.
+      const lifting = d.state === 'surface' && !d.bagHandled && d.bag > 0;
+      visual.liftBag.visible = visual.liftLine.visible = lifting;
+      if (lifting) {
+        const t = Math.min(1, (d.hook || 0) / (d.hookSeconds || 3));
+        const lift = t * t * (3 - 2 * t);
+        const deckX =
+          boat.x -
+          Math.cos(boat.heading) * spec.width * 0.29 -
+          Math.sin(boat.heading) * spec.length * 0.16;
+        const deckZ =
+          boat.y -
+          Math.sin(boat.heading) * spec.width * 0.29 +
+          Math.cos(boat.heading) * spec.length * 0.16;
+        const x = d.x + Math.cos(pose.heading) * 0.58;
+        const z = d.y + Math.sin(pose.heading) * 0.58;
+        const dx = x + (deckX - x) * lift - pose.x;
+        const dz = z + (deckZ - z) * lift - pose.y;
+        const bag = visual.liftBag;
+        bag.position.set(
+          dx * Math.cos(pose.heading) + dz * Math.sin(pose.heading),
+          -0.38 + lift * 1.63 + Math.sin(lift * Math.PI) * 1.25,
+          -dx * Math.sin(pose.heading) + dz * Math.cos(pose.heading),
+        );
+        bag.scale.setScalar(0.38 * Math.max(0.55, Math.cbrt(d.bag / 300)));
+        const anchorX =
+          boat.x -
+          Math.cos(boat.heading) * spec.width * 0.38 -
+          Math.sin(boat.heading) * spec.length * 0.1 -
+          pose.x;
+        const anchorZ =
+          boat.y -
+          Math.sin(boat.heading) * spec.width * 0.38 +
+          Math.cos(boat.heading) * spec.length * 0.1 -
+          pose.y;
+        visual.ropeEnd.set(
+          t > 0
+            ? anchorX * Math.cos(pose.heading) + anchorZ * Math.sin(pose.heading)
+            : bag.position.x,
+          t > 0 ? 1.6 : 0.08,
+          t > 0
+            ? -anchorX * Math.sin(pose.heading) + anchorZ * Math.cos(pose.heading)
+            : bag.position.z,
+        );
+        visual.liftLine.position.copy(bag.position).add(visual.ropeEnd).multiplyScalar(0.5);
+        visual.ropeDirection.copy(visual.ropeEnd).sub(bag.position);
+        visual.liftLine.scale.set(0.016, Math.max(0.04, visual.ropeDirection.length()), 0.016);
+        visual.liftLine.quaternion.setFromUnitVectors(UP, visual.ropeDirection.normalize());
+      }
+      for (const { leg, arm, side } of visual.body.userData.limbs) {
+        const cycle = Math.sin(this.elapsed * (pose.phase === 'boarding' ? 16 : 5) + side * 1.57);
+        leg.rotation.x =
+          cycle *
+          (pose.phase === 'boarding' || pose.phase === 'stowing'
+            ? 0.35
+            : pose.underwater
+              ? 0.16
+              : 0.07);
+        arm.rotation.x =
+          pose.phase === 'boarding'
+            ? -1.9 + cycle * 0.3
+            : pose.phase === 'preparing'
+              ? -0.65
+              : -0.25;
+      }
+      visual.group.userData.contrast = submergedContrast(pose.depth, waterTurbidity(world));
     }
     this.boat.userData.catchLoad.update(world.bags || [], spec);
     this.markers = this.boat.userData.catchLoad.markers;
@@ -1375,11 +2152,13 @@ export class VesselView {
       active.add(actor.id);
       let visual = this.traffic.get(actor.id);
       if (!visual) {
-        const id = actor.kind === 'taxi' ? 'outboard' : actor.kind === 'dfo' ? 'twinjet' : 'basic';
+        const appearance = trafficProfile(actor),
+          id = appearance.family;
         visual = makeVessel(
           { length: actor.length, width: actor.width },
           {
             ...boatDefinition(id),
+            profile: appearance.profile,
             name:
               actor.name ||
               (actor.kind === 'taxi'
@@ -1422,6 +2201,7 @@ export class VesselView {
         let marker = this.rivalDivers.get(key);
         if (!marker) {
           marker = makeSurfaceDiver(this.materials, index);
+          marker.body.visible = false;
           this.scene.add(marker.group);
           this.rivalDivers.set(key, marker);
         }
@@ -1456,7 +2236,9 @@ export class VesselView {
       for (let i = 0; i < world.divers.length; i++) {
         const d = world.divers[i];
         if (
-          ['deploying', 'searching', 'harvesting', 'surfacing'].includes(d.state) &&
+          ['descending', 'searching', 'working', 'ascending'].includes(
+            diverMotion(world, d).phase,
+          ) &&
           bubbleOpacity(world, Math.hypot(d.x - boat.x, d.y - boat.y)) > 0
         ) {
           const surfacing = d.state === 'surfacing',
@@ -1555,6 +2337,7 @@ export class VesselView {
     for (const patch of this.lightPatches) patch.material.dispose();
     disposeGroup(this.lightRig);
     this.lightTexture.dispose();
+    this.column.dispose();
     for (const d of this.divers) disposeGroup(d.group);
     const textures = new Set();
     for (const material of Object.values(this.materials)) {

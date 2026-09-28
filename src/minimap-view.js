@@ -1,3 +1,4 @@
+import { paintOwnship } from './chart-ownship.js';
 import { instrumentStyle, setInstrumentStyle } from './instruments.js';
 import { paintChartNotes } from './chart-notes.js';
 import { paintSectorMap, sectorChartSvg, vectorNotes } from './chart-art.js';
@@ -14,7 +15,7 @@ export function renderNavigationWindows(ui, w) {
     panel.id = 'minimapPanel';
     panel.className = 'navigation-window';
     panel.innerHTML =
-      '<div class="minimap-heading"><strong>CHART · N ↑</strong><div class="minimap-zoom" role="group" aria-label="Chart minimap zoom"><button type="button" data-minimap-open aria-label="Open enlarged chart">↗</button><button type="button" data-minimap-zoom="-1" aria-label="Zoom chart out">−</button><output aria-live="polite">1×</output><button type="button" data-minimap-zoom="1" aria-label="Zoom chart in">+</button></div></div><div class="minimap-chart" aria-label="Chart"><canvas width="240" height="240" aria-label="Current area chart: pink crosses are charted rocks, triangle is your boat"></canvas><svg class="minimap-vector" hidden aria-label="Current area vector chart"></svg></div><p class="minimap-text"></p><small>Pink × rocks · △ your boat · tap to fade</small>';
+      '<div class="minimap-heading"><strong>CHART · N ↑</strong><div class="minimap-zoom" role="group" aria-label="Chart minimap zoom"><button type="button" data-minimap-open aria-label="Open enlarged chart">↗</button><button type="button" data-minimap-zoom="-1" aria-label="Zoom chart out">−</button><output aria-live="polite">1×</output><button type="button" data-minimap-zoom="1" aria-label="Zoom chart in">+</button></div></div><div class="minimap-chart" aria-label="Chart"><canvas width="240" height="240" aria-label="Current area chart: pink crosses are charted rocks, gold ring and heading pointer show your boat"></canvas><svg class="minimap-vector" hidden aria-label="Current area vector chart"></svg></div><p class="minimap-text"></p><small>Pink × rocks · ◉ your boat · tap to fade</small>';
     panel.querySelector('[data-minimap-open]').onclick = () =>
       ui.open(ui.hooks.world().career ? 'knowledge' : 'chart');
     const simple = document.createElement('button');
@@ -127,7 +128,7 @@ export function renderNavigationWindows(ui, w) {
           boat: w.boat,
           ...noteOptions,
           ariaLabel:
-            'Current area vector chart: pink crosses are charted rocks, triangle is your boat',
+            'Current area vector chart: pink crosses are charted rocks, gold ring and heading pointer show your boat',
         });
         const holder = document.createElement('div');
         holder.innerHTML = markup;
@@ -155,6 +156,9 @@ export function renderNavigationWindows(ui, w) {
           'transform',
           `translate(${w.boat.x} ${w.boat.y}) rotate(${(w.boat.heading * 180) / Math.PI})`,
         );
+      ui.minimapSvg
+        .querySelector('[data-ownship-symbol]')
+        ?.setAttribute('transform', `scale(${vectorViewport.size / 240})`);
       return;
     }
     ui.minimapSvg.hidden = true;
@@ -203,22 +207,12 @@ export function renderNavigationWindows(ui, w) {
       240,
       240,
     );
-    ctx.save();
-    ctx.translate(
+    paintOwnship(
+      ctx,
       (w.boat.x * mapScale - viewport.x) * displayScale,
       (w.boat.y * mapScale - viewport.y) * displayScale,
+      w.boat.heading,
+      { compact: true, width: 240 },
     );
-    ctx.rotate(w.boat.heading);
-    ctx.beginPath();
-    ctx.moveTo(0, -7);
-    ctx.lineTo(5, 5);
-    ctx.lineTo(-5, 5);
-    ctx.closePath();
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = '#102c3c';
-    ctx.stroke();
-    ctx.fillStyle = '#fff3cf';
-    ctx.fill();
-    ctx.restore();
   }
 }

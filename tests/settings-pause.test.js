@@ -1,3 +1,4 @@
+import { adjustSoundVolume, preferenceActions } from '../src/menu-preferences.js';
 import './matter-helper.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -137,4 +138,21 @@ test('departure menus consistently call the knowledge screen Local Chart', () =>
     expeditionActions(ui, w).find((action) => action.id === 'knowledge').label,
     'Local Chart',
   );
+});
+
+test('sound slider controller adjustment reaches mute/full volume without cycling and persists through audio', () => {
+  const { ui } = menuSetup();
+  ui.hooks.audio.setVolume = (value) => {
+    ui.hooks.audio.volume = value;
+  };
+  ui.index = preferenceActions(ui).findIndex((action) => action.id === 'volume');
+  assert(adjustSoundVolume(ui, 'right'));
+  assert.equal(ui.hooks.audio.volume, 0.4);
+  for (let i = 0; i < 30; i++) adjustSoundVolume(ui, 'left');
+  assert.equal(ui.hooks.audio.volume, 0);
+  for (let i = 0; i < 30; i++) adjustSoundVolume(ui, 'right');
+  assert.equal(ui.hooks.audio.volume, 1);
+  assert.equal(adjustSoundVolume(ui, 'down'), false);
+  ui.index = 0;
+  assert.equal(adjustSoundVolume(ui, 'left'), false);
 });

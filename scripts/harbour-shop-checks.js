@@ -275,7 +275,7 @@ export async function harbourShopChecks(browser) {
           urchinDebug.ui.titleAction('scale');
       });
       await page.setViewportSize({ width: 1280, height: 800 });
-      await action('buy-top');
+      await action(shop === 'outfit' ? 'buy-inline' : 'buy-top');
       await action('confirm-purchase');
       await screen(shop);
       assert((await cash()) < before);
@@ -283,7 +283,7 @@ export async function harbourShopChecks(browser) {
       records.push({
         shop,
         inspection: 'no charge',
-        explicitBuy: 'inline, top and bottom',
+        explicitBuy: shop === 'outfit' ? 'inline and bottom' : 'inline, top and bottom',
         purchase: 'successful',
       });
     }

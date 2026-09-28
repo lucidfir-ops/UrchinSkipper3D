@@ -54,6 +54,13 @@ import { departing, beginDeparture, advanceDeparture } from './departure-transit
 import { updateEnvironment } from './environment.js';
 import { recordFishingPressure, subAreaYield } from './quota-areas.js';
 import { driftUnderwater, moveOnBottom } from './diver-current.js';
+import {
+  approachRecovery,
+  atRecoveryLadder,
+  diveTransit,
+  diverDepth,
+  DIVER_MOTION,
+} from './diver-motion.js';
 
 export function announce(w, text, d = null) {
   w.message = text;
@@ -85,6 +92,7 @@ export function setInstructions(w, id, { direction, minQuality, searchLimit, max
   return true;
 }
 function surface(w, d, reason) {
+  const depth = diverDepth(w, d);
   d.lastDiveDepth = Math.max(0, depthAt(w, d.x, d.y));
   if (d.patch) d.lastPatchRate = d.patch.rate;
   if (d.bag >= C.diver.bagSize - 0.01) d.lastFullBagSeconds = d.diveTime;
@@ -92,6 +100,7 @@ function surface(w, d, reason) {
   d.recallAt = null;
   d.state = 'surfacing';
   d.timer = C.diver.warningSeconds;
+  d.transit = { kind: 'ascent', depth, total: d.timer };
   d.reason = reason;
   announce(w, 'DIVER SURFACING — WATCH THE BUBBLES', d);
   effect(w, 'warning', d);
@@ -197,6 +206,9 @@ function sendDown(w, d) {
     localSearch: null,
     bagHandled: false,
   });
+  d.transit = diveTransit(w, d, false);
+  d.timer = d.transit.total;
+  d.motionHeading = d.transit.heading;
   announce(w, 'FRESH BAG PROVIDED — DIVER RETURNING TO WORK', d);
   effect(w, 'splash', d);
 }
@@ -248,6 +260,8 @@ function finishRecovery(w, d) {
   d.recoveryAction = null;
   if (action === 'recoverDiver') {
     d.state = 'ready';
+    d.transit = null;
+    d.deckWalkStarted = w.time;
     d.patch = null;
     d.clump = null;
     d.target = null;
@@ -278,8 +292,25 @@ function stepDiver(w, d, a, dt, tolerance) {
     w.weather?.night &&
     !gear(w, 'torch') &&
     ['deploying', 'searching', 'harvesting'].includes(d.state)
-  )
-    surface(w, d, 'Darkness — flashlight required');
+  ) {
+    const transit = d.state === 'deploying' && d.transit,
+      elapsed = transit ? transit.total - d.timer : Infinity;
+    if (transit?.fromDeck && elapsed < transit.prepareSeconds) {
+      d.state = 'ready';
+      d.transit = null;
+      d.timer = 0;
+      d.x = w.boat.x;
+      d.y = w.boat.y;
+      d.reason = 'Darkness — flashlight required';
+      stepDiveExposure(w, d, dt);
+      announce(w, 'DEPLOY CANCELLED — DARKNESS; DIVER REMAINS ABOARD', d);
+      return;
+    }
+    // Once a step off the rail has begun, finish that brief entry before
+    // surfacing normally. Nightfall must not move a figure instantly to water.
+    if (!transit?.fromDeck || elapsed >= transit.prepareSeconds + transit.entrySeconds)
+      surface(w, d, 'Darkness — flashlight required');
+  }
   const tableBreak = stepDiveExposure(w, d, dt);
   const b = w.boat,
     deploy = a.recoverDiver && d.state === 'ready';
@@ -325,18 +356,57 @@ function stepDiver(w, d, a, dt, tolerance) {
         localSearch: null,
         bagHandled: false,
       });
-      announce(w, 'DEPLOY DIVER — DEPLOYING', d);
-      effect(w, 'splash', d);
+      d.transit = diveTransit(w, d);
+      if (gear(w, 'nitrox')) {
+        d.transit.prepareSeconds += 1;
+        d.transit.total += 1;
+      }
+      d.timer = d.transit.total;
+      d.motionHeading = d.transit.heading;
+      announce(w, 'DEPLOY DIVER — CHECKING KIT AT THE PORT RAIL', d);
     }
   }
   if (d.state === 'ready') {
     d.x = b.x;
     d.y = b.y;
+    if (d.deckWalkStarted != null && w.time - d.deckWalkStarted >= DIVER_MOTION.stowSeconds)
+      delete d.deckWalkStarted;
   } else if (d.state === 'deploying') {
+    const transit = d.transit,
+      elapsed = (transit?.total || C.diver.deploySeconds) - d.timer;
+    if (transit?.fromDeck && elapsed < transit.prepareSeconds) {
+      const r = deploymentStatus(w, { ...d, state: 'ready' });
+      d.x = r.x;
+      d.y = r.y;
+      const revised = diveTransit(w, d);
+      revised.total += transit.prepareSeconds - revised.prepareSeconds;
+      d.timer += revised.total - transit.total;
+      transit.total = revised.total;
+      transit.depth = revised.depth;
+      transit.heading = d.motionHeading = revised.heading;
+      // Preparation stays on the moving deck; abort an unsafe drop before entry.
+      if (r.reason && ['BOAT GROUNDED', 'TOO SHALLOW TO DEPLOY'].includes(r.reason)) {
+        d.state = 'ready';
+        d.transit = null;
+        announce(w, `DEPLOY PAUSED — ${r.reason}`, d);
+        return;
+      }
+    } else {
+      driftSurface(w, d, dt);
+      if (
+        transit &&
+        !transit.entryPlayed &&
+        elapsed >= transit.prepareSeconds + transit.entrySeconds * 0.82
+      ) {
+        transit.entryPlayed = true;
+        effect(w, 'splash', d);
+      }
+    }
     d.timer -= dt;
     if (d.timer <= 0) {
       d.state = 'searching';
-      announce(w, 'DIVER UNDERWATER — BUBBLES ONLY', d);
+      d.transit = null;
+      announce(w, 'DIVER UNDERWATER — SEARCHING THE BOTTOM', d);
     }
   } else if (d.state === 'searching' || d.state === 'harvesting') {
     d.holdCurrentKnots = diverSpec(d).holdCurrentKnots;
@@ -429,6 +499,7 @@ function stepDiver(w, d, a, dt, tolerance) {
     d.timer -= dt;
     if (d.timer <= 0) {
       d.state = 'surface';
+      d.transit = null;
       surfaceMoment(w, d);
       announce(w, 'DIVER SURFACED — GET ALONGSIDE ON PORT', d);
       effect(w, 'surface', d);
@@ -482,8 +553,14 @@ function stepDiver(w, d, a, dt, tolerance) {
         );
       }
       if (r.available) {
-        d.hook += dt;
-        if (d.hook + 1e-9 >= recoveryDuration(d)) finishRecovery(w, d);
+        approachRecovery(w, d, dt);
+        const duration = recoveryDuration(d),
+          next = d.hook + dt;
+        d.hook =
+          d.recoveryAction === 'recoverDiver' && !atRecoveryLadder(w, d)
+            ? Math.min(next, duration - DIVER_MOTION.climbSeconds)
+            : next;
+        if (d.hook + 1e-9 >= duration) finishRecovery(w, d);
       }
     }
   } else if (a.recoverDiver && !deploy)

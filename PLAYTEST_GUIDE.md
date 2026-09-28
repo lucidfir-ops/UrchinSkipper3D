@@ -3,7 +3,7 @@
 Run the separate 3D project at http://127.0.0.1:5184/. Start with Frank, then check a complete working day. The inherited cases below still apply.
 
 - Compare High/Balanced/Battery graphics, including reload persistence. Check a wooded coast at near and far zoom, changing tide, rain/fog and night. Watch physical rock crowns and drifting logs.
-- Confirm underwater people appear only as bubbles; surfaced orange floats have one/two identification stripes. Match drift on the port side; collect a bag, redeploy and board both divers.
+- Watch people prepare at the rail, enter and descend. In ordinary coastal water their bodies remain visible near the surface, lose contrast below about 2 m and disappear by about 5 m; deeper divers leave bubbles. Surfaced orange floats retain one/two identification stripes. Match drift on the port side; collect a bag, redeploy and board both divers.
 - Follow the moving port/stern tutorial guides; open charts, individual orders, pause, the boatyard, crew and logbook. Check keyboard, synthetic controller and touch separately. Physical USB Xbox/Steam Deck must be checked on the actual device.
 - Check installed night working lights, fatal/injury surface cues, rival working divers, wakes and inspection boarding.
 - Confirm known-ground overlays, fog/night bubble limits and Realistic shallow visibility reveal only permitted information.
@@ -14,6 +14,19 @@ Run the separate 3D project at http://127.0.0.1:5184/. Start with Frank, then ch
 For the September 27–28 menu and HUD overhaul, use the [interface review record](docs/review/interface-redesign-2026-09-27.md) and its reproducible browser scripts. Check Back from title, Harbour and water; nested scroll restoration; cancelled purchases and remapping; every Harbour destination through the compact scenic pan; crew availability labels; and saved layout precedence. Recovery checks must include eligible and denied pickup, excess catch, active progress and spoken feedback near the instruments. Compare Easy, Realistic, Custom and All Off independently.
 
 The graphics are a separate translation; passing inherited simulation tests does not prove every visual or physical-device case. Historical descriptions of earlier artwork below do not override the commissioned interface redesign; their gameplay and control checks remain relevant.
+
+## September 28 cohesive operations checks
+
+- Chandlery: compare the engine repower and fuel system, rotate the actual hull preview, inspect before/after figures, cancel a purchase, then install the hauler. The same location should now be fitted in Your boat and at sea. Install every compatible item: station diagrams must never impose an equipment-count cap. Check ownership and operating switches survive hull changes and reload.
+- Compare all twelve career hulls and the twenty-five original traffic identities in 3D. Check the two separate Channel Master bows, Island Tender collar, motor arrangements and actual bag footprints. Preserved original artwork remains the reference; a decorative silhouette must not change collision dimensions.
+- Follow both people through preparation, entry, descent, work, ascent, pickup approach, bag lift, short port-ladder climb and walk onto deck. Interrupt recovery by failing a safety gate, then resume. One press still finishes bag exchange/redeployment or boarding; catch is credited once. Reload during descent and compare the trajectory.
+- Neutral must retain entitled diver information. Compare Easy, Realistic and manually selected information options; nearby visible bodies are physical presentation, and do not authorize distant underwater status. Easy labels should avoid instrument panels. In compact active recovery, the action card replaces a colliding duplicate port callout.
+- Judge 2 m visibility at ordinary gameplay zoom as well as close inspection. People are physically small at the widest view; do not confuse a close screenshot with normal-zoom readability. Compare clear weather, rain, dusk, sheltered shallows and deep green water. Kelp belongs in localized stands, independent of harvest locations.
+- Maximize both chart renditions: find your vessel and heading immediately. Use Frank's first task with no prior nautical knowledge; optional notes must not be required to understand that task. Review the return task without a long final lecture.
+- Drag Sound volume on desktop and phone, use keyboard arrows and controller navigation, leave and reload. Hold Space on an actual preference switch: activation should occur only once.
+- Stay offshore through missed offload and a second sunrise. Time alone must not send the boat home. Quality, fatigue, fuel, shipping and deliberate rescue consequences continue; return remains the skipper's decision.
+
+`npm run verify` includes equipment, learning, operations, fleet and traffic galleries plus the thirteen retained browser suites. Re-run individual suites with `npm run verify -- --browsers-only --suite=operations` (or `equipment`, `learning`, `fleet`, `traffic-fleet`). Static phase/depth galleries freeze disposable worlds and need separate visual inspection; the live voyage and input suites verify interaction. Synthetic gamepads do not verify physical controllers.
 
 ---
 

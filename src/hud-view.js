@@ -1,3 +1,5 @@
+import { diverMotion } from './diver-motion.js';
+import { offloadWindow } from './offload.js';
 import { renderKeyboardHelm } from './keyboard-helm.js';
 import { setText, setMarkup } from './dom-view.js';
 import { renderNitrogen } from './nitrogen-view.js';
@@ -190,7 +192,7 @@ export function renderHud(scene, world, input, lockReason) {
         ? world.career?.intro?.status === 'active'
           ? '<b>DAY 0</b><span>Frank’s cove · take your time</span>'
           : '<b>PRACTICE</b><span>No day deadline</span>'
-        : `<b>${formatClock(world.day.minute)}</b><span>${world.day.phase === 'complete' ? 'At harbour' : ground?.name || 'Choose a working area'}</span><span>Offload ${formatClock(C.day.deadlineMinute)}${working ? ` · Leave ${formatClock(depart)}` : ''}</span>`;
+        : `<b>${formatClock(world.day.minute)}</b><span>${world.day.phase === 'complete' ? 'At harbour' : ground?.name || 'Choose a working area'}</span><span>${working && world.day.minute > depart ? `Late landing · ships ${formatClock(offloadWindow(world.day.minute + passageMinutes(world, ground)))}` : `Offload ${formatClock(C.day.deadlineMinute)}${working ? ` · Leave ${formatClock(depart)}` : ''}`}</span>`;
   if (!clock.hidden) setMarkup(clock, clockText);
   clock.className =
     working && world.day.minute > depart
@@ -246,20 +248,31 @@ export function renderHud(scene, world, input, lockReason) {
       button.setAttribute('aria-pressed', String(selected));
       return;
     }
-    const status =
+    const motion = diverMotion(world, d),
+      phaseLabel = {
+        preparing: 'Checking kit',
+        entering: 'Entering water',
+        descending: 'Descending',
+        ascending: 'Ascending',
+        approaching: 'Swimming to ladder',
+        hauling: 'Hauling bag',
+        boarding: 'Climbing aboard',
+      }[motion.phase],
+      status =
         d.condition === 'deceased'
           ? 'Fatality'
           : d.condition === 'injured'
             ? d.state === 'ready'
               ? 'Injured · aboard'
               : 'Injured · waiting'
-            : d.state === 'ready'
-              ? 'Aboard'
-              : d.state === 'surface'
-                ? d.bagHandled
-                  ? 'Bag aboard · waiting'
-                  : 'Float waiting'
-                : d.state[0].toUpperCase() + d.state.slice(1),
+            : phaseLabel ||
+              (d.state === 'ready'
+                ? 'Aboard'
+                : d.state === 'surface'
+                  ? d.bagHandled
+                    ? 'Bag aboard · waiting'
+                    : 'Float waiting'
+                  : d.state[0].toUpperCase() + d.state.slice(1)),
       exact = assist(world, 'exactLoad', ui.realistic),
       air = Math.round((d.air / (diverSpec(d).tankAir || 100)) * 100),
       detail = exact
@@ -357,7 +370,7 @@ export function renderHud(scene, world, input, lockReason) {
     scene.lastMessage = signature;
     message.replaceChildren();
     const title = document.createElement('strong');
-    if (state.observable) {
+    if (state.observable || showTelemetry) {
       const person = document.createElement('span');
       person.className = 'pickup-person';
       setText(person, target.name);

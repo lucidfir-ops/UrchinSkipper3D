@@ -74,8 +74,36 @@ async function stage(page, scenario) {
       'Fixture must exercise working-side denial',
     );
   else {
-    assert.match(title, /diver \+ bag recovery/i, 'Fixture must be actively recovering');
-    assert(await page.locator('#message progress').evaluate((e) => e.value > 0));
+    const operation = await page.evaluate(() => {
+      const debug = urchinDebug,
+        w = debug.world,
+        d = w.divers[0];
+      return {
+        state: d.state,
+        hooking: d.hooking,
+        action: d.recoveryAction,
+        hook: d.hook,
+        pause: d.recoveryPause,
+        available: debug.simulation.recoveryStatus(w, undefined, d).available,
+        phase: debug.three.vessels.divers[0].group.userData.motion.phase,
+        progress: document.querySelector('#message progress')?.value,
+      };
+    });
+    assert.equal(operation.state, 'surface');
+    assert.equal(operation.hooking, true, 'Fixture must have an active deck operation');
+    assert.equal(operation.action, 'recoverDiver');
+    assert.equal(operation.available, true, 'Physical recovery gates must pass');
+    assert.equal(operation.pause, '');
+    assert(operation.hook > 0 && operation.progress > 0 && operation.progress < 1);
+    assert(
+      ['approaching', 'hauling', 'boarding'].includes(operation.phase),
+      JSON.stringify(operation),
+    );
+    assert.match(
+      title,
+      /swimming to port ladder|diver \+ bag recovery|climbing port ladder/i,
+      'The active recovery title must describe a valid physical stage',
+    );
   }
 }
 
@@ -242,7 +270,12 @@ try {
         const h = urchinDebug.ui.hudWindows;
         h.move(h.windows.get('message'), 4, 20);
       });
-      await page.waitForTimeout(100);
+      // Moving a custom panel invalidates default placement on the next HUD
+      // update, followed by the bounded 100 ms obstacle cache. Wait for the
+      // visible result rather than racing those two render passes.
+      await page.waitForFunction(() => !urchinDebug.three.diverCues.labels[0].label.hidden, null, {
+        timeout: 3000,
+      });
       assert.equal(
         await page.evaluate(() => urchinDebug.three.diverCues.labels[0].label.hidden),
         false,

@@ -4,6 +4,7 @@ import { assist, gear } from './assists.js';
 import { ECONOMY, money } from './career-data.js';
 import {
   INTRO_STEPS,
+  INTRO_NOTES,
   INTRO_SCOUT_HINT,
   tickIntroHint,
   introActive,
@@ -99,16 +100,25 @@ export function renderIntro(ui, w) {
   if (signature === ui.signature) return;
   ui.signature = signature;
   const briefing = ui.screen === 'intro';
-  const vector = chartMode(ui) === 'vector',
-    introChart =
-      ui.screen === 'introchart'
-        ? `${chartModeMarkup(ui)}${vector ? sectorChartSvg(w.terrain, { boat: w.boat, rocks: w.rocks || [], ariaLabel: 'Vector chart of Frank’s cove: marked shelf northwest, uncharted eastern shore' }) : '<canvas class="intro-chart" width="520" height="520" aria-label="Chart of Frank’s cove: marked shelf northwest, uncharted eastern shore"></canvas>'}<p>North ↑ · 240 m across. Green is known ground; pink × marks charted rocks. Unmarked rocks have prominent crowns and wash: keep a lookout. Use Chart or the minimap’s ↗ button to open this chart; tap its picture to fade it. The separate sounder reads directly beneath the boat. Toggle either in UI / difficulty options and arrange them in Arrange UI layout. Scout divers along the eastern shelf to learn unmarked ground.</p>`
-        : '';
-  ui.panel.innerHTML = `<div class="day-heading"><div><div class="eyebrow">DAY 0 · FRANK’S COVE</div><h2>${briefing ? 'A talking to by Frank' : ui.screen === 'introchart' ? 'Our little fishery' : 'A moment aboard'}</h2></div></div><article class="intro-copy"><img class="frank-portrait" src="./assets/harbour/frank-v1.png" alt="Frank, your investor"/><p>${briefing ? 'I’m Frank, your investor. I’ve put STARTING_FUNDS behind you. You’ll buy your own boat with it and keep the change for fuel and gear. The Workhorse has a roomy deck and a steady shaft drive; the smaller Island Tender is quicker but needs care around its outboard.' : lesson(w)[1] + (w.career.intro.step === 9 ? (w.career.difficulty === 'realistic' ? ' Realistic: reverse off rocks only when your engine can beat the wind; you may need to wait for calmer conditions or a rising tide.' : ' Easy: hold reverse to limp off a grounding when deeper water is astern. A drying tidal basin still needs a rising tide.') : '')}</p>${briefing ? '<p>Easy gives you more information; Realistic asks you to read the water. Both run the same fishery. You can choose when we buy your boat. Hire and train crew, fit equipment, check the weather, and keep enough fuel and money to get home. Every purchase asks you first.</p><p>Before any of that, come with me. We’ll take my loan boat into a small cove for a slow first morning. I’ll show you the controls and how divers find ground. You can skip any line or skip the whole lesson. Today’s catch and costs stay here; your full starting funds wait for day 1.</p>' : ''}</article>${introChart}<div class="choices intro-choices"></div>`;
+  if (ui.screen === 'introchart') {
+    const surface =
+      chartMode(ui) === 'vector'
+        ? sectorChartSvg(w.terrain, {
+            boat: w.boat,
+            rocks: w.rocks || [],
+            ariaLabel:
+              'Vector chart of Frank’s cove: your boat, marked shelf northwest, uncharted eastern shore',
+          })
+        : '<canvas class="intro-chart" width="520" height="520" aria-label="Chart of Frank’s cove: your boat, marked shelf northwest, uncharted eastern shore"></canvas>';
+    ui.panel.innerHTML = `<div class="day-heading"><div><div class="eyebrow">DAY 0 · FRANK’S COVE</div><h2>Our little fishery</h2></div>${chartModeMarkup(ui)}</div><div class="intro-chart-workspace"><div class="intro-chart-surface">${surface}<p class="map-caption">North ↑ · 240 m across<br>Gold ring: your boat · Green: known ground · Pink ×: charted rocks<br>Unmarked rocks and floating logs are not plotted.</p></div><article class="intro-chart-brief"><div class="eyebrow">YOUR NEXT TASK</div><h3>${lesson(w)[0]}</h3><p>${lesson(w)[1]}</p><details class="skipper-note" open><summary>Frank’s note</summary><p>${INTRO_NOTES[w.career.intro.step]}</p></details><div class="choices intro-choices"></div></article></div>`;
+    const canvas = ui.panel.querySelector('.intro-chart');
+    if (canvas) paintSectorMap(canvas, w.terrain, { boat: w.boat, rocks: w.rocks || [] });
+    bindChartModeToggle(ui.panel, ui);
+    appendChoices(ui.panel.querySelector('.choices'), ui, w, introChoices(ui));
+    return;
+  }
+  ui.panel.innerHTML = `<div class="day-heading"><div><div class="eyebrow">DAY 0 · FRANK’S COVE</div><h2>${briefing ? 'A talking to by Frank' : ui.screen === 'introchart' ? 'Our little fishery' : 'A moment aboard'}</h2></div></div><article class="intro-copy"><img class="frank-portrait" src="./assets/harbour/frank-v1.png" alt="Frank, your investor"/><p>${briefing ? 'I’m Frank, your investor. I’ve put STARTING_FUNDS behind you. First, come aboard my loan boat for a quiet morning: we’ll steer, find urchins, and bring our divers home.' : lesson(w)[1]}</p>${briefing ? '<p>Take your time. You can skip a step or the whole lesson. Today’s catch and costs stay here; your full starting funds wait for day 1.</p>' : ''}</article>${!briefing ? `<details class="skipper-note" open><summary>Frank’s note · ${INTRO_STEPS[w.career.intro.step][0]}</summary><p>${INTRO_NOTES[w.career.intro.step]}</p></details>` : ''}<div class="choices intro-choices"></div>`;
   ui.panel.innerHTML = ui.panel.innerHTML.replace('STARTING_FUNDS', money(ECONOMY.startCash));
-  const canvas = ui.panel.querySelector('.intro-chart');
-  if (canvas) paintSectorMap(canvas, w.terrain, { boat: w.boat, rocks: w.rocks || [] });
-  if (ui.screen === 'introchart') bindChartModeToggle(ui.panel, ui);
   appendChoices(ui.panel.querySelector('.choices'), ui, w, introChoices(ui));
 }
 export function updateIntro(ui, w, actions, dt = 0) {
@@ -140,14 +150,7 @@ export function updateIntro(ui, w, actions, dt = 0) {
   }
   if (!active) return;
   const step = w.career.intro.step;
-  const spoken = (
-    lesson(w)[1] +
-    (step === 9
-      ? w.career.difficulty === 'realistic'
-        ? ' Realistic: your engine must beat the wind to reverse off rocks. Wait for calmer weather or a rising tide if it cannot.'
-        : ' Easy: hold reverse to limp into deeper water. A drying basin still needs a rising tide.'
-      : '')
-  ).replace(/\{(\w+)\}/g, (_, action) => ui.input.label(action));
+  const spoken = lesson(w)[1].replace(/\{(\w+)\}/g, (_, action) => ui.input.label(action));
   const hint = step === 7 && w.career.intro.scoutSeconds >= 60;
   const signature = `${step}:${w.career.intro.prepIndex || 0}:${ui.input.lastDevice}:${!!w.emergency}:${hint}`;
   if (panel.dataset.signature === signature) {
@@ -155,7 +158,7 @@ export function updateIntro(ui, w, actions, dt = 0) {
     return;
   }
   panel.dataset.signature = signature;
-  panel.innerHTML = `<div class="frank-line"><img src="./assets/harbour/frank-v1.png" alt="Frank aboard"/><div><strong>Frank · ${trainingPreparation(w) ? `Equipment ${w.career.intro.prepIndex + 1}/${trainingLessons(w).length}` : `${step + 1}/${INTRO_STEPS.length}`} · ${lesson(w)[0]}</strong><p>${w.emergency ? 'Let’s stop here and start fresh at harbour. You can skip the lesson without losing your starting funds.' : spoken}</p></div></div><div class="frank-buttons"><button data-intro="chart">Chart</button><button data-intro="next" ${step === 9 ? 'disabled' : ''}>${step === 9 ? 'Drive through SOUTH edge' : trainingPreparation(w) ? 'Continue' : 'Skip this step'}</button><button data-intro="skip">${w.career.trainingReplay ? 'Leave training' : 'Skip tutorial'}</button></div>`;
+  panel.innerHTML = `<div class="frank-line"><img src="./assets/harbour/frank-v1.png" alt="Frank aboard"/><div><strong>Frank · ${trainingPreparation(w) ? `Equipment ${w.career.intro.prepIndex + 1}/${trainingLessons(w).length}` : `${step + 1}/${INTRO_STEPS.length}`} · ${lesson(w)[0]}</strong><p>${w.emergency ? 'Let’s stop here and start fresh at harbour. You can skip the lesson without losing your starting funds.' : spoken}</p></div></div><div class="frank-buttons"><button data-intro="chart">Chart & notes</button><button data-intro="next" ${step === 9 ? 'disabled' : ''}>${step === 9 ? 'Drive through SOUTH edge' : trainingPreparation(w) ? 'Continue' : 'Skip this step'}</button><button data-intro="skip">${w.career.trainingReplay ? 'Leave training' : 'Skip tutorial'}</button></div>`;
   panel.scrollTop = 0;
   panel.querySelector('[data-intro="chart"]').onclick = () => ui.open('introchart');
   panel.querySelector('[data-intro="next"]').onclick = () => {

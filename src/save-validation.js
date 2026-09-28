@@ -232,6 +232,34 @@ export function validateSnapshot(data) {
   }
   for (const d of data.divers) {
     assert(
+      d.deckWalkStarted == null || finite(d.deckWalkStarted, 0, data.time + 0.001),
+      'diver deck arrival',
+    );
+    if (d.transit != null) {
+      const transit = d.transit;
+      assert(
+        ['descent', 'ascent'].includes(transit.kind) &&
+          finite(transit.depth, 0, 1000) &&
+          finite(transit.total, 0.01, 120) &&
+          finite(d.timer, -1, transit.total + 0.001),
+        'diver water-column transit',
+      );
+      if (transit.kind === 'descent')
+        assert(
+          typeof transit.fromDeck === 'boolean' &&
+            finite(transit.prepareSeconds, 0, transit.total) &&
+            finite(transit.entrySeconds, 0, transit.total) &&
+            transit.prepareSeconds + transit.entrySeconds <= transit.total &&
+            finite(transit.heading),
+          'diver entry sequence',
+        );
+      if (transit.deckStart != null)
+        assert(
+          finite(transit.deckStart.side, -100, 100) && finite(transit.deckStart.aft, -100, 100),
+          'diver deck departure',
+        );
+    }
+    assert(
       d.maxBagSeconds === undefined || [0, 20, 30, 45, 60, 90].includes(d.maxBagSeconds),
       'diver bag time order',
     );

@@ -1,3 +1,5 @@
+import { learningInterfaceChecks } from './learning-interface-checks.js';
+import { diverOperationsChecks } from './diver-operations-checks.js';
 import { trafficCoastingChecks } from './traffic-coasting-checks.js';
 import { september25Checks } from './september25-checks.js';
 import { september21Checks } from './september21-checks.js';
@@ -49,11 +51,21 @@ mkdirSync('test-results', { recursive: true });
 const browserType = process.env.URCHIN_TEST_BROWSER === 'firefox' ? firefox : chromium;
 const launchOptions = {
   headless: true,
-  ...(browserType === chromium ? { args: ['--no-sandbox'] } : {}),
+  ...(browserType === chromium
+    ? {
+        args: [
+          '--no-sandbox',
+          ...(process.env.URCHIN_HARDWARE === '1' ? ['--enable-gpu', '--use-angle=vulkan'] : []),
+        ],
+      }
+    : {}),
 };
 let browser = await browserType.launch(launchOptions);
 try {
-  if (process.argv.includes('--september25-only')) await september25Checks(browser);
+  if (process.argv.includes('--diver-operations-only')) await diverOperationsChecks(browser);
+  else if (process.argv.includes('--learning-interface-only'))
+    await learningInterfaceChecks(browser);
+  else if (process.argv.includes('--september25-only')) await september25Checks(browser);
   else if (process.argv.includes('--traffic-coasting-only')) await trafficCoastingChecks(browser);
   else if (process.argv.includes('--tablet-feedback-only')) await tabletFeedbackChecks(browser);
   else if (process.argv.includes('--crew-coasts-only')) await crewCoastsChecks(browser);

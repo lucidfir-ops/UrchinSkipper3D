@@ -329,6 +329,26 @@ export const CREW = [
 ];
 export const UPGRADES = [
   {
+    id: 'engine',
+    name: 'Working engine repower',
+    price: 9800,
+    rank: 0,
+    slot: 'drive',
+    fixed: true,
+    detail:
+      'A matched engine and cooling package for this hull: 15% more speed at every load and 20% stronger acceleration. Passage and local fuel use rise 18%. Keeps the boat’s drive type, turning character and shallow-water limits. Permanent installation; does not repair existing drive damage.',
+  },
+  {
+    id: 'fuel-system',
+    name: 'Fuel management package',
+    price: 2400,
+    rank: 0,
+    slot: 'drive',
+    fixed: true,
+    detail:
+      'Matched injectors, filtration and fuel metering reduce fuel use by 12% at sea and on passages. Works with the standard engine or the repower. Permanent installation; tank capacity and speed stay the same.',
+  },
+  {
     id: 'clock-brass',
     name: 'Brass wheel clock',
     price: 120,
@@ -369,7 +389,7 @@ export const UPGRADES = [
     name: 'Nitrox dive system',
     price: 85000,
     rank: 2,
-    slot: 'working deck',
+    slot: 'dive gear',
     detail:
       'Premium dive-gas system: 60% more fictional depth-time allowance and 20% longer tank endurance. Adds one second to each entry from deck. Surface recovery still matters.',
   },
@@ -404,7 +424,7 @@ export const UPGRADES = [
     slot: 'working deck',
     name: 'Hydraulic bag hauler',
     price: 3400,
-    rank: 1,
+    rank: 0,
     detail: 'Shortens bag handling from 3 to 2.2 seconds.',
   },
   {

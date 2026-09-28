@@ -376,7 +376,9 @@ body #playtest .orders-help [data-order='apply'] {
 }
 body #playtest .crew-card {
   display: grid;
-  grid-template-rows: 82px auto auto;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 82px max-content max-content;
+  height: max-content;
   align-content: start;
   justify-items: center;
   gap: 4px;
@@ -392,6 +394,13 @@ body #playtest .crew-card :is(svg, .crew-portrait-image) {
 }
 body #playtest .crew-card > span {
   font-size: 14px;
+}
+body #playtest .crew-card > :is(span, small) {
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 body #playtest .crew-card small {
   font-size: 11px;
@@ -1203,5 +1212,107 @@ body.touchscreen #startup .title-choices button:nth-child(n + 5) {
   body #startup * {
     scroll-behavior: auto;
     transition: none;
+  }
+}
+
+/* Stable native range: dragging never remounts the input or loses capture. */
+body #playtest .menu-volume {
+  padding: 12px 14px;
+  background: #ffffff05;
+  border: 1px solid #7caa9633;
+  border-radius: 9px;
+}
+body #playtest .menu-volume label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+}
+body #playtest .menu-volume output {
+  color: #f3d6a0;
+  font-variant-numeric: tabular-nums;
+}
+body #playtest .menu-volume input {
+  display: block;
+  width: 100%;
+  margin: 4px 0;
+  min-height: 34px;
+  accent-color: #e8c584;
+}
+body #playtest .menu-volume input.selected,
+body #playtest .menu-volume input:focus-visible {
+  outline: 2px solid #e8c584;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+body #playtest .menu-volume small {
+  color: #abc0b8;
+  font-size: 11px;
+}
+body #playtest .skipper-note {
+  margin: 10px 0;
+  padding: 12px 16px;
+  border: 1px solid #7caa9644;
+  border-radius: 9px;
+}
+body #playtest .skipper-note summary {
+  color: #e8c584;
+  cursor: pointer;
+  font-weight: 600;
+}
+body #playtest .skipper-note p {
+  color: #c7d8d0;
+  line-height: 1.55;
+  max-width: 75ch;
+}
+/* Short lessons give the water back to the player; saved custom sizes win. */
+body #frankAboard[data-hud-window][data-default-position] {
+  height: auto !important;
+  max-height: var(--default-height) !important;
+}
+body #playtest .intro-chart-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(230px, 1fr);
+  align-items: start;
+  gap: 24px;
+}
+body #playtest .intro-chart-surface :is(canvas, svg) {
+  width: 100%;
+  max-width: none;
+  height: auto;
+  aspect-ratio: 1;
+  display: block;
+  margin: 0;
+}
+body #playtest .intro-chart-brief {
+  min-width: 0;
+}
+body #playtest .intro-chart-brief > p {
+  line-height: 1.6;
+}
+body #playtest .intro-chart-brief .skipper-note {
+  padding: 12px;
+}
+body #playtest .intro-chart-brief .skipper-note p {
+  font-size: 12px;
+  line-height: 1.55;
+}
+@media (max-width: 650px) {
+  body #playtest .intro-chart-workspace {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+  body #playtest .intro-chart-surface {
+    max-width: 440px;
+    margin: auto;
+  }
+}
+/* On a short touch screen, the live recovery cue and labelled action buttons
+   replace the generic helm primer until the operation is finished. */
+@media (max-height: 500px) {
+  body.touch-playing:has(#message[data-context='active']:not([hidden]))
+    #help[data-default-position] {
+    display: none;
   }
 }

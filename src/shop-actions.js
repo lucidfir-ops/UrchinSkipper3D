@@ -1,8 +1,10 @@
-import { FLEET, FLEET_ORDER, UPGRADES, money } from './career-data.js';
+import { FLEET, FLEET_ORDER, money } from './career-data.js';
 import { boatDefinition } from './boats.js';
 import { buyVessel, buyEquipment, equipment } from './career-state.js';
 import { STARTER_BOATS, chooseFirstBoat } from './starter-career.js';
 import { confirmPurchase } from './purchase.js';
+import { equipmentCatalog, equipmentAvailability } from './equipment-fit.js';
+import { equipmentPurchaseDetail } from './equipment-view.js';
 
 export const SHOP_SCREENS = ['starter', 'fleet', 'boatshop', 'outfit'];
 export const shopField = (screen) =>
@@ -17,7 +19,7 @@ export function shopActions(ui, w) {
     outfit = ui.screen === 'outfit',
     field = shopField(ui.screen),
     items = outfit
-      ? UPGRADES
+      ? equipmentCatalog()
       : (starter ? STARTER_BOATS : FLEET_ORDER).map((id) => ({
           id,
           ...FLEET[id],
@@ -28,7 +30,8 @@ export function shopActions(ui, w) {
       outfit
         ? equipment(w).includes(id)
         : !starter && w.career.fleet[id] && !w.career.fleet[id].lost,
-    available = !!selected && !owned(selected.id),
+    available =
+      !!selected && !owned(selected.id) && (!outfit || equipmentAvailability(w, selected).ok),
     buy = () => {
       if (!available) return;
       const id = selected.id;
@@ -45,7 +48,9 @@ export function shopActions(ui, w) {
           }
           return result;
         },
-        'Check the item and price. Your money is only committed when you confirm.',
+        outfit
+          ? equipmentPurchaseDetail(w, selected)
+          : 'Check the item and price. Your money is only committed when you confirm.',
       );
     },
     purchase = (id, label, placement) => ({ id, label, run: buy, disabled: !available, placement });
@@ -53,20 +58,12 @@ export function shopActions(ui, w) {
     ...(!starter
       ? [{ id: 'your-boat', label: 'Your boat', run: () => ui.open('yourboat'), placement: 'top' }]
       : []),
-    purchase(
-      'buy-top',
-      selected
-        ? outfit
-          ? 'Buy selected equipment'
-          : 'Buy selected boat'
-        : outfit
-          ? 'Pick equipment first'
-          : 'Pick a boat first',
-      'top',
-    ),
+    ...(!outfit
+      ? [purchase('buy-top', selected ? 'Buy selected boat' : 'Pick a boat first', 'top')]
+      : []),
     ...items.map((item) => ({
       id: `${starter ? 'starter' : outfit ? 'equipment' : 'buy'}-${item.id}`,
-      label: `${starter ? 'Choose ' : ''}${item.name} · ${owned(item.id) ? (outfit ? 'Fitted' : 'Owned') : money(item.price)}`,
+      label: `${starter ? 'Choose ' : ''}${item.name} · ${owned(item.id) ? (outfit && item.slot !== 'timepiece' ? 'Installed' : 'Owned') : money(item.price)}${outfit && !equipmentAvailability(w, item).ok ? ` · ${equipmentAvailability(w, item).label}` : ''}`,
       run: () => {
         ui[field] = item.id;
       },
@@ -74,12 +71,28 @@ export function shopActions(ui, w) {
       preview: true,
       selected: selected?.id === item.id,
     })),
-    purchase('buy-inline', 'Buy', 'inline'),
+    purchase(
+      'buy-inline',
+      outfit
+        ? selected && owned(selected.id)
+          ? 'Installed'
+          : selected && !equipmentAvailability(w, selected).ok
+            ? equipmentAvailability(w, selected).label
+            : 'Buy & fit'
+        : 'Buy',
+      'inline',
+    ),
     purchase(
       'buy-selected',
       selected
         ? outfit
-          ? 'Buy selected equipment'
+          ? owned(selected.id)
+            ? selected.slot === 'timepiece'
+              ? 'Clock face owned'
+              : 'Installed on this boat'
+            : equipmentAvailability(w, selected).ok
+              ? 'Buy selected equipment'
+              : equipmentAvailability(w, selected).label
           : 'Buy selected boat'
         : outfit
           ? 'Pick equipment first'

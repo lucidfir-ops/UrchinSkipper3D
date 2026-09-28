@@ -5,6 +5,7 @@ import { seededRandom } from './math.js';
 import { diverSpec } from './crew.js';
 import { gear } from './assists.js';
 import { godmode } from './godmode.js';
+import { diverDepth, diveTransit } from './diver-motion.js';
 
 // Fictional game balance, NOT US Navy tables or real-world dive guidance.
 // All durations below are accelerated game minutes. See docs/DIVE_EXPOSURE.md.
@@ -68,7 +69,7 @@ export function diveForecast(w, d, depth = d.lastDiveDepth ?? depthAt(w, d.x, d.
   const rate = d.patch?.rate || d.lastPatchRate || 10;
   const bagSeconds =
     Math.max(C.diver.bagSize / (rate * diverSpec(d).harvestRate) + 12, d.lastFullBagSeconds || 0) +
-    C.diver.deploySeconds +
+    diveTransit(w, d, true, depth).total +
     C.diver.warningSeconds;
   const budget = depthBudget(depth) * nitroxFactor(w);
   const required = ((bagSeconds * C.day.minutesPerSecond) / budget) * 1.09;
@@ -116,7 +117,9 @@ export function stepDiveExposure(w, d, dt) {
   // Transit and other skipped clock intervals are surface time, not extra bottom work.
   recover(h, Math.max(0, clock - h.clock - minutes));
   h.clock = Math.max(h.clock, clock);
-  const underwater = ['searching', 'harvesting', 'surfacing'].includes(d.state);
+  const underwater =
+    ['searching', 'harvesting', 'surfacing'].includes(d.state) ||
+    (d.state === 'deploying' && d.transit?.kind === 'descent' && diverDepth(w, d) > 0.05);
   if (!underwater || d.condition === 'deceased') {
     recover(h, minutes);
     applyDiveInjury(w, d);

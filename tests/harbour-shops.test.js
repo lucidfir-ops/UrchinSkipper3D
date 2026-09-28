@@ -5,7 +5,7 @@ import { createCareer } from '../src/career-state.js';
 import { careerWorld, encode, decode } from '../src/career-save.js';
 import { careerActions, careerActivate } from '../src/career-actions.js';
 import { FLEET } from '../src/career-data.js';
-import { tickIntroHint, INTRO_STEPS } from '../src/career-intro.js';
+import { tickIntroHint, INTRO_STEPS, INTRO_NOTES } from '../src/career-intro.js';
 import { patchOutline, patchLabelAnchor } from '../src/patch-style.js';
 import { choices } from '../src/screen-actions.js';
 import { chooseFirstBoat } from '../src/starter-career.js';
@@ -44,8 +44,9 @@ test('Frank hint counts only active step-8 time, survives reload and never repea
   w.career.intro.step = 8;
   assert(!tickIntroHint(w, 100, true));
   assert.match(INTRO_STEPS[7][1], /5–11 m/);
-  assert.match(INTRO_STEPS[8][1], /Recording chartplotter/);
-  assert.match(INTRO_STEPS[8][1], /5 m and 25 m/);
+  assert.match(INTRO_NOTES[8], /Recording chartplotter/);
+  assert.doesNotMatch(INTRO_STEPS[8][1], /Recording chartplotter/);
+  assert.match(INTRO_NOTES[7], /5–25 m/);
 });
 
 test('patch labels stay above the entire rendered outline at close and wide zoom', () => {

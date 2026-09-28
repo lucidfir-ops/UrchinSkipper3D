@@ -6,11 +6,15 @@
 
 - `three/world.js`: physical depth sampling, tide-relative coast/bed, depth-aware water, spatially batched plants and stone. Decorative geometry never participates in contact resolution.
 - `three/coastal-life.js`: driftwood and wildlife presentation from existing actor state.
-- `three/vessels.js`: dimensioned hulls and working decks, family-specific drives, deck crew/catch, wakes, surface swimmers, floats and bubble-only submerged divers, traffic interpolation, lights and safety cues.
+- `three/vessels.js`: dimensioned hulls and working decks, family-specific drives, deck crew/catch, wakes, articulated divers through the near-surface water column, floats/bubbles, traffic interpolation, lights and safety cues.
 - `three/navigation.js`: known-ground outlines/labels, information legend, diagnostic chart and rotating port/stern tutorial guides, governed by existing assists.
 - `three/presentation.css`: additive interface skin. `hud-defaults.js` adapts first-use desktop positions; saved player layouts and touch defaults retain precedence.
 
 At sea the camera is rigid orthographic, north-up, following the actual vessel. The title uses a separate presentation-only world for a coastal vignette; it cannot move a player's boat, consume fuel or change a save. Tide translates the visible seabed relative to the y=0 water plane. All horizontal coordinates remain metres: Three x = simulation x; Three z = simulation y; heading zero points toward -z.
+
+The September 28 working-boat revision adds `equipment-fit.js` for compatibility, installation stations and effective previews; `three/fitting-preview.js` reuses the actual vessel factory with one offscreen renderer and cached 2D snapshots. `fleet-profiles.js` explicitly represents all twelve career hulls; `traffic-profiles.js` retains all twenty-five original traffic art identities. Station groups locate compatible equipment without limiting its count. Fixed engine/fuel installations compose in `boatSpec`, including passage consumption.
+
+`diver-motion.js` supplies physical poses from authoritative state and persisted descent/ascent metadata. Simulation still owns eligibility, air/exposure, approach, timers and catch. The port ladder and contextual sector share that recovery location. The short boarding climb occurs inside the established recovery duration; the ready-state deck walk is presentation only and cannot block redeployment. `water-optics.js` supplies shared per-fragment green absorption for people/kelp and repeating daily sunlight. Physical visibility does not bypass the independent Easy/Realistic information entitlements. See [design and review evidence](docs/review/cohesive-operations-2026-09-28.md).
 
 ## Storage and project isolation
 

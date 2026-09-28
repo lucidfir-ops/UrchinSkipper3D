@@ -1,3 +1,4 @@
+import { offloadWindow } from '../src/offload.js';
 import './matter-helper.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -288,3 +289,13 @@ test('selfish rival identity is persistent; ordinary routes increasingly cross w
 });
 test('new browser day pace defaults to plus fifty percent', () =>
   assert.equal(DEFAULT_TIME_INCREASE, 50));
+
+test('morning offload windows include their exact opening and advance safely across multi-day trips', () => {
+  assert.equal(offloadWindow(1140), 1140);
+  assert.equal(offloadWindow(1141), 1800);
+  assert.equal(offloadWindow(1799), 1800);
+  assert.equal(offloadWindow(1800), 1800);
+  assert.equal(offloadWindow(1801), 3240);
+  assert.equal(offloadWindow(3240), 3240);
+  assert.equal(offloadWindow(3241), 4680);
+});

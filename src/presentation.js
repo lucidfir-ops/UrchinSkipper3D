@@ -1,8 +1,9 @@
 import { engineState } from './operating-state.js';
 import { recallStatus } from './diver-recall.js';
-import { pickupTolerance } from './assists.js';
+import { assist, pickupTolerance } from './assists.js';
 import { C } from './config.js';
 import { clamp } from './math.js';
+import { diverMotion, DIVER_MOTION, portRecoveryPoint } from './diver-motion.js';
 import {
   recoveryStatus,
   recoveryDuration,
@@ -47,7 +48,11 @@ export function feedbackText(text, realistic = false) {
 }
 export function diverVisual(d) {
   return {
-    bubbles: ['deploying', 'searching', 'harvesting', 'surfacing'].includes(d.state),
+    bubbles:
+      ['searching', 'harvesting', 'surfacing'].includes(d.state) ||
+      (d.state === 'deploying' &&
+        (!d.transit?.fromDeck ||
+          d.transit.total - d.timer >= d.transit.prepareSeconds + d.transit.entrySeconds)),
     surface: d.state === 'surface',
     aboard: d.state === 'ready',
   };
@@ -92,12 +97,22 @@ export function playState(
 ) {
   const r = recoveryStatus(w, tolerance, d),
     waiting = diverVisual(d).surface,
-    duration = recoveryDuration(d);
+    duration = recoveryDuration(d),
+    motion = diverMotion(w, d);
   const operation = d.recoveryAction === 'recoverDiver' ? 'DIVER + BAG RECOVERY' : 'BAG TURNAROUND';
+  let remaining = Math.max(0, duration - d.hook);
+  if (motion.phase === 'approaching' && d.recoveryAction === 'recoverDiver') {
+    const ladder = portRecoveryPoint(w);
+    remaining = Math.max(
+      remaining,
+      Math.hypot(d.x - ladder.x, d.y - ladder.y) / DIVER_MOTION.recoverySwimSpeed +
+        DIVER_MOTION.climbSeconds,
+    );
+  }
   let status;
   if (waiting) {
     if (d.hooking && r.available)
-      status = `${operation} — ${Math.max(0, duration - d.hook).toFixed(1)}s`;
+      status = `${motion.phase === 'boarding' ? 'CLIMBING PORT LADDER' : motion.phase === 'approaching' ? 'SWIMMING TO PORT LADDER' : operation} — ${remaining.toFixed(1)}s`;
     else if (d.hooking || d.recoveryPause || d.hook > 0)
       status = `RECOVERY PAUSED — ${r.reason || d.recoveryPause || 'PLAYER PAUSED'}`;
     else
@@ -115,9 +130,9 @@ export function playState(
           ? 'INJURED DIVER ABOARD — RETURN TO HARBOUR'
           : 'DIVER ABOARD — CHOOSE A DROP',
       fatality: 'DIVER FATALITY — RADIO FOR EMERGENCY ASSISTANCE',
-      deploying: `DIVER DEPLOYING — ${Math.max(0, d.timer).toFixed(1)}s`,
-      searching: 'DIVER UNDERWATER — BUBBLES ONLY',
-      harvesting: 'DIVER UNDERWATER — BUBBLES ONLY',
+      deploying: `${motion.phase === 'preparing' ? 'CHECKING KIT AT PORT (LEFT) RAIL' : motion.phase === 'entering' ? 'DIVER ENTERING THE WATER' : 'DIVER DESCENDING'} — ${Math.max(0, d.timer).toFixed(1)}s`,
+      searching: 'DIVER SEARCHING UNDERWATER — WATCH THE BUBBLES',
+      harvesting: 'DIVER WORKING UNDERWATER — WATCH THE BUBBLES',
       surfacing: `DIVER SURFACING — ${Math.max(0, d.timer).toFixed(1)}s`,
     }[d.state];
   if (!realistic && ['surface', 'surfacing'].includes(d.state) && d.reason && !d.hooking)
@@ -163,7 +178,9 @@ export function playState(
       });
   }
   const observable =
-    !realistic || d.state === 'ready' || (waiting && r.distance <= C.recovery.tolerance + 3);
+    assist(w, 'diverIndicators', realistic) ||
+    d.state === 'ready' ||
+    (waiting && r.distance <= C.recovery.tolerance + 3);
   if (!observable) status = 'WATCH BUBBLES / MANEUVER ALONGSIDE';
   if (w.day.dump) status = `DUMPING BAG — ${w.day.dump.remaining.toFixed(1)}s`;
   return {
@@ -182,7 +199,7 @@ export function playState(
       : waiting && d.hook > 0
         ? Math.min(1, d.hook / duration)
         : d.state === 'deploying'
-          ? 1 - d.timer / C.diver.deploySeconds
+          ? Math.max(0, Math.min(1, 1 - d.timer / (d.transit?.total || C.diver.deploySeconds)))
           : null,
     controls: lockReason
       ? `CONTROLS LOCKED: ${lockReason}`

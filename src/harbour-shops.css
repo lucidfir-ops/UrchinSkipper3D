@@ -212,3 +212,271 @@ body #playtest.shop-panel .shop-purchase-footer button {
   width: auto;
   text-align: center;
 }
+
+/* The boat plan is a physical address book, not a limited equipment grid. */
+body #playtest .equipment-icon {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  color: #bbcfb7;
+}
+body #playtest.shop-panel .shop-row .shop-equipment-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  padding: 12px;
+  height: auto;
+}
+body #playtest.shop-panel .shop-row.is-preview .shop-equipment-card {
+  padding-right: 90px;
+}
+body #playtest.shop-panel[data-screen='outfit'] .shop-inline-buy {
+  width: 78px;
+  font-size: 12px;
+}
+.shop-equipment-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.shop-equipment-copy strong {
+  font-size: 15px;
+}
+.shop-equipment-copy small,
+.shop-equipment-state {
+  font-size: 11px;
+  line-height: 1.4;
+}
+.shop-equipment-copy small {
+  color: #b2c1bd;
+}
+.shop-equipment-state.available,
+.equipment-status.available {
+  color: #bfddb0;
+}
+.shop-equipment-state.owned,
+.equipment-status.owned {
+  color: #acd8d4;
+}
+.shop-equipment-state.unavailable,
+.equipment-status.unavailable {
+  color: #ddbf8e;
+}
+.equipment-detail-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.equipment-detail-title small {
+  color: #b9c8c1;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+body #playtest .equipment-detail-title h3 {
+  margin: 3px 0 0;
+}
+body #playtest .equipment-status {
+  margin: 14px 0;
+  padding: 8px 12px;
+  border-left: 3px solid currentColor;
+  background: #ffffff08;
+  font-weight: 650;
+}
+.equipment-comparison {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin: 14px 0;
+}
+.equipment-comparison th,
+.equipment-comparison td {
+  padding: 8px 6px;
+  border-bottom: 1px solid #8baba72c;
+  text-align: left;
+}
+.equipment-comparison thead th {
+  color: #a9bfb8;
+  font-weight: 500;
+}
+.equipment-comparison tbody th {
+  font-weight: 500;
+}
+.equipment-comparison td:last-child {
+  color: #e8d8a8;
+  font-weight: 650;
+}
+.equipment-map {
+  display: block;
+  width: 100%;
+  max-width: 230px;
+  background: #10282c;
+  border: 1px solid #91bba433;
+  border-radius: 10px;
+}
+.equipment-map text {
+  fill: #b0c3b8;
+  font: 8px system-ui;
+  letter-spacing: 0.5px;
+}
+.equipment-map-station circle {
+  fill: #17383c;
+  stroke: #729990;
+}
+.equipment-map-station.fitted circle {
+  fill: #436b61;
+  stroke: #c0d5b9;
+}
+.equipment-map-station.preview circle {
+  fill: #e7bd74;
+  stroke: #fff0c3;
+  stroke-width: 2;
+}
+.equipment-map-station.preview text {
+  fill: #182c2a;
+  font-weight: 800;
+}
+.equipment-placement,
+.equipment-plan-layout {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.7fr) minmax(130px, 1fr);
+  align-items: start;
+  gap: 18px;
+  margin: 18px 0;
+}
+.equipment-placement h4,
+.equipment-station h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 10px;
+  color: #e0d5b5;
+  font-size: 13px;
+}
+.equipment-placement h4 b,
+.equipment-station h4 b {
+  display: inline-grid;
+  place-items: center;
+  width: 23px;
+  height: 23px;
+  flex-shrink: 0;
+  border: 1px solid #a9c5b2;
+  border-radius: 50%;
+  color: #c4d8c9;
+  font-size: 12px;
+}
+.equipment-station {
+  padding: 0 0 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #8baba72c;
+}
+body #playtest .equipment-station p {
+  margin: 7px 0;
+  font-size: 12px;
+}
+.equipment-station p strong,
+.equipment-station p span {
+  display: block;
+}
+.equipment-station span,
+.equipment-station small,
+.equipment-placement small,
+.equipment-ownership {
+  color: #acbdb6;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.equipment-price {
+  padding-top: 12px;
+  border-top: 1px solid #8baba72c;
+}
+body #playtest .fitting-preview {
+  margin: 16px 0;
+  overflow: hidden;
+  border: 1px solid #8da99444;
+  border-radius: 10px;
+  background: #112a30;
+}
+body #playtest .fitting-preview canvas {
+  width: 100%;
+  height: auto;
+  max-height: 225px;
+  object-fit: contain;
+  cursor: grab;
+  touch-action: pan-y;
+}
+body #playtest .fitting-preview canvas:active {
+  cursor: grabbing;
+}
+body #playtest .fitting-preview canvas:focus-visible {
+  outline: 2px solid #e8ce91;
+  outline-offset: -3px;
+}
+.fitting-preview-caption {
+  padding: 9px 12px;
+  border-top: 1px solid #8da99433;
+  color: #bbccc3;
+  font-size: 10px;
+  line-height: 1.5;
+}
+.fitting-preview-caption b {
+  color: #e7ce91;
+  letter-spacing: 0.05em;
+}
+.fitting-preview-caption span {
+  display: block;
+  color: #96b0a4;
+}
+body #playtest.shop-panel[data-screen='outfit'] .day-heading {
+  margin-bottom: 8px;
+}
+body #playtest.shop-panel[data-screen='outfit'] .day-heading h2 {
+  font-size: 28px;
+  margin: 7px 0 10px;
+}
+body #playtest.shop-panel[data-screen='outfit'] > .screen-navigation {
+  margin-bottom: 10px;
+}
+body #playtest.shop-panel[data-screen='outfit'] .career-detail {
+  padding: 16px;
+}
+body #playtest.shop-panel[data-screen='outfit'] .equipment-status {
+  margin: 10px 0;
+  padding: 6px 10px;
+}
+body #playtest .equipment-benefit {
+  margin: 8px 0;
+  color: #e5dbbd;
+  font-size: 13px;
+  line-height: 1.4;
+}
+@media (min-width: 1000px) {
+  body #playtest.shop-panel[data-screen='outfit'] .shop-toolbar {
+    position: absolute;
+    top: 108px;
+    right: 28px;
+    margin: 0;
+  }
+  body #playtest.shop-panel[data-screen='outfit'] .day-heading {
+    min-height: 72px;
+    padding-right: 175px;
+  }
+}
+@media (max-width: 600px) {
+  body #playtest .equipment-placement,
+  body #playtest .equipment-plan-layout {
+    grid-template-columns: minmax(95px, 0.7fr) minmax(110px, 1fr);
+    gap: 10px;
+  }
+  body #playtest .equipment-comparison {
+    font-size: 11px;
+  }
+  body #playtest.shop-panel .shop-row .shop-equipment-card {
+    gap: 8px;
+    padding: 9px;
+  }
+  body #playtest.shop-panel .shop-row.is-preview .shop-equipment-card {
+    padding-right: 90px;
+  }
+}

@@ -116,9 +116,9 @@ export function coastalTextures() {
     }
   }
   const waveFields = [
-    [8, 61],
-    [21, 79],
-    [43, 113],
+    [19, 37],
+    [43, 59],
+    [79, 97],
   ].map(([nx, ny]) => ({ nx, ny, grid: Float32Array.from({ length: nx * ny }, random) }));
   const waveAt = (field, x, y) => {
     const px = (x / size) * field.nx,

@@ -2,6 +2,8 @@ import { choiceButton } from './menu-buttons.js';
 import { paintVesselPreviews, vesselPreview } from './vessel-art.js';
 import { FLEET, UPGRADES, money } from './career-data.js';
 import { boatDefinition } from './boats.js';
+import { equipmentAvailability, equipmentGroup, equipmentLocation } from './equipment-fit.js';
+import { equipmentIcon } from './equipment-view.js';
 
 // Two sibling buttons form one card. Real nested <button> elements lose click
 // ownership and accessibility; Buy is an independent, controller-reachable action.
@@ -33,10 +35,7 @@ export function renderShopChoices(ui, w, actions) {
     else if (action.placement === 'bottom') footer.append(button);
     else if (action.preview) {
       if (ui.screen === 'outfit') {
-        const group =
-          UPGRADES.find((i) => i.id === action.equipmentId)?.slot === 'timepiece'
-            ? 'Timepiece'
-            : 'Working equipment';
+        const group = equipmentGroup(UPGRADES.find((i) => i.id === action.equipmentId));
         if (list.dataset.group !== group) {
           const h = document.createElement('h3');
           h.textContent = group;
@@ -49,6 +48,13 @@ export function renderShopChoices(ui, w, actions) {
       row.classList.toggle('is-preview', !!action.selected);
       button.classList.add('shop-inspect');
       button.setAttribute('aria-pressed', String(!!action.selected));
+      if (action.equipmentId) {
+        const item = UPGRADES.find((candidate) => candidate.id === action.equipmentId);
+        const status = equipmentAvailability(w, item);
+        button.classList.add('shop-equipment-card');
+        button.setAttribute('aria-label', action.label);
+        button.innerHTML = `${equipmentIcon(item)}<span class="shop-equipment-copy"><strong>${item.name}</strong><small>${equipmentLocation(item)} · ${money(item.price)}</small><span class="shop-equipment-state ${status.owned ? 'owned' : status.ok ? 'available' : 'unavailable'}">${status.label}</span></span>`;
+      }
       if (action.boatId) {
         const boat = FLEET[action.boatId],
           name = boatDefinition(action.boatId).name;

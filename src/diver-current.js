@@ -27,6 +27,7 @@ export function driftUnderwater(w, d, dt) {
 export function moveOnBottom(w, d, x, y) {
   let dx = x - d.x,
     dy = y - d.y;
+  if (Math.hypot(dx, dy) > 1e-7) d.motionHeading = Math.atan2(dx, -dy);
   const slip = diverSlip(currentAt(w, d.x, d.y), d.holdCurrentKnots),
     speed = Math.hypot(slip.x, slip.y);
   // Station keeping already spends the diver's upstream effort. Do not give

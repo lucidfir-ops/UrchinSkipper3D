@@ -28,7 +28,7 @@ const SETTINGS = [
     note: 'Make the coast look and sound right.',
     items: [
       ['graphics', null, 'Select to cycle rendering quality.'],
-      ['volume', null, 'Select to cycle the master sound level.'],
+      ['volume', 'Sound volume', 'Drag or use ← / → to adjust. 0% mutes sound.'],
       ['boat-art', null, 'Select to switch catalogue artwork.'],
     ],
   },
@@ -57,7 +57,28 @@ export function menuFooter(ui, bind, note = '') {
   return footer;
 }
 
+function volumeRow(ui, action, index, description) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'menu-volume';
+  const value = Math.round((ui.hooks.audio?.volume ?? 0.35) * 100);
+  wrapper.innerHTML = `<label for="soundVolume"><strong>Sound volume</strong><output id="soundVolumeValue" for="soundVolume">${value ? `${value}%` : 'Muted'}</output></label><input id="soundVolume" type="range" min="0" max="100" step="1" value="${value}" aria-label="Sound volume"/><small>${description}</small>`;
+  const slider = wrapper.querySelector('input');
+  slider.dataset.choiceIndex = String(index);
+  slider.dataset.action = action.id;
+  slider.onfocus = slider.onpointerdown = () => {
+    ui.index = index;
+  };
+  slider.oninput = () => {
+    ui.hooks.audio?.setVolume(Number(slider.value) / 100);
+    wrapper.querySelector('output').textContent = Number(slider.value)
+      ? `${slider.value}%`
+      : 'Muted';
+  };
+  return wrapper;
+}
+
 function row(ui, world, action, index, title, description) {
+  if (action.id === 'volume') return volumeRow(ui, action, index, description);
   const button = choiceButton(ui, world, action.label, index, { action });
   button.classList.add('menu-row');
   const label = title || action.label.replace(/^⛶ /, '');
@@ -71,7 +92,7 @@ function row(ui, world, action, index, title, description) {
   copy.append(name, hint);
   const arrow = document.createElement('span');
   arrow.className = 'menu-row-arrow';
-  arrow.textContent = ['graphics', 'volume', 'boat-art'].includes(action.id)
+  arrow.textContent = ['graphics', 'boat-art'].includes(action.id)
     ? '↻'
     : action.id === 'download-log'
       ? '↓'

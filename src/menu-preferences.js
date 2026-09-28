@@ -23,16 +23,7 @@ export function preferenceActions(ui) {
       open('gameplay-speed', 'Gameplay Speed'),
       action('fullscreen', `⛶ ${fullscreenLabel()}`, toggleFullscreen),
       action('boat-art', `Catalogue artwork: ${boatArtLabel()}`, toggleBoatArtMode),
-      action(
-        'volume',
-        `Sound volume: ${Math.round((ui.hooks.audio?.volume ?? 0.35) * 100)}%`,
-        () => {
-          const levels = [0, 0.2, 0.35, 0.5, 0.75];
-          ui.hooks.audio?.setVolume(
-            levels[(levels.indexOf(ui.hooks.audio?.volume ?? 0.35) + 1) % levels.length],
-          );
-        },
-      ),
+      action('volume', 'Sound volume', () => ui.panel.querySelector('#soundVolume')?.focus()),
       action('graphics', `3D graphics: ${ui.hooks.graphicsLabel?.() || 'High'}`, () =>
         ui.hooks.cycleGraphics?.(),
       ),
@@ -70,9 +61,14 @@ export function renderPreferences(ui, world, bind) {
       ui.menuNotice,
       ui.saveNotice,
     ]);
-    if (ui.signature === signature) return;
-    ui.signature = signature;
-    renderSettings(ui, world, actions, bind);
+    if (ui.signature !== signature) {
+      ui.signature = signature;
+      renderSettings(ui, world, actions, bind);
+    }
+    const volume = Math.round((ui.hooks.audio?.volume ?? 0.35) * 100),
+      slider = ui.panel.querySelector('#soundVolume');
+    if (slider && slider.value !== String(volume)) slider.value = String(volume);
+    setText(ui.panel.querySelector('#soundVolumeValue'), volume ? `${volume}%` : 'Muted');
     return;
   }
   if (ui.panel.querySelector('.preference-view')?.dataset.preference !== ui.screen) {
@@ -94,4 +90,14 @@ export function renderPreferences(ui, world, bind) {
     if (slider.value !== String(timeIncrease())) slider.value = String(timeIncrease());
     setText(ui.panel.querySelector('label[for="timeSpeed"] strong'), `+${timeIncrease()}%`);
   }
+}
+
+export function adjustSoundVolume(ui, direction) {
+  if (ui.screen !== 'settings' || !['left', 'right'].includes(direction)) return false;
+  if (preferenceActions(ui)[ui.index]?.id !== 'volume') return false;
+  const value = Math.round((ui.hooks.audio?.volume ?? 0.35) * 100);
+  ui.hooks.audio?.setVolume(
+    Math.max(0, Math.min(100, value + (direction === 'right' ? 5 : -5))) / 100,
+  );
+  return true;
 }

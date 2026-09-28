@@ -191,6 +191,13 @@ export function boatSpec(w) {
   if (w.career) {
     Object.assign(spec, FLEET[w.boat.configuration]);
     const gear = enabledEquipment(w);
+    if (gear.includes('engine')) {
+      spec.maxSpeed *= 1.15;
+      if (spec.loadedSpeed !== undefined) spec.loadedSpeed *= 1.15;
+      spec.acceleration *= 1.2;
+      spec.travelBurn *= 1.18;
+    }
+    if (gear.includes('fuel-system')) spec.travelBurn *= 0.88;
     if (gear.includes('tank'))
       spec.fuelCapacity +=
         w.career.fleet[w.boat.configuration].auxTankLitres ?? ECONOMY.auxTankLitres;

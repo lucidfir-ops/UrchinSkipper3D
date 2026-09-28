@@ -6,6 +6,14 @@ const cents = (value) => Math.round(value * 100) / 100;
 function fraction(seed) {
   return ((Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296;
 }
+// A trip clock can span several days. Arrival exactly at the morning window
+// ships in that window; it must not acquire another 24 hours of storage.
+export function offloadWindow(arrival) {
+  return arrival <= C.day.deadlineMinute + 1e-7
+    ? arrival
+    : Math.ceil((arrival - 360 - 1e-7) / 1440) * 1440 + 360;
+}
+
 // A deterministic settlement quote, evaluated once. All coefficients are game
 // tuning, not a real buyer's price or biological storage model.
 export function calculateOffload(w, arrival) {
@@ -16,7 +24,7 @@ export function calculateOffload(w, arrival) {
     (w.terrain.provenance?.seed ?? C.seed) + Math.round(arrival * 10) + Math.round(gross);
   // Missed evening boat: the next 06:00 offload. Arrival after 06:00 waits
   // for the following morning; time is absolute within the fishing trip.
-  const offloadMinute = onTime ? arrival : (Math.floor((arrival - 360) / 1440) + 1) * 1440 + 360;
+  const offloadMinute = offloadWindow(arrival);
   const delayHours = (offloadMinute - arrival) / 60;
   const lots = w.bags.length
     ? w.bags

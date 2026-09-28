@@ -1,0 +1,388 @@
+{
+  "edition": "Urchin Skipper 3D",
+  "release": "September 28 cohesive working-boat release",
+  "recordedUtc": "2026-09-28T18:50:38.651148+00:00",
+  "builtIndexSha256": "a655c066e508bbe6dfd048b262ea7fe3492163d38f3062ee5298ff39333d0127",
+  "unitTests": {
+    "total": 518,
+    "passed": 517,
+    "failed": 0,
+    "skipped": 1,
+    "skipReason": "Private-save fixture is not distributed."
+  },
+  "effectiveVerificationPassed": true,
+  "chromiumBrowserSuitesPassed": 18,
+  "firefoxInputPassed": true,
+  "productionMatrix": {
+    "started": "2026-09-28T18:40:51.240Z",
+    "ended": "2026-09-28T18:46:28.258Z",
+    "passed": false,
+    "results": [
+      {
+        "label": "lint",
+        "code": 0,
+        "seconds": 6
+      },
+      {
+        "label": "format",
+        "code": 0,
+        "seconds": 5
+      },
+      {
+        "label": "unit regressions",
+        "code": 0,
+        "seconds": 26
+      },
+      {
+        "label": "production build",
+        "code": 0,
+        "seconds": 7
+      },
+      {
+        "label": "equipment",
+        "code": 0,
+        "seconds": 18
+      },
+      {
+        "label": "learning",
+        "code": 0,
+        "seconds": 11
+      },
+      {
+        "label": "operations",
+        "code": 0,
+        "seconds": 31
+      },
+      {
+        "label": "fleet",
+        "code": 0,
+        "seconds": 5
+      },
+      {
+        "label": "traffic-fleet",
+        "code": 0,
+        "seconds": 6
+      },
+      {
+        "label": "interface",
+        "code": 0,
+        "seconds": 47
+      },
+      {
+        "label": "menus",
+        "code": 0,
+        "seconds": 25
+      },
+      {
+        "label": "accessibility",
+        "code": 0,
+        "seconds": 22
+      },
+      {
+        "label": "mobile-career",
+        "code": 0,
+        "seconds": 34
+      },
+      {
+        "label": "hud-context",
+        "code": 1,
+        "seconds": 8
+      },
+      {
+        "label": "visual",
+        "code": 0,
+        "seconds": 11
+      },
+      {
+        "label": "input",
+        "code": 0,
+        "seconds": 19
+      },
+      {
+        "label": "touch",
+        "code": 0,
+        "seconds": 14
+      },
+      {
+        "label": "vessels",
+        "code": 0,
+        "seconds": 4
+      },
+      {
+        "label": "weather",
+        "code": 0,
+        "seconds": 4
+      },
+      {
+        "label": "voyage",
+        "code": 0,
+        "seconds": 20
+      },
+      {
+        "label": "embed",
+        "code": 0,
+        "seconds": 4
+      },
+      {
+        "label": "performance",
+        "code": 0,
+        "seconds": 8
+      }
+    ]
+  },
+  "followups": [
+    {
+      "started": "2026-09-28T18:47:01.403Z",
+      "ended": "2026-09-28T18:47:20.991Z",
+      "passed": true,
+      "results": [
+        {
+          "label": "hud-context",
+          "code": 0,
+          "seconds": 18
+        }
+      ]
+    },
+    {
+      "started": "2026-09-28T18:47:35.703Z",
+      "ended": "2026-09-28T18:47:55.628Z",
+      "passed": true,
+      "results": [
+        {
+          "label": "firefox",
+          "code": 0,
+          "seconds": 18
+        }
+      ]
+    }
+  ],
+  "followupExplanation": "The full matrix hit a fixed-100ms custom HUD label-restoration fixture race. The test now waits for the visible result through the existing HUD/obstacle cache passes. Targeted HUD rerun and script lint/format pass; production bytes were unchanged. All other matrix checks passed.",
+  "effectiveResults": [
+    {
+      "label": "lint",
+      "code": 0,
+      "seconds": 6
+    },
+    {
+      "label": "format",
+      "code": 0,
+      "seconds": 5
+    },
+    {
+      "label": "unit regressions",
+      "code": 0,
+      "seconds": 26
+    },
+    {
+      "label": "production build",
+      "code": 0,
+      "seconds": 7
+    },
+    {
+      "label": "equipment",
+      "code": 0,
+      "seconds": 18
+    },
+    {
+      "label": "learning",
+      "code": 0,
+      "seconds": 11
+    },
+    {
+      "label": "operations",
+      "code": 0,
+      "seconds": 31
+    },
+    {
+      "label": "fleet",
+      "code": 0,
+      "seconds": 5
+    },
+    {
+      "label": "traffic-fleet",
+      "code": 0,
+      "seconds": 6
+    },
+    {
+      "label": "interface",
+      "code": 0,
+      "seconds": 47
+    },
+    {
+      "label": "menus",
+      "code": 0,
+      "seconds": 25
+    },
+    {
+      "label": "accessibility",
+      "code": 0,
+      "seconds": 22
+    },
+    {
+      "label": "mobile-career",
+      "code": 0,
+      "seconds": 34
+    },
+    {
+      "label": "hud-context",
+      "code": 0,
+      "seconds": 18
+    },
+    {
+      "label": "visual",
+      "code": 0,
+      "seconds": 11
+    },
+    {
+      "label": "input",
+      "code": 0,
+      "seconds": 19
+    },
+    {
+      "label": "touch",
+      "code": 0,
+      "seconds": 14
+    },
+    {
+      "label": "vessels",
+      "code": 0,
+      "seconds": 4
+    },
+    {
+      "label": "weather",
+      "code": 0,
+      "seconds": 4
+    },
+    {
+      "label": "voyage",
+      "code": 0,
+      "seconds": 20
+    },
+    {
+      "label": "embed",
+      "code": 0,
+      "seconds": 4
+    },
+    {
+      "label": "performance",
+      "code": 0,
+      "seconds": 8
+    },
+    {
+      "label": "firefox",
+      "code": 0,
+      "seconds": 18
+    }
+  ],
+  "performance": {
+    "device": {
+      "renderer": "ANGLE (AMD, Vulkan 1.4.330 (AMD Custom GPU 0405 (RADV VANGOGH) (0x0000163F)), radv)",
+      "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "pixelRatio": 1,
+      "framebuffer": [
+        1280,
+        800
+      ],
+      "screen": null,
+      "started": true
+    },
+    "results": [
+      {
+        "label": "native",
+        "elapsed": 4000.199999988079,
+        "renderFrames": 240,
+        "rafFrames": 240,
+        "fps": 59.997000150171296,
+        "fields": {
+          "frameMs": {
+            "mean": 16.66625,
+            "p95": 16.700000000000728
+          },
+          "inputMs": {
+            "mean": 0.8062500004967054,
+            "p95": 1
+          },
+          "simulationMs": {
+            "mean": 0.3316666668901841,
+            "p95": 0.5
+          },
+          "drawMs": {
+            "mean": 2.774583334227403,
+            "p95": 3.699999988079071
+          },
+          "hudMs": {
+            "mean": 0.48000000007450583,
+            "p95": 4.0999999940395355
+          },
+          "totalCpuMs": {
+            "mean": 4.453750000769893,
+            "p95": 8
+          }
+        },
+        "render": {
+          "frame": 325,
+          "calls": 83,
+          "triangles": 111170,
+          "points": 0,
+          "lines": 105
+        }
+      }
+    ],
+    "errors": []
+  },
+  "naturalVoyage": {
+    "catchLandedLb": 300,
+    "hull": 1,
+    "crew": [
+      "fit",
+      "fit"
+    ],
+    "navigation": "actual controls, unchanged tide/weather, natural harvest, physical return and settlement"
+  },
+  "portableSmoke": {
+    "url": "http://127.0.0.1:5198/",
+    "edition": "three",
+    "build": "production",
+    "asset": "./assets/index-CrUId6I9.js",
+    "servedJavaScriptSha256": "6f0841bb6de83044864218a5e46bd0c633facfefe1c8828c5b0a86e16845ddac",
+    "matchesVerifiedBuild": true
+  },
+  "exports": [
+    {
+      "path": "exports/2026-09-28-cohesive-operations/Urchin Skipper 3D TEMP.zip",
+      "bytes": 102204902,
+      "sha256": "09c41a0a505aabfb276a7fd6d546f45563e0c761bb05632fd17d36b0d0acc523",
+      "crcAndBuildByteComparison": "passed by scripts/package-temp.py"
+    },
+    {
+      "path": "exports/2026-09-28-cohesive-operations/UrchinSkipper3D-TEMP-ITCHIO.zip",
+      "bytes": 102176393,
+      "sha256": "a3e475525e40f3dd4cbc1b4f242bd5f7cda295e67fc5bc7b0846a8018985984c",
+      "crcAndBuildByteComparison": "passed by scripts/package-temp.py"
+    }
+  ],
+  "screenshotSha256": {
+    "cohesion/fleet-twelve.png": "f164ee7bd518c302020e60b3dae5432b0a42c0f3190886d6343190fe3b561896",
+    "cohesion/traffic-twenty-five.png": "0d4ca6d03745946e1042cafc6c1f90b75d4785b20493289307e63fb66feb5a8a",
+    "diver-operations/column-2-metres-zoom-1.1.png": "ffc221b0d55ada01690cd68f87299a04d10aea1f2ca9729ac1d210e6dafc4a0e",
+    "diver-operations/column-5-metres.png": "0c09231fb1b38cf6ab5d514b3e98c2a23a60cceef2c6c2b4febd83aa0de7c772",
+    "diver-operations/phase-hauling.png": "35928da56cfb4ca59bc5bacc3f3b0e45bd35bbebb7182618ed4094da401c91ea",
+    "ui-overhaul/hud-context/touch-844-recovery-overflow.png": "6e0ea116d0957a3432c545f70cd7984b5a9d10121b07f3af6a88ae3a71ece3b5",
+    "learning-interface-easy-underwater-neutral.png": "b98f2bae31947bb2e4d393f7e846d319ecdd644d00b432f060b26e2704737f68"
+  },
+  "reviews": [
+    "docs/review/cohesive-operations-2026-09-28.md",
+    "docs/review/independent-cohesion-review-2026-09-28.md",
+    "docs/review/diver-operations-2026-09-28.md",
+    "docs/review/equipment-2026-09-28.md",
+    "docs/review/learning-navigation-agency-2026-09-28.md"
+  ],
+  "limits": [
+    "Synthetic controllers do not verify physical USB or Steam Deck controllers.",
+    "No actual mobile hardware, Safari or itch.io-hosted acceptance performed.",
+    "Human-scale divers remain small at the widest camera; closer zoom shows more body detail.",
+    "Boat models are stylized interpretations; several share commercial cabin forms.",
+    "Screenshot reviewers did not independently verify motion feel or long-career upgrade balance.",
+    "The hardware performance sample covers 240 live frames in one controlled scene."
+  ]
+}

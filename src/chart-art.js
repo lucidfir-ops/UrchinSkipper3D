@@ -1,3 +1,4 @@
+import { paintOwnship, ownshipSvg } from './chart-ownship.js';
 import { chartContours, paintContours } from './chart-contours.js';
 import { bedDepthAt } from './terrain.js';
 import { terrainColor } from './presentation.js';
@@ -134,9 +135,7 @@ export function sectorChartSvg(
       : ['south', 'north'].includes(exit)
         ? `<path d="M30 ${exit === 'south' ? size - 3 : 3}H${size - 30}" stroke="#f3d28c" stroke-width="5"/>`
         : `<path d="M${exit === 'east' ? size - 3 : 3} 30V${size - 30}" stroke="#f3d28c" stroke-width="5"/>`,
-    boatPath = boat
-      ? `<g data-chart-boat="" transform="translate(${boat.x} ${boat.y}) rotate(${(boat.heading * 180) / Math.PI})"><path d="M0 -6L4 5H-4Z" fill="#fff3cf" stroke="#102c3c" stroke-width="1.3"/></g>`
-      : '',
+    boatPath = boat ? ownshipSvg(boat, size, compact) : '',
     diverPaths = divers
       .filter((d) => d.state !== 'ready')
       .map(
@@ -348,19 +347,8 @@ export function paintSectorMap(
     }
     ctx.stroke();
   }
-  if (boat) {
-    ctx.save();
-    ctx.translate(boat.x * scale, boat.y * scale);
-    ctx.rotate(boat.heading);
-    ctx.fillStyle = '#fff3cf';
-    ctx.beginPath();
-    ctx.moveTo(0, -6);
-    ctx.lineTo(4, 5);
-    ctx.lineTo(-4, 5);
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
-  }
+  if (boat)
+    paintOwnship(ctx, boat.x * scale, boat.y * scale, boat.heading, { compact, width, height });
   for (const d of divers)
     if (d.state !== 'ready') {
       ctx.fillStyle = '#ffad58';

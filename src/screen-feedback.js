@@ -4,6 +4,11 @@ import { setText } from './dom-view.js';
 import { throttleText, rudderText, feedbackText } from './presentation.js';
 
 export function collectFeedback(world, a) {
+  const notice = this.importantNotice;
+  if (notice && !notice.urgent && /\bDIVER ABOARD\b/.test(notice.text)) {
+    const named = world.divers.find((d) => notice.text.startsWith(`${d.name.toUpperCase()} · `));
+    if (named && named.state !== 'ready') this.importantNotice = null;
+  }
   for (const event of world.events.splice(0)) {
     const text = feedbackText(event, this.realistic);
     if (text === null) continue;

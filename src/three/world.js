@@ -5,6 +5,7 @@ import { coastalTextures } from './coastal-textures.js';
 import { CoastalMist } from './coastal-mist.js';
 import { assist, reefRange } from '../assists.js';
 import { rockOpacity } from '../hazard-view.js';
+import { waterColumnMaterials, waterTurbidity, coastalDaylight } from './water-optics.js';
 
 // Presentation alone samples the simulation's original bathymetry. None of these
 // decorative objects participates in navigation, collision, or catch discovery.
@@ -185,28 +186,29 @@ const waterFragment = /* glsl */ `
     float reveal = 1.0-uRestricted*smoothstep(uReefRange*.55,uReefRange,distance(p,uBoat));
     float depth = mix(25.0,actualDepth,reveal);
     vec2 drift = vec2(uTime*.006,-uTime*.004);
-    vec3 microA = texture2D(uRipples, mat2(.91,.415,-.415,.91)*p*.038+drift).rgb;
-    vec3 microB = texture2D(uRipples, mat2(.72,-.694,.694,.72)*p*.087-drift*.73).rgb;
+    vec2 warp = vec2(valueNoise(p*.031),valueNoise(p*.047+vec2(83,27)))-.5;
+    vec3 microA = texture2D(uRipples, mat2(.91,.415,-.415,.91)*p*.038+drift+warp*.24).rgb;
+    vec3 microB = texture2D(uRipples, mat2(.72,-.694,.694,.72)*p*.087-drift*.73+warp*.37).rgb;
     vec2 windNormal = (microA.rg*2.0-1.0)*.72 + (microB.rg*2.0-1.0)*.28;
-    float slope = .35+uRough*.22;
+    float slope = (.19+uRough*.22)*(.55+valueNoise(p*.07)*.65);
     vec3 normal = normalize(vec3(windNormal.x*slope,1.0,windNormal.y*slope));
     float w1 = microA.b*2.0-1.0;
     float w2 = microB.b*2.0-1.0;
     float w3 = windNormal.x;
     vec3 view = normalize(cameraPosition-vWorld);
     float fresnel = pow(1.0-max(dot(normal,view),0.0),4.0);
-    vec3 shallow = vec3(.10,.29,.265);
-    vec3 shelf = vec3(.026,.14,.165);
-    vec3 deep = vec3(.016,.075,.112);
-    vec3 color = mix(shallow,shelf,smoothstep(.0,10.0,depth));
-    color = mix(color,deep,smoothstep(8.0,34.0,depth));
+    vec3 shallow = vec3(.072,.145,.085);
+    vec3 shelf = vec3(.023,.082,.059);
+    vec3 deep = vec3(.012,.041,.034);
+    vec3 color = mix(shallow,shelf,smoothstep(.0,4.5,depth));
+    color = mix(color,deep,smoothstep(3.0,16.0,depth));
     color *= .89 + .12 * n;
-    vec3 sky = vec3(.43,.63,.65);
-    color = mix(color,sky,fresnel*.63);
+    vec3 sky = vec3(.37,.45,.43);
+    color = mix(color,sky,fresnel*.49);
     vec3 halfVector = normalize(view+uSun);
     float sun = pow(max(dot(normal,halfVector),0.0),260.0);
     float softSun = pow(max(dot(normal,halfVector),0.0),24.0);
-    color += vec3(1.0,.83,.58) * (sun * .11 + softSun*.008) * uDaylight;
+    color += vec3(.77,.85,.81) * (sun * .035 + softSun*.004) * uDaylight;
     // Fine broken wind ripples derive from the same animated normals as
     // reflected light. No repeating dot lattice or oversized specular stripe.
     color += vec3(.014,.021,.02) * (w1*.35+w2*.23) * (.45+n*.55);
@@ -219,7 +221,10 @@ const waterFragment = /* glsl */ `
     float edge = (1.0-smoothstep(.02,.14,actualDepth))*surfBreak*.13;
     color = mix(color,vec3(.67,.76,.73),clamp(foam+edge,0.0,.8));
     color *= .12 + .88*uDaylight;
-    float alpha = mix(.53,.992,smoothstep(.0,13.0,depth));
+    // Turbid coastal water retains bottom/shadow detail only on very shallow
+    // shelves. Deep green is absorption, not a transparent blue floor tint.
+    float alpha = mix(.69,.997,smoothstep(.0,5.0,depth));
+    alpha = min(.999,alpha+uRough*.055);
     alpha = mix(1.0,alpha,reveal);
     alpha = max(alpha,foam*.95);
     gl_FragColor = vec4(color,alpha);
@@ -267,8 +272,8 @@ export class CoastalWorld {
     const position = geometry.attributes.position;
     const colors = new Float32Array(position.count * 3);
     const color = new THREE.Color();
-    const sand = new THREE.Color('#a3a17d'),
-      submerged = new THREE.Color('#627c68');
+    const sand = new THREE.Color('#7d8066'),
+      submerged = new THREE.Color('#475e47');
     const wet = new THREE.Color('#4d5651'),
       stone = new THREE.Color('#656c5b');
     const turf = new THREE.Color('#3d5130'),
@@ -610,22 +615,36 @@ export class CoastalWorld {
     const terrain = world.terrain,
       random = randomGenerator(79824),
       strands = [];
-    for (let i = 0; i < 19000; i++) {
+    for (let i = 0; i < 14000; i++) {
       const x = random() * terrain.size,
         z = random() * terrain.size;
       const d = bedDepthAt(terrain, x, z);
-      if (d < 2.8 || d > 13 || noise(x * 0.48, z * 0.48) < 0.06 || strands.length > 1800) continue;
+      // Broken coastal stands with broad lanes of open water. Macro-patches
+      // follow shallow habitat, never hidden urchin productivity.
+      if (
+        d < 2.8 ||
+        d > 11 ||
+        noise(x * 0.16, z * 0.16) < 0.42 ||
+        noise(x * 0.7, z * 0.7) < -0.1 ||
+        strands.length >= 680
+      )
+        continue;
       // Deliberately independent of harvest ground locations and stock.
-      const length = Math.min(d * 0.73, 1.2 + random() * 3.7);
+      const length = Math.max(1, d - 0.25 - random() * 0.5);
       strands.push({ x, z, y: -d, length, angle: random() * TAU, tint: random() });
     }
     if (!strands.length) return;
-    const material = new THREE.MeshStandardMaterial({
-      color: '#536141',
+    const baseMaterial = new THREE.MeshStandardMaterial({
+      color: '#555037',
       roughness: 0.8,
       side: THREE.DoubleSide,
     });
+    this.kelpColumn = waterColumnMaterials({ kelp: baseMaterial });
+    const material = this.kelpColumn.materials.kelp;
+    baseMaterial.dispose();
+    const columnCompile = material.onBeforeCompile;
     material.onBeforeCompile = (shader) => {
+      columnCompile(shader);
       shader.uniforms.uKelpTime = this.kelpTime;
       shader.vertexShader = 'uniform float uKelpTime;\n' + shader.vertexShader;
       shader.vertexShader = shader.vertexShader.replace(
@@ -644,13 +663,14 @@ export class CoastalWorld {
       color = new THREE.Color();
     for (const cell of cells.values()) {
       const mesh = new THREE.InstancedMesh(shape, material, cell.length);
+      mesh.renderOrder = 2;
       cell.forEach((strand, i) => {
         object.position.set(strand.x, strand.y, strand.z);
         object.rotation.set(0, strand.angle, -0.08);
         object.scale.set(1.2, strand.length, 1);
         object.updateMatrix();
         mesh.setMatrixAt(i, object.matrix);
-        color.setHSL(0.15 + strand.tint * 0.08, 0.26, 0.53 + strand.tint * 0.3);
+        color.setHSL(0.12 + strand.tint * 0.05, 0.33, 0.34 + strand.tint * 0.18);
         mesh.setColorAt(i, color);
       });
       mesh.name = 'Swaying kelp, unrelated to catch grounds';
@@ -726,6 +746,11 @@ export class CoastalWorld {
     const tide = seaLevel(world);
     this.bed.position.y = -tide;
     this.kelpTime.value = this.elapsed;
+    if (this.kelpColumn) {
+      this.kelpColumn.uniforms.uColumnTime.value = this.elapsed;
+      this.kelpColumn.uniforms.uColumnTurbidity.value = waterTurbidity(world);
+      this.kelpColumn.uniforms.uColumnLight.value = world.weather?.sunlight ?? 1;
+    }
     this.life.update(world, this.elapsed);
     this.mist.update(world, this.elapsed, camera);
     if (this.water) {
@@ -739,8 +764,7 @@ export class CoastalWorld {
       uniforms.uRough.value = rough;
       uniforms.uSwell.value = 0.025 + rough * 0.19;
       const minute = world.day?.minute ?? 600;
-      uniforms.uDaylight.value =
-        world.weather?.sunlight ?? clamp(Math.sin(((minute - 360) / 810) * Math.PI), 0.06, 1);
+      uniforms.uDaylight.value = world.weather?.sunlight ?? coastalDaylight(minute);
       const sun = this.scene.children.find(
         (child) => child.isDirectionalLight && child.intensity > 0.2,
       );
@@ -751,6 +775,8 @@ export class CoastalWorld {
   }
   clear() {
     disposeGroup(this.bed);
+    this.kelpColumn?.dispose();
+    this.kelpColumn = null;
     if (this.water) {
       this.group.remove(this.water);
       this.water.geometry.dispose();

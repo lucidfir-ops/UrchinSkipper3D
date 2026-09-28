@@ -4,6 +4,7 @@ const env = {
   ...process.env,
   URCHIN_TEST_URL: 'http://127.0.0.1:5186/',
   URCHIN_PRODUCTION_TEST: '1',
+  URCHIN_HARDWARE: '1',
 };
 const results = [],
   started = new Date().toISOString();
@@ -31,6 +32,11 @@ async function ready() {
   }
 }
 const suites = {
+  equipment: ['scripts/equipment-review.js'],
+  learning: ['scripts/browser-smoke.js', '--learning-interface-only'],
+  operations: ['scripts/browser-smoke.js', '--diver-operations-only'],
+  fleet: ['scripts/cohesion-visual-review.js'],
+  'traffic-fleet': ['scripts/traffic-fleet-review.js'],
   interface: ['scripts/interface-review.js'],
   menus: ['scripts/menu-adversarial-review.js'],
   accessibility: ['scripts/ui-accessibility-checks.js'],

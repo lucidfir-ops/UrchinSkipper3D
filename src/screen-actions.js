@@ -100,7 +100,7 @@ export function choices(world) {
       'Controls / Remapping',
       'Controller setup',
       `Information: ${this.realistic ? 'ALL OFF' : 'EASY'}`,
-      `Sound volume: ${Math.round((this.hooks.audio?.volume ?? 0.35) * 100)}%`,
+      'Sound volume…',
       `Test reveal: ${this.debug ? 'ON' : 'OFF'}`,
       `Controller Diagnostics: ${this.diagnostics ? 'ON' : 'OFF'}`,
       `Action feedback: ${this.feedback ? 'ON' : 'OFF'}`,
@@ -295,10 +295,9 @@ export function activate(world) {
       this.realistic = !this.realistic;
       this.messages = [];
       this.importantNotice = null;
-    } else if (choice.startsWith('Sound volume:')) {
-      const levels = [0, 0.2, 0.35, 0.5, 0.75];
-      const value = this.hooks.audio?.volume ?? 0.35;
-      this.hooks.audio?.setVolume(levels[(levels.indexOf(value) + 1) % levels.length]);
+    } else if (choice.startsWith('Sound volume')) {
+      this.open('settings');
+      this.index = 9;
     } else if (choice.startsWith('Test reveal:')) this.debug = !this.debug;
     else if (choice.startsWith('Controller Diagnostics:')) this.diagnostics = !this.diagnostics;
     else if (choice.startsWith('Action feedback:')) this.feedback = !this.feedback;

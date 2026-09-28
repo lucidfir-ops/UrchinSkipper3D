@@ -8,7 +8,6 @@ import { AREA_PROGRESSION, seasonStatus } from './season.js';
 import { createQuotaAreaState } from './quota-areas.js';
 import { COASTS, coastFor, normalizeCoastAccess } from './coasts.js';
 import { ECONOMY, FLEET, CREW, UPGRADES, rankOf, roll, cents } from './career-data.js';
-import { boatFamily } from './vessel-catalog.js';
 import {
   prepareRosters,
   crewProfile,
@@ -22,6 +21,7 @@ import { assignCrew } from './crew.js';
 import { C } from './config.js';
 import { recoverCrewExposure } from './dive-exposure.js';
 import { boatSpec, boatDefinition } from './boats.js';
+import { equipmentAvailability, equipmentLocation } from './equipment-fit.js';
 export const freshVessel = (id) => ({
   id,
   hullHealth: 1,
@@ -157,17 +157,8 @@ export function buyVessel(w, id) {
 export function buyEquipment(w, id) {
   const c = w.career,
     item = UPGRADES.find((x) => x.id === id);
-  if (w.day.phase !== 'planning' || !item)
-    return { ok: false, reason: 'Fit equipment at harbour.' };
-  if (item.boats && !item.boats.includes(boatFamily(w.boat.configuration)))
-    return {
-      ok: false,
-      reason: 'This retrofit is for the Harbour Workhorse. Other hulls use their own fittings.',
-    };
-  if (equipment(w).includes(id)) return { ok: false, reason: 'Already fitted to this boat.' };
-  if (rankOf(c) < item.rank)
-    return { ok: false, reason: 'Not yet available through your contacts.' };
-  if (c.cash < item.price) return { ok: false, reason: 'Insufficient cash.' };
+  const status = equipmentAvailability(w, item);
+  if (!status.ok) return { ok: false, reason: status.reason };
   c.cash = cents(c.cash - item.price);
   equipment(w).push(id);
   if (item.slot === 'timepiece') {
@@ -175,7 +166,10 @@ export function buyEquipment(w, id) {
     c.preferences.timepiece = id;
   }
   if (id === 'tank') c.fleet[w.boat.configuration].auxTankLitres = ECONOMY.auxTankLitres;
-  return { ok: true };
+  return {
+    ok: true,
+    reason: `${item.name} installed · ${equipmentLocation(item)} aboard ${boatDefinition(w.boat.configuration).name}.`,
+  };
 }
 export function buyAreaAccess(w, id) {
   const c = w.career,
@@ -285,7 +279,7 @@ export function startCareerTrip(w) {
 }
 export function chargeTransit(w, minutes) {
   if (!w.career || w.career.debugConditions?.godmode) return;
-  const litres = Math.min(w.boat.fuel, (minutes / 60) * FLEET[w.boat.configuration].travelBurn);
+  const litres = Math.min(w.boat.fuel, (minutes / 60) * boatSpec(w).travelBurn);
   w.boat.fuel -= litres;
   w.boat.fuelUsed += litres;
   w.costs.fuel += litres * ECONOMY.fuelPrice;

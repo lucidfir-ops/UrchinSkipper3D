@@ -10,6 +10,7 @@ import { assist } from '../assists.js';
 import { currentAt, createWorld } from '../world.js';
 import { NavigationOverlay } from './navigation.js';
 import { DiverCues } from './diver-cues.js';
+import { coastalDaylight } from './water-optics.js';
 
 // Presentation is one-way: this module never mutates simulation positions, terrain or weather.
 export class MarineRenderer {
@@ -246,7 +247,7 @@ export class MarineRenderer {
     this.camera.updateProjectionMatrix();
     this.camera.updateMatrixWorld();
     const minute = world.day.minute ?? 600;
-    const day = Math.max(0.055, Math.sin(((minute - 340) / 870) * Math.PI));
+    const day = coastalDaylight(minute);
     const cloud = Math.min(
       0.65,
       (world.weather?.rain || 0) * 0.4 + (world.weather?.kind === 'fog' ? 0.2 : 0),

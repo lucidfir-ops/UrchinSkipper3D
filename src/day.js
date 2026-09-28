@@ -5,7 +5,6 @@ import { prepareInspection, inspectAtHarbour } from './fishery.js';
 import { conditionsAt } from './weather.js';
 import { C } from './config.js';
 import { boatSpec } from './boats.js';
-import { FLEET } from './career-data.js';
 import { departureReady, startCareerTrip, chargeTransit, settleCareer } from './career-state.js';
 import { SECTORS, enterSector } from './sectors.js';
 import { EDGE_NAMES, EDGE_BEARINGS, crossedReturnBoundary } from './navigation.js';
@@ -60,7 +59,7 @@ export function groundTrip(w, id) {
           Math.abs(passageMinutes(w, ground) - passageMinutes(w, previous)),
         )
     : passageMinutes(w, ground);
-  const fuelNeed = w.career ? (minutes / 60) * FLEET[w.boat.configuration].travelBurn : 0;
+  const fuelNeed = w.career ? (minutes / 60) * boatSpec(w).travelBurn : 0;
   const noWorkWindow =
     w.career &&
     w.day.phase === 'planning' &&
@@ -148,8 +147,7 @@ export function returnToHarbour(w) {
   if ((w.boat.driveHealth ?? 1) <= 0 || w.boat.fuel <= 0) return requestRescue(w);
   if (
     w.career &&
-    w.boat.fuel <
-      (passageMinutes(w, selectedGround(w)) / 60) * FLEET[w.boat.configuration].travelBurn
+    w.boat.fuel < (passageMinutes(w, selectedGround(w)) / 60) * boatSpec(w).travelBurn
   ) {
     chargeTransit(w, passageMinutes(w, selectedGround(w)));
     return requestRescue(w);
@@ -196,7 +194,7 @@ export function advanceDay(w, dt) {
     [
       'late',
       depart + 1,
-      `RETURN WILL BE LATE — NEXT SHIPPING WINDOW COSTS QUALITY / WEIGHT · EXIT ${exit}`,
+      `OFFLOAD WINDOW MISSED — KEEP FISHING OR RETURN VIA ${exit}. LATER SHIPPING COSTS FRESHNESS / WEIGHT`,
     ],
   ])
     if (w.day.minute + 1e-7 >= threshold && !w.day.warnings.includes(key)) {

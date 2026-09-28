@@ -48,7 +48,8 @@ test('board after an exhausted search, move, and deploy: the next dive starts a 
   assert.equal(d.state, 'ready');
   assert.equal(w.catch, 41);
   Object.assign(w.boat, { x: 232, y: 238 });
-  tick(w, C.diver.deploySeconds + 1, { recoverDiver: true });
+  step(w, { recoverDiver: true }, 1 / 60);
+  tick(w, d.timer + 1);
   assert.equal(d.state, 'harvesting');
   assert(d.bag > 0 && d.bag < 30);
   assert.equal(d.localSearch, null);
@@ -108,10 +109,10 @@ test('bag completion records the sampled ground even between periodic chart obse
       qualitySum: 32.8,
     });
     assert(recoveryStatus(w).available, `${boat}: fixture is a legal port pickup`);
-    if (boat === 'twinjet')
-      Object.assign(d, { hook: 2.99, hooking: true, recoveryAction: 'recoverDiver' });
     w.nextObservation = 1000;
-    tick(w, boat === 'twinjet' ? 3.2 : 5.2, { recoverDiver: true });
+    // The larger hull permits pickup well aft: let the diver actually swim to
+    // its ladder before boarding, still before any periodic chart observation.
+    tick(w, boat === 'twinjet' ? 8 : 5.2, { recoverDiver: true });
     assert.equal(d.state, 'ready');
     const report = w.career.knowledge.near?.grounds[p.id];
     assert(

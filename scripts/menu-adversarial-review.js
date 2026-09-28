@@ -99,26 +99,39 @@ try {
   });
   await purchase(page);
   await settings(page);
-  await check(page, 'Held native Space activates the focused preference exactly once', async () => {
-    const volume = page.locator('[data-action="volume"]');
-    await volume.focus();
-    await page.waitForTimeout(300);
-    const before = await volume.textContent();
-    await page.evaluate(() => {
-      window.reviewClickCount = 0;
-      document.querySelector('#playtest').addEventListener('click', (e) => {
-        if (e.target.closest('[data-action="volume"]')) window.reviewClickCount++;
+  await check(
+    page,
+    'Held native Space activates the focused preference switch exactly once',
+    async () => {
+      // Volume is a native range now; Space is not its activation gesture. Use a
+      // real preference button to retain this keyboard double-activation guard.
+      const preference = page.locator('[data-action="logging"]');
+      await preference.focus();
+      await page.waitForTimeout(300);
+      const before = await preference.getAttribute('aria-checked');
+      await page.evaluate(() => {
+        window.reviewClickCount = 0;
+        document.querySelector('#playtest').addEventListener('click', (e) => {
+          if (e.target.closest('[data-action="logging"]')) window.reviewClickCount++;
+        });
       });
-    });
-    await page.keyboard.down('Space');
-    await page.waitForTimeout(500);
-    assert.equal(await volume.textContent(), before, 'Space waits for release');
-    await page.keyboard.up('Space');
-    await page.waitForTimeout(300);
-    assert.equal(await page.evaluate(() => window.reviewClickCount), 1);
-    assert.notEqual(await volume.textContent(), before);
-    assert.equal(await page.evaluate(() => document.activeElement?.dataset.action), 'volume');
-  });
+      await page.keyboard.down('Space');
+      await page.waitForTimeout(500);
+      assert.equal(
+        await preference.getAttribute('aria-checked'),
+        before,
+        'Space waits for release',
+      );
+      await page.keyboard.up('Space');
+      await page.waitForTimeout(300);
+      assert.equal(await page.evaluate(() => window.reviewClickCount), 1);
+      assert.equal(await preference.getAttribute('aria-checked'), String(before !== 'true'));
+      assert.equal(await page.evaluate(() => document.activeElement?.dataset.action), 'logging');
+      // Leave the device preference as we found it.
+      await preference.click();
+      assert.equal(await preference.getAttribute('aria-checked'), before);
+    },
+  );
   await check(
     page,
     'Every Settings action has an actual controller route and is brought into view',

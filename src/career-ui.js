@@ -11,7 +11,14 @@ import { coastWarning } from './frank-advice.js';
 import { FLEET, UPGRADES, RANKS, ECONOMY, rankOf, money } from './career-data.js';
 import { boatDefinition, boatSpec } from './boats.js';
 import { diverSpec, crewProgress } from './crew.js';
-import { equipment, crewContact } from './career-state.js';
+import { crewContact } from './career-state.js';
+import {
+  equipmentPlan,
+  equipmentDetail,
+  equipmentShopIntro,
+  fittingPreview,
+} from './equipment-view.js';
+import { paintFittingPreviews } from './three/fitting-preview.js';
 export { CAREER_SCREENS, careerChoices, careerActivate } from './career-actions.js';
 import { careerActions } from './career-actions.js';
 import { SHOP_SCREENS, shopField } from './shop-actions.js';
@@ -140,20 +147,17 @@ export function renderCareer(ui, w, bind) {
     detail = `<h3>${def.name}</h3><p>${def.description}</p><div class="career-numbers"><span>Purchase<strong>${money(v.price)}</strong></span><span>Deck<strong>${v.capacity.toLocaleString()} lb</strong></span></div><p>${v.length} × ${v.width} m · ${v.fuelCapacity} L tank · ${v.travelBurn} L/h passage · ${(v.maxSpeed * 1.943844).toFixed(0)} kn unloaded<br>${(v.draft ?? def.spec.draft ?? 2).toFixed(1)} m contact depth · ${def.drive}</p><p>${def.controls}</p><p>Requires ${RANKS[v.rank].name}. Resale: 50% of condition-adjusted hull and fittings, plus half-price remaining fuel. Fit another owned boat to make its sale available. Boats retain their own damage, fuel and equipment. Lost vessels must be replaced.</p>`;
   }
   if (ui.screen === 'yourboat') {
-    detail += `<h3>Current setup</h3><p>Fuel ${w.boat.fuel.toFixed(0)} / ${boatSpec(w).fuelCapacity} L · Hull ${Math.round(w.boat.hullHealth * 100)}% · Drive ${Math.round(w.boat.driveHealth * 100)}%</p>${equipmentPlan(w)}`;
+    const spec = boatSpec(w);
+    detail = `<h3>${boatDefinition(w.boat.configuration).name}</h3><p>${boatDefinition(w.boat.configuration).drive} · ${spec.length} × ${spec.width} m · ${spec.capacity.toLocaleString()} lb deck</p><h3>Current setup</h3><div class="career-numbers"><span>Speed at this load<strong>${(spec.maxSpeed * 1.943844).toFixed(1)} kn</strong></span><span>Passage fuel<strong>${spec.travelBurn.toFixed(1)} L/h</strong></span></div><p>Fuel ${w.boat.fuel.toFixed(0)} / ${spec.fuelCapacity} L · Hull ${Math.round(w.boat.hullHealth * 100)}% · Drive ${Math.round(w.boat.driveHealth * 100)}%</p>${equipmentPlan(w)}`;
   }
   if (ui.screen === 'buyboat') {
     title = 'Buy this boat?';
     detail = `<p>Are you sure? Confirm the boat and price below.</p>${detail}`;
   }
   if (ui.screen === 'outfit') {
-    title = 'Equipment that earns its space.';
-    const item = UPGRADES.find((item) => item.id === ui.equipmentCandidate) || UPGRADES[0];
-    detail = `<h3>${item.name}</h3><p>${item.detail}</p>${item.id === 'tank' && equipment(w).includes('tank') ? `<p>Installed tank: ${c.fleet[w.boat.configuration].auxTankLitres ?? ECONOMY.auxTankLitres} L additional capacity.</p>` : ''}<p>${money(item.price)} · ${RANKS[item.rank].name} · ${item.slot}${item.boats ? ' · Harbour Workhorse only' : ''}</p><p>Fitted to ${boatDefinition(w.boat.configuration).name}:<br>${
-      equipment(w)
-        .map((id) => UPGRADES.find((i) => i.id === id)?.name || id)
-        .join('<br>') || 'Standard sounder and compass.'
-    }</p>${equipmentPlan(w)}`;
+    title = 'Fit the boat for your work.';
+    const item = UPGRADES.find((item) => item.id === ui.equipmentCandidate);
+    detail = item ? equipmentDetail(w, item) : equipmentShopIntro(w);
   }
   if (ui.screen === 'accounts') {
     title = 'Keep the boat working.';
@@ -210,7 +214,7 @@ export function renderCareer(ui, w, bind) {
     detail =
       '<p>Force a diver state, air or bag; change the selected ground; level or delevel a person; test repeated-dive behavior; single-step while menus pause ordinary simulation.</p><p>Use Test conditions for weather, current, encounter rates, clock and unlocks. Boats and equipment are available through the normal harbour menus after unlocking.</p><p>Hidden table adherence and injury thresholds are debugging information. The diver info panel shows a fictional nitrogen meter and full-bag readiness. This is a fictional game model, never real dive guidance.</p><p>Changes affect this Test Mode session only. Leave Test Mode to restore your saved real career.</p>';
   }
-  if (SHOP_SCREENS.includes(ui.screen) && !ui[shopField(ui.screen)])
+  if (SHOP_SCREENS.includes(ui.screen) && ui.screen !== 'outfit' && !ui[shopField(ui.screen)])
     detail = `<h3>${ui.screen === 'outfit' ? 'Pick equipment' : 'Pick a boat'}</h3><p>Tap a card to select it and see its details. Then use Buy to review the purchase. Nothing is selected yet.</p>`;
   ui.panel.classList.add('day-panel');
   if (
@@ -218,15 +222,19 @@ export function renderCareer(ui, w, bind) {
     ['starter', 'fleet', 'boatshop', 'buyboat', 'yourboat'].includes(ui.screen)
   ) {
     const id = previewBoat;
-    detail = vesselPreview(id, boatDefinition(id).name) + detail;
+    detail =
+      (ui.screen === 'yourboat' ? fittingPreview(w) : vesselPreview(id, boatDefinition(id).name)) +
+      detail;
   }
   ui.panel.innerHTML = `<div class="day-heading"><div><div class="eyebrow">URCHIN SKIPPER · DAY ${c.day} · ${money(c.cash)}</div><h2>${title}</h2></div></div><div class="career-layout"><div class="career-choices choices"></div><article class="career-detail">${detail}</article></div><div class="day-footer">${ui.menuNotice || ui.saveNotice || `${bind('menuUp')} / ${bind('menuDown')} Navigate · ${bind('confirm')} Select · Right stick scrolls detail · ${bind('back')} Back`}</div>`;
   const list = ui.panel.querySelector('.choices');
   paintVesselPreviews(ui.panel);
   if (SHOP_SCREENS.includes(ui.screen)) {
     renderShopChoices(ui, w, actions);
+    paintFittingPreviews(ui.panel, w);
     return;
   }
+  paintFittingPreviews(ui.panel, w);
   if (ui.screen === 'crew') list.classList.add('crew-grid');
   if (ui.screen === 'boatshop') list.classList.add('boat-pairs');
   choices.forEach((label, index) => {
@@ -258,45 +266,4 @@ export function renderCareer(ui, w, bind) {
     list.append(b);
   });
   list.children[ui.index]?.scrollIntoView({ block: 'nearest' });
-}
-
-function equipmentPlan(w) {
-  const fitted = equipment(w),
-    slots = [
-      'bow',
-      'console',
-      'mast',
-      'working deck',
-      'hull',
-      'aft deck',
-      'skipper',
-      'timepiece',
-      'dive gear',
-      'drive',
-    ];
-  const positions = [
-    [3, 8],
-    [70, 22],
-    [3, 32],
-    [70, 48],
-    [3, 56],
-    [70, 75],
-    [3, 81],
-    [70, 4],
-    [37, 60],
-    [37, 83],
-  ];
-  const items = (slot) => [
-    ...(slot === 'drive'
-      ? [boatDefinition(w.boat.configuration).drive]
-      : slot === 'console'
-        ? ['Sounder', 'Compass']
-        : slot === 'timepiece'
-          ? ['Red digital clock']
-          : []),
-    ...UPGRADES.filter((item) => item.slot === slot && fitted.includes(item.id)).map(
-      (item) => item.name,
-    ),
-  ];
-  return `<div class="boat-blueprint"><svg viewBox="0 0 500 500" role="img" aria-label="Installed equipment by boat station"><defs><pattern id="blueprint-grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#517a9033"/></pattern></defs><rect width="500" height="500" fill="url(#blueprint-grid)"/><path d="M250 25Q326 96 320 180V435Q250 465 180 435V180Q174 96 250 25Z" fill="#183d50" stroke="#b3e0e8" stroke-width="2"/><path d="M250 30V450M190 286H310M190 364H310" stroke="#76aeb6" stroke-dasharray="5 5"/><rect x="205" y="163" width="90" height="95" fill="none" stroke="#c0edf0"/><path d="M210 190H290M213 430V467M287 430V467" stroke="#b3e0e8"/>${positions.map(([x, y]) => `<path d="M${x < 50 ? 170 : 330} ${y * 5 + 24}H250" stroke="#7ca9b3"/>`).join('')}</svg>${slots.map((slot, i) => `<section class="fitting-slot ${items(slot).length ? 'installed' : ''}" style="left:${positions[i][0]}%;top:${positions[i][1]}%"><strong>${slot.toUpperCase()}</strong><span>${items(slot).join(' · ') || 'Empty station'}</span></section>`).join('')}</div><p>Fittings stay with this boat. Highlighted stations are installed; buy additions in the chandlery.</p>`;
 }

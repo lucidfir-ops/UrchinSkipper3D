@@ -7,6 +7,8 @@ export function enabledEquipment(w) {
 export function toggleEquipment(w, id) {
   const v = w.career?.fleet[w.boat.configuration];
   if (!v?.equipment.includes(id)) return { ok: false, reason: 'Fit this equipment first.' };
+  if (UPGRADES.find((item) => item.id === id)?.fixed)
+    return { ok: false, reason: 'This is a permanent installation, with no operating switch.' };
   const disabled = (v.disabledEquipment ??= []);
   const enabling = disabled.includes(id);
   if (!enabling && id === 'tank' && w.boat.fuel > FLEET[w.boat.configuration].fuelCapacity)

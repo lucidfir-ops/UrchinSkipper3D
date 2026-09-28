@@ -1,3 +1,4 @@
+import { adjustSoundVolume } from './menu-preferences.js';
 import { updatePatrolPrompt } from './patrol-view.js';
 import { uiScale, setUiScale, changeUiScale } from './ui-scale.js';
 import { updateIntro } from './intro-view.js';
@@ -516,6 +517,7 @@ export class PlaytestUI {
           : a.menuRight
             ? 'right'
             : a.navDirection || (a.navPulse === 1 ? 'down' : a.navPulse === -1 ? 'up' : '');
+    if (adjustSoundVolume(this, direction)) return;
     const navigationHeader =
       this.index < 0 || /^Back( |$)/.test(this.choices(this.hooks.world())[this.index] || '');
     if (

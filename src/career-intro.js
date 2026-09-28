@@ -7,11 +7,11 @@ export const introPending = (w) => ['briefing', 'active'].includes(w.career?.int
 export const INTRO_STEPS = [
   [
     'A little ahead',
-    'I’m aboard with you. The green rail is our PORT pickup side; orange marks the dangerous stern. These turn with the boat. Give her a little ahead throttle. On touch, use Ahead or drag the left stick up.',
+    'Give her a little ahead throttle. On touch, drag the left stick up or tap Ahead. The bow is the front of the boat; watch it begin to move.',
   ],
   [
     'Feel the rudder',
-    'While moving ahead, turn the rudder and watch the bow turn. Leave room: she keeps her throttle and rudder when you release.',
+    'While moving ahead, turn the rudder and watch the bow turn. Release the control: the rudder and throttle stay where you left them. Leave room for her momentum.',
   ],
   [
     'See the whole cove',
@@ -19,32 +19,46 @@ export const INTRO_STEPS = [
   ],
   [
     'Read our chart',
-    'Open Chart. Green marks known ground; pink crosses mark rocks that may be hard to see. Rocks and floating timber are solid hazards: hitting them can damage the hull or exposed drive. This is only a partial survey, so watch for unmarked crowns, wash, and objects in the water. The minimap shows our chart and boat position; select it to open the larger chart. The sounder reads depth only beneath us, including rock tops. Menu → UI / difficulty options toggles each; Arrange UI layout moves or resizes them. Close the chart when ready.',
+    'Open Chart. The gold ring and pointer show our position and heading. Green marks known fishing ground; pink crosses mark charted rocks. Find the green patch northwest of us, then close the chart.',
   ],
   [
     'Find the marked ground',
-    'Steer to the green patch northwest of our starting position, then select Neutral. Watch the sounder as we approach.',
+    'Steer to the green patch northwest of our starting position, then select Neutral. Neutral removes engine thrust; we still drift. The sounder measures water depth directly beneath the boat.',
   ],
   [
     'Put a diver to work',
-    'Deploy Ada or Milo on the marked patch. On touch use Deploy / board; otherwise use your deploy control. Wait for a little catch.',
+    'Deploy Ada or Milo here with Deploy / board. Watch the diver enter and descend, then follow the bubbles. Give them a moment to find urchins and collect a little catch.',
   ],
   [
     'Bring them alongside',
-    'Recall near the bubbles or wait for the float. Bring it into the green pickup sector outside the PORT rail — left when facing the bow. Select Neutral, match its drift, then use Deploy / board. Keep divers away from the orange stern, especially when reversing.',
+    'Recall near the bubbles, or wait for the float. Bring it beside the green PORT rail — the left side when facing the bow (front). Select Neutral, match its drift, then use Deploy / board. Keep the stern (back) away from the diver.',
   ],
   [
     'Scout unmarked water',
-    'Now head east along the northern shelf. Look in about 5–11 m of water in this cove, near the eastern kelp, and deploy a diver to scout. Orders can point the search east. There is no chart marker to follow: watch bubbles and the diver’s report. Unmarked ground is often fresher and less worked, so it can hold more and better-quality urchins, but finding it costs time and brings more navigation risk.',
+    'Head east along the northern shelf, toward the eastern kelp. Look for about 5–11 m on the sounder, then deploy a diver. There is no chart marker here: follow the bubbles and listen for their report.',
   ],
   [
     'Bring the discovery home',
-    'They found fresh ground! Recover your working divers and some catch, keeping the floats on port. In the future you can buy an upgrade that will let you mark the ground you find: the Recording chartplotter keeps ground observations for later trips. To find urchins, look for not too steep a slope, between 5 m and 25 m, but your divers will do better shallower, often near kelp.',
+    'They found fresh ground! Bring the floats alongside on port — our left working side. Use Deploy / board to take each diver and their catch aboard. We need everyone aboard before leaving.',
   ],
   [
     'Return through the south edge',
-    'That’s the loop: read the water, scout, look after the divers, and bring the catch home. Recover everyone, then drive all the way through the SOUTH edge of the map to return to harbour. Other edges will hold you inside the cove. I’ll cover today’s fuel; once we cross south, we choose your own boat and start day 1. Miss 19:00 offload and your catch lands at 06:00 next morning, with departure at 09:00. You can still fish a shorter day. Continuing late costs fatigue, freshness and safety; night diving needs flashlights. Home Coast only gets weak storms. Later areas have worse conditions, especially the fifth coast: check the forecast before you fish. A falling tide can leave you beached. Wait at sea for rising water or radio for a paid tow.',
+    'Recover everyone, then drive all the way through the SOUTH edge of the map to return to harbour. I’ll cover today’s fuel. Once we get home, we’ll choose your own boat.',
   ],
+];
+// Optional explanations remain beside the action they explain, rather than
+// becoming a final lecture before the player can finish the lesson.
+export const INTRO_NOTES = [
+  'Bow means front; stern means back. Port is left and starboard is right when facing the bow. These directions turn with the boat.',
+  'Water flowing over a rudder turns a shaft-drive boat. Neutral does not stop the boat instantly. Reverse can slow you, but always keep the stern clear of divers.',
+  'The camera follows your boat. Zoom close for alongside work and out for navigation.',
+  'The chart is a partial survey. Unmarked rocks and floating timber are real hazards. The sounder reads only directly underneath you; it does not scan ahead.',
+  'Tide changes the water depth. A falling tide can strand a boat. Reverse toward deeper water if possible, wait for the tide, or call for a paid tow from the radio.',
+  'Exactly two divers work from your boat. They search and pick independently. Bubbles mark their presence; the orange float appears when they surface. Night diving requires fitted flashlights.',
+  'Deploy / board ends one diver’s operation. Bag work takes and replaces one bag so a ready diver can keep fishing. Both actions automatically choose a diver alongside; portrait selection is for deployment and orders.',
+  'Urchins favour workable slopes in roughly 5–25 m, often near kelp. Shallower work is generally quicker. Orders can set a search direction, quality target and time limit.',
+  'The Recording chartplotter preserves dated observations. A report tells you what the diver found at that place and time; it does not reveal every hidden bed or guarantee tomorrow’s catch.',
+  'The shipping boat leaves at 19:00. Missing it reduces freshness and payable weight, but you decide when to stop fishing. Check the return estimate, fuel and forecast before committing to more work. Home Coast storms are weak; later coasts, especially the fifth, can be much harsher.',
 ];
 export const INTRO_SCOUT_HINT = 'The urchins are east of the patch you can see, right next to it!';
 export function tickIntroHint(w, seconds, playing) {

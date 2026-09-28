@@ -33,7 +33,9 @@ export async function chooseController(page, action, prefix, activate = true) {
         const directions =
           id < 0 || choices[id]?.startsWith('Back')
             ? ['down', 'up', 'left', 'right']
-            : menuDirections(ui.screen, !!urchinDebug.world.career);
+            : ui.panel.querySelector(`[data-choice-index="${id}"]`)?.matches('input[type=range]')
+              ? ['down', 'up']
+              : menuDirections(ui.screen, !!urchinDebug.world.career);
         for (const dir of directions) {
           const next = neighbour(items, id, dir);
           if (!seen.has(next)) queue.push([next, [...path, dir]]);

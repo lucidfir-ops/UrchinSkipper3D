@@ -37,7 +37,7 @@ test('two deployments have independent instructions, air, searching and harvesti
   tick(w, 5);
   const firstAir = w.divers[0].air;
   step(w, { recoverDiver: true, diverId: 1 }, frame);
-  tick(w, 3);
+  tick(w, w.divers[1].timer + 1);
   const [a, b] = w.divers;
   assert.equal(a.state, 'harvesting');
   assert.equal(b.state, 'searching');

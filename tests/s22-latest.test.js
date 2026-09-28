@@ -13,7 +13,7 @@ import {
 import { advanceIntro, INTRO_STEPS } from '../src/career-intro.js';
 import { setPreset, toggleAssist, normalizeAssists } from '../src/assists.js';
 import { boatDefinition } from '../src/boats.js';
-import { FLEET } from '../src/career-data.js';
+import { FLEET, UPGRADES } from '../src/career-data.js';
 import { canCrossReturnBoundary } from '../src/navigation.js';
 import { WEATHER } from '../src/weather.js';
 import { freshVessel, useVessel } from '../src/career-state.js';
@@ -135,7 +135,10 @@ test('arcade showcases unlock every boat, equipment, later-area, and speed-run l
     assert.equal(practice.boat.configuration, showcase.boatId || sourceWorld.career.activeBoat);
     assert(trainingLessons(practice).length > 0);
     if (showcase.scenario === 'options')
-      assert.equal(practice.career.fleet[practice.boat.configuration].equipment.length, 15);
+      assert.deepEqual(
+        [...practice.career.fleet[practice.boat.configuration].equipment].sort(),
+        UPGRADES.map((item) => item.id).sort(),
+      );
     if (showcase.scenario === 'risk-reward')
       assert.match(
         trainingLessons(practice).find(([title]) => title === 'Later-area risk and reward')[1],
