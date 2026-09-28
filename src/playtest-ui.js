@@ -29,17 +29,7 @@ import { isRadioMessage } from './radio-history.js';
 import { fullscreenLabel, toggleFullscreen } from './fullscreen.js';
 import { applyScreenFit } from './screen-fit.js';
 import { loggingEnabled, toggleLogging, downloadLog, sampleLog } from './troubleshooting-log.js';
-const TITLE_ACTIONS = [
-  'continue',
-  'load',
-  'new',
-  'test',
-  'touch',
-  'scale',
-  'fullscreen',
-  'logging',
-  'download-log',
-];
+const TITLE_ACTIONS = ['continue', 'load', 'new', 'test', 'settings', 'touch', 'fullscreen'];
 export class PlaytestUI {
   constructor(input, canvas, hooks) {
     this.input = input;
@@ -69,6 +59,24 @@ export class PlaytestUI {
     this.lastBuckets = { throttle: 0, rudder: 0 };
     this.titleIndex = 0;
     this.installTitle();
+    // Keep a pressed button mounted until its native click is delivered. Focus
+    // may change a preview, but must not destroy the pointer's activation target.
+    this.panel.addEventListener('pointerdown', (event) => {
+      this.pressedMenuButton = event.target.closest('button');
+    });
+    for (const type of ['pointerup', 'pointercancel', 'blur'])
+      window.addEventListener(type, () => {
+        this.pressedMenuButton = null;
+      });
+    this.panel.addEventListener('focusin', (event) => {
+      const button = event.target.closest('[data-choice-index]');
+      if (!button || button.disabled || this.input.capture || this.input.naming) return;
+      const index = Number(button.dataset.choiceIndex);
+      if (index !== this.index) {
+        this.index = index;
+        this.signature = null;
+      }
+    });
     this.touch = new TouchControls(input, this);
     applyScreenFit();
     window.addEventListener('resize', applyScreenFit);
@@ -87,18 +95,19 @@ export class PlaytestUI {
     list.className = 'title-choices';
     continueButton.before(list);
     list.append(continueButton);
+    continueButton.dataset.titleAction = 'continue';
+    continueButton.classList.add('title-primary');
     for (const [label, action] of [
       ['Load Game', 'load'],
       ['New Career', 'new'],
       ['Training Mode', 'test'],
+      ['Settings', 'settings'],
       ['Touchscreen Options', 'touch'],
-      [`UI scale: ${uiScale()}% · change`, 'scale'],
       [`⛶ ${fullscreenLabel()}`, 'fullscreen'],
-      [`Troubleshooting log: ${loggingEnabled() ? 'ON' : 'OFF'}`, 'logging'],
-      ['Download troubleshooting log', 'download-log'],
     ]) {
       const b = document.createElement('button');
       b.textContent = label;
+      b.dataset.titleAction = action;
       if (action === 'touch') b.dataset.touchOptions = '';
       if (action === 'scale') b.dataset.uiScale = '';
       if (action === 'fullscreen') b.dataset.fullscreen = '';
@@ -111,18 +120,21 @@ export class PlaytestUI {
       b.onclick = () => this.titleAction(action, true);
       list.append(b);
     }
-    const note = document.createElement('small');
-    note.textContent =
-      'Optional log keeps recent controls, menus and errors on this device. Download after a problem or reload; nothing is uploaded. A browser crash may lose the last few seconds.';
-    list.after(note);
+    list.addEventListener('focusin', (event) => {
+      const action = event.target.closest('[data-title-action]')?.dataset.titleAction;
+      if (action) this.titleIndex = TITLE_ACTIONS.indexOf(action);
+    });
     setUiScale(uiScale());
     const nav = document.createElement('div');
     nav.className = 'title-navigation';
     nav.innerHTML =
-      '<button disabled aria-label="Already at title">← Back</button><button class="screen-forward" aria-label="Forward to last menu" disabled>Forward →</button>';
+      '<button class="screen-forward" aria-label="Forward to last menu" disabled>Return to last menu →</button>';
     list.before(nav);
     this.titleForward = nav.querySelector('.screen-forward');
     this.titleForward.onclick = () => this.forward();
+    this.titleForward.onfocus = () => {
+      this.titleIndex = TITLE_ACTIONS.length;
+    };
   }
   showTitle({ navigation = false } = {}) {
     this.fromTitle = false;
@@ -165,9 +177,9 @@ export class PlaytestUI {
       changeUiScale();
       return;
     }
-    if (action === 'touch') {
+    if (action === 'touch' || action === 'settings') {
       this.begin(keyboard);
-      this.open('touch-options');
+      this.open(action === 'settings' ? 'settings' : 'touch-options');
       this.fromTitle = true;
       return;
     }
@@ -308,16 +320,46 @@ export class PlaytestUI {
         count = TITLE_ACTIONS.length + (forwardAvailable ? 1 : 0);
       if (this.titleForward) {
         this.titleForward.disabled = !forwardAvailable;
+        this.titleForward.hidden = !forwardAvailable;
       }
       this.titleIndex ??= 0;
       this.titleIndex %= count;
-      if (a.menuDown || a.navPulse === 1) this.titleIndex = (this.titleIndex + 1) % count;
-      if (a.menuUp || a.navPulse === -1) this.titleIndex = (this.titleIndex + count - 1) % count;
       const titleButtons = [...this.start.querySelectorAll('.title-choices button')];
       if (this.titleForward) titleButtons.push(this.titleForward);
+      const direction =
+        a.menuDown || a.navPulse === 1
+          ? 'down'
+          : a.menuUp || a.navPulse === -1
+            ? 'up'
+            : a.menuRight
+              ? 'right'
+              : a.menuLeft
+                ? 'left'
+                : null;
+      if (direction) {
+        const geometry = titleButtons.flatMap((button, id) => {
+          if (button.hidden || button.disabled) return [];
+          const rect = button.getBoundingClientRect();
+          return [
+            {
+              id,
+              x: rect.x + rect.width / 2,
+              y: rect.y + rect.height / 2,
+              width: rect.width,
+              height: rect.height,
+            },
+          ];
+        });
+        this.titleIndex = geometry.length
+          ? neighbour(geometry, this.titleIndex, direction)
+          : (this.titleIndex + (direction === 'up' ? count - 1 : 1)) % count;
+        if (this.start.contains?.(document.activeElement))
+          titleButtons[this.titleIndex]?.focus({ preventScroll: true });
+      }
       titleButtons.forEach((b, n) => {
         const selected = n === this.titleIndex;
         b.classList.toggle('selected', selected);
+        b.setAttribute('aria-current', String(selected));
         if (selected && this.titleFocused !== b) {
           b.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
           this.titleFocused = b;
@@ -457,7 +499,7 @@ export class PlaytestUI {
           ? 'Touchscreen mode is on. Tap Continue, or repeat Training Mode.'
           : this.input.connected
             ? `Controller detected: ${this.input.activePad.id}`
-            : 'Press a face button or Enter. Keep Steam running for built-in controls; use a Gamepad layout for this shortcut. Touch or keyboard can open controller setup.',
+            : 'Enter to begin · Keyboard, controller & touch',
       );
     this.render(world);
     this.touch?.update();

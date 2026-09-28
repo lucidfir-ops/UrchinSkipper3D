@@ -105,7 +105,7 @@ try {
       .getByRole('button', { name: 'Touchscreen Options', exact: true })
       .click({ noWaitAfter: true });
     await p
-      .getByRole('button', { name: 'Touchscreen mode: OFF', exact: true })
+      .getByRole('switch', { name: 'Touchscreen mode: OFF', exact: true })
       .click({ noWaitAfter: true });
     await p.waitForTimeout(300);
     await p

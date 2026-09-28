@@ -31,6 +31,11 @@ async function ready() {
   }
 }
 const suites = {
+  interface: ['scripts/interface-review.js'],
+  menus: ['scripts/menu-adversarial-review.js'],
+  accessibility: ['scripts/ui-accessibility-checks.js'],
+  'mobile-career': ['scripts/mobile-career-review.js'],
+  'hud-context': ['scripts/hud-context-review.js'],
   visual: ['scripts/three-smoke.js'],
   input: ['scripts/three-input-checks.js'],
   touch: ['scripts/three-touch-review.js'],
@@ -62,7 +67,14 @@ try {
     if (selected && !Object.hasOwn(suites, selected)) throw new Error('Unknown suite: ' + selected);
     for (const [name, args] of Object.entries(suites)) {
       if (selected ? selected !== name : name === 'firefox') continue;
-      await run(name, process.execPath, args);
+      // Browser suites use isolated contexts. Keep their failure status while
+      // collecting the rest of the matrix instead of hiding later defects.
+      try {
+        await run(name, process.execPath, args);
+      } catch (error) {
+        console.error(error.message);
+        process.exitCode = 1;
+      }
     }
   }
 } catch (error) {

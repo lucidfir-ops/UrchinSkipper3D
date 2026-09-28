@@ -226,8 +226,8 @@ export async function keyboardFeedbackChecks(browser) {
     await shot('harbour');
     await page.getByRole('button', { name: 'Settings', exact: true }).click();
     await page.getByRole('button', { name: 'Touchscreen Options', exact: true }).click();
-    await page.getByRole('button', { name: 'Touchscreen mode: OFF', exact: true }).click();
-    await page.getByRole('button', { name: 'Touchscreen mode: ON', exact: true }).waitFor();
+    await page.getByRole('switch', { name: 'Touchscreen mode: OFF', exact: true }).click();
+    await page.getByRole('switch', { name: 'Touchscreen mode: ON', exact: true }).waitFor();
     await released();
     await page.keyboard.press('Escape');
     await screen('harbour');

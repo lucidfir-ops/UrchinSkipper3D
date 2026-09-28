@@ -77,6 +77,10 @@ async function careerLayout(name) {
       })),
     };
   });
+  // Preserve the failing geometry and image too; a clipped panel must not erase
+  // the evidence needed to diagnose it from the review receipt.
+  results.push({ name, ...layout });
+  await screenshot(name);
   assert(layout.touch);
   assert.equal(layout.touchScale, 1, 'Fresh-context default touch scale is 100%');
   for (const panel of layout.panels) {
@@ -99,8 +103,6 @@ async function careerLayout(name) {
       `${control.action}: touch target below 44px`,
     );
   }
-  results.push({ name, ...layout });
-  await screenshot(name);
   await hitTargets(name);
 }
 
@@ -136,7 +138,7 @@ try {
   await page.waitForFunction(() => window.urchinDebug?.ready, null, { timeout: 60000 });
   await viewportReady();
   await page.getByRole('button', { name: 'Touchscreen Options', exact: true }).tap();
-  await page.getByRole('button', { name: 'Touchscreen mode: OFF', exact: true }).tap();
+  await page.getByRole('switch', { name: 'Touchscreen mode: OFF', exact: true }).tap();
   await page.getByRole('button', { name: 'Back to previous menu', exact: true }).tap();
   await page.locator('#keyboardFallback').tap();
   await page.getByRole('button', { name: 'Come aboard · learn with Frank', exact: true }).tap();
@@ -148,7 +150,7 @@ try {
     const d = urchinDebug;
     return {
       boat: d.three.project(d.world.boat.x, d.world.boat.y, 0),
-      expected: { x: innerWidth * 0.58, y: innerHeight * 0.34 },
+      expected: { x: innerWidth * 0.58, y: innerHeight * 0.37 },
       dialog: document.querySelector('#frankAboard').getBoundingClientRect().toJSON(),
       viewport: { width: innerWidth, height: innerHeight },
       scale: { width: d.three.host.scale.width, height: d.three.host.scale.height },

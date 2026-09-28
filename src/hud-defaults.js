@@ -1,43 +1,21 @@
 // Screen-space defaults based on the designer's tablet and Deck arrangements.
 // User layouts take precedence; these adapt without rewriting saved positions.
-function baselineHudRect(id, width, height, touch, tutorial = false) {
+export const instrumentShelf = (touch) =>
+  touch
+    ? ['timepiecePanel', 'speedPanel', 'throttlePanel', 'fuelPanel', 'depthInstrumentPanel']
+    : [
+        'timepiecePanel',
+        'depthInstrumentPanel',
+        'throttlePanel',
+        'speedPanel',
+        'fuelPanel',
+        'loadPanel',
+      ];
+
+function baselineHudRect(id, width, height, touch, tutorial = false, visibleShelf) {
   const r = (left, top, w, h) => ({ left, top, width: w, height: h });
-  if (!touch && height < 560) {
-    // Short desktop windows need side docks rather than stacking instruments
-    // into the action panel. Keep the central working water unobstructed.
-    const s = Math.min(1, width / 844),
-      rail = 242 * s,
-      side = width - 270 * s,
-      edge = width - 100 * s,
-      mapWidth = 150 * s;
-    const short = {
-      helmPanel: r(8 * s, 8, 216 * s, 166),
-      diverPanel: r(8 * s, 182, 216 * s, Math.min(190, height - 190)),
-      timepiecePanel: r(rail, 8, 100 * s, 82),
-      depthInstrumentPanel: r(rail + 110 * s, 8, 100 * s, 82),
-      throttlePanel: r(rail + 220 * s, 8, 100 * s, 108),
-      clock: r(rail, 98, 100 * s, 74),
-      sounderPanel: r(rail + 110 * s, 98, 100 * s, 74),
-      almanacPanel: r(side, 8, 160 * s, 34),
-      groundLegend: r(rail, 122, 148 * s, 112),
-      navigation: r(side, 170, 160 * s, 72),
-      loadPanel: r(side, height - 138, 100 * s, 62),
-      hullPanel: r(side, height - 68, 100 * s, 60),
-      speedPanel: r(edge, 8, 92 * s, 80),
-      fuelPanel: r(edge, 96, 92 * s, 80),
-      currentReadout: r(edge, 184, 92 * s, 74),
-      minimapPanel: r(width - mapWidth - 8 * s, height - 120, mapWidth, 112),
-      message: r(rail, height - 104, Math.max(200, width - 522 * s), 96),
-      help: r(rail, height - 186, Math.max(200, width - 522 * s), 72),
-      actionFeedback: r(rail, 124, Math.max(160, width - 570 * s), 66),
-      electronics: r(side, 50, 160 * s, 72),
-      compassPanel: r(side, 170, 90 * s, 74),
-      frankAboard: r(rail, 122, Math.max(200, width - 522 * s), Math.min(150, height - 232)),
-    }[id];
-    if (short) return short;
-  }
-  if (id === 'almanacPanel')
-    return touch && height < 500 ? r(width - 370, 94, 112, 44) : r(width / 2 - 95, 155, 190, 36);
+  if (touch && id === 'almanacPanel')
+    return height < 500 ? r(width - 370, 94, 112, 44) : r(width / 2 - 95, 155, 190, 36);
   if (touch) {
     const short = height < 500,
       map = short ? 126 : Math.min(240, width * 0.21),
@@ -45,13 +23,7 @@ function baselineHudRect(id, width, height, touch, tutorial = false) {
       available = width - start - 244,
       cell = Math.max(64, available / 5),
       gaugeH = short ? 76 : 104;
-    const strip = [
-      'timepiecePanel',
-      'speedPanel',
-      'throttlePanel',
-      'fuelPanel',
-      'depthInstrumentPanel',
-    ];
+    const strip = visibleShelf || instrumentShelf(true);
     if (strip.includes(id)) return r(start + strip.indexOf(id) * cell, 6, cell - 4, gaugeH);
     return {
       minimapPanel: r(6, 6, map, short ? 128 : map + 44),
@@ -60,12 +32,12 @@ function baselineHudRect(id, width, height, touch, tutorial = false) {
       electronics: short ? r(start + 6, 184, 140, 50) : r(width - 236, 52, 144, 94),
       currentReadout: r(width - 86, 52, 80, short ? 74 : 100),
       helmPanel: r(width * 0.6, height - 48, width * 0.4 - 6, 44),
-      diverPanel: r(6, height - 48, width * 0.6 - 12, 44),
+      diverPanel: r(6, height - 64, width * 0.6 - 12, 60),
       frankAboard: r(
         start,
         gaugeH + 14,
         short ? Math.min(290, width * 0.34) : width * 0.4,
-        short ? 150 : 186,
+        short ? 132 : 186,
       ),
       message: short
         ? r(start + 6, 90, Math.min(220, width * 0.27), 86)
@@ -89,99 +61,196 @@ function baselineHudRect(id, width, height, touch, tutorial = false) {
         short ? 58 : 112,
       ),
       loadPanel: r(
-        short ? start + 156 : start + 256,
-        short ? 184 : height * 0.38,
-        short ? 70 : 120,
-        short ? 50 : 112,
+        short ? 6 : start + 256,
+        short ? 140 : height * 0.38,
+        short ? 126 : 120,
+        short ? 40 : 112,
       ),
     }[id];
   }
-  // Three.js edition: reserve the centre for the working water, group the
-  // helm/crew on the left, and keep navigation instruments in aligned rails.
-  // These defaults never replace a player's saved layout; touch remains above.
-  const margin = 16,
-    left = Math.min(280, width * 0.245),
-    gauge = Math.min(128, width * 0.105),
-    top = height < 580 ? 90 : 104,
-    rail = left + margin + 12,
-    right = width - gauge - margin,
-    compact = height < 650,
-    helmHeight = compact ? 181 : 202,
-    crewTop = helmHeight + margin + 10,
-    crewHeight = compact ? 174 : 190,
-    extraTop = crewTop + crewHeight + 12;
+  // A working wheelhouse: one instrument shelf, crew to port, navigation to
+  // starboard, and open water through the middle. Each remains an independent
+  // window. HudWindows applies a saved position/size after these defaults.
+  const compact = height < 560,
+    margin = compact ? 8 : 14,
+    gap = compact ? 6 : 8,
+    side = compact ? 176 : Math.min(224, width * 0.19),
+    shelfHeight = compact ? 90 : 112,
+    wide = width >= 1100 && !compact,
+    gauge = (width - margin * 2 - side - gap * 6 - (wide ? side + gap : 0)) / 6,
+    start = margin + side + gap,
+    right = width - side - margin,
+    under = margin + shelfHeight + gap,
+    map = compact ? 138 : Math.min(side, height * 0.29),
+    dockTop = height - (compact ? 119 : 164),
+    crewHeight = compact ? 148 : 242;
+  const strip = visibleShelf || instrumentShelf(false);
+  if (strip.includes(id))
+    return r(start + strip.indexOf(id) * (gauge + gap), margin, gauge, shelfHeight);
+  if (compact) {
+    const compactWindows = {
+      diverPanel: r(margin, under, side, 132),
+      message: r(margin, under + 136, side, 40),
+      groundLegend: r(start, under, 142, 94),
+      currentReadout: r(start, under + 100, 142, 60),
+      electronics: r(width - 302, under, 142, 66),
+      navigation: r(width - 302, under + 72, 142, 62),
+      almanacPanel: r(width - 302, under + 140, 142, 36),
+      minimapPanel: r(width - 150, under, 142, 176),
+      help: r(start, under, width - start - 318, 92),
+    }[id];
+    if (compactWindows) return compactWindows;
+  }
   return {
-    helmPanel: r(margin, margin, left, helmHeight),
-    diverPanel: r(margin, crewTop, left, crewHeight),
-    timepiecePanel: r(rail, margin, gauge, top),
-    clock: r(rail, top + margin + 10, gauge * 1.15, 76),
-    depthInstrumentPanel: r(rail + gauge + 10, margin, gauge, top),
-    sounderPanel: r(rail + gauge * 1.15 + 10, top + margin + 10, gauge, 76),
-    throttlePanel: r(rail + gauge * 2 + 20, margin, gauge, top + 20),
-    electronics: r(width - gauge * 1.7 - margin, margin, gauge * 1.7, top - 8),
-    speedPanel: r(right, top + margin + 14, gauge, 105),
-    fuelPanel: r(right, top + margin + 129, gauge, 105),
-    currentReadout: r(right, top + margin + 244, gauge, 94),
-    minimapPanel: r(
-      width - Math.min(224, height * 0.28) - margin,
-      height - Math.min(224, height * 0.28) - 48,
-      Math.min(224, height * 0.28),
-      Math.min(224, height * 0.28) + 32,
+    helmPanel: r(margin, margin, side, shelfHeight),
+    diverPanel: r(margin, under, side, crewHeight),
+    electronics: r(
+      wide && visibleShelf ? start + strip.length * (gauge + gap) : right,
+      wide ? margin : under,
+      side,
+      wide ? shelfHeight : 66,
     ),
-    frankAboard: r(rail, top + margin + 16, width - rail - gauge - margin * 2, height * 0.27),
-    message: r(margin, height - 112, Math.min(440, width * 0.38), 96),
-    help: r(width * 0.35, height - 94, width * 0.35, 78),
-    navigation: r(rail, tutorial ? top + height * 0.3 + 16 : top + margin + 14, 220, 64),
-    groundLegend: r(rail, height - 236, 190, 112),
-    actionFeedback: r(width * 0.64, height * 0.4, 180, 72),
-    compassPanel: r(rail, height * 0.48, 120, 108),
-    hullPanel: r(margin, extraTop, left * 0.47, 108),
-    loadPanel: r(margin + left * 0.53, extraTop, left * 0.47, 108),
+    navigation: r(right, wide ? under : under + 72, side, compact ? 56 : 76),
+    almanacPanel: r(right, under + (wide ? 84 : 150), side, 42),
+    currentReadout: r(right, under + (wide ? 134 : 198), side, compact ? 66 : 74),
+    minimapPanel: r(width - map - margin, dockTop - map - gap, map, map),
+    frankAboard: r(start, under, Math.max(260, right - start - gap), compact ? 122 : 146),
+    message: r(
+      margin,
+      compact ? dockTop - 70 : dockTop - 116,
+      compact ? side + 32 : Math.max(side, 320),
+      compact ? 64 : 108,
+    ),
+    help: r(
+      start + (compact ? 28 : 104),
+      dockTop - (compact ? 78 : 94),
+      Math.max(210, right - start - (compact ? 48 : 128)),
+      compact ? 72 : 86,
+    ),
+    groundLegend: r(margin, under + crewHeight + gap, side, compact ? 82 : 104),
+    actionFeedback: r(
+      start + 12,
+      under + (compact ? 130 : 162),
+      Math.min(320, right - start - 24),
+      70,
+    ),
+    clock: r(start, under, Math.min(180, gauge * 1.6), 72),
+    sounderPanel: r(
+      start + Math.min(180, gauge * 1.6) + gap,
+      under,
+      Math.min(160, gauge * 1.5),
+      72,
+    ),
+    compassPanel: r(margin, under + crewHeight + 120, side / 2 - gap, 94),
+    hullPanel: r(margin + side / 2, under + crewHeight + 120, side / 2, 94),
   }[id];
 }
 
-export function defaultHudRect(id, width, height, touch, tutorial = false, controlsTop) {
+export function avoidContextTarget(rect, target, band) {
+  if (
+    !target ||
+    target.x < rect.left - 12 ||
+    target.x > rect.left + rect.width + 12 ||
+    target.y < rect.top - 12 ||
+    target.y > rect.top + rect.height + 12
+  )
+    return rect;
+  const minimum = Math.min(rect.width, 300),
+    leftWidth = Math.min(rect.width, target.x - 18 - band.left),
+    rightWidth = Math.min(rect.width, band.right - target.x - 18),
+    options = [];
+  if (leftWidth >= minimum) options.push({ ...rect, left: band.left, width: leftWidth });
+  if (rightWidth >= minimum) options.push({ ...rect, left: target.x + 18, width: rightWidth });
+  return (
+    options.sort(
+      (a, b) =>
+        Math.abs(a.left - rect.left) +
+        (rect.width - a.width) / 2 -
+        Math.abs(b.left - rect.left) -
+        (rect.width - b.width) / 2,
+    )[0] || rect
+  );
+}
+
+export function defaultHudRect(
+  id,
+  width,
+  height,
+  touch,
+  tutorial = false,
+  controlsTop,
+  visibleShelf,
+  activeMessage = false,
+  compactMessage = false,
+  targetPoint,
+) {
   let rect;
+  if (id === 'message' && activeMessage && !tutorial && !(touch && width < height)) {
+    if (touch && height < 500)
+      return { left: 140, top: 86, width: Math.min(220, width * 0.292), height: 134 };
+    if (height < 560) {
+      const left = 190;
+      return {
+        left,
+        top: 104,
+        width: Math.min(168, Math.max(140, width / 2 - left - 54)),
+        height: height - 214,
+      };
+    }
+    const left = 14 + Math.min(224, width * 0.19) + 8;
+    return avoidContextTarget(
+      { left, top: 134, width: Math.min(500, width - left - 240), height: 176 },
+      targetPoint,
+      { left, right: width - Math.min(224, width * 0.19) - 14 },
+    );
+  }
   if (touch && width < height) {
     const cell = (width - 20) / 5,
       controls =
         controlsTop === undefined
           ? 64 + ((width <= 700 ? 225 : 170) * touchScale()) / 100
-          : height - controlsTop + 10;
-    const top = [
-      'timepiecePanel',
-      'speedPanel',
-      'throttlePanel',
-      'fuelPanel',
-      'depthInstrumentPanel',
-    ];
+          : height - controlsTop + 10,
+      workTop = height - controls,
+      lessonHeight = 150,
+      lessonTop = workTop - lessonHeight;
+    if (id === 'message' && activeMessage && !tutorial)
+      return compactMessage
+        ? { left: 4, top: workTop - 82, width: width - 8, height: 82 }
+        : { left: width - 158, top: 326, width: 154, height: Math.max(170, workTop - 326) };
+    const top = visibleShelf || instrumentShelf(true);
     if (top.includes(id))
-      rect = { left: 4 + top.indexOf(id) * (cell + 3), top: 50, width: cell, height: 65 };
+      rect = { left: 4 + top.indexOf(id) * (cell + 3), top: 50, width: cell, height: 72 };
     else
       rect = {
-        minimapPanel: { left: 4, top: 122, width: 100, height: 110 },
+        minimapPanel: { left: 4, top: 130, width: 100, height: 110 },
         clock: { left: 110, top: 122, width: 134, height: 68 },
         sounderPanel: { left: 250, top: 122, width: width - 254, height: 68 },
-        diverPanel: { left: 4, top: height - 52, width: width - 8, height: 48 },
-        helmPanel: { left: 110, top: 198, width: width - 114, height: 45 },
+        diverPanel: { left: 4, top: height - 64, width: width - 8, height: 60 },
+        helmPanel: { left: 110, top: 210, width: width - 114, height: 44 },
         hullPanel: { left: 4, top: 240, width: 74, height: 68 },
-        loadPanel: { left: 110, top: 122, width: 74, height: 68 },
-        currentReadout: { left: width - 78, top: 122, width: 74, height: 68 },
-        electronics: { left: 154, top: 308, width: width - 160, height: 48 },
+        loadPanel: { left: 110, top: 130, width: 74, height: 74 },
+        currentReadout: { left: width - 78, top: 130, width: 74, height: 74 },
+        almanacPanel: { left: 4, top: 248, width: 100, height: 44 },
+        electronics: { left: 190, top: 130, width: Math.max(96, width - 274), height: 74 },
         actionFeedback: { left: 154, top: 252, width: width - 160, height: 46 },
         frankAboard: {
           left: 6,
-          top: 312,
+          top: lessonTop,
           width: width - 12,
-          height: Math.min(160, height - 312 - controls),
+          height: lessonHeight,
         },
-        message: { left: 6, top: height - controls - 80, width: width - 12, height: 80 },
-        navigation: { left: 4, top: 366, width: 140, height: 74 },
-        groundLegend: { left: 4, top: 252, width: 140, height: 106 },
-        help: { left: 6, top: height - controls - 125, width: width - 12, height: 54 },
+        message: { left: 6, top: height - controls - 60, width: width - 12, height: 60 },
+        navigation: { left: 110, top: 260, width: width - 114, height: 60 },
+        groundLegend: { left: 4, top: 298, width: 100, height: 132 },
+        help: {
+          left: tutorial ? width - 104 : 6,
+          top: tutorial ? 260 : workTop - 142,
+          width: tutorial ? 100 : width - 12,
+          height: tutorial ? Math.min(110, lessonTop - 268) : 48,
+        },
       }[id];
   }
-  rect ||= baselineHudRect(id, width, height, touch, tutorial);
+  rect ||= baselineHudRect(id, width, height, touch, tutorial, visibleShelf);
   return rect;
 }
 import { touchScale } from './touch-scale.js';

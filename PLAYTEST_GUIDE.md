@@ -11,7 +11,9 @@ Run the separate 3D project at http://127.0.0.1:5184/. Start with Frank, then ch
 - Tap the visible 3D boat to neutral and centre the rudder, including Frank’s offset tutorial view. Zoom in fully and confirm labelled touch buttons still receive their own taps. Check default control targets and intentionally smaller Tiny/50% choices.
 - Inspect desktop 1280×800, short 844×390 and portrait 390×844. All purchase/return confirmations must remain reachable.
 
-The graphics are a separate translation; passing inherited simulation tests does not prove every visual or physical-device case.
+For the September 27–28 menu and HUD overhaul, use the [interface review record](docs/review/interface-redesign-2026-09-27.md) and its reproducible browser scripts. Check Back from title, Harbour and water; nested scroll restoration; cancelled purchases and remapping; every Harbour destination through the compact scenic pan; crew availability labels; and saved layout precedence. Recovery checks must include eligible and denied pickup, excess catch, active progress and spoken feedback near the instruments. Compare Easy, Realistic, Custom and All Off independently.
+
+The graphics are a separate translation; passing inherited simulation tests does not prove every visual or physical-device case. Historical descriptions of earlier artwork below do not override the commissioned interface redesign; their gameplay and control checks remain relevant.
 
 ---
 

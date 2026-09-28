@@ -1,0 +1,1084 @@
+/* One wheelhouse, independent windows. Position and size stay with HudWindows
+   so a skipper's saved arrangement always takes precedence over defaults. */
+body [data-hud-window] {
+  color: var(--ui-text);
+  background: var(--marine-panel);
+  border: 1px solid var(--ui-border);
+  border-radius: 9px;
+  box-shadow: var(--marine-shadow);
+  scrollbar-color: #82c6b366 transparent;
+  font-variant-numeric: tabular-nums;
+}
+body
+  :is(
+    #helmPanel,
+    #diverPanel,
+    #electronics,
+    #message,
+    #help,
+    #navigation,
+    #frankAboard
+  )[data-hud-window] {
+  padding: 10px 12px;
+}
+body
+  :is(
+    #timepiecePanel,
+    #depthInstrumentPanel,
+    #throttlePanel,
+    #speedPanel,
+    #fuelPanel,
+    #loadPanel,
+    #currentReadout
+  )[data-hud-window] {
+  padding: 7px;
+}
+body #helmPanel #hud {
+  height: 100%;
+  padding: 0;
+  font-size: 10px;
+}
+body:not(.touch-playing) #helmPanel #hud {
+  padding: 0;
+}
+body:not(.touch-playing) #helmPanel[data-hud-window] {
+  padding: 8px 10px;
+}
+.instrument-eyebrow {
+  margin-bottom: 5px;
+  color: var(--ui-accent);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.075em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+.boat-card-main {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+body .boat-card-main .instrument-compass {
+  flex: 0 0 53px;
+  width: 53px;
+  height: 53px;
+  min-height: 0;
+}
+.boat-card-readings {
+  display: grid;
+  gap: 3px;
+  color: var(--ui-muted);
+  font-size: 11px;
+  line-height: 1.2;
+}
+.boat-heading b {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ui-text);
+}
+.boat-heading small {
+  font-size: 10px;
+}
+.boat-speed {
+  color: var(--ui-text);
+}
+.boat-speed b {
+  font-size: 17px;
+  font-weight: 600;
+}
+.boat-speed small {
+  font-size: 9px;
+  color: var(--ui-muted);
+}
+.boat-command {
+  border-top: 1px solid var(--ui-border);
+  margin-top: 5px;
+  padding-top: 4px;
+  color: var(--ui-accent);
+  font-size: 10px;
+  line-height: 1.3;
+}
+.gauge-ring,
+.gauge-arc,
+.gauge-reserve,
+.compass-ring {
+  fill: none;
+}
+.gauge-ring {
+  stroke: #82c6b31c;
+  stroke-width: 9;
+}
+.gauge-arc {
+  stroke: var(--ui-sea);
+  stroke-width: 2;
+}
+.gauge-reserve {
+  stroke: var(--ui-danger);
+  stroke-width: 4;
+}
+.gauge-tick {
+  fill: none;
+  stroke: #aec4c485;
+  stroke-width: 1.5;
+}
+.gauge-needle {
+  fill: none;
+  stroke: var(--ui-accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.gauge-pin {
+  fill: var(--ui-accent);
+}
+.instrument-dial.danger .gauge-needle {
+  stroke: var(--ui-danger);
+}
+body .instrument-dial text,
+body .instrument-compass text {
+  fill: var(--ui-text);
+  font-family: inherit;
+}
+body .instrument-dial .gauge-label {
+  fill: var(--ui-muted);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 1px;
+}
+body .instrument-dial .dial-value {
+  font:
+    600 19px 'Avenir Next',
+    'Segoe UI',
+    sans-serif;
+}
+body .instrument-dial .gauge-limit {
+  fill: var(--ui-muted);
+  font-size: 10px;
+}
+.compass-ring {
+  stroke: #82c6b350;
+  stroke-width: 1.5;
+}
+.compass-pointer {
+  fill: var(--ui-accent);
+}
+.compass-tail {
+  fill: var(--ui-sea);
+}
+body .instrument-compass .compass-reading {
+  font-size: 13px;
+  font-weight: 600;
+}
+body .instrument-compass .compass-north {
+  fill: var(--ui-accent);
+  font-size: 11px;
+}
+body .digital-clock,
+body .depth-instrument {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  align-items: center;
+  padding: 5px;
+  background: #04151c80;
+  border-radius: 5px;
+  text-shadow: none;
+}
+body .digital-clock > .instrument-texture,
+body .depth-instrument > .instrument-texture {
+  display: none;
+}
+body .digital-clock small,
+body .depth-instrument small {
+  position: static;
+  width: auto;
+  color: var(--ui-muted);
+  font:
+    600 clamp(8px, 8cqw, 11px) 'Avenir Next',
+    'Segoe UI',
+    sans-serif;
+  letter-spacing: 0.035em;
+}
+body .digital-clock output,
+body.tiny-mode .digital-clock output {
+  position: static;
+  width: auto;
+  color: #ff927f;
+  font:
+    600 min(23cqw, 31px) ui-monospace,
+    monospace;
+  letter-spacing: -0.04em;
+  text-shadow: 0 0 12px #ff705028;
+}
+body .depth-instrument output,
+body.tiny-mode .depth-instrument output {
+  color: var(--ui-sea);
+  background: transparent;
+  font:
+    600 min(29cqw, 33px) ui-monospace,
+    monospace;
+  line-height: 1;
+  text-shadow: none;
+}
+body .depth-instrument.shallow {
+  background: #5b382752;
+}
+body .depth-instrument.shallow output {
+  color: var(--ui-danger);
+}
+body .depth-scale {
+  width: 85%;
+  height: 3px;
+  margin: 0;
+  background: #82c6b326;
+}
+body .depth-scale i {
+  background: var(--ui-sea);
+}
+body .command-instrument {
+  padding: 4px;
+  text-shadow: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.command-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3px;
+}
+body .command-instrument :is(strong, small),
+body.tiny-mode .command-instrument :is(strong, small) {
+  color: var(--ui-muted);
+  font-size: min(8cqw, 10px);
+  line-height: 1.1;
+}
+body .command-instrument output {
+  margin: 0;
+  color: var(--ui-accent);
+  font-size: min(13cqw, 15px);
+}
+body .command-instrument small {
+  display: flex;
+  justify-content: space-between;
+  font-size: min(6.5cqw, 8px);
+}
+body .command-track {
+  height: 5px;
+  margin: 4px 0;
+  background: linear-gradient(90deg, #f2a28e70, #193a45 48%, #82c6b370);
+  border: 1px solid var(--ui-border);
+}
+body .command-track i {
+  top: -3px;
+  width: 3px;
+  height: 9px;
+  border-radius: 2px;
+  background: var(--ui-accent);
+}
+body .load-crate {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 3px;
+  text-align: center;
+}
+.load-crate .gauge-label {
+  color: var(--ui-muted);
+  font-size: min(9cqw, 10px);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+body .bag-stack {
+  height: auto;
+  min-height: 0;
+  flex: 1;
+  width: 82%;
+  margin: 0 auto;
+  padding: 4px;
+  gap: 3px;
+  border: 1px solid #aec4c43b;
+  background: #04151c80;
+}
+body .bag-stack i {
+  background: #82c6b312;
+  border: 1px solid #82c6b326;
+  border-radius: 2px;
+}
+body .bag-stack i.loaded {
+  background: var(--ui-accent);
+  border-color: #f2eee355;
+}
+body .load-crate output {
+  font:
+    600 min(18cqw, 21px) 'Avenir Next',
+    'Segoe UI',
+    sans-serif;
+  color: var(--ui-text);
+}
+body .load-crate small {
+  font-size: min(8.5cqw, 10px);
+  color: var(--ui-muted);
+}
+body #diverPanel[data-hud-window] {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: auto;
+}
+body #diverPanel #divers {
+  display: grid;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+}
+body #diverPanel #divers button {
+  width: 100%;
+  max-width: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  padding: 9px 10px;
+  border: 1px solid var(--ui-border);
+  border-radius: 9px;
+  background: var(--marine-panel);
+  color: var(--ui-text);
+  text-align: left;
+  box-shadow: var(--marine-shadow);
+  font-size: 11px;
+}
+body #diverPanel #divers button.selected {
+  border-color: #e7c78b80;
+  box-shadow:
+    inset 3px 0 var(--ui-accent),
+    var(--marine-shadow);
+  background: linear-gradient(120deg, #243c3cef, #102c37f5);
+  outline: none;
+}
+body #diverPanel #divers button:focus-visible {
+  outline: 2px solid var(--ui-accent);
+  outline-offset: -4px;
+}
+.diver-card-content {
+  display: block;
+  width: 100%;
+}
+.diver-identity {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  width: 100%;
+}
+.diver-identity > span:not(.diver-selection-mark) {
+  flex: 1;
+  min-width: 0;
+}
+body #diverPanel #divers .diver-identity :is(img, svg) {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border-radius: 6px;
+  object-fit: cover;
+  margin: 0;
+}
+.diver-identity b {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+}
+.diver-identity small {
+  display: block;
+  margin-top: 3px;
+  color: var(--ui-muted);
+  font-size: 10px;
+}
+.diver-selection-mark {
+  color: var(--ui-accent);
+  font-size: 10px;
+}
+body #diverPanel .diver-detail {
+  display: block;
+  margin-top: 5px;
+  color: var(--ui-muted);
+  font-size: 10px;
+  line-height: 1.35;
+}
+body #diverPanel[data-presentation='graphic'] .diver-detail.instrument-text {
+  display: none;
+}
+body #diverPanel .diver-meters {
+  width: 100%;
+  height: auto;
+  flex: 0 0 auto;
+  gap: 12px;
+  margin-top: 0;
+  order: 2;
+}
+.diver-meters label > span {
+  display: flex;
+  justify-content: space-between;
+  color: var(--ui-muted);
+  font-size: 9px;
+}
+.diver-meters label b {
+  color: var(--ui-text);
+  font-weight: 500;
+}
+body #diverPanel .diver-meters meter {
+  width: 100%;
+  height: 5px;
+  display: block;
+  margin-top: 3px;
+}
+body #diverPanel .nitrogen-info {
+  display: flex;
+  flex: 0 0 auto;
+  width: 100%;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  order: 3;
+}
+body #diverPanel .nitrogen-info[hidden] {
+  display: none;
+}
+body #diverPanel .nitrogen-bar {
+  flex: 1;
+  height: 7px;
+}
+body #diverPanel .nitrogen-info small {
+  font-size: 9px;
+  color: var(--ui-sea);
+}
+body #diverPanel #divers.portrait-only {
+  height: auto;
+}
+body #diverPanel #divers.portrait-only button {
+  min-height: 64px;
+}
+body .weather-instrument {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+}
+body .weather-instrument strong {
+  color: var(--ui-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+body .weather-instrument > div {
+  color: var(--ui-muted);
+  font-size: 12px;
+}
+body .weather-instrument meter {
+  height: 4px;
+}
+body #navigation {
+  gap: 10px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--ui-text);
+}
+body #navigation small {
+  color: var(--ui-muted);
+  font-size: 10px;
+}
+body #navigation > span {
+  color: var(--ui-accent);
+}
+body #almanacPanel {
+  padding: 0;
+  border: 0;
+}
+body #openAlmanac {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  border: 1px solid var(--ui-border);
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--marine-panel);
+  color: var(--ui-muted);
+}
+body #message {
+  font-size: 11px;
+  line-height: 1.4;
+  border-left: 3px solid var(--ui-border);
+}
+body #message > strong {
+  display: block;
+  color: var(--ui-text);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.pickup-person {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--ui-muted);
+  font-size: 10px;
+}
+body #message.available {
+  border-left-color: var(--ui-sea);
+}
+body #message.locked {
+  border-left-color: var(--ui-accent);
+}
+body #message .pickup-detail {
+  color: var(--ui-muted);
+  font-size: 10px;
+}
+body #message .control-status {
+  color: var(--ui-accent);
+  margin-top: 5px;
+  font-size: 11px;
+}
+body #message .pickup-reason,
+body #message .pickup-requirement {
+  color: var(--ui-muted);
+  font-size: 11px;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+body #message .pickup-requirement {
+  margin-top: 5px;
+  color: var(--ui-sea);
+}
+body #message .important-notice {
+  color: var(--ui-danger);
+  font-size: 11px;
+  line-height: 1.3;
+  margin-top: 4px;
+  padding: 0;
+}
+body #message progress {
+  display: block;
+  width: 100%;
+  height: 7px;
+  margin: 5px 0;
+  accent-color: var(--ui-sea);
+}
+body #message[data-context='active'] > strong {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 5px;
+  margin-bottom: 3px;
+}
+.pickup-duration {
+  flex: 0 0 auto;
+  color: var(--ui-muted);
+  font-size: 10px;
+  font-weight: 400;
+}
+body.touch-playing #message .control-status {
+  display: block;
+}
+body.touch-playing #message[data-context='active'] .pickup-detail {
+  display: none;
+}
+body #help {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--ui-muted);
+}
+body #groundLegend {
+  padding: 8px 10px;
+}
+body #actionFeedback {
+  padding: 9px 12px;
+  border-left: 3px solid var(--ui-accent);
+  font-size: 12px;
+}
+body #minimapPanel {
+  padding: 5px;
+  background: #0c242fe8;
+  border-color: #aec4c45c;
+  border-radius: 9px;
+}
+body #frankAboard {
+  border-color: #e7c78b55;
+  background: linear-gradient(135deg, #193a45f8, #102c37f8);
+  font-size: 12px;
+}
+body .frank-line {
+  gap: 10px;
+}
+body .frank-line img {
+  width: 38px;
+  height: 47px;
+}
+body .frank-line strong {
+  color: var(--ui-accent);
+  font-size: 12px;
+  font-weight: 600;
+}
+body .frank-line p {
+  margin: 5px 0 9px;
+  line-height: 1.45;
+}
+body .frank-buttons {
+  gap: 6px;
+}
+body .frank-buttons button {
+  min-height: 36px;
+  padding: 6px;
+  margin: 0;
+  border-color: var(--ui-border);
+  border-radius: 6px;
+  font-size: 11px;
+}
+body #keyboardHelm {
+  left: 14px;
+  right: 14px;
+  bottom: 12px;
+  gap: 16px;
+  align-items: end;
+}
+body .keyboard-cluster {
+  width: 224px;
+}
+body .key-cross,
+body .keyboard-extra,
+body .keyboard-actions {
+  gap: 5px;
+}
+body .helm-key {
+  padding: 7px 5px;
+  border-color: #aec4c438;
+  border-radius: 6px;
+  background: #081d27de;
+  color: var(--ui-muted);
+  font-size: 10px;
+}
+body .helm-key kbd {
+  margin-bottom: 3px;
+  color: var(--ui-accent);
+  font-size: 10px;
+  white-space: nowrap;
+  letter-spacing: -0.025em;
+}
+body .helm-key.command-level {
+  background: linear-gradient(
+    to top,
+    #477b6ebf var(--command-level),
+    #081d27de var(--command-level)
+  );
+}
+body .helm-key.pressed {
+  border-color: var(--ui-accent);
+}
+body #keyboardHelm button {
+  min-height: 44px;
+}
+body .keyboard-actions {
+  max-width: 340px;
+  grid-auto-rows: 44px;
+}
+body .key-cross {
+  grid-template-rows: repeat(2, 44px);
+}
+body .keyboard-extra > .helm-key {
+  height: 44px;
+  box-sizing: border-box;
+}
+body .helm-key {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  line-height: 1.15;
+}
+
+/* The phone retains the specified top instruments, second chart shelf, open
+   water, actions above sticks, and two separate diver selectors below. */
+body.touch-playing [data-hud-window] {
+  border-radius: 7px;
+}
+body.touch-playing
+  :is(
+    #timepiecePanel,
+    #depthInstrumentPanel,
+    #throttlePanel,
+    #speedPanel,
+    #fuelPanel,
+    #loadPanel,
+    #currentReadout
+  )[data-hud-window] {
+  padding: 3px;
+}
+body.touch-playing #diverPanel #divers {
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+}
+body.touch-playing #diverPanel[data-hud-window] {
+  padding: 0;
+}
+body.touch-playing #diverPanel #divers button {
+  padding: 4px 7px;
+  gap: 1px;
+}
+body.touch-playing #diverPanel #divers .diver-identity :is(img, svg) {
+  width: 30px;
+  height: 34px;
+  flex-basis: 30px;
+}
+body.touch-playing .diver-identity {
+  gap: 6px;
+}
+body.touch-playing .diver-identity b {
+  font-size: 11px;
+}
+body.touch-playing .diver-identity small {
+  font-size: 9px;
+  margin-top: 2px;
+}
+body.touch-playing #diverPanel .diver-detail {
+  margin-top: 2px;
+  font-size: 9px;
+}
+body.touch-playing #diverPanel .nitrogen-info {
+  gap: 4px;
+}
+body.touch-playing #diverPanel .nitrogen-info small {
+  font-size: 8px;
+}
+body.touch-playing #diverPanel .nitrogen-bar {
+  height: 4px;
+}
+body.touch-playing #diverPanel #divers.portrait-only button {
+  min-height: 44px;
+}
+body.touch-playing #helmPanel[data-hud-window] {
+  padding: 1px 4px;
+}
+body.touch-playing.intro-playing #helmPanel[data-hud-window] {
+  padding: 1px 4px;
+}
+body.touch-playing #helmPanel #hud {
+  font-size: 10px;
+  line-height: 1.2;
+}
+body.touch-playing #helmPanel #hud .instrument-graphic {
+  height: 100%;
+  align-content: center;
+}
+body.touch-playing .boat-touch-heading {
+  color: var(--ui-accent);
+}
+body.touch-playing .boat-touch-command {
+  grid-column: 1 / -1;
+}
+body.touch-playing .digital-clock,
+body.touch-playing .depth-instrument {
+  gap: 5px;
+  padding: 2px;
+}
+body.touch-playing #frankAboard {
+  padding: 9px;
+  font-size: 11px;
+}
+body.touch-playing .frank-line img {
+  width: 30px;
+  height: 38px;
+}
+body.touch-playing .frank-line strong {
+  font-size: 11px;
+}
+body.touch-playing .frank-line p {
+  line-height: 1.4;
+  margin: 4px 0 7px;
+}
+body.touch-playing .frank-buttons button {
+  min-height: 44px;
+  font-size: 10px;
+  padding: 5px 3px;
+}
+body.touch-playing #help {
+  padding: 6px 8px;
+  font-size: 10px;
+  line-height: 1.35;
+}
+body.touch-playing #message {
+  padding: 7px 9px;
+}
+body.touch-playing #message > strong {
+  font-size: 12px;
+}
+body.touch-playing #message[data-context='quiet'] {
+  padding-block: 4px;
+}
+body.touch-playing #message[data-context='quiet'] > strong {
+  margin-bottom: 2px;
+}
+body.touch-playing #message[data-context='quiet'] .pickup-reason {
+  margin-bottom: 0;
+}
+body.touch-playing #groundLegend[data-default-position] {
+  padding: 6px 7px 4px;
+}
+body.touch-playing #groundLegend[data-default-position] .ground-legend {
+  row-gap: 3px;
+}
+body.touch-playing #electronics {
+  padding: 6px 8px;
+}
+body.touch-playing .weather-instrument {
+  gap: 3px;
+}
+body.touch-playing .weather-instrument strong,
+body.touch-playing .weather-instrument > div {
+  font-size: 10px;
+}
+body.touch-playing #touchControls button,
+body.touch-playing .touch-stick {
+  border-color: #aec4c47a;
+  border-radius: 8px;
+  background-color: #102c37dc;
+  color: var(--ui-text);
+}
+body.touch-playing .touch-stick {
+  border-radius: 50%;
+}
+body.touch-playing .touch-stick > span {
+  position: absolute;
+  top: 9%;
+  max-width: 86%;
+  font-size: 8px;
+  line-height: 1.05;
+  color: var(--ui-text);
+}
+body.touch-playing .touch-stick > i {
+  width: 28px;
+  height: 28px;
+}
+body.touch-playing .touch-stick .command-arrow {
+  top: auto;
+  bottom: 4%;
+  font-size: 14px;
+}
+body.touch-playing #touchControls button.pressed {
+  border-color: var(--ui-accent);
+  background: #40594c;
+}
+body.touch-playing #touchMenu {
+  border-color: var(--ui-border);
+  border-radius: 7px;
+  background: #102c37f5;
+  color: var(--ui-text);
+}
+body.touch-playing :is(#touchMenu, #touchHudToggle, #touchLockToggle) {
+  top: max(4px, env(safe-area-inset-top));
+  min-height: 44px;
+  height: 44px;
+}
+body.touch-playing #touchControls {
+  bottom: max(70px, calc(64px + env(safe-area-inset-bottom)));
+}
+@media (orientation: portrait) and (max-width: 700px) {
+  body.touch-playing #touchControls {
+    bottom: max(70px, calc(64px + env(safe-area-inset-bottom)));
+  }
+  body.touch-playing #message[data-default-position][data-density='compact'] {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-content: start;
+    column-gap: 8px;
+    row-gap: 2px;
+  }
+  body.touch-playing #message[data-default-position][data-density='compact'] > strong {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0;
+  }
+  body.touch-playing #message[data-default-position][data-density='compact'] > .pickup-person {
+    grid-column: 2;
+    grid-row: 1;
+    text-align: right;
+    margin: 0;
+  }
+  body.touch-playing #message[data-default-position][data-density='compact'] > div {
+    grid-column: 1 / -1;
+    margin: 0;
+    line-height: 1.2;
+  }
+}
+@media (max-height: 560px) {
+  body:not(.touch-playing):has(#message[data-default-position][data-context='active']:not([hidden]))
+    :is(#groundLegend, #currentReadout)[data-default-position] {
+    visibility: hidden;
+  }
+  body:not(.touch-playing) #message[data-context='active'] .pickup-detail {
+    display: none;
+  }
+  body:not(.touch-playing)
+    #message[data-context='active']
+    :is(.important-notice, .pickup-requirement, .pickup-reason) {
+    font-size: 10px;
+    line-height: 1.25;
+  }
+  body:not(.touch-playing) .key-cross {
+    grid-template-rows: repeat(2, 32px);
+  }
+  body:not(.touch-playing) .keyboard-extra > .helm-key {
+    height: 32px;
+  }
+  body:not(.touch-playing) .keyboard-actions {
+    grid-auto-rows: 32px;
+  }
+  body:not(.touch-playing) #keyboardHelm button {
+    min-height: 32px;
+  }
+  body:not(.touch-playing) #message {
+    padding: 5px 7px;
+  }
+  body:not(.touch-playing) #message > strong {
+    font-size: 11px;
+    line-height: 1.3;
+  }
+  body:not(.touch-playing) #message .pickup-person {
+    display: none;
+  }
+  body:not(.touch-playing) #helmPanel[data-hud-window] {
+    padding: 6px;
+  }
+  body:not(.touch-playing) .boat-card-main .instrument-compass {
+    width: 38px;
+    height: 42px;
+    flex-basis: 38px;
+  }
+  body:not(.touch-playing) .boat-card-readings {
+    font-size: 9px;
+    gap: 1px;
+  }
+  body:not(.touch-playing) .boat-speed b {
+    font-size: 14px;
+  }
+  body:not(.touch-playing) .boat-speed small {
+    display: none;
+  }
+  body:not(.touch-playing) .instrument-eyebrow {
+    font-size: 9px;
+    margin-bottom: 2px;
+  }
+  body:not(.touch-playing) .boat-command {
+    margin-top: 3px;
+    padding-top: 3px;
+    font-size: 9px;
+  }
+  body:not(.touch-playing) #diverPanel #divers button {
+    padding: 4px 8px;
+    gap: 2px;
+  }
+  body:not(.touch-playing) #diverPanel #divers .diver-identity :is(img, svg) {
+    width: 26px;
+    height: 24px;
+    flex-basis: 26px;
+  }
+  body:not(.touch-playing) .diver-identity b {
+    font-size: 11px;
+  }
+  body:not(.touch-playing) .diver-identity small {
+    font-size: 9px;
+  }
+  body:not(.touch-playing) #diverPanel .diver-detail {
+    font-size: 9px;
+    margin-top: 2px;
+  }
+  body:not(.touch-playing) #diverPanel[data-presentation='graphic'] .diver-detail {
+    display: none;
+  }
+  body:not(.touch-playing) #diverPanel .diver-meters label > span {
+    font-size: 8px;
+    line-height: 1;
+  }
+  body:not(.touch-playing) #diverPanel .diver-meters meter {
+    height: 3px;
+    margin-top: 1px;
+  }
+  body:not(.touch-playing) #diverPanel .nitrogen-info small {
+    font-size: 8px;
+    line-height: 1;
+  }
+  body:not(.touch-playing) #diverPanel .nitrogen-bar {
+    height: 4px;
+  }
+  body #keyboardHelm {
+    left: 8px;
+    right: 8px;
+    bottom: 6px;
+  }
+  body .keyboard-cluster {
+    width: 176px;
+  }
+  body .helm-key {
+    padding: 4px;
+    font-size: 9px;
+  }
+  body .helm-key kbd {
+    font-size: 10px;
+    margin-bottom: 1px;
+  }
+  body .key-cross,
+  body .keyboard-extra,
+  body .keyboard-actions {
+    gap: 3px;
+  }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  body.touch-playing:has(#message[data-default-position][data-context='active']:not([hidden]))
+    #electronics[data-default-position] {
+    visibility: hidden;
+  }
+  body.touch-playing #message[data-context='active'] :is(.important-notice, .pickup-requirement) {
+    font-size: 10px;
+    line-height: 1.25;
+    margin-top: 2px;
+  }
+  body.touch-playing #loadPanel .bag-stack {
+    display: none;
+  }
+  body.touch-playing #loadPanel .load-crate {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0 8px;
+    padding: 0;
+  }
+  body.touch-playing #loadPanel .load-crate output {
+    font-size: 13px;
+  }
+  body.touch-playing #loadPanel .load-crate small {
+    width: 100%;
+    font-size: 9px;
+  }
+  body.touch-playing #frankAboard {
+    padding: 6px;
+  }
+  body.touch-playing .frank-line img {
+    display: none;
+  }
+  body.touch-playing .frank-line p {
+    font-size: 10.5px;
+    line-height: 1.25;
+    margin: 3px 0 6px;
+  }
+}

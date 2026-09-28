@@ -19,7 +19,14 @@ export function renderKeyboardHelm(ui, w) {
     key = (action, label, position = '') => {
       const codes = (ui.input.map[action] || []).filter((code) => !/^(b\d+|a\d+[+-])$/.test(code));
       const tag = action === 'pause' ? 'button' : 'div';
-      return `<${tag} data-action="${action}" class="helm-key ${position} ${codes.some((code) => ui.input.keys.has(code)) ? 'pressed' : ''}"><kbd>${codes.map(bindingName).join(' / ') || 'Unbound'}</kbd><span>${label}</span></${tag}>`;
+      const names = codes.map(bindingName).join(' / ') || 'Unbound',
+        compactNames = names
+          .replace(/Caps Lock/g, 'Caps')
+          .replace(/PageDown/g, 'PgDn')
+          .replace(/PageUp/g, 'PgUp')
+          .replace(/Numpad/g, 'Num')
+          .replace(/Escape/g, 'Esc');
+      return `<${tag} data-action="${action}" title="${names} · ${label}" class="helm-key ${position} ${codes.some((code) => ui.input.keys.has(code)) ? 'pressed' : ''}"><kbd>${compactNames}</kbd><span>${label}</span></${tag}>`;
     };
   setMarkup(
     panel,

@@ -6,6 +6,7 @@ import { selectDiver } from '../world.js';
 import { boatSpec } from '../boats.js';
 import { introActive } from '../career-intro.js';
 import { C } from '../config.js';
+import { placeSpeech } from './cue-placement.js';
 
 // A direct translation of the original surface prompts, speech and delayed assistance.
 export class DiverCues {
@@ -16,13 +17,16 @@ export class DiverCues {
     this.outside = [0, 0];
     this.labels = [0, 1].map(() => {
       const label = document.createElement('div'),
-        speech = document.createElement('div');
+        speech = document.createElement('div'),
+        leader = document.createElement('div');
       label.style.cssText =
         'position:absolute;transform:translate(-50%,-100%);white-space:pre;text-align:center;padding:5px 7px;border-radius:4px;background:#102e3be8;color:#eed4a4;font:11px/1.4 system-ui';
       speech.style.cssText =
-        'position:absolute;transform:translate(-50%,-100%);padding:7px 9px;border-radius:8px;max-width:210px;text-align:center;background:#fff5df;color:#19383d;box-shadow:0 3px 12px #00151a44;font:12px/1.4 system-ui';
-      layer.append(label, speech);
-      return { label, speech };
+        'position:absolute;transform:translate(-50%,-100%);padding:7px 9px;border-radius:8px;width:max-content;max-width:210px;text-align:center;background:#fff5df;color:#19383d;box-shadow:0 3px 12px #00151a44;font:12px/1.4 system-ui';
+      leader.style.cssText =
+        'position:absolute;height:1px;transform-origin:0 50%;background:#fff5dfaa;pointer-events:none';
+      layer.append(leader, label, speech);
+      return { label, speech, leader, nextSpeechLayout: 0 };
     });
     this.ring = new THREE.Mesh(
       new THREE.RingGeometry(1.98, 2.02, 48),
@@ -50,6 +54,10 @@ export class DiverCues {
   reset() {
     this.time = 0;
     this.outside = [0, 0];
+    for (const entry of this.labels) {
+      entry.speechBox = null;
+      entry.nextSpeechLayout = 0;
+    }
   }
   update(world, ui, title, project) {
     const b = world.boat,
@@ -59,6 +67,20 @@ export class DiverCues {
     const hidden = title || !!ui.screen,
       indicators = assist(world, 'diverIndicators', ui.realistic, ui.debug),
       arrows = [];
+    const context = ui.hudMessageActive && !hidden ? document.getElementById('message') : null,
+      contextStyle = context && getComputedStyle(context),
+      contextBox = context?.getBoundingClientRect(),
+      contextHit =
+        contextBox && document.elementFromPoint(contextBox.left + 12, contextBox.top + 12),
+      contextSuppliesTarget =
+        ui.hudMessageActive &&
+        !context?.hidden &&
+        context?.hasAttribute('data-default-position') &&
+        contextBox?.height > 0 &&
+        contextStyle?.visibility === 'visible' &&
+        Number(contextStyle.opacity) >= 0.9 &&
+        !!contextHit &&
+        (contextHit === context || context.contains(contextHit));
     this.group.visible = !hidden;
     this.ring.visible = indicators && !diverVisual(target).aboard;
     this.ring.position.set(target.x, 0.27, target.y);
@@ -67,10 +89,14 @@ export class DiverCues {
         distance = Math.hypot(d.x - b.x, d.y - b.y),
         physicallyVisible = distance <= visibilityRange(world),
         p = project(d.x, d.y),
-        { label, speech } = this.labels[d.id];
+        entry = this.labels[d.id],
+        { label, speech, leader } = entry;
       const pickup =
         visual.surface && physicallyVisible && assist(world, 'actionPrompts', ui.realistic);
-      label.hidden = hidden || (!pickup && (!indicators || visual.aboard));
+      label.hidden =
+        hidden ||
+        (!pickup && (!indicators || visual.aboard)) ||
+        (pickup && d.id === target.id && contextSuppliesTarget);
       if (!label.hidden) {
         const status = pickup
           ? recoveryStatus(world, pickupTolerance(world, ui.realistic), d)
@@ -90,8 +116,11 @@ export class DiverCues {
         distance < 28 &&
         d.speech?.until > world.time;
       speech.hidden = !talking;
+      leader.hidden = !talking;
       if (talking) {
-        speech.textContent = `${d.speech.icon}${d.speech.text ? ' ' + d.speech.text : ''}`;
+        const text = `${d.speech.icon}${d.speech.text ? ' ' + d.speech.text : ''}`,
+          changed = speech.textContent !== text;
+        if (changed) speech.textContent = text;
         const partner = world.divers.some(
           (o) =>
             o !== d &&
@@ -99,8 +128,79 @@ export class DiverCues {
             o.speech?.until > world.time &&
             Math.hypot(o.x - d.x, o.y - d.y) < 14,
         );
-        speech.style.left = p.x + (partner ? (d.id ? 90 : -90) : 0) + 'px';
-        speech.style.top = p.y - 76 + 'px';
+        if (changed || !entry.speechBox || world.time >= entry.nextSpeechLayout) {
+          const obstacles = [
+            ...document.querySelectorAll(
+              '[data-hud-window], #keyboardHelm, #touchControls, #touchMenu, #touchHudToggle, #touchLockToggle',
+            ),
+          ].flatMap((panel) => {
+            const style = getComputedStyle(panel),
+              box = panel.getBoundingClientRect();
+            return !panel.hidden &&
+              style.display !== 'none' &&
+              style.visibility !== 'hidden' &&
+              Number(style.opacity) > 0.25 &&
+              box.width > 0 &&
+              box.height > 0
+              ? [box]
+              : [];
+          });
+          const spec = boatSpec(world),
+            corners = [-1, 1].flatMap((sx) =>
+              [-1, 1].map((sy) => {
+                const x = (sx * spec.width) / 2,
+                  y = (sy * spec.length) / 2;
+                return project(
+                  b.x + x * Math.cos(b.heading) - y * Math.sin(b.heading),
+                  b.y + x * Math.sin(b.heading) + y * Math.cos(b.heading),
+                );
+              }),
+            );
+          obstacles.push({
+            left: Math.min(...corners.map((corner) => corner.x)) - 12,
+            right: Math.max(...corners.map((corner) => corner.x)) + 12,
+            top: Math.min(...corners.map((corner) => corner.y)) - 12,
+            bottom: Math.max(...corners.map((corner) => corner.y)) + 12,
+          });
+          for (const diver of world.divers) {
+            if (
+              !diverVisual(diver).surface ||
+              Math.hypot(diver.x - b.x, diver.y - b.y) > visibilityRange(world)
+            )
+              continue;
+            const float = project(diver.x, diver.y);
+            obstacles.push({
+              left: float.x - 12,
+              right: float.x + 12,
+              top: float.y - 12,
+              bottom: float.y + 12,
+            });
+          }
+          const size = { width: speech.offsetWidth, height: speech.offsetHeight };
+          entry.speechBox = placeSpeech(
+            p,
+            size,
+            { width: innerWidth, height: innerHeight },
+            obstacles,
+            {
+              left: p.x + (partner ? (d.id ? 90 : -90) : 0) - size.width / 2,
+              top: p.y - 76 - size.height,
+            },
+          );
+          entry.nextSpeechLayout = world.time + 0.1;
+          speech.style.left = entry.speechBox.left + size.width / 2 + 'px';
+          speech.style.top = entry.speechBox.top + size.height + 'px';
+        }
+        const box = entry.speechBox,
+          x = Math.max(box.left, Math.min(box.left + box.width, p.x)),
+          y = Math.max(box.top, Math.min(box.top + box.height, p.y)),
+          dx = p.x - x,
+          dy = p.y - y;
+        leader.hidden = Math.hypot(dx, dy) < 12;
+        leader.style.left = x + 'px';
+        leader.style.top = y + 'px';
+        leader.style.width = Math.hypot(dx, dy) + 'px';
+        leader.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
       }
       const onScreen = p.x >= 15 && p.y >= 15 && p.x <= innerWidth - 15 && p.y <= innerHeight - 15;
       this.outside[d.id] = onScreen || visual.aboard ? 0 : this.outside[d.id] + dt;

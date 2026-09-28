@@ -12,7 +12,9 @@ export function neighbour(items, current, direction) {
     .map((b) => {
       const across = Math.abs(b[cross] - from[cross]),
         aligned = across < (b[extent] + from[extent]) / 2 - 2;
-      return { b, score: (aligned ? 0 : 10000) + (b[axis] - from[axis]) * sign + across * 2 };
+      // Prefer the next row/column when a wide action branches into narrower
+      // ones. A large cross-axis penalty skips those rows entirely.
+      return { b, score: (aligned ? 0 : 10000) + (b[axis] - from[axis]) * sign + across * 0.25 };
     });
   candidates.sort((a, b) => a.score - b.score);
   if (candidates.length) return candidates[0].b.id;

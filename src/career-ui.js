@@ -2,7 +2,6 @@ import { crewStatTable, medicalHistoryMarkup } from './medical-history.js';
 import { workingDayDetail } from './working-day-view.js';
 import { crewRoster, crewEmployer } from './crew-roster.js';
 import { insurancePremium } from './insurance.js';
-import { timeIncrease, setTimeIncrease } from './time-speed.js';
 import { choiceButton } from './menu-buttons.js';
 import { portrait } from './crew-portrait.js';
 import { buyerNotice } from './buyer.js';
@@ -20,7 +19,12 @@ import { renderShopChoices } from './shop-view.js';
 import { renderHarbour } from './harbour-view.js';
 import { catchSheetSvg } from './catch-sheet.js';
 import { vesselPreview, paintVesselPreviews } from './vessel-art.js';
+import { renderPreferences } from './menu-preferences.js';
 export function renderCareer(ui, w, bind) {
+  if (['settings', 'ui-scale', 'gameplay-speed'].includes(ui.screen)) {
+    renderPreferences(ui, w, bind);
+    return;
+  }
   const now = performance.now(),
     immediate = JSON.stringify([
       ui.screen,
@@ -32,7 +36,6 @@ export function renderCareer(ui, w, bind) {
       ui.equipmentCandidate,
       ui.menuNotice,
       ui.saveNotice,
-      timeIncrease(),
     ]);
   if (
     ui.signature &&
@@ -61,7 +64,6 @@ export function renderCareer(ui, w, bind) {
       ui.boatCandidate,
       ui.starterCandidate,
       ui.equipmentCandidate,
-      timeIncrease(),
       c.day,
       c.cash,
       c.debt,
@@ -198,19 +200,6 @@ export function renderCareer(ui, w, bind) {
     title = 'The harbour office.';
     detail = `<h3>Season ${seasonStatus(c).season} · day ${seasonStatus(c).day} / ${seasonStatus(c).length}</h3><p>${seasonStatus(c).label} · ${seasonStatus(c).daysLeft} days left.</p><p>${c.assists.departureGuidance ? 'Grounds stay worked out through the season. Leave survivors for next season; stripped ground recovers very slowly. More kelp can establish on depleted reef.' : 'Last season’s ground reports are observations, not promises.'}</p><p class="buyer-notice">Buyer: ${buyerNotice(c)}</p><p>${c.news.join('<br>')}</p><p>Book fuel and repairs, check the fleet’s last landings, or take a day ashore.</p><p>Rest recovers crew. Dock work earns ${money(ECONOMY.dockWage)} and advances the day; debt interest still accrues.</p>`;
   }
-  if (ui.screen === 'settings') {
-    title = 'Make yourself at home.';
-    detail =
-      '<p>Arrange the interface, information options and controls here. Scale and gameplay-speed adjustments each have their own submenu.</p>';
-  }
-  if (ui.screen === 'ui-scale') {
-    title = 'UI Scale';
-    detail = '<p>Make menus and interface text smaller or larger, or restore the default size.</p>';
-  }
-  if (ui.screen === 'gameplay-speed') {
-    title = 'Gameplay Speed';
-    detail = `<label for="timeSpeed">World time speed increase: <strong>+${timeIncrease()}%</strong></label><input id="timeSpeed" type="range" min="0" max="100" step="5" value="${timeIncrease()}"/><p>0% is the original pace; +100% runs twice as fast. Bags, days, boats and weather all speed up together. Default: +50%. Saved for this browser.</p><p>Use the −5%/+5% buttons with a controller, or drag the slider.</p>`;
-  }
   if (ui.screen === 'workshop') {
     title = c.sandbox ? 'Developer conditions' : 'Training Mode · aboard with Frank';
     detail =
@@ -233,16 +222,6 @@ export function renderCareer(ui, w, bind) {
   }
   ui.panel.innerHTML = `<div class="day-heading"><div><div class="eyebrow">URCHIN SKIPPER · DAY ${c.day} · ${money(c.cash)}</div><h2>${title}</h2></div></div><div class="career-layout"><div class="career-choices choices"></div><article class="career-detail">${detail}</article></div><div class="day-footer">${ui.menuNotice || ui.saveNotice || `${bind('menuUp')} / ${bind('menuDown')} Navigate · ${bind('confirm')} Select · Right stick scrolls detail · ${bind('back')} Back`}</div>`;
   const list = ui.panel.querySelector('.choices');
-  const speed = ui.panel.querySelector('#timeSpeed');
-  if (speed) {
-    speed.oninput = () => {
-      ui.panel.querySelector('label[for="timeSpeed"] strong').textContent = `+${speed.value}%`;
-    };
-    speed.onchange = () => {
-      setTimeIncrease(speed.value);
-      ui.signature = null;
-    };
-  }
   paintVesselPreviews(ui.panel);
   if (SHOP_SCREENS.includes(ui.screen)) {
     renderShopChoices(ui, w, actions);

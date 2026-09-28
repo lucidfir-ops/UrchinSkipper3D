@@ -1,0 +1,99 @@
+/* Shared visual language for menus and the working wheelhouse. */
+:root {
+  --ui-bg: #081d27;
+  --ui-surface: #102c37;
+  --ui-raised: #193a45;
+  --ui-text: #f2eee3;
+  --ui-muted: #aec4c4;
+  --ui-faint: #7f9fa5;
+  --ui-accent: #e7c78b;
+  --ui-sea: #82c6b3;
+  --ui-danger: #f2a28e;
+  --ui-border: #8eb4b52e;
+  --ui-radius: 10px;
+  --ink: var(--ui-bg);
+  --foam: var(--ui-text);
+  --amber: var(--ui-accent);
+  --line: var(--ui-sea);
+  --marine-panel: linear-gradient(145deg, #102c37f5, #081d27f5);
+  --marine-border: var(--ui-border);
+  --marine-shadow: 0 8px 28px #00121e30, inset 0 1px #ffffff06;
+}
+
+body {
+  font-family: 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
+  color: var(--ui-text);
+  font-variant-numeric: tabular-nums;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  touch-action: manipulation;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--ui-accent);
+  outline-offset: 3px;
+}
+
+input[type='range'] {
+  accent-color: var(--ui-sea);
+  min-height: 32px;
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--ui-sea);
+  color: var(--ui-bg);
+}
+
+/* A menu owns the player's attention. Keep the sea visible, and restore the
+   player's chosen instruments intact on return. Arrange UI needs its previews. */
+body:has(#playtest:not([hidden]):not(.layout-panel))
+  > :is([data-hud-window], #keyboardHelm, #touchControls, #touchMenu, #offscreen) {
+  visibility: hidden;
+}
+
+body #playtest:not(.wharf-panel):not(.layout-panel) {
+  box-shadow:
+    0 28px 100px #001017aa,
+    0 0 0 100vmax #03172050;
+}
+
+/* Short fades communicate a change of context without moving hit targets. */
+#playtest:not([hidden]),
+#startup:not([hidden]) .title-copy {
+  animation: interface-appear 160ms ease-out;
+}
+
+@keyframes interface-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #playtest,
+  #startup .title-copy,
+  button,
+  input,
+  [data-hud-window] {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

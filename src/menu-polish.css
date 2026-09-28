@@ -1,0 +1,1207 @@
+/* The shore and wheelhouse share a quiet working-journal vocabulary. */
+body #playtest:not(.wharf-panel) {
+  padding: 24px 28px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius);
+  background: linear-gradient(125deg, #12303bf9, #071d28fc 75%);
+  box-shadow: 0 28px 100px #001017aa;
+}
+body #playtest:not(.wharf-panel) h2 {
+  font-size: clamp(25px, 2.8vw, 36px);
+  line-height: 1.13;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+body #playtest .day-heading {
+  flex-shrink: 0;
+  margin-bottom: 18px;
+}
+body #playtest .eyebrow {
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: 0.16em;
+  color: var(--ui-sea);
+}
+body #playtest > .screen-navigation {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 6px;
+  margin: -4px 0 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--ui-border);
+}
+body #playtest .screen-navigation button {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 44px;
+  min-height: 40px;
+  margin: 0;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ui-text);
+  border: 1px solid var(--ui-border);
+  background: #15343e;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+body #playtest .screen-navigation button:disabled {
+  opacity: 0.32;
+}
+.menu-location {
+  margin-left: auto;
+  color: var(--ui-muted);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+body #playtest .menu-introduction {
+  margin: 8px 0 0;
+  color: var(--ui-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+body #playtest.dashboard-panel {
+  width: min(1060px, calc((100vw - 48px) / var(--ui-scale)));
+  height: min(830px, calc((100dvh - 48px) / var(--ui-scale)));
+  max-height: calc((100dvh - 48px) / var(--ui-scale));
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+}
+body #playtest.dashboard-panel .day-heading {
+  margin-bottom: 18px;
+  padding-bottom: 0;
+  border: 0;
+}
+body #playtest .menu-dashboard.choices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px 28px;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  overflow: auto;
+  padding: 2px 5px 10px 2px;
+  align-content: start;
+  scrollbar-gutter: stable;
+  scrollbar-color: #82c6b3aa #071d28;
+}
+.menu-group {
+  min-width: 0;
+}
+.menu-group h3 {
+  margin: 0 0 4px;
+  padding: 0 0 8px;
+  color: var(--ui-text);
+  font-size: 17px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--ui-border);
+}
+body #playtest .menu-group-note {
+  margin: 0 0 10px;
+  color: var(--ui-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+body #playtest .menu-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 59px;
+  margin: 5px 0 0;
+  padding: 10px 13px;
+  border: 1px solid #8eb4b51c;
+  border-radius: 7px;
+  background: #102d38;
+  text-align: left;
+}
+.menu-row-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.menu-row-copy strong {
+  font-size: 14px;
+  line-height: 1.3;
+  font-weight: 600;
+  color: var(--ui-text);
+}
+.menu-row-copy small {
+  color: var(--ui-muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+.menu-row-copy small:empty {
+  display: none;
+}
+.menu-row-arrow {
+  color: var(--ui-sea);
+  font-size: 24px;
+  font-weight: 300;
+}
+.menu-row-switch {
+  flex: 0 0 30px;
+  width: 30px;
+  height: 18px;
+  padding: 3px;
+  border-radius: 12px;
+  background: #45616a;
+}
+.menu-row-switch::after {
+  content: '';
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--ui-text);
+}
+[aria-checked='true'] > .menu-row-switch {
+  background: #418671;
+}
+[aria-checked='true'] > .menu-row-switch::after {
+  margin-left: 12px;
+}
+.pause-column {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 22px;
+}
+body #playtest .menu-row:hover {
+  border-color: #82c6b380;
+  background: #193b45;
+}
+body #playtest .menu-row.selected,
+body #playtest .menu-row:focus-visible {
+  border-color: var(--ui-accent);
+  background: #25434a;
+  box-shadow: inset 3px 0 var(--ui-accent);
+}
+body #playtest .menu-row.selected strong {
+  color: #fff0ce;
+}
+body #playtest .menu-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px 18px;
+  flex: 0 0 auto;
+  margin-top: 14px;
+  padding-top: 13px;
+  border-top: 1px solid var(--ui-border);
+  color: var(--ui-muted);
+  font-size: 11px;
+}
+.menu-legend {
+  margin-left: auto;
+  color: var(--ui-text);
+}
+body #playtest .pause-primary {
+  flex: 0 0 auto;
+  max-height: none;
+  margin-bottom: 18px;
+}
+body #playtest .menu-primary {
+  min-height: 52px;
+  background: var(--ui-accent);
+  color: var(--ui-bg);
+  border-color: var(--ui-accent);
+  box-shadow: none;
+}
+body #playtest .menu-primary :is(strong, .menu-row-arrow) {
+  color: #112c34;
+}
+body #playtest .menu-row.menu-primary,
+body #playtest .menu-row.menu-primary.selected,
+body #playtest .menu-row.menu-primary:focus-visible {
+  background: #f0d6a4;
+  outline: 2px solid #f5e3bf;
+  outline-offset: 2px;
+  box-shadow: none;
+}
+body #playtest .menu-primary.selected strong {
+  color: #112c34;
+}
+body #playtest .screen-navigation .screen-forward:disabled {
+  display: none;
+}
+body #playtest .menu-group-testing .menu-row {
+  min-height: 44px;
+  background: #0c2530;
+}
+body #playtest .menu-group-testing h3 {
+  color: var(--ui-muted);
+  font-size: 14px;
+}
+/* Secondary screens use the same surfaces, readable measures and spacing. */
+body #playtest .career-layout {
+  gap: 24px;
+}
+body #playtest .career-detail {
+  padding: 22px;
+  color: var(--ui-muted);
+  background: #08212bc9;
+  border: 1px solid var(--ui-border);
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.65;
+}
+body #playtest .career-detail h3 {
+  color: var(--ui-text);
+  font-size: 23px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+body #playtest .career-detail p {
+  line-height: 1.65;
+}
+/* Purchases are deliberate decisions, sized around the item and its price. */
+body #playtest:is([data-screen='purchase'], [data-screen='buyboat']) {
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  width: min(690px, calc((100vw - 32px) / var(--ui-scale)));
+  height: auto;
+  max-height: calc((100dvh - 32px) / var(--ui-scale));
+  overflow: auto;
+}
+body #playtest:is([data-screen='purchase'], [data-screen='buyboat']) .career-layout {
+  display: flex;
+  flex-direction: column-reverse;
+  flex: 0 0 auto;
+  gap: 18px;
+  overflow: visible;
+}
+body #playtest:is([data-screen='purchase'], [data-screen='buyboat']) .career-detail {
+  max-height: 35dvh;
+  min-height: 0;
+}
+body #playtest:is([data-screen='purchase'], [data-screen='buyboat']) .career-detail p:last-child {
+  margin-bottom: 0;
+}
+body #playtest:is([data-screen='purchase'], [data-screen='buyboat']) .career-choices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  flex: 0 0 auto;
+  gap: 10px;
+  padding: 3px;
+  overflow: visible;
+}
+body #playtest:is([data-screen='purchase'], [data-screen='buyboat']) .career-choices button {
+  width: 100%;
+  min-height: 54px;
+  margin: 0;
+  font-size: 14px;
+  text-align: center;
+}
+body #playtest:is([data-screen='purchase'], [data-screen='buyboat']) .day-footer {
+  margin-top: 20px;
+}
+body #playtest .career-choices:not(.crew-grid):not(.shop-grid) > button,
+body #playtest .menu-body > .choices > button {
+  min-height: 48px;
+  padding: 12px 15px;
+  font-size: 14px;
+  line-height: 1.4;
+  border-radius: 7px;
+}
+body #playtest .menu-body {
+  min-height: 0;
+}
+body #playtest > p {
+  color: var(--ui-muted);
+  font-size: 14px;
+  line-height: 1.65;
+}
+body #playtest .layout-title small {
+  display: inline-block;
+  margin-left: 12px;
+  color: var(--ui-muted);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: normal;
+  vertical-align: middle;
+}
+body #playtest .layout-card strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+body #playtest .layout-card span {
+  display: none;
+}
+body #playtest .binding-row select {
+  min-height: 44px;
+  padding: 8px;
+  font-size: 12px;
+  border-color: var(--ui-border);
+  color: var(--ui-text);
+  background: #102d38;
+}
+.binding-scroll-hint {
+  display: none;
+}
+body #playtest .frank-lesson {
+  padding: 16px 0;
+  gap: 24px;
+}
+body #playtest .frank-lesson p {
+  margin: 0;
+  line-height: 1.75;
+  max-width: 68ch;
+}
+body #playtest .orders-help {
+  padding: 0 8px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ui-muted);
+}
+body #playtest .orders-help button {
+  min-height: 46px;
+  font-size: 13px;
+}
+body #playtest .orders-help [data-order='apply'] {
+  background: var(--ui-accent);
+  color: var(--ui-bg);
+  border-color: var(--ui-accent);
+  font-weight: 600;
+}
+body #playtest .crew-card {
+  display: grid;
+  grid-template-rows: 82px auto auto;
+  align-content: start;
+  justify-items: center;
+  gap: 4px;
+  min-height: 156px;
+  background: #102d38;
+  border-color: var(--ui-border);
+  padding: 12px;
+  border-radius: 8px;
+}
+body #playtest .crew-card :is(svg, .crew-portrait-image) {
+  margin: 0;
+  height: 82px;
+}
+body #playtest .crew-card > span {
+  font-size: 14px;
+}
+body #playtest .crew-card small {
+  font-size: 11px;
+  line-height: 1.35;
+}
+body #playtest .crew-card.unavailable {
+  filter: none;
+  color: var(--ui-text);
+}
+body #playtest .crew-card.unavailable :is(svg, .crew-portrait-image) {
+  filter: grayscale(1);
+}
+body #playtest .crew-card.unavailable small {
+  color: var(--ui-muted);
+}
+body #playtest .shop-card {
+  border-radius: 9px;
+  border-color: var(--ui-border);
+}
+body #playtest.shop-panel .shop-toolbar[hidden] {
+  display: none;
+}
+body #playtest.shop-panel .shop-vessel-card {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 14px;
+  text-align: left;
+  background: #102e39;
+  border: 1px solid var(--ui-border);
+  border-radius: 8px;
+}
+body #playtest.shop-panel .shop-vessel-card .vessel-preview {
+  float: none;
+  flex: 0 0 64px;
+  width: 64px;
+  height: 120px;
+  max-height: none;
+  margin: 0;
+  padding: 4px;
+  border: 0;
+  background: #061c2677;
+  overflow: hidden;
+}
+body #playtest.shop-panel .shop-vessel-card canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+body #playtest.shop-panel .shop-vessel-card figcaption {
+  display: none;
+}
+.shop-vessel-copy {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 7px;
+}
+.shop-vessel-copy strong {
+  color: var(--ui-text);
+  font-size: 16px;
+  line-height: 1.25;
+  font-weight: 600;
+}
+.shop-vessel-copy small {
+  color: var(--ui-muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+.shop-vessel-price {
+  color: var(--ui-accent);
+  font-size: 17px;
+  font-weight: 600;
+}
+.shop-vessel-state {
+  color: var(--ui-sea);
+  font-size: 10px;
+}
+body #playtest.shop-panel .shop-row.is-preview .shop-vessel-card {
+  padding-right: 14px;
+  padding-bottom: 55px;
+  background: #1a3b45;
+  border-color: var(--ui-accent);
+}
+body #playtest.shop-panel .shop-row:has(.shop-vessel-card) .shop-inline-buy {
+  top: auto;
+  right: 10px;
+  bottom: 8px;
+  width: 64px;
+  min-height: 36px;
+}
+body #playtest.shop-panel[data-screen='starter'] .career-layout {
+  grid-template-columns: minmax(370px, 0.9fr) minmax(340px, 1.15fr);
+}
+body #playtest.shop-panel[data-screen='starter'] .shop-choices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  gap: 12px;
+}
+body #playtest.shop-panel[data-screen='starter'] .shop-vessel-card {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  padding: 18px 14px;
+}
+body #playtest.shop-panel[data-screen='starter'] .shop-vessel-card .vessel-preview {
+  flex: 0 0 170px;
+  width: 100%;
+  height: 170px;
+  padding: 8px;
+  border-radius: 5px;
+}
+body #playtest.shop-panel[data-screen='starter'] .is-preview .shop-vessel-card {
+  padding-bottom: 18px;
+}
+body #playtest.shop-panel .shop-purchase-footer {
+  background: #0c2632;
+  border-color: var(--ui-border);
+  padding: 12px;
+  margin-top: 12px;
+  border-radius: 7px;
+}
+body #playtest.shop-panel .shop-purchase-footer button:not(:disabled) {
+  min-height: 48px;
+  padding: 12px 26px;
+  color: #102b34;
+  background: var(--ui-accent);
+  border-color: var(--ui-accent);
+  font-weight: 600;
+}
+body #playtest.shop-panel .shop-purchase-footer button:disabled {
+  border-color: transparent;
+  background: transparent;
+  color: var(--ui-muted);
+  opacity: 1;
+}
+body #playtest.shop-panel[data-screen='starter'] .shop-purchase-footer {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+body #playtest.shop-panel .shop-purchase-footer .starter-difficulty:not(:disabled) {
+  color: var(--ui-text);
+  background: #17343e;
+  border-color: var(--ui-border);
+  font-size: 13px;
+  font-weight: 500;
+}
+/* Information controls read as grouped instruments, with a separate switch. */
+body #playtest .assist-layout {
+  grid-template-columns: minmax(350px, 1.4fr) minmax(260px, 0.9fr);
+  gap: 24px;
+}
+body #playtest .assist-section {
+  margin: 0 0 24px;
+}
+body #playtest .assist-section h3,
+body #playtest .touch-option-group h3 {
+  margin: 0 0 6px;
+  color: var(--ui-text);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+body #playtest .assist-section-note,
+body #playtest .touch-option-group > p {
+  margin: 0 0 12px;
+  color: var(--ui-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+body #playtest .assist-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 8px;
+  margin: 5px 0;
+  padding: 0;
+  background: #102d38;
+  border: 1px solid var(--ui-border);
+  border-radius: 7px;
+}
+body #playtest .assist-row-description {
+  flex: 0 0 100%;
+  padding: 0 13px 14px;
+  margin: 0;
+  color: var(--ui-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+body #playtest .assist-row .assist-info {
+  min-width: 0;
+  width: calc(100% - 74px);
+}
+body #playtest .assist-row .assist-info {
+  flex: 1 1 auto;
+  width: auto;
+  margin: 0;
+  padding: 10px 13px;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  color: var(--ui-text);
+  text-align: left;
+  font-size: 13px;
+  line-height: 1.4;
+}
+body #playtest .assist-row [role='switch'] {
+  flex: 0 0 64px;
+  width: 64px;
+  min-height: 46px;
+  margin: 0;
+  padding: 8px;
+  border: 1px solid transparent;
+  border-radius: 0 6px 6px 0;
+  color: var(--ui-muted);
+  background: #081f2a;
+  font-size: 12px;
+  font-weight: 600;
+}
+body #playtest .assist-row [aria-checked='true'] {
+  background: #214940;
+  color: #b6e7d5;
+}
+body #playtest .assist-row [role='switch'].selected {
+  border-color: var(--ui-accent);
+  box-shadow: inset 0 0 0 1px var(--ui-accent);
+}
+body #playtest .assist-explanation {
+  border: 1px solid var(--ui-border);
+  border-radius: 8px;
+  padding: 22px;
+  background: #08212bcc;
+  color: var(--ui-muted);
+  font-size: 14px;
+  line-height: 1.65;
+}
+body #playtest .assist-explanation h3 {
+  color: var(--ui-text);
+  font-size: 22px;
+  line-height: 1.25;
+  font-weight: 600;
+}
+body #playtest .assist-presets button {
+  border-color: var(--ui-border);
+  min-height: 45px;
+  padding: 10px 15px;
+}
+body #playtest .touch-options-layout {
+  display: grid;
+  grid-template-columns: minmax(330px, 1.1fr) minmax(280px, 1fr);
+  gap: 24px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+body #playtest .touch-option-groups {
+  min-height: 0;
+  overflow: auto;
+  padding: 2px 8px 0 2px;
+}
+body #playtest .touch-option-group {
+  margin-bottom: 18px;
+  padding: 18px;
+  border: 1px solid var(--ui-border);
+  border-radius: 8px;
+  background: #102d38;
+}
+body #playtest .touch-option-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+body #playtest .touch-option-controls button {
+  min-height: 48px;
+  margin: 0;
+  padding: 10px 12px;
+  font-size: 13px;
+  border-color: var(--ui-border);
+  border-radius: 6px;
+  background: #0b2531;
+}
+body #playtest .touch-option-controls button:only-child,
+body #playtest .touch-option-controls [data-action='tiny-touch'],
+body #playtest .touch-option-controls [data-action='touch-reset'] {
+  grid-column: 1 / -1;
+}
+body #playtest .assist-status {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 10px;
+  color: var(--ui-muted);
+  font-size: 12px;
+}
+body #playtest .assist-status strong {
+  color: var(--ui-sea);
+  font-size: 14px;
+}
+body #playtest .assist-presets {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 10px;
+  max-height: none;
+}
+body #playtest .assist-presets button {
+  flex: 1;
+  width: auto;
+  margin: 0;
+}
+body #playtest .assist-presets .is-active {
+  color: #c8efe0;
+  border-color: var(--ui-sea);
+  background: #214940;
+}
+body #playtest .assist-tools {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 18px;
+}
+body #playtest .assist-tools button {
+  width: auto;
+  margin: 0;
+  padding: 10px 14px;
+  font-size: 12px;
+  background: #0c2632;
+}
+body #playtest .touch-option-group label {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 0 4px;
+  color: var(--ui-muted);
+  font-size: 13px;
+}
+body #playtest .touch-option-group label strong {
+  color: var(--ui-accent);
+}
+body #playtest .touch-option-group input[type='range'] {
+  width: 100%;
+  margin: 0 0 10px;
+  min-height: 38px;
+}
+body #playtest .touch-options-detail {
+  align-self: start;
+  overflow: auto;
+  max-height: 100%;
+  padding: 22px;
+  border: 1px solid var(--ui-border);
+  border-radius: 8px;
+  color: var(--ui-muted);
+  background: #08212bcc;
+  font-size: 14px;
+  line-height: 1.6;
+}
+body #playtest .touch-options-detail h3 {
+  margin: 10px 0 18px;
+  color: var(--ui-text);
+  font-size: 23px;
+  font-weight: 600;
+}
+body #playtest .touch-options-detail p {
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 18px 0;
+}
+body #playtest .touch-options-detail .touch-option-save {
+  font-size: 11px;
+  margin-bottom: 0;
+}
+body #playtest .touch-preview-menu {
+  display: inline-block;
+  padding: 10px 16px;
+  margin: 12px 0;
+  border: 1px solid var(--ui-border);
+  border-radius: 6px;
+  color: var(--ui-text);
+  background: #17343e;
+  font-size: 13px;
+}
+body #playtest.wharf-panel .wharf-heading {
+  flex-wrap: wrap;
+  padding: 12px 18px;
+  background: #0a2631ee;
+  border-color: var(--ui-border);
+  border-radius: 8px;
+}
+body #playtest.wharf-panel .screen-navigation {
+  display: flex;
+  align-items: center;
+  flex-basis: 100%;
+  gap: 6px;
+  margin: 0 0 4px;
+}
+body #playtest.wharf-panel .wharf-heading > div:not(.screen-navigation) {
+  flex: 1;
+}
+body #playtest.wharf-panel .wharf-heading h2 {
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+/* A clean title leaves room for the moving coast. Support tools live in Settings. */
+body #startup .title-copy {
+  width: min(420px, calc((100vw - 40px) / var(--ui-scale)));
+  padding: 28px 30px 24px;
+  border: 1px solid var(--ui-border);
+  border-top-color: #e7c78b77;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #0d2a36f2, #071d28ed);
+}
+body #startup .title-choices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin: 20px 0 15px;
+}
+body #startup .title-choices button {
+  min-height: 47px;
+  width: 100%;
+  margin: 0;
+  padding: 11px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  background: #14343e;
+  border: 1px solid var(--ui-border);
+  border-radius: 6px;
+  color: var(--ui-text);
+}
+body #startup .title-choices button:nth-child(n + 5) {
+  min-height: 44px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--ui-muted);
+}
+body #startup .title-choices .title-primary {
+  grid-column: 1 / -1;
+  min-height: 53px;
+  padding: 13px 16px;
+  font-size: 17px;
+  font-weight: 650;
+  color: #112c34;
+  background: var(--ui-accent);
+  border-color: var(--ui-accent);
+}
+body #startup .title-choices [data-title-action='test'],
+body #startup .title-choices [data-title-action='fullscreen'] {
+  grid-column: 1 / -1;
+}
+body #startup .title-choices [data-title-action='settings'],
+body #startup .title-choices [data-title-action='touch'] {
+  margin-top: 7px;
+}
+body #startup .title-choices button.selected {
+  outline: 2px solid var(--ui-accent);
+  outline-offset: 2px;
+  background: #24444b;
+  color: #fff0d0;
+}
+body #startup .title-choices .title-primary.selected {
+  background: #f0d6a4;
+  color: #112c34;
+}
+body #startup .title-navigation:has(button[hidden]) {
+  display: none;
+}
+body #startup #controllerStatus {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--ui-muted);
+}
+body #startup small {
+  color: var(--ui-muted);
+  line-height: 1.5;
+  font-size: 11px;
+}
+@media (max-height: 850px) {
+  body #playtest.dashboard-panel .menu-group-note {
+    display: none;
+  }
+  body #playtest.dashboard-panel .menu-row {
+    min-height: max(50px, calc(44px / var(--ui-scale)));
+    padding: 6px 11px;
+  }
+  body #playtest.dashboard-panel .menu-row-copy {
+    gap: 2px;
+  }
+  body #playtest.dashboard-panel .menu-dashboard {
+    gap: 18px 28px;
+  }
+  body #playtest.dashboard-panel .day-heading {
+    margin-bottom: 14px;
+  }
+}
+@media (max-height: 700px) {
+  body #playtest:not(.wharf-panel) {
+    padding: 16px 22px;
+  }
+  body #playtest > .screen-navigation {
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+  }
+  body #playtest .day-heading {
+    margin-bottom: 12px;
+  }
+  body #playtest.dashboard-panel .day-heading {
+    margin-bottom: 12px;
+  }
+  body #playtest .menu-group-note {
+    display: none;
+  }
+  body #playtest .menu-row {
+    min-height: 50px;
+    padding: 8px 11px;
+  }
+  body #startup .title-copy {
+    padding: 20px 24px;
+  }
+  body #startup .title-copy h1 {
+    margin: 10px 0;
+    font-size: 46px;
+  }
+  body #startup .title-choices {
+    margin: 14px 0;
+  }
+}
+@media (max-width: 700px) {
+  body #playtest.shop-panel[data-screen='starter'] .career-layout,
+  body #playtest .touch-options-layout,
+  body #playtest .assist-layout {
+    display: block;
+    overflow: visible;
+  }
+  body #playtest .touch-option-group {
+    padding: 15px;
+  }
+  body #playtest .touch-options-detail {
+    margin-top: 16px;
+    max-height: none;
+    overflow: visible;
+  }
+  body #playtest .touch-option-groups {
+    overflow: visible;
+    max-height: none;
+    padding: 0;
+  }
+  body #playtest .assist-explanation {
+    margin: 8px 0 16px;
+    padding: 16px;
+  }
+  body #playtest .assist-tools {
+    margin-bottom: 14px;
+  }
+  body #playtest.shop-panel[data-screen='starter'] .shop-vessel-card .vessel-preview {
+    flex-basis: 125px;
+    height: 125px;
+  }
+  body #playtest.dashboard-panel,
+  body.touchscreen #playtest.dashboard-panel {
+    inset: 10px auto auto 10px;
+    transform: none;
+    width: calc((100vw - 20px) / var(--ui-scale));
+    height: calc((100dvh - 20px) / var(--ui-scale));
+    max-height: calc((100dvh - 20px) / var(--ui-scale));
+    padding: 16px;
+    overflow-y: auto;
+  }
+  body #playtest .menu-dashboard.choices {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+  body #playtest .screen-navigation button {
+    min-height: 44px;
+  }
+  body #playtest .menu-location {
+    font-size: 10px;
+  }
+  body #playtest .menu-row {
+    min-height: 58px;
+  }
+  body #playtest .menu-group-note {
+    display: block;
+  }
+  body #playtest .menu-row-copy strong {
+    font-size: 15px;
+  }
+  body #playtest .menu-row-copy small {
+    font-size: 12px;
+  }
+  body #playtest .menu-footer {
+    font-size: 11px;
+  }
+  body #playtest .menu-legend {
+    margin-left: 0;
+  }
+  body #playtest .career-detail {
+    padding: 17px;
+  }
+  body #playtest.wharf-panel .wharf-heading {
+    padding: 8px 12px;
+  }
+}
+/* UI Scale must not shrink touch hit areas below a finger-sized 44 CSS pixels. */
+body.touchscreen #playtest.panel :is(button, select, input[type='range']):not(.layout-card),
+body.touchscreen #playtest button,
+body.touchscreen #playtest input[type='range'],
+body.touchscreen #playtest .touch-option-group input[type='range'],
+body.touchscreen #startup button,
+body.touchscreen #playtest .screen-navigation button,
+body.touchscreen #playtest .assist-row [role='switch'],
+body.touchscreen #playtest .touch-option-controls button,
+body.touchscreen #playtest.shop-panel .shop-inline-buy,
+body.touchscreen #playtest.shop-panel .shop-purchase-footer button,
+body.touchscreen #startup .title-choices button,
+body.touchscreen #startup .title-choices button:nth-child(n + 5) {
+  min-height: max(44px, calc(44px / var(--ui-scale)));
+  min-width: max(44px, calc(44px / var(--ui-scale)));
+}
+@media (pointer: coarse) {
+  body #playtest.panel :is(button, select, input[type='range']):not(.layout-card),
+  body #playtest button,
+  body #playtest input[type='range'],
+  body #playtest .touch-option-group input[type='range'],
+  body #startup button,
+  body #playtest .screen-navigation button,
+  body #playtest .assist-row [role='switch'],
+  body #playtest .touch-option-controls button,
+  body #playtest.shop-panel .shop-inline-buy,
+  body #playtest.shop-panel .shop-purchase-footer button,
+  body #startup .title-choices button,
+  body #startup .title-choices button:nth-child(n + 5) {
+    min-height: max(44px, calc(44px / var(--ui-scale)));
+    min-width: max(44px, calc(44px / var(--ui-scale)));
+  }
+}
+@media (max-height: 500px) and (min-width: 701px) {
+  body #playtest.dashboard-panel,
+  body.touchscreen #playtest.dashboard-panel {
+    inset: 10px auto auto 10px;
+    transform: none;
+    width: calc((100vw - 20px) / var(--ui-scale));
+    height: calc((100dvh - 20px) / var(--ui-scale));
+    max-height: calc((100dvh - 20px) / var(--ui-scale));
+    padding: 14px 20px;
+    overflow: auto;
+  }
+  body #playtest .menu-dashboard.choices {
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+  body #playtest.dashboard-panel h2 {
+    font-size: 26px;
+  }
+  body #playtest.dashboard-panel .menu-introduction {
+    display: none;
+  }
+  body #startup .title-copy {
+    width: 380px;
+  }
+  body #startup .title-copy h1 {
+    font-size: 38px;
+  }
+}
+.harbour-pan-controls {
+  display: none;
+}
+/* Compact screens retain the approved scenic pan. Keep its navigation and
+   heading on the viewport so the off-screen destinations are discoverable. */
+@media (max-width: 700px), (max-height: 500px) {
+  body #playtest.wharf-panel {
+    scroll-padding: var(--harbour-header-space, 130px) 16px 100px;
+  }
+  body #playtest.wharf-panel .wharf-heading {
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    width: calc(100vw - 20px);
+    min-width: 0;
+    padding: 8px 10px;
+    background: #102d39f5;
+  }
+  body #playtest.wharf-panel .wharf-heading .screen-navigation {
+    display: flex;
+    flex: 0 0 100%;
+    gap: 6px;
+    margin: 0 0 4px;
+  }
+  body #playtest.wharf-panel .wharf-heading > div:not(.screen-navigation) {
+    min-width: 0;
+  }
+  body #playtest.wharf-panel .wharf-heading h2 {
+    font-size: 14px;
+    white-space: normal;
+  }
+  body #playtest.wharf-panel .wharf-money {
+    flex: 0 0 auto;
+    font-size: 20px;
+  }
+  body #playtest.wharf-panel .wharf-place {
+    min-height: 48px;
+    font-size: 13px;
+    line-height: 1.35;
+  }
+  body #playtest.wharf-panel .day-footer {
+    display: none;
+  }
+  body #playtest.wharf-panel .harbour-pan-controls {
+    --pan-target: max(48px, calc(44px / var(--ui-scale)));
+    display: grid;
+    grid-template-columns: var(--pan-target) minmax(0, 1fr) var(--pan-target);
+    gap: 6px;
+    align-items: center;
+    position: fixed;
+    z-index: 6;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    padding: 7px;
+    border: 1px solid var(--ui-border);
+    border-radius: 8px;
+    background: #0a2631f5;
+  }
+  body #playtest.wharf-panel .harbour-pan-controls.has-vertical-pan {
+    grid-template-columns: var(--pan-target) var(--pan-target) minmax(0, 1fr) var(--pan-target) var(
+        --pan-target
+      );
+  }
+  body #playtest.wharf-panel .harbour-pan-controls button {
+    width: 100%;
+    min-height: var(--pan-target);
+    margin: 0;
+    padding: 6px;
+    font-size: 23px;
+    background: #173a45;
+    border-color: var(--ui-border);
+    border-radius: 6px;
+  }
+  body #playtest.wharf-panel .harbour-pan-controls button:disabled {
+    opacity: 0.35;
+  }
+  .harbour-pan-cue {
+    color: var(--ui-text);
+    font-size: 11px;
+    line-height: 1.4;
+    text-align: center;
+    white-space: pre-line;
+  }
+  body #playtest .binding-scroll-hint {
+    display: block;
+    margin: 0 0 8px;
+    color: var(--ui-sea);
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  body #playtest .controller-diagrams {
+    overflow-x: hidden;
+  }
+  body #playtest .binding-figure {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    padding-bottom: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--ui-sea) var(--ui-bg);
+  }
+  body #playtest .binding-figure::-webkit-scrollbar {
+    height: 7px;
+  }
+  body #playtest .binding-figure::-webkit-scrollbar-thumb {
+    background: var(--ui-sea);
+    border-radius: 7px;
+  }
+}
+@media (max-height: 500px) {
+  body #playtest.wharf-panel::before {
+    content: '';
+    display: block;
+    height: 16px;
+  }
+  body #playtest.wharf-panel::after {
+    content: '';
+    display: block;
+    height: 90px;
+  }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  body #playtest.wharf-panel .wharf-heading {
+    flex-wrap: nowrap;
+    gap: 14px;
+    min-height: 72px;
+  }
+  body #playtest.wharf-panel .wharf-heading .screen-navigation {
+    flex: 0 0 auto;
+    margin: 0;
+  }
+  body #playtest.wharf-panel .wharf-heading .menu-location {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body #playtest *,
+  body #startup * {
+    scroll-behavior: auto;
+    transition: none;
+  }
+}

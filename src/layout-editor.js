@@ -503,6 +503,7 @@ export class LayoutEditor {
         const card = document.createElement('button');
         card.className = 'layout-card';
         card.dataset.layoutWindow = row.id;
+        card.title = row.label;
         const title = document.createElement('strong'),
           sample = document.createElement('span');
         title.textContent = row.label;

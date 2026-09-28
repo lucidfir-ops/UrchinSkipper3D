@@ -58,6 +58,14 @@ export function decorateBindings(ui, world) {
   diagrams.append(tabs);
   const figure = document.createElement('div');
   figure.className = 'binding-figure';
+  if (ui.bindingView === 'keyboard') {
+    const hint = document.createElement('p');
+    hint.className = 'binding-scroll-hint';
+    hint.textContent = ui.input.touchEnabled
+      ? 'Swipe the keyboard sideways to see every key →'
+      : 'Scroll the keyboard sideways to see every key →';
+    diagrams.append(hint);
+  }
   figure.innerHTML =
     ui.bindingView === 'keyboard'
       ? keyboardDiagram(input, Object.keys(DEFAULTS)[ui.index], !!world.career)
@@ -96,6 +104,10 @@ export function decorateBindings(ui, world) {
     select.setAttribute('aria-label', `${LABELS[action]} ${ui.remapDevice} binding`);
     const gamepad = ui.remapDevice === 'gamepad';
     const current = input.map[action].filter((c) => /^(b\d+|a\d+[+-])$/.test(c) === gamepad);
+    const currentLabel = current.length
+      ? current.map((c) => bindingName(c, input.faceNames)).join(' / ')
+      : 'Unbound';
+    select.title = `Current binding: ${currentLabel}`;
     const codes = gamepad
       ? [
           ...Array.from({ length: input.activePad?.buttons.length || 16 }, (_, i) => `b${i}`),
@@ -106,12 +118,7 @@ export function decorateBindings(ui, world) {
         ]
       : [...new Set([...KEYBOARD_CODES, ...current])];
     for (const [value, label] of [
-      [
-        '',
-        current.length
-          ? 'Current: ' + current.map((c) => bindingName(c, input.faceNames)).join(' / ')
-          : 'Unbound',
-      ],
+      ['', currentLabel],
       ['capture', 'Press an input…'],
       ...codes.map((c) => [c, bindingName(c, input.faceNames) + (gamepad ? ` (${c})` : '')]),
     ]) {

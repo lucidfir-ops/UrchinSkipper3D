@@ -1,7 +1,7 @@
-import { toggleAssist } from './assists.js';
+import { assist, toggleAssist } from './assists.js';
 import { fitWindow } from './layout-geometry.js';
 import { instrumentStyle, STANDALONE_INSTRUMENTS } from './instruments.js';
-import { defaultHudRect } from './hud-defaults.js';
+import { defaultHudRect, instrumentShelf } from './hud-defaults.js';
 // Keep resize controls outside live telemetry markup: HUD refreshes must not
 // replace a captured pointer or reset the window's scroll position and size.
 export const WINDOWS = {
@@ -312,6 +312,24 @@ export class HudWindows {
       layout = `${ui.input.touchEnabled ? 'touch' : 'desktop'}:${innerWidth > innerHeight ? 'landscape' : 'portrait'}`;
     if (!playing || this.layout !== layout) this.cancel();
     this.layout = layout;
+    const world = ui.hooks.world(),
+      shelf = instrumentShelf(ui.input.touchEnabled),
+      // Any deliberate shelf arrangement retains the original slots. This
+      // avoids moving a default gauge into a neighbour's saved rectangle.
+      customizedShelf = [...shelf, 'electronics'].some(
+        (id) =>
+          this.windows.get(id)?.positions.has(layout) ||
+          this.windows.get(id)?.sizes.has(layout) ||
+          this.saved[id]?.[layout],
+      ),
+      visibleShelf =
+        !ui.screen && !customizedShelf
+          ? shelf.filter(
+              (id) =>
+                assist(world, WINDOW_OPTIONS[id], ui.realistic) &&
+                (id !== 'loadPanel' || assist(world, 'exactLoad', ui.realistic)),
+            )
+          : undefined;
     for (const [id, label] of Object.entries(WINDOWS)) {
       const panel = document.getElementById(id);
       if (!panel) continue;
@@ -323,9 +341,15 @@ export class HudWindows {
           innerWidth,
           innerHeight,
           ui.input.touchEnabled,
-          ui.hooks.world().career?.intro?.status === 'active',
+          world.career?.intro?.status === 'active',
           ui.touch?.controlsKey === `${innerWidth}/${innerHeight}/${touchScale()}`
             ? ui.touch.controlsTop
+            : undefined,
+          visibleShelf,
+          ui.hudMessageActive,
+          ui.hudMessageCompact,
+          !entry.positions.has(layout) && !entry.sizes.has(layout)
+            ? ui.hudMessageTargetPoint
             : undefined,
         ),
         position = entry.positions.get(layout),

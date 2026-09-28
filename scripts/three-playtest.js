@@ -8,14 +8,8 @@ const browser = await chromium.launch({
   args: ['--no-sandbox', '--enable-gpu', '--use-angle=vulkan'],
 });
 const errors = [];
-browser.on('page', (p) => {
-  p.on('pageerror', (e) => errors.push(e.message));
-  p.on('response', (r) => {
-    if (r.status() >= 400) errors.push(`${r.status()} ${r.url()}`);
-  });
-});
 try {
-  await voyageChecks(browser);
+  await voyageChecks(browser, errors);
   assert.deepEqual(errors, []);
 } finally {
   writeFileSync('test-results/three/playtest-errors.json', JSON.stringify(errors, null, 2));

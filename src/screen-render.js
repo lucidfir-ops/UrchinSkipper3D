@@ -25,6 +25,8 @@ import { renderDayScreen } from './day-view.js';
 import { chartMode } from './chart-presentation.js';
 import { layoutEditor } from './layout-editor.js';
 import { renderTouchOptions } from './touch-options.js';
+import { renderPause, restoreMenuScroll, captureMenuScroll } from './menu-shell.js';
+import { renderPreferences } from './menu-preferences.js';
 
 export function renderOrders(world, bind) {
   const d = this.draft,
@@ -74,6 +76,17 @@ export function renderOrders(world, bind) {
   };
 }
 export function render(world) {
+  if (this.pressedMenuButton?.isConnected && this.screen) return;
+  const activeChoice = this.panel.contains(document.activeElement)
+      ? document.activeElement.dataset.choiceIndex
+      : undefined,
+    renderingScreen = this.screen,
+    outerScroll =
+      this.panel.dataset.screen === (this.screen || '')
+        ? { top: this.panel.scrollTop, left: this.panel.scrollLeft }
+        : null,
+    menuScroll =
+      this.panel.dataset.screen === (this.screen || '') ? captureMenuScroll(this.panel) : [];
   if (world.career) this.realistic = !world.career.assists.exactLoad;
   const i = this.input,
     bind = (k) => i.label(k),
@@ -100,7 +113,9 @@ export function render(world) {
     .join('   |   ');
   setText(
     document.querySelector('#help'),
-    `${world.career ? actions || `${bind('work')} Bag work · ${bind('recoverDiver')} Deploy / board · ${bind('recall')} Recall nearby` : `${i.deviceLabel.toUpperCase()} · ${actions || 'Read bubbles / maneuver alongside'}`}\n${bind('cycleDiver')} Select diver · ${bind('instructions')} Orders · ${bind('assists')} Assists · ${bind('chart')} Chart · ${tideHint} · ${bind('pause')} Menu\n${bind('fullAhead')} Ahead · ${bind('fullReverse')} Reverse · ${bind('neutral')} Neutral · ${bind('zoomIn')} / ${bind('zoomOut')} Zoom · ${bind('debug')} ${!world.career ? 'Reveal' : `Information · ${presetLabel(world.career.assists.preset)}`}`,
+    i.touchEnabled
+      ? 'HELM\nLeft: throttle\nRight: rudder\nRelease holds.\nTap boat:\nneutral + centre.'
+      : `${world.career ? actions || `${bind('work')} Bag work · ${bind('recoverDiver')} Deploy / board · ${bind('recall')} Recall nearby` : `${i.deviceLabel.toUpperCase()} · ${actions || 'Read bubbles / maneuver alongside'}`}\n${bind('cycleDiver')} Select diver · ${bind('instructions')} Orders · ${bind('assists')} Assists · ${bind('chart')} Chart · ${tideHint} · ${bind('pause')} Menu\n${bind('fullAhead')} Ahead · ${bind('fullReverse')} Reverse · ${bind('neutral')} Neutral · ${bind('zoomIn')} / ${bind('zoomOut')} Zoom · ${bind('debug')} ${!world.career ? 'Reveal' : `Information · ${presetLabel(world.career.assists.preset)}`}`,
   );
   document.querySelector('#help').hidden = !assist(world, 'controlsHelp', this.realistic);
   document.querySelector('#touchMenu').hidden = !i.touchEnabled && i.lastDevice === 'gamepad';
@@ -122,6 +137,7 @@ export function render(world) {
   this.panel.classList.toggle('chart-vector-mode', chartScreen && chartMode(this) === 'vector');
   this.panel.hidden = !this.screen;
   this.panel.classList.toggle('orders-panel', this.screen === 'instructions');
+  this.panel.classList.toggle('dashboard-panel', ['settings', 'pause'].includes(this.screen));
   this.panel.classList.toggle(
     'day-panel',
     [
@@ -136,6 +152,8 @@ export function render(world) {
     ].includes(this.screen),
   );
   if (this.screen === 'layout') layoutEditor(this).render(world);
+  else if (['settings', 'ui-scale', 'gameplay-speed'].includes(this.screen))
+    renderPreferences(this, world, bind);
   else if (this.screen === 'touch-options') renderTouchOptions(this, world);
   else if (INTRO_SCREENS.includes(this.screen)) renderIntro(this, world);
   else if (world.career && EXPEDITION_SCREENS.includes(this.screen))
@@ -144,6 +162,7 @@ export function render(world) {
   else if (this.screen === 'almanac') renderAlmanac(this, world, bind);
   else if (this.screen === 'boatyard') renderBoatyard(this, world, bind);
   else if (this.screen === 'instructions') this.renderOrders(world, bind);
+  else if (this.screen === 'pause') renderPause(this, world, bind);
   else if (['chart', 'departure', 'summary'].includes(this.screen))
     renderDayScreen(this, world, bind);
   else if (this.screen) {
@@ -259,6 +278,11 @@ export function render(world) {
       }
     }
   }
+  restoreMenuScroll(this.panel, menuScroll);
+  if (outerScroll) {
+    this.panel.scrollTop = outerScroll.top;
+    this.panel.scrollLeft = outerScroll.left;
+  }
   if (this.screen && this.screen !== 'emergency') {
     const choices = this.choices(world),
       backIndex = choices.findIndex((x) => /^Back( |$)/.test(x));
@@ -275,10 +299,11 @@ export function render(world) {
         this.screen === 'exit' ? 'Cancel exit' : 'Back to previous menu',
       );
       back.onclick = () => this.back();
-      const navigation = document.createElement('span');
+      const navigation = document.createElement('div');
       navigation.className = 'screen-navigation';
       navigation.append(back);
-      this.panel.querySelector('h2')?.prepend(navigation);
+      const navParent = this.panel.querySelector('.wharf-heading') || this.panel;
+      navParent.prepend(navigation);
       const forward = document.createElement('button');
       forward.className = 'screen-forward';
       forward.textContent = '→';
@@ -287,19 +312,35 @@ export function render(world) {
       forward.title = 'Forward to next menu';
       forward.onclick = () => this.forward();
       back.after(forward);
+      const context = document.createElement('span');
+      context.className = 'menu-location';
+      context.textContent = this.fromTitle
+        ? 'From the title screen'
+        : world.day.phase === 'planning'
+          ? 'Home harbour'
+          : world.day.phase === 'complete'
+            ? 'Trip complete'
+            : 'Aboard · time paused';
+      navigation.append(context);
     }
     this.panel.querySelector('.screen-forward').disabled = !canForward.call(this);
     back.hidden = false;
     back.dataset.choiceIndex = String(backIndex >= 0 ? backIndex : -1);
+    if (this.screen === 'harbour') this.updateHarbourPan?.();
     for (const b of this.panel.querySelectorAll('[data-choice-index]')) {
       const selected = Number(b.dataset.choiceIndex) === this.index && !b.hidden && !b.disabled;
       b.classList.toggle('selected', selected);
       b.setAttribute('aria-current', String(selected));
-      if (selected && this.focusedButton !== b) {
+      if (selected && this.focusedChoiceKey !== `${this.screen}:${this.index}`) {
         b.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-        this.focusedButton = b;
+        this.focusedChoiceKey = `${this.screen}:${this.index}`;
       }
     }
+  }
+  if (activeChoice !== undefined && renderingScreen === this.screen) {
+    const focused = this.panel.querySelector(`[data-choice-index="${this.index}"]:not([hidden])`);
+    if (focused && !focused.disabled && focused !== document.activeElement)
+      focused.focus({ preventScroll: true });
   }
   // Touch menus scroll as a whole page; never rewind the player's swipe.
   if (!i.touchEnabled && !INTRO_SCREENS.includes(this.screen) && this.screen !== 'harbour') {
@@ -309,6 +350,7 @@ export function render(world) {
   if (this.pendingScroll) {
     this.panel.scrollTop = this.pendingScroll.top;
     this.panel.scrollLeft = this.pendingScroll.left;
+    restoreMenuScroll(this.panel, this.pendingScroll.children);
     this.pendingScroll = null;
   }
   this.diag.hidden = !this.diagnostics;

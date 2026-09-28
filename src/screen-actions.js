@@ -22,8 +22,11 @@ import { layoutEditor } from './layout-editor.js';
 import { debugActivate, debugChoices } from './debug-mode.js';
 import { fullscreenLabel, toggleFullscreen } from './fullscreen.js';
 import { touchOptionsActions } from './touch-options.js';
+import { preferenceActions } from './menu-preferences.js';
 
 export function choices(world) {
+  const preferences = preferenceActions(this);
+  if (preferences) return preferences.map((action) => action.label);
   if (this.screen === 'touch-options') return touchOptionsActions(this).map((a) => a.label);
   if (this.screen === 'layout')
     return layoutEditor(this)
@@ -222,6 +225,13 @@ export function activate(world) {
     return;
   }
   this.hooks.audio?.play('confirm');
+  const preferences = preferenceActions(this);
+  if (preferences) {
+    preferences[this.index]?.run();
+    this.hooks.save?.();
+    this.signature = null;
+    return;
+  }
   if (debugActivate(this, world)) return;
   if (world.career && (expeditionActivate(this, world) || careerActivate(this, world))) return;
   if (!world.career && this.screen === 'assists') {

@@ -5,6 +5,7 @@ import { GROUNDS } from './day.js';
 import { harbourScreen } from './starter-career.js';
 import { setBindingView } from './controller-view.js';
 import { introActive } from './career-intro.js';
+import { captureMenuScroll } from './menu-shell.js';
 
 const VIEW_FIELDS = [
   'screen',
@@ -36,7 +37,11 @@ function captureView(ui) {
     index: ui.index === -2 ? 0 : ui.index,
     world,
     phase: world.day.phase,
-    scroll: { top: ui.panel.scrollTop, left: ui.panel.scrollLeft },
+    scroll: {
+      top: ui.panel.scrollTop,
+      left: ui.panel.scrollLeft,
+      children: captureMenuScroll(ui.panel),
+    },
   };
 }
 function restoreView(ui, point, navigation = true) {
@@ -107,11 +112,16 @@ export function open(screen, { replace = false, navigation = false } = {}) {
     this.chartGroundId = this.hooks.world().day.groundId || this.chartGroundId || 'near';
   if (screen !== this.screen) {
     this.layoutEditor = null;
+    this.focusedChoiceKey = null;
     this.panel.style?.removeProperty('translate');
   }
   this.screen = screen;
+  // A transaction may restore its parent and immediately open a new destination.
+  // Only restoreView may carry that parent's saved viewport into the next render.
+  this.pendingScroll = null;
   this.index = 0;
   if (screen === 'starter') this.index = 1;
+  if (screen === 'settings') this.index = 1;
   this.input.capture = null;
   this.input.cancelNaming();
   this.signature = null;
@@ -255,7 +265,9 @@ export function back() {
   }
   if (this.screen === 'settings') {
     this.forwardHistory = [];
-    if (!['planning', 'complete'].includes(world.day.phase)) {
+    if (this.fromTitle) {
+      this.showTitle();
+    } else if (!['planning', 'complete'].includes(world.day.phase)) {
       this.history = [];
       this.input.suppress();
       this.open(null, { replace: true });

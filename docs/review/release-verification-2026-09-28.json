@@ -1,0 +1,270 @@
+{
+  "edition": "Urchin Skipper 3D",
+  "localReleaseDate": "2026-09-28",
+  "builtIndexSha256": "57579322cc15070ef16606249317151f095a43219cf8868e8131439a90ccfe3d",
+  "unitTests": {
+    "total": 492,
+    "passed": 491,
+    "failed": 0,
+    "skipped": 1,
+    "skipReason": "Private-save fixture is not distributed."
+  },
+  "unitVerification": {
+    "started": "2026-09-28T07:27:38.848Z",
+    "ended": "2026-09-28T07:28:19.002Z",
+    "passed": true,
+    "results": [
+      {
+        "label": "lint",
+        "code": 0,
+        "seconds": 6
+      },
+      {
+        "label": "format",
+        "code": 0,
+        "seconds": 5
+      },
+      {
+        "label": "unit regressions",
+        "code": 0,
+        "seconds": 22
+      },
+      {
+        "label": "production build",
+        "code": 0,
+        "seconds": 7
+      }
+    ]
+  },
+  "browserVerification": {
+    "builtIndexSha256": "c5a03ed1b99be217178841c2f5fdc7f8e5bfed8a6b84e48de4ef192758096e9c",
+    "started": "2026-09-28T07:22:21.674Z",
+    "ended": "2026-09-28T07:26:10.862Z",
+    "passed": true,
+    "results": [
+      {
+        "label": "interface",
+        "code": 0,
+        "seconds": 48
+      },
+      {
+        "label": "menus",
+        "code": 0,
+        "seconds": 25
+      },
+      {
+        "label": "accessibility",
+        "code": 0,
+        "seconds": 22
+      },
+      {
+        "label": "mobile-career",
+        "code": 0,
+        "seconds": 34
+      },
+      {
+        "label": "hud-context",
+        "code": 0,
+        "seconds": 18
+      },
+      {
+        "label": "visual",
+        "code": 0,
+        "seconds": 12
+      },
+      {
+        "label": "input",
+        "code": 0,
+        "seconds": 19
+      },
+      {
+        "label": "touch",
+        "code": 0,
+        "seconds": 13
+      },
+      {
+        "label": "vessels",
+        "code": 0,
+        "seconds": 4
+      },
+      {
+        "label": "weather",
+        "code": 0,
+        "seconds": 4
+      },
+      {
+        "label": "voyage",
+        "code": 0,
+        "seconds": 17
+      },
+      {
+        "label": "embed",
+        "code": 0,
+        "seconds": 4
+      },
+      {
+        "label": "performance",
+        "code": 0,
+        "seconds": 8
+      }
+    ]
+  },
+  "finalBuildFollowup": {
+    "builtIndexSha256": "57579322cc15070ef16606249317151f095a43219cf8868e8131439a90ccfe3d",
+    "changeAfterFullMatrix": "Clear cached speech placement and its deadline when a new voyage resets the simulation clock. No menu, layout or simulation rule changed after the full matrix.",
+    "checks": {
+      "hud-context": {
+        "started": "2026-09-28T07:29:48.053Z",
+        "ended": "2026-09-28T07:30:07.909Z",
+        "passed": true,
+        "results": [
+          {
+            "label": "hud-context",
+            "code": 0,
+            "seconds": 18
+          }
+        ]
+      },
+      "voyage": {
+        "started": "2026-09-28T07:30:21.316Z",
+        "ended": "2026-09-28T07:30:40.802Z",
+        "passed": true,
+        "results": [
+          {
+            "label": "voyage",
+            "code": 0,
+            "seconds": 18
+          }
+        ]
+      },
+      "firefox": {
+        "started": "2026-09-28T07:31:34.436Z",
+        "ended": "2026-09-28T07:31:53.511Z",
+        "passed": true,
+        "results": [
+          {
+            "label": "firefox",
+            "code": 0,
+            "seconds": 17
+          }
+        ]
+      }
+    },
+    "hudPresentationCaptures": 18,
+    "firefoxMenuAccessibility": {
+      "checks": [
+        "Assist controls preserve DOM identity through focus and a 300ms held pointer click; switch and Custom status update after release.",
+        "390\u00d7844: touch toggle, stable slider drag, 5% opacity step, reset, Adjust UI, information switch, Back context, reload persistence and physical 44px menu targets pass.",
+        "844\u00d7390: touch toggle, stable slider drag, 5% opacity step, reset, Adjust UI, information switch, Back context, reload persistence and physical 44px menu targets pass."
+      ],
+      "errors": []
+    },
+    "voyage": {
+      "grossCatchLb": 300,
+      "onTime": true,
+      "hullHealth": 1,
+      "crew": [
+        "fit",
+        "fit"
+      ],
+      "net": 84.85,
+      "browserErrors": []
+    }
+  },
+  "hardwarePerformance": {
+    "builtIndexSha256": "c5a03ed1b99be217178841c2f5fdc7f8e5bfed8a6b84e48de4ef192758096e9c",
+    "device": {
+      "renderer": "ANGLE (AMD, Vulkan 1.4.330 (AMD Custom GPU 0405 (RADV VANGOGH) (0x0000163F)), radv)",
+      "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "pixelRatio": 1,
+      "framebuffer": [
+        1280,
+        800
+      ],
+      "screen": null,
+      "started": true
+    },
+    "results": [
+      {
+        "label": "native",
+        "elapsed": 4000.199999988079,
+        "renderFrames": 240,
+        "rafFrames": 240,
+        "fps": 59.997000150171296,
+        "fields": {
+          "frameMs": {
+            "mean": 16.66625,
+            "p95": 16.700000000000728
+          },
+          "inputMs": {
+            "mean": 0.772083334500591,
+            "p95": 1
+          },
+          "simulationMs": {
+            "mean": 0.32708333283662794,
+            "p95": 0.5
+          },
+          "drawMs": {
+            "mean": 2.5100000001490117,
+            "p95": 3.100000023841858
+          },
+          "hudMs": {
+            "mean": 0.47541666713853675,
+            "p95": 4.299999982118607
+          },
+          "totalCpuMs": {
+            "mean": 4.136250001067917,
+            "p95": 7.800000011920929
+          }
+        },
+        "render": {
+          "frame": 325,
+          "calls": 70,
+          "triangles": 111698,
+          "points": 0,
+          "lines": 105
+        }
+      }
+    ],
+    "errors": []
+  },
+  "independentReviews": [
+    "docs/review/ui-final-menu-review-2026-09-27.md",
+    "docs/review/ui-final-hud-review-2026-09-27.md",
+    "docs/review/ui-final-cross-review-2026-09-27.md"
+  ],
+  "exportDirectory": "exports/2026-09-28-interface-release",
+  "exports": [
+    {
+      "file": "Urchin Skipper 3D TEMP.zip",
+      "bytes": 102186930,
+      "sha256": "49a1d3b31f853592fc1a437582a99f2d6933b3334b70a2b40c9ae24cb6dd2e0c",
+      "crcPassed": true,
+      "productionFileComparisonPassed": true
+    },
+    {
+      "file": "UrchinSkipper3D-TEMP-ITCHIO.zip",
+      "bytes": 102158428,
+      "sha256": "8b74c4093432252953db902a36cebb3f67dc2942f060152922051511181369b0",
+      "crcPassed": true,
+      "productionFileComparisonPassed": true
+    }
+  ],
+  "portableLaunch": {
+    "passed": true,
+    "launcher": "node scripts/start-portable.js --no-open",
+    "port": 5198,
+    "editionHeader": "three",
+    "builtIndexSha256": "57579322cc15070ef16606249317151f095a43219cf8868e8131439a90ccfe3d",
+    "productionJavaScriptFilesCompared": 5,
+    "desktopGuiLaunchersTested": false
+  },
+  "limitations": [
+    "Physical Xbox and Steam Deck controls were not tested; gamepads were synthetic.",
+    "Touch interactions used browser emulation. Mobile hardware ergonomics/performance and Safari remain unverified.",
+    "Nested iframe hosting passed locally; actual itch.io upload is manual.",
+    "The portable Node launcher and served files passed. Windows/macOS GUI launchers were not exercised on those operating systems.",
+    "The 60 FPS result is a four-second controlled AMD GPU scene, not a whole-game or all-device guarantee.",
+    "Compact secondary gauge captions and the miniature Arrange UI preview remain dense; this is not formal accessibility certification or exhaustive custom-layout coverage."
+  ]
+}

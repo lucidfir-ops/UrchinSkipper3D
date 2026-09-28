@@ -1,14 +1,11 @@
+import { preferenceActions } from './menu-preferences.js';
 import { crewRoster } from './crew-roster.js';
 import { marketOffers, chooseBuyer } from './buyer.js';
 import { enabledEquipment, toggleEquipment } from './equipment-controls.js';
 import { startDump } from './deck-work.js';
-import { fullscreenLabel, toggleFullscreen } from './fullscreen.js';
-import { uiScale, changeUiScale, setUiScale } from './ui-scale.js';
 import { confirmAction, confirmPurchase, purchaseActions } from './purchase.js';
 import { coastWarning } from './frank-advice.js';
 import { shopActions } from './shop-actions.js';
-import { setTimeIncrease, timeIncrease } from './time-speed.js';
-import { boatArtLabel, toggleBoatArtMode } from './boat-art-mode.js';
 import { testConditionActions } from './test-mode.js';
 import { trainingActions, restTrainingCrew } from './training-tools.js';
 import { setPreset, presetLabel } from './assists.js';
@@ -58,6 +55,8 @@ export const CAREER_SCREENS = [
   'training',
 ];
 export function careerActions(ui, w) {
+  const preferences = preferenceActions(ui);
+  if (preferences) return preferences;
   const c = w.career,
     people = crewRoster(c);
   const open = (id, label, screen = id) => ({ id, label, run: () => ui.open(screen) });
@@ -170,60 +169,6 @@ export function careerActions(ui, w) {
           ),
         ),
         open('market', 'Buyer market · choose today’s goal'),
-        back,
-      ];
-    case 'settings':
-      return [
-        open('layout', 'Arrange UI layout'),
-        open('assists', 'UI / difficulty options'),
-        open('controller', 'Controller setup'),
-        open('bindings', 'Controller Remapping'),
-        open('ui-scale', 'UI Scale'),
-        open('touch-options', 'Touchscreen Options'),
-        open('gameplay-speed', 'Gameplay Speed'),
-        action('fullscreen', `⛶ ${fullscreenLabel()}`, toggleFullscreen),
-        action('boat-art', `Catalogue artwork: ${boatArtLabel()}`, () => {
-          toggleBoatArtMode();
-          ui.signature = null;
-        }),
-        action(
-          'volume',
-          `Sound volume: ${Math.round((ui.hooks.audio?.volume ?? 0.35) * 100)}%`,
-          () => {
-            const levels = [0, 0.2, 0.35, 0.5, 0.75];
-            ui.hooks.audio?.setVolume(
-              levels[(levels.indexOf(ui.hooks.audio?.volume ?? 0.35) + 1) % levels.length],
-            );
-          },
-        ),
-        action('graphics', `3D graphics: ${ui.hooks.graphicsLabel?.() || 'High'}`, () => {
-          ui.hooks.cycleGraphics?.();
-          ui.signature = null;
-        }),
-        action('exit', 'Exit Game', () => ui.exit()),
-        back,
-      ];
-    case 'ui-scale':
-      return [
-        action('ui-smaller', `Smaller · now ${uiScale()}%`, () => {
-          changeUiScale(-1, false);
-        }),
-        action('ui-larger', `Larger · now ${uiScale()}%`, () => {
-          changeUiScale(1, false);
-        }),
-        action('ui-reset', 'Reset · 100%', () => {
-          setUiScale(100);
-        }),
-        back,
-      ];
-    case 'gameplay-speed':
-      return [
-        action('time-slower', `−5% · now +${timeIncrease()}%`, () =>
-          setTimeIncrease(timeIncrease() - 5),
-        ),
-        action('time-faster', `+5% · now +${timeIncrease()}%`, () =>
-          setTimeIncrease(timeIncrease() + 5),
-        ),
         back,
       ];
     case 'workshop':

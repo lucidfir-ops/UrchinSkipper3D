@@ -30,6 +30,9 @@ import './layout-editor.css';
 import './device-feedback.css';
 import './september23-ui.css';
 import './three/presentation.css';
+import './interface-theme.css';
+import './menu-polish.css';
+import './wheelhouse.css';
 import { C } from './config.js';
 import { CHART_ATLAS, installChartMaterial } from './chart-material.js';
 import { vesselCanvas, prepareVesselArt } from './vessel-art.js';
@@ -303,10 +306,18 @@ class Ocean extends Phaser.Scene {
       rangeY: this.scale.height / (2 * C.pixelsPerMeter * this.cameras.main.zoom),
     };
     this.anchor.setPosition(b.x * C.pixelsPerMeter, b.y * C.pixelsPerMeter);
-    const compactLesson = introActive(world) && input.touchEnabled && this.scale.height <= 500;
+    const compactWheelhouse = input.touchEnabled && this.scale.height <= 500;
+    const compactLesson = introActive(world) && compactWheelhouse;
+    const portraitWheelhouse = input.touchEnabled && this.scale.width < this.scale.height;
     this.cameras.main.setFollowOffset(
       compactLesson ? (this.scale.width * 0.08) / this.cameras.main.zoom : 0,
-      compactLesson ? (-this.scale.height * 0.16) / this.cameras.main.zoom : 0,
+      compactLesson
+        ? (-this.scale.height * 0.13) / this.cameras.main.zoom
+        : compactWheelhouse
+          ? (-this.scale.height * 0.1) / this.cameras.main.zoom
+          : portraitWheelhouse
+            ? (-this.scale.height * (introActive(world) ? 0.115 : 0.035)) / this.cameras.main.zoom
+            : 0,
     );
     if (!preparing()) this.view.draw(world, this.playtest, dt);
     this.markers = this.view.markers;

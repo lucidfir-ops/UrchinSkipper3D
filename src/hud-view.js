@@ -35,6 +35,31 @@ import {
   instrumentContent,
   renderStandaloneInstruments,
 } from './instruments.js';
+const html = (value) =>
+  String(value).replace(
+    /[&<>"']/g,
+    (character) =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character],
+  );
+const sentenceCase = (value) =>
+  value
+    .replace(/\b[A-Z][A-Z /+]+\b/g, (words) => words.toLowerCase())
+    .replace(/^\w/, (c) => c.toUpperCase());
+
+// The boat card is the fallback for independently hidden instruments. Keeping
+// these checks tied to the options preserves both Custom and All Off layouts.
+export function boatCardFallbacks(world, realistic) {
+  const enabled = (key) => assist(world, key, realistic);
+  return {
+    speed: !enabled('speedGauge'),
+    depth: !enabled('depthInstrument') && !enabled('sounder'),
+    fuel: !enabled('fuelGauge'),
+    load: enabled('exactLoad') && !enabled('loadGauge'),
+    condition: !enabled('hullGauge'),
+    commands: !enabled('throttleGauge'),
+  };
+}
+
 export function renderHud(scene, world, input, lockReason) {
   document.querySelector('#godmodeNotice').hidden =
     !world.career?.debugConditions?.godmode || !scene.playtest.started;
@@ -75,22 +100,39 @@ export function renderHud(scene, world, input, lockReason) {
   hud.hidden = !assist(world, 'helmOverlay', ui.realistic);
   if (!hud.hidden) {
     const hudText = input.touchEnabled
-      ? `<span>${heading.toFixed(0).padStart(3, '0')}° · ${waterSpeed.toFixed(1)}kn · ${Number(soundingDepth(world, b.x, b.y).toFixed(1))}m</span><span>Fuel ${b.fuel.toFixed(0)}L${fuel.level === 'normal' ? '' : ' · LOW'} · Hull ${Math.round(hullHealth * 100)}%</span><span>${ui.realistic ? 'Read load from deck' : `Deck ${Math.round(world.catch)}/${boatSpec(world).capacity}lb`}${b.grounded ? ' · GROUNDED' : ''}${world.emergency ? ' · MEDICAL RETURN' : ''}</span><span>Drive ${Math.round(driveHealth * 100)}% · ${throttleText(b.throttle)} · Rudder ${rudderText(b.rudder)}</span>`
-      : `<div class="instrument-label">${boatDefinition(b.configuration).name.toUpperCase()} · ${heading.toFixed(0).padStart(3, '0')}°</div><b>COMMANDED THROTTLE: ${throttleText(b.throttle)}</b><br><b>COMMANDED RUDDER: ${rudderText(b.rudder)}</b><div class="speed">Speed ${waterSpeed.toFixed(1)} kn <span>through water</span></div><span>${groundSpeed.toFixed(1)} kn over ground · Depth ${Math.max(0, soundingDepth(world, b.x, b.y)).toFixed(1)} m</span>${world.environment.model === 'spatial-v1' ? `<br><span>Tide ${seaLevel(world) >= 0 ? '+' : ''}${seaLevel(world).toFixed(1)} m · ${world.environment.tideRate >= 0 ? 'rising' : 'falling'}</span>` : ''}${fuelReadout}<br>${ui.realistic ? 'Read load from deck' : `<strong class="deck-readout">Deck ${world.catch.toFixed(0)} / ${boatSpec(world).capacity} lb · Bags ${world.bags.length}</strong>`}${boatSpec(world).bowThrusterStrength || boatSpec(world).pivotRate ? `<br><span>Bow / docking thrust: ${Math.abs(b.thruster || 0) < 0.01 ? 'OFF' : (b.thruster < 0 ? 'PORT' : 'STARBOARD') + ' ' + Math.round(Math.abs(b.thruster) * 100) + '%'}</span>` : ''}${(b.driveHealth ?? 1) < 0.99 ? `<div class="drive-alert">${b.driveHealth <= 0 ? 'PROPULSION FAILED · Pause → Radio for rescue' : `Drive damaged · ${ui.realistic ? 'thrust / steering unreliable' : Math.round(b.driveHealth * 100) + '% health'}`}</div>` : ''}${hullHealth < 0.7 ? `<div class="drive-alert">${b.sinking ? 'VESSEL SINKING · Radio for rescue' : 'Hull damage · return for repairs'}</div>` : ''}${world.emergency && !world.emergency.mandatoryRescue ? `<div class="drive-alert">MEDICAL RETURN · ${world.divers.some((d) => d.condition === 'injured' && d.state !== 'ready') ? 'Bring injured diver aboard' : 'Return to harbour / radio for assistance'}</div>` : ''}${b.grounded ? '<div class="grounding">GROUNDED — reverse to deeper water; wait at sea for rising tide or Pause → Radio for paid tow</div>' : ''}`;
-    if (scene.lastHud !== hudText) {
-      const graphic = input.touchEnabled
-        ? hudText
-        : `<div class="helm-graphic">${compass('HDG', heading, `${heading.toFixed(0)}°`)}${dial('FUEL', `${b.fuel.toFixed(0)} L`, b.fuel / boatSpec(world).fuelCapacity, 'E', 'F', fuel.level !== 'normal')}</div><div class="helm-status">${waterSpeed.toFixed(1)} kn · ${soundingDepth(world, b.x, b.y).toFixed(1)} m<br>Hull ${Math.round(hullHealth * 100)}% · Drive ${Math.round(driveHealth * 100)}%<br>${ui.realistic ? 'Read load from deck' : `Deck ${Math.round(world.catch)} / ${boatSpec(world).capacity} lb`}${b.grounded ? ' · GROUNDED' : ''}</div>`;
+      ? `<span>${heading.toFixed(0).padStart(3, '0')}° · ${waterSpeed.toFixed(1)}kn · ${Number(soundingDepth(world, b.x, b.y).toFixed(1))}m</span><span>Fuel ${b.fuel.toFixed(0)}L${fuel.level === 'normal' ? '' : ' · LOW'} · Hull ${Math.round(hullHealth * 100)}%</span><span>${!assist(world, 'exactLoad', ui.realistic) ? 'Read load from deck' : `Deck ${Math.round(world.catch)}/${boatSpec(world).capacity}lb`}${b.grounded ? ' · GROUNDED' : ''}${world.emergency ? ' · MEDICAL RETURN' : ''}</span><span>Drive ${Math.round(driveHealth * 100)}% · ${throttleText(b.throttle)} · Rudder ${rudderText(b.rudder)}</span>`
+      : `<div class="instrument-label">${boatDefinition(b.configuration).name.toUpperCase()} · ${heading.toFixed(0).padStart(3, '0')}°</div><b>COMMANDED THROTTLE: ${throttleText(b.throttle)}</b><br><b>COMMANDED RUDDER: ${rudderText(b.rudder)}</b><div class="speed">Speed ${waterSpeed.toFixed(1)} kn <span>through water</span></div><span>${groundSpeed.toFixed(1)} kn over ground · Depth ${Math.max(0, soundingDepth(world, b.x, b.y)).toFixed(1)} m</span>${world.environment.model === 'spatial-v1' ? `<br><span>Tide ${seaLevel(world) >= 0 ? '+' : ''}${seaLevel(world).toFixed(1)} m · ${world.environment.tideRate >= 0 ? 'rising' : 'falling'}</span>` : ''}${fuelReadout}<br>${!assist(world, 'exactLoad', ui.realistic) ? 'Read load from deck' : `<strong class="deck-readout">Deck ${world.catch.toFixed(0)} / ${boatSpec(world).capacity} lb · Bags ${world.bags.length}</strong>`}${boatSpec(world).bowThrusterStrength || boatSpec(world).pivotRate ? `<br><span>Bow / docking thrust: ${Math.abs(b.thruster || 0) < 0.01 ? 'OFF' : (b.thruster < 0 ? 'PORT' : 'STARBOARD') + ' ' + Math.round(Math.abs(b.thruster) * 100) + '%'}</span>` : ''}${(b.driveHealth ?? 1) < 0.99 ? `<div class="drive-alert">${b.driveHealth <= 0 ? 'PROPULSION FAILED · Pause → Radio for rescue' : `Drive damaged · ${ui.realistic ? 'thrust / steering unreliable' : Math.round(b.driveHealth * 100) + '% health'}`}</div>` : ''}${hullHealth < 0.7 ? `<div class="drive-alert">${b.sinking ? 'VESSEL SINKING · Radio for rescue' : 'Hull damage · return for repairs'}</div>` : ''}${world.emergency && !world.emergency.mandatoryRescue ? `<div class="drive-alert">MEDICAL RETURN · ${world.divers.some((d) => d.condition === 'injured' && d.state !== 'ready') ? 'Bring injured diver aboard' : 'Return to harbour / radio for assistance'}</div>` : ''}${b.grounded ? '<div class="grounding">GROUNDED — reverse to deeper water; wait at sea for rising tide or Pause → Radio for paid tow</div>' : ''}`;
+    const fallback = boatCardFallbacks(world, ui.realistic),
+      readings = [
+        fallback.speed ? `${waterSpeed.toFixed(1)} kn through water` : '',
+        fallback.depth ? `${soundingDepth(world, b.x, b.y).toFixed(1)} m depth` : '',
+        fallback.fuel
+          ? `Fuel ${b.fuel.toFixed(0)} L${fuel.level === 'normal' ? '' : ' · Low'}`
+          : '',
+        fallback.condition
+          ? `Hull ${Math.round(hullHealth * 100)}% · Drive ${Math.round(driveHealth * 100)}%`
+          : '',
+        fallback.load
+          ? `Deck ${Math.round(world.catch).toLocaleString()} / ${boatSpec(world).capacity.toLocaleString()} lb`
+          : '',
+      ].filter(Boolean),
+      commands = [
+        fallback.commands
+          ? `${sentenceCase(throttleText(b.throttle))} · Rudder ${rudderText(b.rudder).toLowerCase()}`
+          : '',
+        boatSpec(world).bowThrusterStrength ? `Bow ${Math.round((b.thruster || 0) * 100)}%` : '',
+      ]
+        .filter(Boolean)
+        .join(' · '),
+      graphic = input.touchEnabled
+        ? `<span class="boat-touch-heading">${heading.toFixed(0).padStart(3, '0')}° heading</span>${readings.map((text) => `<span>${text}</span>`).join('')}${commands ? `<span class="boat-touch-command">${commands}</span>` : ''}`
+        : `<div class="boat-card"><div class="instrument-eyebrow">${html(boatDefinition(b.configuration).name)}</div><div class="boat-card-main">${compass('HDG', heading, `${heading.toFixed(0).padStart(3, '0')}°`)}<div class="boat-card-readings">${!fallback.speed ? `<span class="boat-heading"><b>${heading.toFixed(0).padStart(3, '0')}°</b> <small>heading</small></span>` : ''}${readings.map((text) => `<span>${text}</span>`).join('')}</div></div>${commands ? `<div class="boat-command">${commands}</div>` : ''}</div>`;
+    const hudMarkup = instrumentContent(graphic, hudText);
+    if (scene.lastHud !== hudMarkup) {
       const alerts =
         hudText.match(/<div class="(?:drive-alert|grounding)">.*?<\/div>/g)?.join('') || '';
-      const commands = !input.touchEnabled
-        ? `<div class="helm-status">${throttleText(b.throttle)} · Rudder ${rudderText(b.rudder)}${boatSpec(world).bowThrusterStrength ? ` · Bow ${Math.round((b.thruster || 0) * 100)}%` : ''}</div>`
-        : '';
-      hud.innerHTML = instrumentContent(
-        graphic + commands + (!input.touchEnabled ? alerts : ''),
-        hudText,
-      );
-      scene.lastHud = hudText;
+      hud.innerHTML = instrumentContent(graphic + (!input.touchEnabled ? alerts : ''), hudText);
+      scene.lastHud = hudMarkup;
     }
   }
   const speedPanel = document.querySelector('#speedPanel'),
@@ -189,44 +231,69 @@ export function renderHud(scene, world, input, lockReason) {
   diverPanel.classList.toggle('portrait-only', !indicators);
   world.divers.forEach((d, id) => {
     if (diverPanel.hidden) return;
+    const button = scene.diverButtons[id],
+      person = { ...crewProfile(world.career, d.crewId), name: d.name },
+      selected = d.id === world.selectedDiverId;
     if (!indicators) {
-      const button = scene.diverButtons[id];
-      setMarkup(button, portrait({ ...crewProfile(world.career, d.crewId), name: d.name }));
-      button.className = d.id === world.selectedDiverId ? 'selected' : '';
+      // Realistic selectors communicate identity and selection only. Their
+      // appearance never encodes a diver's hidden underwater state.
+      setMarkup(
+        button,
+        `<span class="diver-identity">${portrait(person)}<span><b>${html(d.name)}</b><small>${selected ? 'Selected diver' : 'Select diver'}</small></span></span>`,
+      );
+      button.className = selected ? 'selected' : '';
       button.setAttribute('aria-label', `Select ${d.name}`);
-      button.setAttribute('aria-pressed', String(d.id === world.selectedDiverId));
+      button.setAttribute('aria-pressed', String(selected));
       return;
     }
-    const button = scene.diverButtons[id],
-      text = `${d.name} · ${d.condition === 'deceased' ? 'FATALITY' : d.condition === 'injured' ? (d.state === 'ready' ? 'INJURED / ABOARD' : 'INJURED / WAITING') : d.state === 'ready' ? 'ABOARD' : d.state === 'surface' ? (d.bagHandled ? 'BAG ABOARD / WAITING' : 'FLOAT WAITING') : d.state.toUpperCase()}${world.career ? ` · ${d.condition === 'fit' ? Math.round((d.fatigue || 0) * 100) + '% tired' : d.condition.toUpperCase()}` : ''}`;
-    const detail = assist(world, 'exactLoad', ui.realistic)
-      ? input.touchEnabled
-        ? `${d.name}\nAir ${Math.round(d.air)} · Bag ${Math.round(d.bag)} lb${d.condition !== 'fit' ? ' · ' + d.condition : ''}${d.swimmingClear ? ' · Swimming clear' : ''}`
-        : text + '\n' + diverTelemetry(world, d)
-      : text;
-    if (!button.querySelector('.diver-detail')) {
+    const status =
+        d.condition === 'deceased'
+          ? 'Fatality'
+          : d.condition === 'injured'
+            ? d.state === 'ready'
+              ? 'Injured · aboard'
+              : 'Injured · waiting'
+            : d.state === 'ready'
+              ? 'Aboard'
+              : d.state === 'surface'
+                ? d.bagHandled
+                  ? 'Bag aboard · waiting'
+                  : 'Float waiting'
+                : d.state[0].toUpperCase() + d.state.slice(1),
+      exact = assist(world, 'exactLoad', ui.realistic),
+      air = Math.round((d.air / (diverSpec(d).tankAir || 100)) * 100),
+      detail = exact
+        ? input.touchEnabled
+          ? `Air ${air}% · Bag ${Math.round(d.bag)} lb`
+          : `${world.career && d.condition === 'fit' ? Math.round((d.fatigue || 0) * 100) + '% tired · ' : ''}${diverTelemetry(world, d).split(' · ').slice(2).join(' · ')}`
+        : '',
+      content = `<span class="diver-identity">${portrait(person)}<span><b>${html(d.name)}</b><small>${html(status)}</small></span><span class="diver-selection-mark" aria-hidden="true">${selected ? '●' : '○'}</span></span>${exact && !input.touchEnabled ? `<span class="diver-detail instrument-text">Air ${air}% · Bag ${Math.round(d.bag)} / 300 lb</span>` : ''}<span class="diver-detail">${html(detail)}${d.swimmingClear ? ' · Swimming clear' : ''}</span>`;
+    let identity = button.querySelector('.diver-card-content');
+    if (!identity) {
       button.replaceChildren();
-      const span = document.createElement('span');
-      span.className = 'diver-detail';
-      button.append(span);
+      identity = document.createElement('span');
+      identity.className = 'diver-card-content';
+      button.append(identity);
     }
-    setText(button.firstElementChild, detail);
-    renderNitrogen(button, world, d, assist(world, 'exactLoad', ui.realistic), input.touchEnabled);
+    setMarkup(identity, content);
+    // Compact cards show readiness. Exact loading and reference-depth details
+    // remain available in the diver's full record, as the design requires.
+    renderNitrogen(button, world, d, exact, true);
     let meters = button.querySelector('.diver-meters');
     if (!meters) {
       meters = document.createElement('span');
       meters.className = 'diver-meters instrument-graphic';
       button.append(meters);
     }
-    meters.hidden = !assist(world, 'exactLoad', ui.realistic) || input.touchEnabled;
+    meters.hidden = !exact || input.touchEnabled;
     if (!meters.hidden)
       setMarkup(
         meters,
-        `<label>Air <meter min="0" max="100" low="20" optimum="100" value="${Math.round((d.air / (diverSpec(d).tankAir || 100)) * 100)}"></meter></label><label>Bag <meter min="0" max="300" value="${Math.round(d.bag)}"></meter></label>`,
+        `<label><span>Air <b>${air}%</b></span><meter aria-label="${html(d.name)} air remaining" min="0" max="100" low="20" optimum="100" value="${air}"></meter></label><label><span>Bag <b>${Math.round(d.bag)} lb</b></span><meter aria-label="${html(d.name)} bag load" min="0" max="300" value="${Math.round(d.bag)}"></meter></label>`,
       );
-    button.setAttribute('aria-label', `Select ${d.name}`);
-    button.className = d.id === world.selectedDiverId ? 'selected' : '';
-    button.setAttribute('aria-pressed', String(d.id === world.selectedDiverId));
+    button.setAttribute('aria-label', `Select ${d.name}, ${status}`);
+    button.className = selected ? 'selected' : '';
+    button.setAttribute('aria-pressed', String(selected));
   });
   if (world.time >= (scene.nextPanelCheck || 0)) {
     scene.nextPanelCheck = world.time + 0.2;
@@ -253,7 +320,24 @@ export function renderHud(scene, world, input, lockReason) {
     }
   }
   message.className = state.locked ? 'locked' : state.available ? 'available' : '';
-  const notice = ui.importantNotice?.until > performance.now() ? ui.importantNotice.text : '';
+  const notice = ui.importantNotice?.until > performance.now() ? ui.importantNotice.text : '',
+    showTelemetry = assist(world, 'exactLoad', ui.realistic) && (diverPanel.hidden || !indicators);
+  const activeContext =
+    (diverVisual(target).surface && state.observable) ||
+    state.progress !== null ||
+    !!notice ||
+    state.locked;
+  ui.hudMessageActive = activeContext && world.career?.intro?.status !== 'active';
+  ui.hudMessageTargetPoint =
+    diverVisual(target).surface && state.observable ? scene.view.project(target.x, target.y) : null;
+  ui.hudMessageCompact =
+    ui.hudMessageActive &&
+    state.progress === null &&
+    state.controls === 'BOAT CONTROLS AVAILABLE' &&
+    !state.reason &&
+    !notice;
+  message.dataset.context = ui.hudMessageActive ? 'active' : 'quiet';
+  message.dataset.density = ui.hudMessageCompact ? 'compact' : 'full';
   const signature = JSON.stringify([
     state.status,
     state.progress === null ? null : Math.round(state.progress * 100),
@@ -266,20 +350,35 @@ export function renderHud(scene, world, input, lockReason) {
     target.name,
     ui.realistic,
     notice,
+    showTelemetry,
     assist(world, 'exactLoad', ui.realistic) ? diverTelemetry(world, target) : '',
   ]);
   if (!message.hidden && signature !== scene.lastMessage) {
     scene.lastMessage = signature;
     message.replaceChildren();
     const title = document.createElement('strong');
-    setText(title, `${state.observable ? target.name + ' · ' : ''}${state.status}`);
-    message.append(title);
-    if (assist(world, 'exactLoad', ui.realistic)) {
-      const telemetry = document.createElement('div');
-      telemetry.className = 'pickup-detail';
-      setText(telemetry, diverTelemetry(world, target));
-      message.append(telemetry);
+    if (state.observable) {
+      const person = document.createElement('span');
+      person.className = 'pickup-person';
+      setText(person, target.name);
+      message.append(person);
     }
+    const [primary, ...details] = state.status.split(' · '),
+      [headline, ...reasons] = primary.split(' — ');
+    setText(title, sentenceCase(headline === 'RECOVERY AVAILABLE' ? 'READY TO RECOVER' : headline));
+    message.append(title);
+    const line = (className, text) => {
+      const element = document.createElement('div');
+      element.className = className;
+      setText(element, text);
+      message.append(element);
+    };
+    if (reasons.length === 1 && /^\d+(?:\.\d+)?s$/.test(reasons[0])) {
+      const duration = document.createElement('small');
+      duration.className = 'pickup-duration';
+      setText(duration, reasons[0]);
+      title.append(duration);
+    } else if (reasons.length) line('pickup-reason', sentenceCase(reasons.join(' — ')));
     if (state.progress !== null && (!ui.realistic || target.state === 'surface')) {
       const bar = document.createElement('progress');
       bar.max = 1;
@@ -287,43 +386,35 @@ export function renderHud(scene, world, input, lockReason) {
       bar.setAttribute('aria-label', state.operation + ' progress');
       message.append(bar);
     }
-    if (notice) {
-      const line = document.createElement('div');
-      line.className = 'important-notice';
-      setText(line, notice);
-      message.append(line);
-    }
-    const controls = document.createElement('div');
-    controls.className = 'control-status';
-    setText(controls, state.controls);
-    message.append(controls);
-    if (diverVisual(target).surface && state.observable) {
-      const detail = document.createElement('div');
-      detail.className = 'pickup-detail';
-      setText(
-        detail,
-        `Port working side${ui.realistic ? '' : ` · Hull distance ${state.distance.toFixed(1)} / ${tolerance} m`} · ${ui.realistic ? 'Match float drift' : `Relative speed ${(state.waterSpeed * C.knotsPerMps).toFixed(1)} kn`} · Pickup below ${(C.recovery.maxRelativeSpeed * C.knotsPerMps).toFixed(1)} kn relative to float`,
+    if (state.controls !== 'BOAT CONTROLS AVAILABLE')
+      line('control-status', sentenceCase(state.controls));
+    if (diverVisual(target).surface && state.observable && state.overflow > 0)
+      line(
+        'important-notice',
+        `${ui.realistic ? 'Excess catch' : Math.round(state.overflow) + ' lb excess'} will be released; diver can board.`,
       );
-      message.append(detail);
-      if (state.reason) {
-        const why = document.createElement('div');
-        why.className = 'pickup-detail';
-        setText(why, state.reason + ` · ${input.label('recoverDiver')} brings the diver aboard`);
-        message.append(why);
-      }
-      if (state.overflow > 0) {
-        const warning = document.createElement('div');
-        warning.className = 'important-notice';
-        setText(
-          warning,
-          ui.realistic
-            ? 'Deck full: excess catch will be released; diver recovery available.'
-            : `Only ${Math.max(0, boatSpec(world).capacity - world.catch).toFixed(0)} lb fits. Excess catch will be released; diver recovery available.`,
+    if (notice) line('important-notice', notice);
+    if (diverVisual(target).surface && state.observable) {
+      line(
+        'pickup-requirement',
+        `Port side · below ${(C.recovery.maxRelativeSpeed * C.knotsPerMps).toFixed(1)} kn relative to float`,
+      );
+      if (state.reason)
+        line(
+          'pickup-reason',
+          state.reason + ` · ${input.label('recoverDiver')} brings the diver aboard`,
         );
-        message.append(warning);
-      }
+      line(
+        'pickup-detail',
+        ui.realistic
+          ? 'Match float drift'
+          : `Hull distance ${state.distance.toFixed(1)} / ${tolerance} m · Relative speed ${(state.waterSpeed * C.knotsPerMps).toFixed(1)} kn`,
+      );
     }
+    if (showTelemetry) line('pickup-detail', diverTelemetry(world, target));
+    else if (details.length && !indicators) line('pickup-detail', details.join(' · '));
   }
+
   let instruments = document.querySelector('#electronics');
   let patrol = document.querySelector('#patrolBearing');
   if (!patrol) {

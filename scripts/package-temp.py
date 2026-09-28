@@ -123,7 +123,7 @@ data. No Node.js installation or external assets are needed on players' devices.
 Saves are per browser/origin. Export a career from the logbook before changing
 browsers or clearing storage. New day-start saves cannot recover earlier days
 from old releases retroactively. Exported careers include a bounded local
-troubleshooting snapshot. Optional detailed input logging remains on the title.
+troubleshooting snapshot. Optional detailed input logging is in Settings.
 
 OPTIONAL LOCAL / WI-FI COPY:
 Urchin Skipper 3D TEMP.zip contains identical game bytes and desktop/LAN helpers.

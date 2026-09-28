@@ -160,8 +160,12 @@ export async function harbourShopChecks(browser) {
       } else {
         assert(
           Math.abs(layout.canvas.width / layout.canvas.height - 1.6) < 0.002,
-          'phone panning preserves the approved harbour composition',
+          'compact harbour retains the approved scenic pan composition',
         );
+        assert(await page.locator('.harbour-pan-controls').isVisible());
+        const header = await page.locator('.wharf-heading').boundingBox();
+        assert(header.x >= 0 && header.x + header.width <= viewport.width);
+        assert(header.y >= 0 && header.y + header.height < viewport.height);
       }
       if (viewport.width === 360 && engine === 'chromium') {
         const cdp = await context.newCDPSession(page);

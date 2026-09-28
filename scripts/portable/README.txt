@@ -1,4 +1,4 @@
-URCHIN SKIPPER 3D — TEMP LOCAL / WI-FI EDITION — SEPTEMBER 26, 2026
+URCHIN SKIPPER 3D — TEMP LOCAL / WI-FI EDITION
 
 This is the separate Three.js edition. The original 2D game is unchanged.
 For itch.io browser play upload UrchinSkipper3D-TEMP-ITCHIO.zip into a separate

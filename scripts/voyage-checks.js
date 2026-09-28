@@ -3,11 +3,13 @@ import { chooseStarter } from './career-start.js';
 import { chooseController } from './controller-menu.js';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-export async function voyageChecks(browser) {
-  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } }),
-    errors = [];
+export async function voyageChecks(browser, errors = []) {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
   page.setDefaultTimeout(25000);
   page.on('pageerror', (e) => errors.push(e.message));
+  page.on('response', (response) => {
+    if (response.status() >= 400) errors.push(`${response.status()} ${response.url()}`);
+  });
   await page.addInitScript(() => {
     // Match the repeatable unit-voyage career; its generated weather still evolves normally.
     window.voyageClock = Date.now;
@@ -47,7 +49,10 @@ export async function voyageChecks(browser) {
     await page.exposeFunction('voyageObserve', async (label) => {
       if (['drop', 'surface', 'recovered', 'offload'].includes(label)) {
         await page.waitForTimeout(80);
-        await page.screenshot({ path: `test-results/natural-voyage-${label}.png` });
+        await page.screenshot({
+          path: `test-results/natural-voyage-${label}.png`,
+          animations: 'disabled',
+        });
       }
     });
     const pilot = readFileSync(new URL('./voyage-pilot.js', import.meta.url), 'utf8').replace(

@@ -48,6 +48,34 @@ const oldMap = () =>
     ]),
   );
 
+test('native menu Tab and focused button activation never also command the boat', () => {
+  const previousDocument = globalThis.document;
+  try {
+    globalThis.document = { querySelector: () => ({}) };
+    const { input, send } = setup();
+    const target = {
+      matches: (selector) => selector === 'button',
+      closest: (selector) => (selector === '#playtest, #startup' ? {} : null),
+    };
+    for (const code of ['Tab', 'Enter', 'Space']) {
+      const event = send('keydown', code, { target });
+      send('keyup', code, { target });
+      assert(!event.prevented, `${code} retains browser navigation/activation`);
+      const actions = input.poll();
+      assert(!actions.confirm);
+      assert(!actions.centerRudder);
+      assert(!actions.neutral);
+      assert(!actions.cycleDiver);
+    }
+    globalThis.document = { querySelector: () => null };
+    send('keydown', 'Tab');
+    send('keyup', 'Tab');
+    assert(input.poll().cycleDiver, 'Tab retains diver selection on the water');
+  } finally {
+    globalThis.document = previousDocument;
+  }
+});
+
 test('every requested keyboard key resolves its command, including arrow alternatives and separate neutral steering', () => {
   const { input, send } = setup();
   for (const [code, command, value] of [

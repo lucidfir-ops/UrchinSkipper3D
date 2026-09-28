@@ -2,6 +2,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { PlaytestUI } from '../src/playtest-ui.js';
 import { createWorld } from '../src/world.js';
+import { timeIncrease, setTimeIncrease } from '../src/time-speed.js';
+import { purchaseActions } from '../src/purchase.js';
 function setup(phase = 'practice') {
   globalThis.document = { hidden: false, hasFocus: () => true };
   let w = createWorld({ practice: phase === 'practice' }),
@@ -64,6 +66,131 @@ test('Session Ended freezes simulation while B restores the prior screen, choice
   assert.equal(ui.index, 5);
   assert.deepEqual(ui.history, [{ screen: 'chart', index: 1 }]);
   assert.equal(JSON.stringify(world()), before);
+});
+
+test('title direction keys follow its two-column geometry and every action stays reachable', () => {
+  const { ui, world } = setup();
+  ui.started = false;
+  ui.screen = null;
+  ui.titleRequested = true;
+  ui.titleIndex = 0;
+  const positions = [
+    [0, 0, 240],
+    [0, 60, 115],
+    [125, 60, 115],
+    [0, 120, 240],
+    [0, 180, 115],
+    [125, 180, 115],
+    [0, 240, 240],
+  ];
+  ui.start.querySelectorAll = () =>
+    positions.map(([x, y, width]) => ({
+      classList: { toggle() {} },
+      setAttribute() {},
+      getBoundingClientRect: () => ({ x, y, width, height: 44 }),
+    }));
+  for (const [direction, expected] of [
+    ['menuDown', 1],
+    ['menuRight', 2],
+    ['menuDown', 3],
+    ['menuDown', 4],
+    ['menuRight', 5],
+    ['menuDown', 6],
+    ['menuDown', 0],
+  ]) {
+    ui.update({ [direction]: true }, world());
+    assert.equal(ui.titleIndex, expected, direction);
+  }
+});
+
+test('returning to Settings restores independent list scroll positions', () => {
+  const { ui } = setup();
+  ui.screen = 'settings';
+  ui.history = [];
+  const dashboard = { scrollTop: 224, scrollLeft: 0 };
+  ui.panel.querySelector = (selector) => (selector === '.menu-dashboard' ? dashboard : null);
+  ui.open('touch-options');
+  dashboard.scrollTop = 0;
+  ui.back();
+  assert.equal(ui.screen, 'settings');
+  assert.deepEqual(ui.pendingScroll.children, [{ selector: '.menu-dashboard', top: 224, left: 0 }]);
+});
+
+test('Back and Forward retain scroll inside a weather detail pane', () => {
+  const { ui } = setup();
+  ui.screen = 'conditions';
+  ui.history = [];
+  const detail = { scrollTop: 318, scrollLeft: 0 };
+  ui.panel.querySelector = (selector) => (selector === '.expedition-copy' ? detail : null);
+  ui.open('help');
+  detail.scrollTop = 0;
+  ui.back();
+  assert.equal(ui.screen, 'conditions');
+  assert.deepEqual(ui.pendingScroll.children, [
+    { selector: '.expedition-copy', top: 318, left: 0 },
+  ]);
+  detail.scrollTop = 318;
+  ui.back();
+  ui.forward();
+  assert.equal(ui.screen, 'conditions');
+  assert.deepEqual(ui.pendingScroll.children, [
+    { selector: '.expedition-copy', top: 318, left: 0 },
+  ]);
+});
+
+test('a completed purchase cannot apply the shop viewport to its new Harbour destination', () => {
+  const { ui } = setup();
+  ui.screen = 'starter';
+  ui.history = [];
+  ui.panel.scrollLeft = 24;
+  ui.panel.scrollTop = 180;
+  ui.open('purchase');
+  ui.pendingPurchase = {
+    run() {
+      assert.equal(ui.pendingScroll.top, 180, 'the purchase first returns to its shop');
+      ui.open(null);
+      ui.open('harbour');
+      return { ok: true };
+    },
+  };
+  purchaseActions(ui)
+    .find((action) => action.id === 'confirm-purchase')
+    .run();
+  assert.equal(ui.screen, 'harbour');
+  assert.equal(ui.pendingScroll, null, 'a fresh destination must reveal its own selection');
+  assert.equal(ui.focusedChoiceKey, null);
+});
+
+test('prototype Settings shares working preferences and returns to its title context', () => {
+  const { ui, world } = setup();
+  ui.history = [];
+  ui.fromTitle = true;
+  ui.open('settings');
+  const before = JSON.stringify(world());
+  assert(ui.choices(world()).includes('UI Scale'));
+  assert(ui.choices(world()).includes('Gameplay Speed'));
+  ui.index = ui.choices(world()).indexOf('UI Scale');
+  ui.activate(world());
+  assert.equal(ui.screen, 'ui-scale');
+  assert(ui.choices(world()).some((label) => label.startsWith('Smaller')));
+  ui.back();
+  assert.equal(ui.screen, 'settings');
+  ui.index = ui.choices(world()).indexOf('Gameplay Speed');
+  ui.activate(world());
+  const speed = timeIncrease();
+  try {
+    ui.index = 1;
+    ui.activate(world());
+    assert.equal(timeIncrease(), Math.min(100, speed + 5));
+  } finally {
+    setTimeIncrease(speed);
+  }
+  ui.back();
+  assert.equal(ui.screen, 'settings');
+  ui.back();
+  assert(!ui.started);
+  assert.equal(ui.screen, null);
+  assert.equal(JSON.stringify(world()), before, 'preferences leave the practice world intact');
 });
 test('Retry makes one fresh trip; Launcher stays on title with preconnected controller even during planning', () => {
   const a = setup();

@@ -56,6 +56,13 @@ export const keyboardChord = (e) =>
   e.metaKey ||
   (e.shiftKey && !isShift(e.code) && !(e.code === 'Equal' && e.key === '+'));
 export const editingKey = (e) =>
+  (e.code === 'Tab' &&
+    !!globalThis.document?.querySelector?.('#playtest:not([hidden]), #startup:not([hidden])')) ||
+  // A focused menu button owns native Enter/Space activation. Sending the same
+  // press to gameplay as well can activate a different row or trigger it twice.
+  (e.target?.matches?.('button') &&
+    e.target?.closest?.('#playtest, #startup') &&
+    /^(Enter|NumpadEnter|Space)$/.test(e.code)) ||
   (e.target?.matches?.('input,select,textarea,[contenteditable="true"]') &&
     !/^(Escape|F\d{1,2}|Browser\w+|Launch\w+)$/.test(e.code)) ||
   (e.target?.closest?.('[data-hud-window], [data-resize-window], [data-move-window]') &&
