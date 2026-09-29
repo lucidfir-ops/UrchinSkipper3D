@@ -814,7 +814,8 @@ body.touch-playing #touchControls #touchBoat {
 /* September 28 screenshot layout: brief speech lives at the HUD edge. */
 #seaSpeech {
   position: fixed;
-  z-index: 24;
+  /* Frank's card is 38; bubbles must also cover it near the viewport edge. */
+  z-index: 40;
   transform: translateX(-50%);
   box-sizing: border-box;
   padding: 7px 12px;

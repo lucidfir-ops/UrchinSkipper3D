@@ -37,7 +37,7 @@ export class CurrentField extends THREE.Group {
       new THREE.MeshBasicMaterial({
         color: '#a9d2bd',
         transparent: true,
-        opacity: 0.4,
+        opacity: 0.22,
         depthWrite: false,
         side: THREE.DoubleSide,
       }),

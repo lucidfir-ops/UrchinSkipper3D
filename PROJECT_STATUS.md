@@ -1,6 +1,6 @@
 # Urchin Skipper 3D — current status
 
-September 29, 2026 · screenshot feedback revision of the independent Three.js edition. Work, exports and publication belong only to this project and [lucidfir-ops/UrchinSkipper3D](https://github.com/lucidfir-ops/UrchinSkipper3D). The original 2D project and repository were used read-only.
+September 29, 2026 · vegetation and propulsion feedback revision of the independent Three.js edition. Work, exports and publication belong only to this project and [lucidfir-ops/UrchinSkipper3D](https://github.com/lucidfir-ops/UrchinSkipper3D). The original 2D project and repository were used read-only.
 
 ## Design authority
 
@@ -8,6 +8,8 @@ The inherited [living Bible](bible.md) governs gameplay. Its September 26 amendm
 
 ## Playable build
 
+
+The latest September 29 follow-up uses the six photographs in `feedback/9-29`: broad meadows of individually rooted eelgrass occupy 2–6 m chart-datum depths; procedural bull kelp with long stems, floats and trailing olive-brown ribbons occupies 4–10 m. Lower tide exposes more canopy, higher tide submerges shorter plants, and local current sets downstream orientation. The former upright kelp fans are removed. Water arrows are more translucent (22% opacity). Brief speech paints over Frank’s card, including top-edge overlap. Outboards, sterndrives and jet nozzles now steer with the correct stern-thrust direction. [Implementation record](docs/review/vegetation-feedback-2026-09-29.md), [independent screenshot reviews](docs/review/independent-vegetation-feedback-2026-09-29.md).
 
 The September 29 feedback revision follows `feedback/9-28`: tutorial instruments give way to Frank and a clear working viewport, while career defaults keep five gauges, crew and controls. Pickup text is short-lived speech above Frank (or at the HUD edge in career). Tutorial and career use matching camera framing; compact touch retains its existing space above the lower controls. Saved custom layouts remain intact.
 
@@ -27,25 +29,25 @@ Build with `npm ci && npm run build`; `npm start` serves http://127.0.0.1:5184/.
 
 ## Verification
 
-- Full regression suite: 522 tests, 521 pass, 0 fail, 1 intentional private-save skip. Lint, formatting and production build pass; the existing large geography-chunk warning remains.
-- Production Chromium checks pass for feedback layouts, equipment, all twelve fleet models, keyboard/touch input, performance, day/fog/rain/night rendering and a complete career voyage. Synthetic controller checks cover equipment purchase/cancel and the career voyage; they do not establish physical controller support.
+- Full regression suite: 526 tests, 525 pass, 0 fail, 1 intentional private-save skip. Lint, formatting and production build pass; the existing large geography-chunk warning remains.
+- Latest production Chromium checks pass for vegetation habitats, tide/current reversal, five propulsion configurations at three helm positions, feedback layouts, keyboard/touch input, performance and a complete career voyage. Earlier equipment, fleet and weather evidence remains in the previous release receipt. Latest synthetic controller coverage includes career menus and the complete voyage; it does not establish physical controller support.
 - Phone 390×844, landscape touch 844×390 and desktop 1280×800 tutorial/pickup/starter captures; three reload checks preserve boat identities; speech expires after 2.6 seconds. Portrait/landscape purchase confirmations keep their detail box above the buttons.
-- Frozen tide/wind fixtures show boulder depth 5/2/0.3/−1.5 m, kelp exposure at tides −1/+2/+5 m, and wind 0/5/15. Actual twin outboard transforms turn together at both helm extremes. Current lattice samples remain fixed after ownship moves. These fixtures test presentation, not natural tide timing or physical input.
+- Frozen tide/wind fixtures show boulder depth 5/2/0.3/−1.5 m, kelp exposure at tides −1/+2/+5 m, and wind 0/5/15. Actual outboard, leg and jet transforms produce the correct stern-thrust torque at both helm extremes. In Frank’s cove the fixture contains 17,411 grass blades and 637 kelp plants; surfaced kelp counts fall from 637 to 262 to 0 at tides −1/+2/+5 m. Separate headless tests check fixed roots, exact habitat bands, flow direction and hidden-catch independence. Current lattice samples remain fixed after ownship moves. These fixtures test presentation, not natural tide timing or physical input.
 - A complete career voyage lands 300 lb on time with 100% hull and both divers fit. Taxi tests cover days 1–3, 4/9 and later-season fatal risk without resetting onboarding protection. Rendering/non-mutation tests now include physical rock geometry.
-- AMD RADV VANGOGH measured 240 frames in four seconds at 1280×800, approximately 60 FPS. This controlled sample is not a device-wide performance guarantee.
-- Separate [visual review](docs/review/independent-feedback-2026-09-29.md) drove fixes to landscape Frank placement, capture timing, whitecap shape, five-metre rock contrast, wide-view current arrow readability and source-specific fleet fittings.
+- AMD RADV VANGOGH measured 240 frames in four seconds at 1280×800, approximately 59.95 FPS in the latest sample. This controlled sample is not a device-wide performance guarantee.
+- Latest [independent screenshot reviews](docs/review/independent-vegetation-feedback-2026-09-29.md) drove darker kelp, smoother stipes, denser grass and varied proportions, and confirmed readable speech/current arrows. The earlier [visual review](docs/review/independent-feedback-2026-09-29.md) drove fixes to landscape Frank placement, capture timing, whitecap shape, five-metre rock contrast, wide-view current arrow readability and source-specific fleet fittings.
 
-Reproduce with `npm run verify -- --suite=feedback,equipment,fleet,input,performance,weather,voyage`. Local evidence is in `test-results/`; the [release receipt](docs/review/release-verification-2026-09-29-feedback.json) records verification and export hashes. Earlier September 28 validation remains documented in the existing review records.
+Reproduce the latest pass with `PLAYWRIGHT_BROWSERS_PATH=.browser-cache npm run verify -- --suite=vegetation,feedback,input,voyage,performance`. Local evidence is in `test-results/`; the [release receipt](docs/review/release-verification-2026-09-29-vegetation.json) records verification and export hashes. Earlier September 28 validation remains documented in the existing review records.
 
 ## Remaining acceptance
 
-Physical USB Xbox/Steam Deck controls, mobile device performance, Safari, actual itch.io hosting and long-career upgrade balance need human playtesting in this edition. Synthetic input does not establish physical controller behaviour. Near-surface people are recognizable close up but remain physically small at the widest orthographic zoom. Career boats now have distinct source-based fittings and layouts, but remain stylized models rather than exact raster reconstructions. The wide wind-crest pattern can still look regular, and kelp blades are a stylized interpretation. Unusual traffic artwork is interpreted rather than reproduced exactly. The presentation is deliberately stylized; completed implementation and automated checks are not full device, balance or new-player acceptance.
+Physical USB Xbox/Steam Deck controls, mobile device performance, Safari, actual itch.io hosting and long-career upgrade balance need human playtesting in this edition. Synthetic input does not establish physical controller behaviour. Near-surface people are recognizable close up but remain physically small at the widest orthographic zoom. Career boats now have distinct source-based fittings and layouts, but remain stylized models rather than exact raster reconstructions. The wide wind-crest pattern can still look regular, and kelp ribbons/grass blades retain some visible repetition. The finite tutorial terrain still has an abrupt water-shading boundary at very wide zoom. Unusual traffic artwork is interpreted rather than reproduced exactly. The presentation is deliberately stylized; completed implementation and automated checks are not full device, balance or new-player acceptance.
 
 ## GitHub backup and release workflow
 
 Use this independent Git repository normally; never synchronize into or push the 2D repository. Selected rebuildable source, assets and essential documentation belong in Git. Dependencies, builds, private saves, browser profiles, recordings, test output and TEMP ZIPs stay outside it. New exports are additive; preserve older exports.
 
-The latest feedback release is under `exports/2026-09-29-feedback/`; all September 28 and September 26 exports are retained:
+The latest feedback release is under `exports/2026-09-29-vegetation/`; the earlier September 29, September 28 and September 26 exports are retained:
 
 - `UrchinSkipper3D-TEMP-ITCHIO.zip`: standalone HTML build for the separate 3D itch.io project; upload remains manual.
 - `Urchin Skipper 3D TEMP.zip` and its extracted folder: local/Wi-Fi edition with isolated port 5198 and portable launcher.

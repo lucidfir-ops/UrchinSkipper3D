@@ -1,0 +1,745 @@
+{
+  "date": "2026-09-29T16:04:28.499483+00:00",
+  "baseCommit": "9feec31c38c80e82d467eddf282f13623f340e00",
+  "sourceSha256": {
+    "scripts/feedback-2026-review.js": "1ce7cb8e720860dd3cb796848f500576a9312ac84e3546434c2bb0d7163deec9",
+    "scripts/verify.js": "904c8b26a4347cc2847be3daad04e0cf904e3fbda0b0c825287cd1f375adb29b",
+    "src/sea-messages.js": "1790e0df0ee5fd75d9c43571bd2cc5c665346b15c465df629c7811102caf2631",
+    "src/three/current-field.js": "1a001932c8d4db2d7dc21144a7f6971272a469e483eeb0fd4f616896122cbfd9",
+    "src/three/kelp-patches.js": "bdc9632dea101e5bedf26b54f2725c6eb93e7b78521fa6ccf86d4aedcd0b7692",
+    "src/three/presentation.css": "bb899d4d1d84ff02ead1b8eb6bfc9963e1dfd6abd91b4b6b1d5ab53b47be5517",
+    "src/three/vessels.js": "1dc4db94122b21c48c1c46aa2322b7b89b8a94ca4da1eb7eb89bc2a6d1ee6647",
+    "src/three/world.js": "d63b207d174e98c269d878233f71333c0d3d13f0adff9fe7385470847c1038c7",
+    "tests/playtest-feedback.test.js": "df9bda8a7dca73d5f7eee1ad1ab77f56fa6cd03f0f779c6f05cfbb5d1b759d34",
+    "scripts/vegetation-review.js": "1ce3883a459c8f08be4b66c74008a29a39311210ef7d5447cb332543fe27d82e",
+    "src/three/marine-vegetation.js": "6b30e937413653c0d8b78158bba93d9a440e23e9526e90ea9789f81953e8d56d",
+    "tests/marine-vegetation.test.js": "21f5e2f7fb5e0be9a56994f3b40dd4a01cadd362bab9c914594108a890521bcd"
+  },
+  "productionIndexSha256": "d4db9072551fb9ac41945fec204eff64975d3ee4857f7e5e1f85c3565674f1e7",
+  "tests": {
+    "total": 526,
+    "passed": 525,
+    "failed": 0,
+    "skipped": 1
+  },
+  "verification": {
+    "started": "2026-09-29T15:59:13.508Z",
+    "ended": "2026-09-29T16:01:51.124Z",
+    "passed": true,
+    "results": [
+      {
+        "label": "lint",
+        "code": 0,
+        "seconds": 6
+      },
+      {
+        "label": "format",
+        "code": 0,
+        "seconds": 6
+      },
+      {
+        "label": "unit regressions",
+        "code": 0,
+        "seconds": 28
+      },
+      {
+        "label": "production build",
+        "code": 0,
+        "seconds": 7
+      },
+      {
+        "label": "vegetation",
+        "code": 0,
+        "seconds": 13
+      },
+      {
+        "label": "feedback",
+        "code": 0,
+        "seconds": 51
+      },
+      {
+        "label": "input",
+        "code": 0,
+        "seconds": 19
+      },
+      {
+        "label": "voyage",
+        "code": 0,
+        "seconds": 19
+      },
+      {
+        "label": "performance",
+        "code": 0,
+        "seconds": 8
+      }
+    ]
+  },
+  "vegetationAndDrives": {
+    "records": [
+      {
+        "kelp": 637,
+        "grass": 17411,
+        "kelpDepth": [
+          4.063103056195815,
+          9.998419846862316
+        ],
+        "grassDepth": [
+          2.0000580443755114,
+          5.999255113178006
+        ]
+      },
+      {
+        "tide": -1,
+        "direction": 1,
+        "surfaced": 637,
+        "angles": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "calls": 86
+      },
+      {
+        "tide": -1,
+        "direction": -1,
+        "surfaced": 637,
+        "angles": [
+          -3.141592653589793,
+          -3.141592653589793,
+          -3.141592653589793,
+          -3.141592653589793,
+          -3.141592653589793
+        ],
+        "calls": 86
+      },
+      {
+        "tide": 2,
+        "direction": 1,
+        "surfaced": 262,
+        "angles": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "calls": 86
+      },
+      {
+        "tide": 5,
+        "direction": 1,
+        "surfaced": 0,
+        "angles": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "calls": 85
+      },
+      {
+        "tide": -1,
+        "direction": 1,
+        "surfaced": 637,
+        "angles": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "calls": 97
+      },
+      {
+        "tide": 2,
+        "direction": 1,
+        "surfaced": 262,
+        "angles": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "calls": 97
+      },
+      {
+        "tide": 5,
+        "direction": 1,
+        "surfaced": 0,
+        "angles": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "calls": 95
+      },
+      {
+        "id": "outboard",
+        "helm": -1,
+        "drives": [
+          {
+            "type": "outboard",
+            "angle": -0.58,
+            "aftX": -0.5480239367918736,
+            "thrustX": 0.5480239367918736,
+            "z": 3.5700000000000003,
+            "propellerZ": 0.3
+          },
+          {
+            "type": "outboard",
+            "angle": -0.58,
+            "aftX": -0.5480239367918736,
+            "thrustX": 0.5480239367918736,
+            "z": 3.5700000000000003,
+            "propellerZ": 0.3
+          }
+        ]
+      },
+      {
+        "id": "outboard",
+        "helm": 0,
+        "drives": [
+          {
+            "type": "outboard",
+            "angle": 0,
+            "aftX": 0,
+            "thrustX": 0,
+            "z": 3.5700000000000003,
+            "propellerZ": 0.3
+          },
+          {
+            "type": "outboard",
+            "angle": 0,
+            "aftX": 0,
+            "thrustX": 0,
+            "z": 3.5700000000000003,
+            "propellerZ": 0.3
+          }
+        ]
+      },
+      {
+        "id": "outboard",
+        "helm": 1,
+        "drives": [
+          {
+            "type": "outboard",
+            "angle": 0.58,
+            "aftX": 0.5480239367918736,
+            "thrustX": -0.5480239367918736,
+            "z": 3.5700000000000003,
+            "propellerZ": 0.3
+          },
+          {
+            "type": "outboard",
+            "angle": 0.58,
+            "aftX": 0.5480239367918736,
+            "thrustX": -0.5480239367918736,
+            "z": 3.5700000000000003,
+            "propellerZ": 0.3
+          }
+        ]
+      },
+      {
+        "id": "outboard-sister",
+        "helm": -1,
+        "drives": [
+          {
+            "type": "outboard",
+            "angle": -0.58,
+            "aftX": -0.5480239367918736,
+            "thrustX": 0.5480239367918736,
+            "z": 3.672,
+            "propellerZ": 0.3
+          }
+        ]
+      },
+      {
+        "id": "outboard-sister",
+        "helm": 0,
+        "drives": [
+          {
+            "type": "outboard",
+            "angle": 0,
+            "aftX": 0,
+            "thrustX": 0,
+            "z": 3.672,
+            "propellerZ": 0.3
+          }
+        ]
+      },
+      {
+        "id": "outboard-sister",
+        "helm": 1,
+        "drives": [
+          {
+            "type": "outboard",
+            "angle": 0.58,
+            "aftX": 0.5480239367918736,
+            "thrustX": -0.5480239367918736,
+            "z": 3.672,
+            "propellerZ": 0.3
+          }
+        ]
+      },
+      {
+        "id": "sterndrive",
+        "helm": -1,
+        "drives": [
+          {
+            "type": "leg",
+            "angle": -0.58,
+            "aftX": -0.5480239367918736,
+            "thrustX": 0.5480239367918736,
+            "z": 4.59,
+            "propellerZ": 0.52
+          }
+        ]
+      },
+      {
+        "id": "sterndrive",
+        "helm": 0,
+        "drives": [
+          {
+            "type": "leg",
+            "angle": 0,
+            "aftX": 0,
+            "thrustX": 0,
+            "z": 4.59,
+            "propellerZ": 0.52
+          }
+        ]
+      },
+      {
+        "id": "sterndrive",
+        "helm": 1,
+        "drives": [
+          {
+            "type": "leg",
+            "angle": 0.58,
+            "aftX": 0.5480239367918736,
+            "thrustX": -0.5480239367918736,
+            "z": 4.59,
+            "propellerZ": 0.52
+          }
+        ]
+      },
+      {
+        "id": "jet",
+        "helm": -1,
+        "drives": [
+          {
+            "type": "jet",
+            "angle": -0.58,
+            "aftX": -0.5480239367918736,
+            "thrustX": 0.5480239367918736,
+            "z": 6.375
+          }
+        ]
+      },
+      {
+        "id": "jet",
+        "helm": 0,
+        "drives": [
+          {
+            "type": "jet",
+            "angle": 0,
+            "aftX": 0,
+            "thrustX": 0,
+            "z": 6.375
+          }
+        ]
+      },
+      {
+        "id": "jet",
+        "helm": 1,
+        "drives": [
+          {
+            "type": "jet",
+            "angle": 0.58,
+            "aftX": 0.5480239367918736,
+            "thrustX": -0.5480239367918736,
+            "z": 6.375
+          }
+        ]
+      },
+      {
+        "id": "twinjet",
+        "helm": -1,
+        "drives": [
+          {
+            "type": "jet",
+            "angle": -0.58,
+            "aftX": -0.5480239367918736,
+            "thrustX": 0.5480239367918736,
+            "z": 7.905
+          },
+          {
+            "type": "jet",
+            "angle": -0.58,
+            "aftX": -0.5480239367918736,
+            "thrustX": 0.5480239367918736,
+            "z": 7.905
+          }
+        ]
+      },
+      {
+        "id": "twinjet",
+        "helm": 0,
+        "drives": [
+          {
+            "type": "jet",
+            "angle": 0,
+            "aftX": 0,
+            "thrustX": 0,
+            "z": 7.905
+          },
+          {
+            "type": "jet",
+            "angle": 0,
+            "aftX": 0,
+            "thrustX": 0,
+            "z": 7.905
+          }
+        ]
+      },
+      {
+        "id": "twinjet",
+        "helm": 1,
+        "drives": [
+          {
+            "type": "jet",
+            "angle": 0.58,
+            "aftX": 0.5480239367918736,
+            "thrustX": -0.5480239367918736,
+            "z": 7.905
+          },
+          {
+            "type": "jet",
+            "angle": 0.58,
+            "aftX": 0.5480239367918736,
+            "thrustX": -0.5480239367918736,
+            "z": 7.905
+          }
+        ]
+      }
+    ],
+    "errors": []
+  },
+  "feedbackLayouts": {
+    "records": [
+      {
+        "viewport": [
+          390,
+          844
+        ],
+        "boat": {
+          "x": 195,
+          "y": 392.45999999999947
+        },
+        "kelp": 637,
+        "frank": {
+          "x": 6,
+          "y": 90,
+          "width": 378,
+          "height": 136,
+          "top": 90,
+          "right": 384,
+          "bottom": 226,
+          "left": 6
+        },
+        "visibleHud": [
+          "diverPanel",
+          "frankAboard"
+        ]
+      },
+      {
+        "name": "phone",
+        "speech": {
+          "above": true,
+          "rect": {
+            "x": 8,
+            "y": 54,
+            "width": 374,
+            "height": 30.1875,
+            "top": 54,
+            "right": 382,
+            "bottom": 84.1875,
+            "left": 8
+          },
+          "viewport": [
+            390,
+            844
+          ]
+        }
+      },
+      {
+        "name": "phone",
+        "models": [
+          {
+            "id": "outboard",
+            "model": "outboard",
+            "loaded": "true"
+          },
+          {
+            "id": "basic",
+            "model": "basic",
+            "loaded": "true"
+          }
+        ]
+      },
+      {
+        "viewport": [
+          844,
+          390
+        ],
+        "boat": {
+          "x": 422,
+          "y": 155.99999999999983
+        },
+        "kelp": 637,
+        "frank": {
+          "x": 10,
+          "y": 60,
+          "width": 300,
+          "height": 121.515625,
+          "top": 60,
+          "right": 310,
+          "bottom": 181.515625,
+          "left": 10
+        },
+        "visibleHud": [
+          "diverPanel",
+          "frankAboard"
+        ]
+      },
+      {
+        "name": "landscape",
+        "speech": {
+          "above": true,
+          "rect": {
+            "x": 10,
+            "y": 8,
+            "width": 300,
+            "height": 46.375,
+            "top": 8,
+            "right": 310,
+            "bottom": 54.375,
+            "left": 10
+          },
+          "viewport": [
+            844,
+            390
+          ]
+        }
+      },
+      {
+        "name": "landscape",
+        "models": [
+          {
+            "id": "outboard",
+            "model": "outboard",
+            "loaded": "true"
+          },
+          {
+            "id": "basic",
+            "model": "basic",
+            "loaded": "true"
+          }
+        ]
+      },
+      {
+        "viewport": [
+          1280,
+          800
+        ],
+        "boat": {
+          "x": 640,
+          "y": 399.99999999999966
+        },
+        "kelp": 637,
+        "frank": {
+          "x": 360,
+          "y": 60,
+          "width": 560,
+          "height": 123.78125,
+          "top": 60,
+          "right": 920,
+          "bottom": 183.78125,
+          "left": 360
+        },
+        "visibleHud": [
+          "diverPanel",
+          "frankAboard"
+        ]
+      },
+      {
+        "name": "desktop",
+        "speech": {
+          "above": true,
+          "rect": {
+            "x": 400,
+            "y": 24,
+            "width": 480,
+            "height": 30.1875,
+            "top": 24,
+            "right": 880,
+            "bottom": 54.1875,
+            "left": 400
+          },
+          "viewport": [
+            1280,
+            800
+          ]
+        }
+      },
+      {
+        "name": "desktop",
+        "models": [
+          {
+            "id": "outboard",
+            "model": "outboard",
+            "loaded": "true"
+          },
+          {
+            "id": "basic",
+            "model": "basic",
+            "loaded": "true"
+          }
+        ]
+      },
+      {
+        "helm": -1,
+        "drives": [
+          -0.58,
+          -0.58
+        ]
+      },
+      {
+        "helm": 1,
+        "drives": [
+          0.58,
+          0.58
+        ]
+      }
+    ],
+    "errors": []
+  },
+  "performance": {
+    "device": {
+      "renderer": "ANGLE (AMD, Vulkan 1.4.330 (AMD Custom GPU 0405 (RADV VANGOGH) (0x0000163F)), radv)",
+      "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "pixelRatio": 1,
+      "framebuffer": [
+        1280,
+        800
+      ],
+      "screen": null,
+      "started": true
+    },
+    "results": [
+      {
+        "label": "native",
+        "elapsed": 4003.4000000000233,
+        "renderFrames": 240,
+        "rafFrames": 240,
+        "fps": 59.949043313183445,
+        "fields": {
+          "frameMs": {
+            "mean": 16.666666666666668,
+            "p95": 16.700000000000728
+          },
+          "inputMs": {
+            "mean": 0.7612499999983507,
+            "p95": 0.9000000000232831
+          },
+          "simulationMs": {
+            "mean": 0.31500000000087314,
+            "p95": 0.5
+          },
+          "drawMs": {
+            "mean": 4.236250000001261,
+            "p95": 12.300000000046566
+          },
+          "hudMs": {
+            "mean": 0.3449999999987388,
+            "p95": 3.200000000069849
+          },
+          "totalCpuMs": {
+            "mean": 5.71208333333343,
+            "p95": 13.600000000093132
+          }
+        },
+        "render": {
+          "frame": 325,
+          "calls": 99,
+          "triangles": 383522,
+          "points": 0,
+          "lines": 96
+        }
+      }
+    ],
+    "errors": []
+  },
+  "portable": {
+    "url": "http://127.0.0.1:5198/",
+    "edition": "three",
+    "entry": "./assets/index-Cddn22Nv.js",
+    "sha256": "958ce9b8614a27b42a8fd9348d8615762e03259e588bf7f39f9fb327433f8495",
+    "passed": true
+  },
+  "exports": [
+    {
+      "path": "exports/2026-09-29-vegetation/Urchin Skipper 3D TEMP.zip",
+      "bytes": 102206604,
+      "sha256": "df190254ff3677fe3f93c85e54db869732b7d5e5a27a1df827a4e5c0fd80a87d",
+      "crcAndProductionBytesVerified": true
+    },
+    {
+      "path": "exports/2026-09-29-vegetation/UrchinSkipper3D-TEMP-ITCHIO.zip",
+      "bytes": 102178104,
+      "sha256": "c44a87dfeb117c70c4df2589d6ea94a8453ad0cfd85968b9967007e019af187c",
+      "crcAndProductionBytesVerified": true
+    }
+  ],
+  "screenshotSha256": {
+    "test-results/vegetation-2026-09-29/current-field.png": "5452d487a73a08aa7456faeadb303db92d155d47d3c2a51d926f0dbd38f4f8d2",
+    "test-results/vegetation-2026-09-29/grass-close.png": "01aefd5e1465346ce1d56f38eb5523d92ad4b975869dd1daa586099272f353fd",
+    "test-results/vegetation-2026-09-29/grass-tide--1-flow-1.png": "7f4b941a1669f3ec1dc442aceff729fdf946e72d33205cca4f08afb6b2ad9efc",
+    "test-results/vegetation-2026-09-29/grass-tide-2-flow-1.png": "65e47c740ae58e61ba09d2239a6e2be4166cb527de23b2213cfe10a4ad57004a",
+    "test-results/vegetation-2026-09-29/grass-tide-5-flow-1.png": "d54cc78274f13dbbb54c4eb1b59a54573ddf32b4b4ef33f692889422348cc782",
+    "test-results/vegetation-2026-09-29/jet-helm--1.png": "232d6d3502be820823ac288ab6b0fbcb38c4f697feed3586bae3d3e963c9bc5f",
+    "test-results/vegetation-2026-09-29/jet-helm-0.png": "ffccd5552aba744eee7c0d511a0e88bd2beed410d5b43e93518afbe7388765ad",
+    "test-results/vegetation-2026-09-29/jet-helm-1.png": "b21e61863091c25243783ffebd83875f1bf8c02eedee46c0e36fb4ef0cf94515",
+    "test-results/vegetation-2026-09-29/kelp-close.png": "271b34b80fcd47ddc378409ac9978954cd867c2bd69a17f3b39513e62e352205",
+    "test-results/vegetation-2026-09-29/kelp-tide--1-flow--1.png": "5a3fdc7d07ee49bc0123ff2f248785e6c4baef8ce2b53254e020e85bf1f63ad5",
+    "test-results/vegetation-2026-09-29/kelp-tide--1-flow-1.png": "e5129e1a382862f55b3a06747fbd114c485d1b96f3fbd67dc5dc7b0407e4ba74",
+    "test-results/vegetation-2026-09-29/kelp-tide-2-flow-1.png": "c19420d0237ee67cf1d6d4dd60e2f613365cf9863ae2b8f350dbe8ece5c9b03a",
+    "test-results/vegetation-2026-09-29/kelp-tide-5-flow-1.png": "ef1dec7bc46bc986f3fbc28da07218e28b24e8288ab6155754efdc5a12816055",
+    "test-results/vegetation-2026-09-29/outboard-helm--1.png": "ad68727e700ab60d1437908ab4f6e767e7987bb05afc8d882e2e31e23b02114e",
+    "test-results/vegetation-2026-09-29/outboard-helm-0.png": "8f8f2b484440197a5b7586f260623fef6b4e00602c662a5d7a7750892e56d285",
+    "test-results/vegetation-2026-09-29/outboard-helm-1.png": "5efcc524e54f696b3d6bdee01da167f21c0b58bdb86895784da467c004867093",
+    "test-results/vegetation-2026-09-29/outboard-sister-helm--1.png": "d159e67a5a069991eabce90b263570d255c8691bab2c251bebfd75e1530648d8",
+    "test-results/vegetation-2026-09-29/outboard-sister-helm-0.png": "e03662dc58d523f54ba180b26504264acd4066acc6a18d6a80f5586968caf64e",
+    "test-results/vegetation-2026-09-29/outboard-sister-helm-1.png": "4ddd81dacf81345b897e7e27d8af2e111989cbe7042e24562304abd3da5fe162",
+    "test-results/vegetation-2026-09-29/sterndrive-helm--1.png": "d5ec726ababbea9e022ceee58b717b12aa687b67a53e981db19318371cb61b24",
+    "test-results/vegetation-2026-09-29/sterndrive-helm-0.png": "30316f682be4bee20a4fce90cebaadde4b0a8fe461a6c96cdd85a386b5670c8a",
+    "test-results/vegetation-2026-09-29/sterndrive-helm-1.png": "2d173a2a12a1334f796f15e4f783e1add715622631b0cb5b671c82a877bbcd41",
+    "test-results/vegetation-2026-09-29/twinjet-helm--1.png": "0199e1bec11266185667c883aa1823224df41300392e4506a3b78b33b8ef6b18",
+    "test-results/vegetation-2026-09-29/twinjet-helm-0.png": "eb7124ae9006314226ed9b0c27645b1174f0296f24f8f836dfe8e47b9446a5bd",
+    "test-results/vegetation-2026-09-29/twinjet-helm-1.png": "282e069997b16da09c2f8f0b777f45c6538ef578304d6e38871ff1a7abecabe1"
+  },
+  "independentReview": "docs/review/independent-vegetation-feedback-2026-09-29.md",
+  "limits": [
+    "Synthetic controllers do not verify physical controllers.",
+    "Static tide/current fixtures do not verify natural tide timing.",
+    "Stylized ribbons and grass blades retain some repetition.",
+    "Existing finite tutorial map has a wide-zoom water shading boundary.",
+    "Actual itch.io upload, Safari and real mobile device performance not tested."
+  ]
+}

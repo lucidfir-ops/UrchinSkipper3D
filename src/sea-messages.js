@@ -24,8 +24,11 @@ export function updateSeaMessages(ui) {
   const frank = document.getElementById('frankAboard');
   if (frank && !frank.hidden) {
     const rect = frank.getBoundingClientRect();
-    panel.style.width = Math.min(480, rect.width) + 'px';
-    panel.style.left = rect.left + rect.width / 2 + 'px';
+    const width = Math.min(480, rect.width, innerWidth - 16);
+    panel.style.width = width + 'px';
+    panel.style.left =
+      Math.max(width / 2 + 8, Math.min(innerWidth - width / 2 - 8, rect.left + rect.width / 2)) +
+      'px';
     panel.style.top = Math.max(4, rect.top - panel.offsetHeight - 6) + 'px';
   } else {
     panel.style.width = Math.min(innerWidth - 20, 480) + 'px';

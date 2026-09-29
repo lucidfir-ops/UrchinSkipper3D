@@ -78,10 +78,10 @@ test('all steering drive groups turn together; propeller animation stops in neut
   vessel.userData.drives = [new THREE.Group(), new THREE.Group()];
   for (const d of vessel.userData.drives) d.userData.propeller = new THREE.Group();
   animateDrives(vessel, 1, 0.5, 1);
-  assert.equal(vessel.userData.drives[0].rotation.y, -0.58);
-  assert.equal(vessel.userData.drives[1].rotation.y, -0.58);
+  assert.equal(vessel.userData.drives[0].rotation.y, 0.58);
+  assert.equal(vessel.userData.drives[1].rotation.y, 0.58);
   const spin = vessel.userData.drives[0].userData.propeller.rotation.z;
   animateDrives(vessel, -1, 0, 1);
-  assert.equal(vessel.userData.drives[0].rotation.y, 0.58);
+  assert.equal(vessel.userData.drives[0].rotation.y, -0.58);
   assert.equal(vessel.userData.drives[0].userData.propeller.rotation.z, spin);
 });

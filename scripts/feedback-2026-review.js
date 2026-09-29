@@ -63,6 +63,21 @@ try {
       Object.assign(w.divers[0], { state: 'surface', x: b.x - 6, y: b.y, bag: 300, air: 0.4 });
     });
     await page.waitForTimeout(350);
+    assert(await page.locator('#seaSpeech').isVisible(), 'pickup speech must be visible');
+    const speech = await page.evaluate(() => {
+      const panel = document.querySelector('#seaSpeech'),
+        rect = panel.getBoundingClientRect();
+      // Hit testing with pointer events temporarily enabled proves the actual
+      // stacking result, including saved/compact cards near the top edge.
+      panel.style.pointerEvents = 'auto';
+      const above =
+        document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2) === panel;
+      panel.style.pointerEvents = '';
+      return { above, rect: rect.toJSON(), viewport: [innerWidth, innerHeight] };
+    });
+    assert(speech.above, 'Frank speech paints above his tutorial card');
+    assert(speech.rect.top >= 0 && speech.rect.left >= 0 && speech.rect.right <= width);
+    records.push({ name, speech });
     await page.screenshot({ path: `${output}/${name}-pickup.png` });
     await page.waitForTimeout(2850);
     assert.equal(await page.locator('#seaSpeech').isVisible(), false, 'speech expires');
@@ -235,7 +250,7 @@ try {
       return r.vessels.boat.userData.drives.map((m) => m.rotation.y);
     }, helm);
     assert.equal(drives.length, 2);
-    assert(drives.every((angle) => Math.abs(angle + helm * 0.58) < 0.0001));
+    assert(drives.every((angle) => Math.abs(angle - helm * 0.58) < 0.0001));
     records.push({ helm, drives });
     await page.screenshot({ path: `${output}/outboards-helm-${helm}.png` });
   }

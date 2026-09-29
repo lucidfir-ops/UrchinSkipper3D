@@ -742,7 +742,9 @@ function propeller(parent, m, x, y, z) {
 }
 export function animateDrives(vessel, rudder = 0, throttle = 0, dt = 0) {
   for (const drive of vessel.userData.drives || []) {
-    drive.rotation.y = -Math.max(-1, Math.min(1, rudder)) * 0.58;
+    // Bow is -Z. Starboard helm sends the stern thrust to port (-X),
+    // so the aft end of an outboard/leg/nozzle swings to starboard (+X).
+    drive.rotation.y = Math.max(-1, Math.min(1, rudder)) * 0.58;
     if (drive.userData.propeller) drive.userData.propeller.rotation.z += throttle * dt * 34;
   }
 }

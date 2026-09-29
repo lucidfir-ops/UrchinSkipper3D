@@ -32,6 +32,7 @@ async function ready() {
   }
 }
 const suites = {
+  vegetation: ['scripts/vegetation-review.js'],
   feedback: ['scripts/feedback-2026-review.js'],
   'feedback-water': ['scripts/feedback-2026-review.js', '--environment-only'],
   equipment: ['scripts/equipment-review.js'],
