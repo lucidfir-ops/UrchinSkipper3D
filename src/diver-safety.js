@@ -4,6 +4,13 @@ import { boatDefinition, boatSpec } from './boats.js';
 import { hullDistance, sweptPoses, toHull, fromHull } from './collision-geometry.js';
 import { engineState } from './operating-state.js';
 import { godmode } from './godmode.js';
+import { seasonStatus } from './season.js';
+
+export function taxiSafetyStage(w, source) {
+  if (source?.kind !== 'taxi' || !w.career) return 'normal';
+  if (w.career.day <= 3) return 'near miss';
+  return seasonStatus(w.career).season === 1 ? 'injury' : 'normal';
+}
 export function closingImpact(pose, diver, spec, vx, vy) {
   const q = toHull(pose, diver.x, diver.y);
   const sideGap = Math.abs(q.side) - spec.width / 2;
@@ -48,12 +55,15 @@ export function checkDiverSafety(w, previous, source = {}) {
         Math.abs(b.throttle) > 0.2 &&
         (source.boat ? b.speed > 0 : engineState(w).powered) &&
         local.fore < -spec.length / 2 + 0.8;
+      const taxiStage = taxiSafetyStage(w, source.boat);
       const fatal =
         !godmode(w) &&
+        taxiStage === 'normal' &&
         (speed >= cfg.fatalSpeed || (exposed && relativeSpeed >= cfg.propellerFatalSpeed));
       const injured =
         !godmode(w) &&
         !fatal &&
+        taxiStage !== 'near miss' &&
         (speed >= cfg.injurySpeed ||
           (source.boat?.kind === 'taxi' && relativeSpeed > 0.2) ||
           (exposed && relativeSpeed >= cfg.propellerInjurySpeed));
@@ -69,7 +79,9 @@ export function checkDiverSafety(w, previous, source = {}) {
         sector: w.day.groundId,
         cause:
           source.boat?.kind === 'taxi'
-            ? 'water taxi strike'
+            ? taxiStage === 'near miss'
+              ? 'water taxi near miss'
+              : 'water taxi strike'
             : exposed
               ? 'powered stern contact'
               : 'boat strike',
@@ -105,7 +117,9 @@ export function checkDiverSafety(w, previous, source = {}) {
         );
       } else
         w.events.push(
-          `${d.name.toUpperCase()} — HULL CONTACT / NEAR MISS. KEEP THE DIVER CLEAR OF THE HULL`,
+          source.boat?.kind === 'taxi'
+            ? `${d.name.toUpperCase()} — WATER TAXI NEAR MISS. KEEP WATCH: FAST TAXIS CAN STRIKE SURFACED DIVERS`
+            : `${d.name.toUpperCase()} — HULL CONTACT / NEAR MISS. KEEP THE DIVER CLEAR OF THE HULL`,
         );
       if (injured || fatal) w.effects.push({ type: 'warning', diverId: d.id, x: d.x, y: d.y });
     }

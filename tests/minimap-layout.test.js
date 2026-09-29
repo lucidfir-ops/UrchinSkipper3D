@@ -13,18 +13,20 @@ test('legacy UI preferences survive new independent minimap/sounder defaults and
   delete w.career.assists.minimap;
   delete w.career.assists.sounder;
   normalizeAssists(w.career);
-  assert(w.career.assists.minimap && w.career.assists.depthInstrument && !w.career.assists.sounder);
+  assert(
+    !w.career.assists.minimap && w.career.assists.depthInstrument && !w.career.assists.sounder,
+  );
   toggleAssist(w, 'sounder');
   assert(!w.career.assists.helmOverlay && !w.career.assists.diverCards);
   w.career.difficulty = 'realistic';
   toggleAssist(w, 'minimap');
-  assert(!w.career.assists.minimap && w.career.assists.sounder);
+  assert(w.career.assists.minimap && w.career.assists.sounder);
   const loaded = decode(encode(w));
   assert.deepEqual(loaded.career.assists, w.career.assists);
   setPreset(loaded, 'off');
   assert(!loaded.career.assists.minimap && !loaded.career.assists.sounder);
   setPreset(loaded, 'custom');
-  assert(!loaded.career.assists.minimap && loaded.career.assists.sounder);
+  assert(loaded.career.assists.minimap && loaded.career.assists.sounder);
 });
 
 test('layout fits within the viewport and permits the bottom strip on touch', () => {

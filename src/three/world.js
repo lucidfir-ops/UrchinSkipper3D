@@ -4,7 +4,9 @@ import { CoastalLife } from './coastal-life.js';
 import { coastalTextures } from './coastal-textures.js';
 import { CoastalMist } from './coastal-mist.js';
 import { assist, reefRange } from '../assists.js';
-import { rockOpacity } from '../hazard-view.js';
+import { visibilityRange } from '../assists.js';
+import { currentAt } from '../environment.js';
+import { kelpPatches } from './kelp-patches.js';
 import { waterColumnMaterials, waterTurbidity, coastalDaylight } from './water-optics.js';
 
 // Presentation alone samples the simulation's original bathymetry. None of these
@@ -72,6 +74,14 @@ function rockGeometry() {
     const cut = 0.9 + 0.12 * Math.sin(x * 12 + z * 8 + y * 4);
     position.setXYZ(i, x * cut, clamp((y + 1) / 2) ** 0.83, z * cut);
   }
+  let minY = Infinity,
+    maxY = -Infinity;
+  for (let i = 0; i < position.count; i++) {
+    minY = Math.min(minY, position.getY(i));
+    maxY = Math.max(maxY, position.getY(i));
+  }
+  for (let i = 0; i < position.count; i++)
+    position.setY(i, (position.getY(i) - minY) / (maxY - minY));
   geometry.computeVertexNormals();
   return geometry;
 }
@@ -124,13 +134,23 @@ function crownGeometry() {
 function kelpGeometry() {
   const positions = [],
     indices = [];
-  for (let i = 0; i <= 8; i++) {
-    const y = i / 8,
-      width = Math.sin(y * Math.PI) * 0.13 + 0.025;
-    positions.push(-width + Math.sin(y * 8) * 0.07, y, 0, width + Math.sin(y * 8) * 0.07, y, 0);
-    if (i < 8) {
-      const a = i * 2;
-      indices.push(a, a + 1, a + 2, a + 1, a + 3, a + 2);
+  // Several tapering bull-kelp blades fan from each fixed holdfast.
+  for (let blade = 0; blade < 7; blade++) {
+    const angle = blade * 2.39996,
+      start = positions.length / 3;
+    for (let i = 0; i <= 12; i++) {
+      const t = i / 12,
+        fan = Math.max(0, t - 0.45),
+        width = 0.012 + Math.sin(t * Math.PI) * 0.16,
+        x = Math.cos(angle) * fan * 1.8,
+        z = Math.sin(angle) * fan * 1.8,
+        y = t - fan * fan * 0.25;
+      for (const side of [-1, 1])
+        positions.push(x + Math.sin(angle) * width * side, y, z - Math.cos(angle) * width * side);
+      if (i < 12) {
+        const a = start + i * 2;
+        indices.push(a, a + 1, a + 2, a + 1, a + 3, a + 2);
+      }
     }
   }
   const geometry = new THREE.BufferGeometry();
@@ -162,6 +182,7 @@ const waterFragment = /* glsl */ `
   uniform float uSeaLevel;
   uniform float uTime;
   uniform float uRough;
+  uniform vec2 uWind;
   uniform float uDaylight;
   uniform vec3 uSun;
   uniform vec2 uBoat;
@@ -220,6 +241,28 @@ const waterFragment = /* glsl */ `
     float foam = shore * smoothstep(.56,.87, n*.38+wash*.62) * .62;
     float edge = (1.0-smoothstep(.02,.14,actualDepth))*surfBreak*.13;
     color = mix(color,vec3(.67,.76,.73),clamp(foam+edge,0.0,.8));
+    // Broken crests travel downwind; wind sets coverage and size.
+    // With zero wind this contribution is exactly zero, even with swell.
+    float windSpeed = length(uWind);
+    vec2 wind = uWind / max(.001,windSpeed);
+    vec2 across = vec2(-wind.y,wind.x);
+    float strength = clamp(windSpeed/15.0,0.0,1.0);
+    vec2 windUV = vec2(dot(p,across),dot(p,wind)-uTime*(.35+windSpeed*.10));
+    vec2 cell = floor(windUV/8.0);
+    float seed = hash(cell);
+    vec2 local = mod(windUV,8.0)-4.0;
+    local -= vec2(hash(cell+19.0),hash(cell+43.0))*2.2-1.1;
+    float halfWidth = mix(.45,2.5,strength)*(.7+seed*.45);
+    float edgeFade = 1.0-smoothstep(halfWidth*.35,halfWidth,abs(local.x));
+    float front = local.y + local.x*local.x*.16;
+    float crest = exp(-pow(front/(.09+strength*.16),2.0));
+    float broken = .55+.45*valueNoise(windUV*2.4);
+    float lifetime = smoothstep(.2,.7,.5+.5*sin(uTime*.7+seed*24.0));
+    float coverage = smoothstep(1.0-strength*.7,1.05-strength*.7,seed);
+    float whitecaps = crest*edgeFade*broken*lifetime*coverage
+      *smoothstep(.2,7.0,windSpeed)*(.16+strength*.30);
+    whitecaps *= smoothstep(.25,1.3,actualDepth);
+    color = mix(color,vec3(.70,.80,.75),whitecaps);
     color *= .12 + .88*uDaylight;
     // Turbid coastal water retains bottom/shadow detail only on very shallow
     // shelves. Deep green is absorption, not a transparent blue floor tint.
@@ -589,9 +632,14 @@ export class CoastalWorld {
         this.bed.add(mesh);
       }
     }
+    this.rockColumn = waterColumnMaterials(
+      { stone: material },
+      { visibilityDepth: 7.5, contrast: 2 },
+    );
     for (const rock of world.rocks || []) {
       const bottom = bedDepthAt(terrain, rock.x, rock.y);
-      const mesh = new THREE.Mesh(geom, material);
+      const mesh = new THREE.Mesh(geom, this.rockColumn.materials.stone);
+      mesh.renderOrder = 2;
       mesh.position.set(rock.x, -bottom - 0.15, rock.y);
       mesh.scale.set(
         rock.radius,
@@ -612,30 +660,12 @@ export class CoastalWorld {
     }
   }
   buildKelp(world) {
-    const terrain = world.terrain,
-      random = randomGenerator(79824),
-      strands = [];
-    for (let i = 0; i < 14000; i++) {
-      const x = random() * terrain.size,
-        z = random() * terrain.size;
-      const d = bedDepthAt(terrain, x, z);
-      // Broken coastal stands with broad lanes of open water. Macro-patches
-      // follow shallow habitat, never hidden urchin productivity.
-      if (
-        d < 2.8 ||
-        d > 11 ||
-        noise(x * 0.16, z * 0.16) < 0.42 ||
-        noise(x * 0.7, z * 0.7) < -0.1 ||
-        strands.length >= 680
-      )
-        continue;
-      // Deliberately independent of harvest ground locations and stock.
-      const length = Math.max(1, d - 0.25 - random() * 0.5);
-      strands.push({ x, z, y: -d, length, angle: random() * TAU, tint: random() });
-    }
+    const strands = kelpPatches(world.terrain);
+    this.kelpPatches = strands;
+    this.kelpCells = [];
     if (!strands.length) return;
     const baseMaterial = new THREE.MeshStandardMaterial({
-      color: '#555037',
+      color: '#78813e',
       roughness: 0.8,
       side: THREE.DoubleSide,
     });
@@ -646,12 +676,14 @@ export class CoastalWorld {
     material.onBeforeCompile = (shader) => {
       columnCompile(shader);
       shader.uniforms.uKelpTime = this.kelpTime;
-      shader.vertexShader = 'uniform float uKelpTime;\n' + shader.vertexShader;
+      shader.vertexShader =
+        'uniform float uKelpTime;\nattribute vec2 kelpFlow;\n' + shader.vertexShader;
       shader.vertexShader = shader.vertexShader.replace(
         '#include <begin_vertex>',
-        '#include <begin_vertex>\ntransformed.x += sin(uKelpTime * .55 + position.y * 2.0 + instanceMatrix[3].x * .11) * position.y * position.y * .16;\ntransformed.z += cos(uKelpTime * .42 + instanceMatrix[3].z * .13) * position.y * .11;',
+        '#include <begin_vertex>\nfloat bend = position.y*position.y;\ntransformed.xz += kelpFlow*bend + vec2(sin(uKelpTime*.8+position.y*5.0+instanceMatrix[3].x*.21),cos(uKelpTime*.6+instanceMatrix[3].z*.16))*bend*.13;',
       );
     };
+    material.customProgramCacheKey = () => 'bc-kelp-column-v3';
     const shape = kelpGeometry();
     const cells = new Map();
     for (const strand of strands) {
@@ -662,21 +694,28 @@ export class CoastalWorld {
     const object = new THREE.Object3D(),
       color = new THREE.Color();
     for (const cell of cells.values()) {
-      const mesh = new THREE.InstancedMesh(shape, material, cell.length);
+      const geometry = shape.clone();
+      const flows = new THREE.InstancedBufferAttribute(new Float32Array(cell.length * 2), 2);
+      flows.setUsage(THREE.DynamicDrawUsage);
+      geometry.setAttribute('kelpFlow', flows);
+      const mesh = new THREE.InstancedMesh(geometry, material, cell.length);
+      this.kelpCells.push({ mesh, plants: cell, flows });
       mesh.renderOrder = 2;
       cell.forEach((strand, i) => {
         object.position.set(strand.x, strand.y, strand.z);
-        object.rotation.set(0, strand.angle, -0.08);
-        object.scale.set(1.2, strand.length, 1);
+        object.rotation.set(0, 0, 0);
+        object.scale.set(1.3, strand.length, 1.3);
         object.updateMatrix();
         mesh.setMatrixAt(i, object.matrix);
         color.setHSL(0.12 + strand.tint * 0.05, 0.33, 0.34 + strand.tint * 0.18);
         mesh.setColorAt(i, color);
       });
-      mesh.name = 'Swaying kelp, unrelated to catch grounds';
+      mesh.name = 'Current-swaying kelp stand';
       mesh.computeBoundingSphere();
+      mesh.boundingSphere.radius += 5;
       this.bed.add(mesh);
     }
+    shape.dispose();
   }
 
   buildWater(world) {
@@ -704,6 +743,7 @@ export class CoastalWorld {
         uTime: { value: 0 },
         uSwell: { value: 0.045 },
         uRough: { value: 0.1 },
+        uWind: { value: new THREE.Vector2() },
         uDaylight: { value: 1 },
         uSun: { value: new THREE.Vector3(-0.6, 0.85, -0.35).normalize() },
         uBoat: { value: new THREE.Vector2(world.boat.x, world.boat.y) },
@@ -746,6 +786,23 @@ export class CoastalWorld {
     const tide = seaLevel(world);
     this.bed.position.y = -tide;
     this.kelpTime.value = this.elapsed;
+    if (this.elapsed >= (this.nextKelpFlow || 0)) {
+      this.nextKelpFlow = this.elapsed + 0.3;
+      for (const { plants: cell, flows } of this.kelpCells || []) {
+        cell.forEach((p, i) => {
+          const flow = currentAt(world, p.x, p.z);
+          const speed = Math.hypot(flow.x, flow.y),
+            factor = Math.min(1, 1.8 / Math.max(0.001, speed));
+          flows.setXY(i, flow.x * factor, flow.y * factor);
+        });
+        flows.needsUpdate = true;
+      }
+    }
+    if (this.rockColumn) {
+      this.rockColumn.uniforms.uColumnTime.value = this.elapsed;
+      this.rockColumn.uniforms.uColumnTurbidity.value = waterTurbidity(world);
+      this.rockColumn.uniforms.uColumnLight.value = world.weather?.sunlight ?? 1;
+    }
     if (this.kelpColumn) {
       this.kelpColumn.uniforms.uColumnTime.value = this.elapsed;
       this.kelpColumn.uniforms.uColumnTurbidity.value = waterTurbidity(world);
@@ -762,6 +819,7 @@ export class CoastalWorld {
       uniforms.uReefRange.value = reefRange(world);
       const rough = clamp((world.weather?.wave || 0.12) / 2.2);
       uniforms.uRough.value = rough;
+      uniforms.uWind.value.set(world.environment.wind?.x || 0, world.environment.wind?.y || 0);
       uniforms.uSwell.value = 0.025 + rough * 0.19;
       const minute = world.day?.minute ?? 600;
       uniforms.uDaylight.value = world.weather?.sunlight ?? coastalDaylight(minute);
@@ -770,13 +828,20 @@ export class CoastalWorld {
       );
       if (sun) uniforms.uSun.value.copy(sun.position).sub(sun.target.position).normalize();
     }
-    for (const { mesh, rock } of this.rockObjects) mesh.visible = rockOpacity(world, rock) > 0;
+    for (const { mesh, rock } of this.rockObjects)
+      mesh.visible =
+        rock.topDepth + tide < 7.5 &&
+        Math.hypot(rock.x - world.boat.x, rock.y - world.boat.y) < visibilityRange(world);
     if (camera) this.group.userData.cameraDistance = camera.position.y;
   }
   clear() {
     disposeGroup(this.bed);
+    this.rockColumn?.dispose();
+    this.rockColumn = null;
     this.kelpColumn?.dispose();
     this.kelpColumn = null;
+    this.kelpCells = [];
+    this.nextKelpFlow = 0;
     if (this.water) {
       this.group.remove(this.water);
       this.water.geometry.dispose();

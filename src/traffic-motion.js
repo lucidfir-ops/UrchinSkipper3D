@@ -67,7 +67,7 @@ export function moveTraffic(w, actor, dt) {
         .map((a) => ({ ...a, radius: (a.length + actor.length) / 2 + 3 })),
       ...(actor.kind === 'taxi' ? surfacedWildlifePoints(w) : []),
     ];
-  if (actor.kind !== 'taxi')
+  if (actor.kind !== 'taxi' || (w.career && w.career.day <= 3))
     for (const d of [
       ...w.divers,
       ...(w.traffic?.actors || []).filter((a) => a !== actor).flatMap((a) => a.divers || []),

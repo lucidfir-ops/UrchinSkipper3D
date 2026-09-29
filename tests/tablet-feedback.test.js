@@ -83,9 +83,9 @@ test('recall reaches pickup distance from the hull on both axes and rotated boat
     assert.equal(recallStatus(w).available, false);
   }
 });
-test('deck load defaults on in Easy and Realistic and stays off in All Off', () => {
-  assert(presetAssists('easy').loadGauge);
-  assert(presetAssists('realistic').loadGauge);
+test('deck load is optional in the calm default layout in every preset', () => {
+  assert(!presetAssists('easy').loadGauge);
+  assert(!presetAssists('realistic').loadGauge);
   assert.equal(presetAssists('off').loadGauge, false);
 });
 test('decorative drift retains elapsed movement and wet-path checks at reduced cadence', () => {

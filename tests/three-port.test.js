@@ -34,6 +34,9 @@ test('3D coast, material generation and animation never write simulation data', 
   const world = createWorld({ practice: true }),
     scene = new THREE.Scene();
   world.environment.seaLevel = 1.7;
+  world.rocks = [
+    { x: 200, y: 155, radius: 2, length: 5, width: 3, topDepth: 1, heading: 0.3, kind: 'boulder' },
+  ];
   const original = JSON.stringify(world);
   const coast = new CoastalWorld(scene);
   coast.setWorld(world);

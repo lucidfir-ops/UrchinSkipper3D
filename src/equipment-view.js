@@ -29,7 +29,7 @@ export function equipmentIcon(item) {
 }
 export function fittingPreview(w, item) {
   const owned = !item || w.career.fleet[w.boat.configuration].equipment.includes(item.id);
-  return `<figure class="fitting-preview"><canvas width="720" height="440" data-fitting-preview="${item?.id || ''}" data-preview-boat="${w.boat.configuration}" tabindex="0" role="img" aria-label="${boatDefinition(w.boat.configuration).name} in 3D${item ? ` with ${item.name} highlighted` : ' with installed equipment'}. Drag or use left and right arrows to turn the model."></canvas><figcaption class="fitting-preview-caption"><b>${owned ? 'YOUR INSTALLED BOAT' : 'FITTING PREVIEW'}</b> · ${item ? 'Gold marks this fitting' : 'Current equipment'}<span>Drag to turn · keyboard ← →</span></figcaption></figure>`;
+  return `<figure class="fitting-preview"><canvas width="720" height="440" data-fitting-preview="${item?.id || ''}" data-preview-boat="${w.boat.configuration}" tabindex="0" role="img" aria-label="${boatDefinition(w.boat.configuration).name} in 3D${item ? ` with ${item.name} highlighted` : ' with installed equipment'}. Drag or use left and right arrows to turn the model."></canvas><figcaption class="fitting-preview-caption"><b>${owned ? 'YOUR INSTALLED BOAT' : 'FITTING PREVIEW'}</b> · ${item ? 'Red marks this fitting' : 'Current equipment'}<span>Drag to turn · keyboard ← →</span></figcaption></figure>`;
 }
 function stationItems(w, station) {
   const fitted = w.career.fleet[w.boat.configuration].equipment;

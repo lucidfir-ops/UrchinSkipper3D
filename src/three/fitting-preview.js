@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { makeVessel, makeMaterials, addFittings, disposeGroup } from './vessels.js';
 import { boatDefinition, boatSpec } from '../boats.js';
-import { UPGRADES } from '../career-data.js';
+import { UPGRADES, FLEET } from '../career-data.js';
 import { equipmentStation } from '../equipment-fit.js';
 
 // One renderer serves all menu canvases. Each canvas receives an ordinary 2D
@@ -37,7 +37,7 @@ class FittingPreview {
     this.ring = new THREE.Mesh(
       new THREE.TorusGeometry(0.6, 0.035, 6, 36),
       new THREE.MeshBasicMaterial({
-        color: '#ffdc91',
+        color: '#ff5145',
         depthTest: false,
         transparent: true,
         opacity: 0.9,
@@ -156,5 +156,34 @@ export function paintFittingPreviews(panel, w) {
       rotation += event.key === 'ArrowLeft' ? -0.22 : 0.22;
       draw();
     };
+  }
+}
+
+const fleetSnapshots = new Map();
+export function paintFleetPreviews(panel) {
+  for (const canvas of panel.querySelectorAll('canvas[data-vessel]')) {
+    const id = canvas.dataset.vessel;
+    if (!FLEET[id]) continue;
+    try {
+      preview ??= new FittingPreview();
+      if (!fleetSnapshots.has(id)) {
+        const snapshot = document.createElement('canvas');
+        snapshot.width = 720;
+        snapshot.height = 440;
+        const world = {
+          boat: { configuration: id, fuel: 0 },
+          catch: 0,
+          career: { fleet: { [id]: { equipment: [] } } },
+        };
+        preview.draw(snapshot, world, undefined, 0);
+        fleetSnapshots.set(id, snapshot);
+      }
+      canvas.getContext('2d').drawImage(fleetSnapshots.get(id), 0, 0, canvas.width, canvas.height);
+      canvas.dataset.loaded = 'true';
+      canvas.dataset.model = id;
+    } catch {
+      canvas.setAttribute('aria-label', `${id}: 3D preview unavailable`);
+      canvas.closest('figure')?.classList.add('preview-unavailable');
+    }
   }
 }

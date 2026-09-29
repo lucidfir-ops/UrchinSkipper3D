@@ -1,3 +1,5 @@
+import { seaMessage } from './sea-messages.js';
+import { updateTutorialSpeech } from './tutorial-speech.js';
 import { diverMotion } from './diver-motion.js';
 import { offloadWindow } from './offload.js';
 import { renderKeyboardHelm } from './keyboard-helm.js';
@@ -333,8 +335,9 @@ export function renderHud(scene, world, input, lockReason) {
     }
   }
   message.className = state.locked ? 'locked' : state.available ? 'available' : '';
-  const notice = ui.importantNotice?.until > performance.now() ? ui.importantNotice.text : '',
-    showTelemetry = assist(world, 'exactLoad', ui.realistic) && (diverPanel.hidden || !indicators);
+  const notice = ui.importantNotice?.until > performance.now() ? ui.importantNotice.text : '';
+  updateTutorialSpeech(ui, world, state, target, notice);
+  if (world.career?.intro?.status === 'active') message.hidden = true;
   const activeContext =
     (diverVisual(target).surface && state.observable) ||
     state.progress !== null ||
@@ -349,85 +352,30 @@ export function renderHud(scene, world, input, lockReason) {
     state.controls === 'BOAT CONTROLS AVAILABLE' &&
     !state.reason &&
     !notice;
+  if (world.career?.intro?.status !== 'active' && assist(world, 'actionPrompts', ui.realistic)) {
+    const actionable = activeContext && target.state !== 'ready';
+    const key = JSON.stringify([
+      actionable,
+      target.id,
+      state.reason,
+      state.operation,
+      state.available,
+      state.locked,
+      notice,
+      state.progress !== null,
+    ]);
+    seaMessage(
+      ui,
+      'pickup',
+      key,
+      notice || (actionable ? `${target.name} · ${state.status.replace(/ — [\d.]+s/, '')}` : ''),
+    );
+  }
+  // The full context remains available through the controls and diver cards.
+  message.hidden = true;
+  ui.hudMessageActive = false;
   message.dataset.context = ui.hudMessageActive ? 'active' : 'quiet';
   message.dataset.density = ui.hudMessageCompact ? 'compact' : 'full';
-  const signature = JSON.stringify([
-    state.status,
-    state.progress === null ? null : Math.round(state.progress * 100),
-    state.controls,
-    state.distance.toFixed(1),
-    state.waterSpeed.toFixed(2),
-    state.overflow,
-    state.reason,
-    target.id,
-    target.name,
-    ui.realistic,
-    notice,
-    showTelemetry,
-    assist(world, 'exactLoad', ui.realistic) ? diverTelemetry(world, target) : '',
-  ]);
-  if (!message.hidden && signature !== scene.lastMessage) {
-    scene.lastMessage = signature;
-    message.replaceChildren();
-    const title = document.createElement('strong');
-    if (state.observable || showTelemetry) {
-      const person = document.createElement('span');
-      person.className = 'pickup-person';
-      setText(person, target.name);
-      message.append(person);
-    }
-    const [primary, ...details] = state.status.split(' · '),
-      [headline, ...reasons] = primary.split(' — ');
-    setText(title, sentenceCase(headline === 'RECOVERY AVAILABLE' ? 'READY TO RECOVER' : headline));
-    message.append(title);
-    const line = (className, text) => {
-      const element = document.createElement('div');
-      element.className = className;
-      setText(element, text);
-      message.append(element);
-    };
-    if (reasons.length === 1 && /^\d+(?:\.\d+)?s$/.test(reasons[0])) {
-      const duration = document.createElement('small');
-      duration.className = 'pickup-duration';
-      setText(duration, reasons[0]);
-      title.append(duration);
-    } else if (reasons.length) line('pickup-reason', sentenceCase(reasons.join(' — ')));
-    if (state.progress !== null && (!ui.realistic || target.state === 'surface')) {
-      const bar = document.createElement('progress');
-      bar.max = 1;
-      bar.value = state.progress;
-      bar.setAttribute('aria-label', state.operation + ' progress');
-      message.append(bar);
-    }
-    if (state.controls !== 'BOAT CONTROLS AVAILABLE')
-      line('control-status', sentenceCase(state.controls));
-    if (diverVisual(target).surface && state.observable && state.overflow > 0)
-      line(
-        'important-notice',
-        `${ui.realistic ? 'Excess catch' : Math.round(state.overflow) + ' lb excess'} will be released; diver can board.`,
-      );
-    if (notice) line('important-notice', notice);
-    if (diverVisual(target).surface && state.observable) {
-      line(
-        'pickup-requirement',
-        `Port side · below ${(C.recovery.maxRelativeSpeed * C.knotsPerMps).toFixed(1)} kn relative to float`,
-      );
-      if (state.reason)
-        line(
-          'pickup-reason',
-          state.reason + ` · ${input.label('recoverDiver')} brings the diver aboard`,
-        );
-      line(
-        'pickup-detail',
-        ui.realistic
-          ? 'Match float drift'
-          : `Hull distance ${state.distance.toFixed(1)} / ${tolerance} m · Relative speed ${(state.waterSpeed * C.knotsPerMps).toFixed(1)} kn`,
-      );
-    }
-    if (showTelemetry) line('pickup-detail', diverTelemetry(world, target));
-    else if (details.length && !indicators) line('pickup-detail', details.join(' · '));
-  }
-
   let instruments = document.querySelector('#electronics');
   let patrol = document.querySelector('#patrolBearing');
   if (!patrol) {

@@ -222,21 +222,37 @@ function hullOutline(width, length, y = 0, factor = 1, form = 'alloy') {
           [-0.48, -0.42],
           [-0.4, -0.5],
         ]
-      : [
-          [0, -0.5],
-          [0.19, -0.415],
-          [0.365, -0.27],
-          [0.475, -0.07],
-          [0.5, 0.28],
-          [0.485, 0.43],
-          [0.38, 0.49],
-          [-0.38, 0.49],
-          [-0.485, 0.43],
-          [-0.5, 0.28],
-          [-0.475, -0.07],
-          [-0.365, -0.27],
-          [-0.19, -0.415],
-        ]
+      : form === 'tug'
+        ? [
+            [0, -0.5],
+            [0.3, -0.46],
+            [0.45, -0.34],
+            [0.5, -0.15],
+            [0.5, 0.3],
+            [0.46, 0.46],
+            [0.36, 0.49],
+            [-0.36, 0.49],
+            [-0.46, 0.46],
+            [-0.5, 0.3],
+            [-0.5, -0.15],
+            [-0.45, -0.34],
+            [-0.3, -0.46],
+          ]
+        : [
+            [0, -0.5],
+            [0.19, -0.415],
+            [0.365, -0.27],
+            [0.475, -0.07],
+            [0.5, 0.28],
+            [0.485, 0.43],
+            [0.38, 0.49],
+            [-0.38, 0.49],
+            [-0.485, 0.43],
+            [-0.5, 0.28],
+            [-0.475, -0.07],
+            [-0.365, -0.27],
+            [-0.19, -0.415],
+          ]
   ).map(([x, z]) => new THREE.Vector3(x * width * factor, y, z * length * factor));
   return new THREE.CatmullRomCurve3(controls, true, 'centripetal').getPoints(72).slice(0, -1);
 }
@@ -701,6 +717,207 @@ function makeOpenVessel(spec, definition, materials, profile) {
   return group;
 }
 
+function propeller(parent, m, x, y, z) {
+  const hub = new THREE.Group();
+  hub.userData.dynamic = true;
+  hub.position.set(x, y, z);
+  parent.add(hub);
+  sphere(hub, m.metal, 0.09, 0, 0, 0);
+  for (let i = 0; i < 3; i++) {
+    const angle = (i * TAU) / 3;
+    const blade = box(
+      hub,
+      m.metal,
+      0.12,
+      0.3,
+      0.035,
+      Math.sin(angle) * 0.15,
+      Math.cos(angle) * 0.15,
+      0,
+      0.02,
+    );
+    blade.rotation.z = -angle;
+  }
+  return hub;
+}
+export function animateDrives(vessel, rudder = 0, throttle = 0, dt = 0) {
+  for (const drive of vessel.userData.drives || []) {
+    drive.rotation.y = -Math.max(-1, Math.min(1, rudder)) * 0.58;
+    if (drive.userData.propeller) drive.userData.propeller.rotation.z += throttle * dt * 34;
+  }
+}
+function addCareerDetails(group, spec, m, p, accent) {
+  const w = spec.width,
+    l = spec.length,
+    { cabinZ, cabinTop } = group.userData.stations;
+  const detail = p.detail;
+  group.userData.detail = detail;
+  // Small objects describe life aboard without inventing fitted upgrade powers.
+  // The mug and deck brush sit against the house, clear of the working ladder.
+  const houseEdge = Math.min(l * 0.26, cabinZ + (l * p.cabin) / 2 + 0.12);
+  cylinder(group, m.roof, 0.065, 0.14, w * 0.23, 1.2, houseEdge);
+  ring(group, m.metal, 0.045, 0.012, w * 0.23 + 0.07, 1.2, houseEdge).rotation.x = 0;
+  rod(group, m.rope, [w * 0.42, 1, l * 0.16], [w * 0.42, 1.3, l * 0.34], 0.02);
+  box(group, m.rope, 0.19, 0.06, 0.11, w * 0.42, 1.31, l * 0.34);
+  if (['yellow-crane', 'silver-crane', 'crane-platform'].includes(detail)) {
+    const metal = detail === 'silver-crane' ? m.metal : accent;
+    const x = -w * 0.36,
+      z = l * (detail === 'crane-platform' ? 0.11 : 0.25);
+    const base = [x, 1.65, z],
+      elbow = [x, 2.65, z - l * 0.09],
+      tip = [x, 2.25, z + l * 0.12];
+    cylinder(group, metal, 0.23, 0.9, x, 1.35, z);
+    box(group, metal, 0.48, 0.4, 0.48, x, 1.95, z, 0.04);
+    for (const [a, b] of [
+      [base, elbow],
+      [elbow, tip],
+    ]) {
+      const p = new THREE.Vector3(...a),
+        q = new THREE.Vector3(...b),
+        delta = q.clone().sub(p);
+      const boom = box(group, metal, 0.26, delta.length(), 0.3, 0, 0, 0, 0.035);
+      boom.position.copy(p.add(q).multiplyScalar(0.5));
+      boom.quaternion.setFromUnitVectors(UP, delta.normalize());
+    }
+    sphere(group, m.darkMetal, 0.16, ...elbow);
+    rod(group, m.metal, [x + 0.15, 1.65, z + 0.15], [x + 0.15, 2.55, z - l * 0.065], 0.065);
+    rod(group, m.rubber, tip, [tip[0], 1.6, tip[2]], 0.025);
+    ring(group, m.darkMetal, 0.1, 0.025, tip[0], 1.55, tip[2]).rotation.x = Math.PI / 2;
+    tube(
+      group,
+      m.rubber,
+      [
+        [x - 0.17, 1.6, z],
+        [x - 0.19, 2.75, z - l * 0.09],
+        [x - 0.17, 2.32, z + l * 0.12],
+      ],
+      0.035,
+    );
+    for (const side of [-1, 1])
+      box(group, accent, 0.18, 0.08, l * 0.52, side * w * 0.46, 1.1, l * 0.14, 0.02);
+  }
+  if (detail === 'yellow-crane') {
+    for (let i = 0; i < 4; i++) {
+      cylinder(group, m.blue, 0.16, 0.86, w * 0.34, 1.35, l * (0.15 + i * 0.065));
+      cylinder(group, m.metal, 0.07, 0.13, w * 0.34, 1.85, l * (0.15 + i * 0.065));
+    }
+    for (const side of [-1, 1]) {
+      box(group, m.rope, w * 0.22, 0.42, 0.58, side * w * 0.28, 1.13, l * 0.4, 0.04);
+      box(group, m.darkMetal, w * 0.2, 0.025, 0.52, side * w * 0.28, 1.36, l * 0.4);
+    }
+  }
+  if (detail === 'crane-platform') {
+    for (let i = 0; i < 2; i++)
+      box(group, m.paint, w * 0.2, 0.5, l * 0.095, w * 0.32, 1.16, l * (0.14 + i * 0.12), 0.035);
+    box(group, m.rubber, w * 0.56, 0.028, l * 0.13, 0, 0.92, l * 0.37);
+    for (let i = -5; i <= 5; i++)
+      box(group, m.metal, 0.016, 0.012, l * 0.125, i * w * 0.05, 0.941, l * 0.37);
+    for (let i = -3; i <= 3; i++)
+      box(group, m.metal, w * 0.55, 0.012, 0.016, 0, 0.944, l * (0.37 + i * 0.02));
+  }
+  if (detail === 'timber-cockpit') {
+    box(group, m.paint, w * 0.54, 0.38, 0.45, 0, 1.13, l * 0.4, 0.09);
+    box(group, m.tank, w * 0.54, 0.17, 0.47, 0, 1.4, l * 0.4, 0.055);
+    cylinder(group, m.metal, 0.05, 0.45, 0, 1.12, l * 0.25);
+    box(group, m.rope, w * 0.29, 0.06, l * 0.1, 0, 1.4, l * 0.25, 0.035);
+    for (const side of [-1, 1])
+      box(group, m.rope, 0.14, 0.05, l * 0.55, side * w * 0.43, 1.11, l * 0.06);
+  }
+  if (detail === 'tow-winch') {
+    const hazard = m.orange.clone();
+    hazard.color.set('#ebc33b');
+    group.userData.extraMaterials.push(hazard);
+    const z = l * 0.29;
+    cylinder(group, m.darkMetal, 0.29, w * 0.38, 0, 1.4, z).rotation.z = Math.PI / 2;
+    for (const side of [-1, 1]) {
+      cylinder(group, accent, 0.37, 0.06, side * w * 0.21, 1.4, z).rotation.z = Math.PI / 2;
+      rod(group, m.metal, [side * w * 0.21, 0.93, z], [side * w * 0.21, 1.4, z], 0.07);
+    }
+    for (let i = -3; i <= 3; i++)
+      ring(group, m.rope, 0.295, 0.025, i * 0.07, 1.4, z).rotation.z = Math.PI / 2;
+    for (let i = -4; i <= 4; i++)
+      box(
+        group,
+        i % 2 ? m.rubber : hazard,
+        0.23,
+        0.21,
+        0.045,
+        i * 0.23,
+        0.88,
+        l * 0.496,
+      ).rotation.z = -0.4;
+  }
+  if (detail === 'bow-ramp') {
+    box(group, accent, w * 0.79, 0.13, l * 0.11, 0, 1.01, -l * 0.44, 0.025);
+    for (let i = -4; i <= 4; i++)
+      box(group, m.metal, 0.035, 0.023, l * 0.105, i * w * 0.077, 1.09, -l * 0.44);
+    for (const side of [-1, 1])
+      rod(
+        group,
+        m.darkMetal,
+        [side * w * 0.42, 1.02, -l * 0.31],
+        [side * w * 0.42, 1.4, -l * 0.49],
+        0.03,
+      );
+  }
+  if (detail === 'aft-lockers') {
+    for (const side of [-1, 1]) {
+      box(group, m.paint, w * 0.19, 0.46, l * 0.14, side * w * 0.3, 1.13, l * 0.34, 0.06);
+      box(group, m.metal, 0.1, 0.035, 0.045, side * w * 0.3, 1.38, l * 0.32);
+    }
+    cylinder(group, m.orange, 0.15, w * 0.46, 0, 1.09, houseEdge + 0.2).rotation.z = Math.PI / 2;
+  }
+  if (detail === 'folded-boom') {
+    for (const side of [-1, 1])
+      for (let i = 0; i < 3; i++) {
+        const tire = ring(
+          group,
+          m.rubber,
+          0.25,
+          0.085,
+          side * w * (0.28 + i * 0.06),
+          0.96,
+          -l * (0.36 - i * 0.045),
+        );
+        tire.rotation.x = 0.5;
+      }
+    box(group, m.paint, w * 0.26, 0.42, l * 0.12, 0, 1.12, l * 0.17, 0.05);
+    box(group, m.paint, 0.22, 0.23, l * 0.25, w * 0.28, 1.43, l * 0.26, 0.025).rotation.x = -0.13;
+    rod(group, m.metal, [w * 0.28, 0.95, l * 0.36], [w * 0.28, 1.45, l * 0.36], 0.09);
+    tube(
+      group,
+      m.orange,
+      [
+        [-w * 0.18, 1, -l * 0.34],
+        [0, 1.04, -l * 0.4],
+        [w * 0.18, 1, -l * 0.34],
+      ],
+      0.04,
+    );
+  }
+  if (['crane-platform', 'twin-step'].includes(detail)) {
+    box(group, m.metal, w * 0.45, 0.07, 0.58, 0, 0.5, l * 0.52, 0.025);
+    for (let i = -4; i <= 4; i++)
+      box(group, m.darkMetal, 0.03, 0.012, 0.52, i * w * 0.047, 0.542, l * 0.52);
+  }
+  if (detail === 'net-foredeck') {
+    for (let x = -w * 0.3; x <= w * 0.3; x += 0.17)
+      rod(group, m.rope, [x, 0.91, -l * 0.43], [x, 0.91, -l * 0.29], 0.012);
+    for (let z = -l * 0.43; z <= -l * 0.29; z += 0.17)
+      rod(group, m.rope, [-w * 0.3, 0.91, z], [w * 0.3, 0.91, z], 0.012);
+    ring(group, m.roof, w * 0.16, 0.025, 0, 0.967, l * 0.29);
+    cylinder(group, m.darkMetal, 0.16, 0.45, 0, cabinTop + 0.25, cabinZ - 0.4).rotation.z =
+      Math.PI / 2;
+    for (const x of [-0.24, 0.24])
+      cylinder(group, m.metal, 0.23, 0.045, x, cabinTop + 0.25, cabinZ - 0.4).rotation.z =
+        Math.PI / 2;
+  }
+  if (detail === 'workhorse' || detail === 'rib') {
+    cylinder(group, m.roof, 0.24, 0.13, 0.3, cabinTop + 0.18, cabinZ + 0.26);
+    sphere(group, m.roof, 0.24, 0.3, cabinTop + 0.24, cabinZ + 0.26, [1, 0.65, 1]);
+  }
+}
+
 export function makeVessel(spec, definition, materials, role = 'player') {
   const group = new THREE.Group(),
     length = spec.length || 10,
@@ -715,8 +932,18 @@ export function makeVessel(spec, definition, materials, role = 'player') {
   const accent = materials.blue.clone();
   accent.color.set(profile.trim);
   group.userData.ownedMaterial = accent;
+  group.userData.extraMaterials = [];
+  const tintMaterial = (base, color) => {
+    if (!color) return base;
+    const material = base.clone();
+    material.color.set(color);
+    group.userData.extraMaterials.push(material);
+    return material;
+  };
+  const hullPaint = tintMaterial(materials.hull, profile.hullColor),
+    cabinPaint = tintMaterial(materials.paint, profile.cabinColor);
   const deckY = 0.88,
-    cabinZ = -length * 0.125;
+    cabinZ = length * (profile.cabinZ ?? -0.125);
   const cabinLength = length * profile.cabin;
   const cabinWidth = width * profile.cabinWidth,
     cabinTop = deckY + profile.cabinHeight;
@@ -737,7 +964,7 @@ export function makeVessel(spec, definition, materials, role = 'player') {
       ],
       profile.type,
     ),
-    materials.hull,
+    hullPaint,
   );
   mesh(
     hullGroup,
@@ -786,7 +1013,7 @@ export function makeVessel(spec, definition, materials, role = 'player') {
     hullGroup,
     materials.rubber,
     hullOutline(width, length, 0.67, 1.005, profile.type).map((p) => [p.x, p.y, p.z]),
-    0.066,
+    profile.type === 'tug' ? 0.21 : 0.066,
     true,
   );
   if (catamaran) {
@@ -795,17 +1022,7 @@ export function makeVessel(spec, definition, materials, role = 'player') {
     const secondHull = hullGroup.clone();
     secondHull.position.x = width * 0.345;
     group.add(secondHull);
-    box(
-      group,
-      materials.hull,
-      width * 0.7,
-      0.26,
-      length * 0.7,
-      0,
-      deckY - 0.17,
-      length * 0.075,
-      0.08,
-    );
+    box(group, hullPaint, width * 0.7, 0.26, length * 0.7, 0, deckY - 0.17, length * 0.075, 0.08);
     box(
       group,
       materials.deck,
@@ -820,7 +1037,7 @@ export function makeVessel(spec, definition, materials, role = 'player') {
   }
   if (profile.type === 'timber' || profile.timberDeck) {
     const timber = materials.deck.clone();
-    group.userData.extraMaterials = [timber];
+    group.userData.extraMaterials.push(timber);
     timber.color.set('#8a6849');
     const woodDeck = mesh(
       group,
@@ -850,7 +1067,7 @@ export function makeVessel(spec, definition, materials, role = 'player') {
       group,
       profile.type === 'rib' ? accent : materials.rubber,
       hullOutline(width * 0.94, length * 0.98, 0.78, 0.98).map((p) => [p.x, p.y, p.z]),
-      width * (profile.type === 'rib' ? 0.065 : 0.038),
+      width * (profile.type === 'rib' ? 0.105 : 0.06),
       true,
     );
   }
@@ -858,7 +1075,7 @@ export function makeVessel(spec, definition, materials, role = 'player') {
   for (const side of [-1, 1]) {
     box(
       group,
-      materials.hull,
+      hullPaint,
       0.09,
       0.37,
       length * 0.53,
@@ -883,7 +1100,7 @@ export function makeVessel(spec, definition, materials, role = 'player') {
   // A slight rake and softly bevelled wheelhouse prevent the slab-sided toy look.
   box(
     group,
-    materials.paint,
+    cabinPaint,
     cabinWidth,
     cabinTop - deckY,
     cabinLength,
@@ -1290,7 +1507,7 @@ export function makeVessel(spec, definition, materials, role = 'player') {
     }
   }
   // Cylinder rack, two available berths, recovery davit and coiled lines.
-  const rackZ = cabinZ + cabinLength / 2 + 0.48;
+  const rackZ = Math.min(length * 0.15, cabinZ + cabinLength / 2 + 0.48);
   for (let i = 0; i < 3; i++) {
     const x = width * 0.3,
       z = rackZ + i * 0.32;
@@ -1333,21 +1550,36 @@ export function makeVessel(spec, definition, materials, role = 'player') {
       0.033,
     );
   box(group, accent, 0.16, 0.05, 0.7, ladderX + 0.14, 1.085, ladderZ, 0.025);
+  group.userData.drives = [];
+  const driveAt = (x, type) => {
+    const drive = new THREE.Group();
+    drive.userData.dynamic = true;
+    drive.userData.type = type;
+    drive.position.set(x, 0, length * 0.51);
+    group.add(drive);
+    group.userData.drives.push(drive);
+    return drive;
+  };
   if (small) {
-    for (const x of profile.motors === 2 ? [-width * 0.19, width * 0.19] : [0]) {
-      box(group, materials.darkMetal, 0.57, 0.76, 0.7, x, 0.57, length * 0.52, 0.13);
-      box(group, materials.metal, 0.19, 0.8, 0.25, x, -0.08, length * 0.54, 0.045);
-      box(group, accent, 0.48, 0.065, 0.58, x, 0.96, length * 0.52, 0.025);
+    for (const x of profile.motors === 2 ? [-width * 0.2, width * 0.2] : [0]) {
+      const motor = driveAt(x, 'outboard');
+      box(motor, materials.rubber, 0.64, 0.82, 0.79, 0, 0.64, 0.12, 0.16);
+      box(motor, materials.metal, 0.19, 0.85, 0.25, 0, -0.08, 0.18, 0.045);
+      box(motor, materials.rubber, 0.57, 0.07, 0.68, 0, 1.06, 0.12, 0.025);
+      box(motor, materials.metal, 0.42, 0.045, 0.4, 0, -0.44, 0.19);
+      motor.userData.propeller = propeller(motor, materials, 0, -0.5, 0.3);
     }
   } else if (definition.id.includes('jet')) {
     for (const x of premium ? [-width * 0.345, width * 0.345] : [0]) {
-      cylinder(group, materials.darkMetal, 0.22, 0.34, x, -0.03, length * 0.51).rotation.x =
-        Math.PI / 2;
-      box(group, materials.metal, 0.47, 0.35, 0.08, x, 0.03, length * 0.53, 0.055);
+      const nozzle = driveAt(x, 'jet');
+      cylinder(nozzle, materials.darkMetal, 0.22, 0.34, 0, -0.03, 0).rotation.x = Math.PI / 2;
+      box(nozzle, materials.metal, 0.47, 0.35, 0.08, 0, 0.03, 0.2, 0.055);
     }
   } else if (definition.id.startsWith('sterndrive')) {
-    box(group, materials.darkMetal, 0.35, 0.63, 0.34, 0, 0.05, length * 0.51, 0.045);
-    cylinder(group, materials.metal, 0.16, 0.42, 0, -0.26, length * 0.55).rotation.x = Math.PI / 2;
+    const leg = driveAt(0, 'leg');
+    box(leg, materials.darkMetal, 0.35, 0.63, 0.34, 0, 0.05, 0.02, 0.045);
+    cylinder(leg, materials.metal, 0.16, 0.42, 0, -0.26, 0.3).rotation.x = Math.PI / 2;
+    leg.userData.propeller = propeller(leg, materials, 0, -0.26, 0.52);
   }
   if (profile.solar) {
     box(group, materials.metal, width * 0.68, 0.08, length * 0.12, 0, 1.65, length * 0.43, 0.035);
@@ -1372,6 +1604,7 @@ export function makeVessel(spec, definition, materials, role = 'player') {
       );
     }
   }
+  addCareerDetails(group, spec, materials, profile, accent);
   addTrafficDetails(group, spec, materials, profile, accent);
   const nameMap = labelTexture(definition.name || 'Urchin Skipper');
   const nameMaterial = new THREE.MeshStandardMaterial({
@@ -1856,11 +2089,12 @@ class SurfaceCues {
     for (let i = 0; i < 4; i++) {
       const sheen = mesh(
         this.group,
-        new THREE.RingGeometry(0.8, 1, 40),
+        new THREE.PlaneGeometry(2, 2),
         new THREE.MeshBasicMaterial({
           color: ['#656578', '#946c93', '#6a9385', '#557d91'][i],
+          map: this.siltTexture,
           transparent: true,
-          opacity: 0.25,
+          opacity: 0.13,
           depthWrite: false,
         }),
       );
@@ -2039,6 +2273,7 @@ export class VesselView {
     this.position(this.boat, boat, surfaceY, wave);
     setDepartureAlpha(this.boat, boat.alpha);
     this.boat.userData.radar.rotation.y = this.elapsed * 1.1;
+    animateDrives(this.boat, boat.rudder, boat.throttle, dt);
     this.column.uniforms.uColumnTime.value = this.elapsed;
     this.column.uniforms.uColumnTurbidity.value = waterTurbidity(world);
     this.column.uniforms.uColumnLight.value = world.weather?.sunlight ?? 1;

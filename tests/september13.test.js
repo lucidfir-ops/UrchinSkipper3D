@@ -37,7 +37,7 @@ test('custom information survives the three-mode RB cycle and save/reload', () =
   setPreset(restored, 'realistic');
   assert(assist(restored, 'chartGrounds'));
   assert(!assist(restored, 'groundDots'));
-  assert(assist(restored, 'weatherOverlay'), 'weather is now a standard UI option');
+  assert(!assist(restored, 'weatherOverlay'), 'weather remains available but defaults hidden');
   assert(restored.day.assisted);
   toggleInformation(restored);
   toggleInformation(restored);
@@ -314,7 +314,7 @@ test('old custom assists gain visible legacy instruments without resetting chose
   delete c.assists.version;
   delete c.assists.chartGrounds;
   const w = careerWorld(c);
-  assert(assist(w, 'helmOverlay'));
+  assert(!assist(w, 'helmOverlay'));
   assert(assist(w, 'timepiece'));
   assert(!assist(w, 'clockOverlay'));
   assert(!assist(w, 'currentOverlay'));

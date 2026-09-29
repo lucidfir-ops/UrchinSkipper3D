@@ -54,6 +54,14 @@ export const REALISTIC_ASSISTS = new Set([
   'actionPrompts',
 ]);
 const DEFAULT_OFF_ASSISTS = new Set([
+  'loadGauge',
+  'minimap',
+  'helmOverlay',
+  'weatherOverlay',
+  'departureGuidance',
+  'currentOverlay',
+  'almanacShortcut',
+  'pickingLegend',
   'clockOverlay',
   'sounder',
   'controlsHelp',
@@ -65,6 +73,7 @@ export const presetLabel = (preset) =>
 export function presetAssists(preset) {
   return {
     version: 2,
+    layoutRevision: 3,
     preset,
     base: preset,
     ...Object.fromEntries(
@@ -93,6 +102,12 @@ export function normalizeAssists(c) {
     delete c.savedAssists;
   }
   c.difficulty ??= 'easy';
+  // Refresh untouched shipped defaults once; preserve deliberate custom choices.
+  if (c.assists.layoutRevision !== 3) {
+    if (['easy', 'realistic', 'off'].includes(c.assists.preset))
+      Object.assign(c.assists, presetAssists(c.assists.preset));
+    c.assists.layoutRevision = 3;
+  }
   const defaults = presetAssists(c.assists.base || c.assists.preset);
   const fallback = c.assists.base === 'easy';
   for (const k of Object.keys(ASSISTS))
@@ -155,6 +170,34 @@ export function toggleAssist(w, key) {
   if (w.career.assists[key]) w.day.assisted = true;
 }
 export function assist(w, name, realistic = false, reveal = false) {
+  // Training temporarily replaces instruments with Frank, without changing the
+  // career's saved information choices. Crew and action controls remain visible.
+  if (
+    !reveal &&
+    w.career?.intro?.status === 'active' &&
+    [
+      'timepiece',
+      'depthInstrument',
+      'speedGauge',
+      'throttleGauge',
+      'fuelGauge',
+      'loadGauge',
+      'minimap',
+      'helmOverlay',
+      'weatherOverlay',
+      'departureGuidance',
+      'currentOverlay',
+      'almanacShortcut',
+      'pickingLegend',
+      'controlsHelp',
+      'clockOverlay',
+      'sounder',
+      'compassGauge',
+      'hullGauge',
+      'feedbackOverlay',
+    ].includes(name)
+  )
+    return false;
   return (
     reveal ||
     (w.career

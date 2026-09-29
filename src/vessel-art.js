@@ -3,6 +3,7 @@ import { VESSEL_ART, VESSEL_VECTOR_ART } from './vessel-catalog.js';
 import { boatArtMode } from './boat-art-mode.js';
 import { loadImage } from './loading.js';
 import runtimeArt from './generated/vessel-runtime.json' with { type: 'json' };
+import { paintFleetPreviews } from './three/fitting-preview.js';
 
 // Runtime framing only: original PNGs remain byte-for-byte intact. Row gaps
 // separate the neighbouring sheet fragment present above the Island Tender.
@@ -117,19 +118,10 @@ export async function prepareVesselArt(progress = () => {}) {
   );
 }
 export function vesselPreview(id, name) {
-  return `<figure class="vessel-preview"><canvas width="320" height="640" data-vessel="${id}" role="img" aria-label="${name}, supplied overhead boat artwork"></canvas><figcaption>${name}</figcaption></figure>`;
+  return `<figure class="vessel-preview vessel-model"><canvas width="720" height="440" data-vessel="${id}" role="img" aria-label="${name}, 3D boat model"></canvas><figcaption>${name}</figcaption></figure>`;
 }
-export function paintVesselPreviews(panel, mode = boatArtMode()) {
-  for (const canvas of panel.querySelectorAll('canvas[data-vessel]'))
-    vesselCanvas(canvas.dataset.vessel, mode)
-      .then((source) => {
-        if (!canvas.isConnected) return;
-        canvas.getContext('2d').drawImage(source, 0, 0, canvas.width, canvas.height);
-        canvas.dataset.loaded = 'true';
-      })
-      .catch(() => {
-        canvas.setAttribute('aria-label', 'Boat artwork unavailable');
-      });
+export function paintVesselPreviews(panel) {
+  paintFleetPreviews(panel);
 }
 export class VesselSprites {
   constructor(scene) {

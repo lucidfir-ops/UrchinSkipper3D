@@ -150,7 +150,18 @@ export function updateIntro(ui, w, actions, dt = 0) {
   }
   if (!active) return;
   const step = w.career.intro.step;
-  const spoken = lesson(w)[1].replace(/\{(\w+)\}/g, (_, action) => ui.input.label(action));
+  const spoken = lesson(w)[1]
+    .replace(
+      'On touch, drag the left stick up or tap Ahead.',
+      ui.input.touchEnabled
+        ? 'Drag the left stick up or tap Ahead.'
+        : `Use ${ui.input.label('throttleUp')} to increase throttle.`,
+    )
+    .replace(
+      'Use Zoom − on touch or your zoom-out control.',
+      `Use ${ui.input.label('zoomOut')} to zoom out.`,
+    )
+    .replace(/\{(\w+)\}/g, (_, action) => ui.input.label(action));
   const hint = step === 7 && w.career.intro.scoutSeconds >= 60;
   const signature = `${step}:${w.career.intro.prepIndex || 0}:${ui.input.lastDevice}:${!!w.emergency}:${hint}`;
   if (panel.dataset.signature === signature) {
@@ -183,17 +194,11 @@ export function updateIntro(ui, w, actions, dt = 0) {
 }
 
 function updateLessonReadout(panel, w) {
-  const b = w.boat;
-  setText(
-    panel.querySelector('.frank-helm'),
-    `Throttle ${Math.round(b.throttle * 100)}% · Rudder ${Math.round(b.rudder * 100)}% · Depth ${depthAt(w, b.x, b.y).toFixed(1)} m\n` +
-      w.divers
-        .map(
-          (d) =>
-            `${d.name.split(' ')[0]}: ${d.state === 'ready' ? 'aboard' : d.state} · ${Math.round(d.bag)} lb`,
-        )
-        .join(' / '),
-  );
+  const readout = panel.querySelector('.frank-helm');
+  // Soundings are needed for these tasks; keep them in Frank's advice rather
+  // than restoring a separate instrument panel over the water.
+  readout.hidden = ![4, 7].includes(w.career.intro.step);
+  setText(readout, `Sounder · ${depthAt(w, w.boat.x, w.boat.y).toFixed(1)} m beneath us`);
 }
 
 function lesson(w) {

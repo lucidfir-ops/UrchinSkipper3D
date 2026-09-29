@@ -145,7 +145,7 @@ export class NavigationOverlay {
     const anchors = [pt(-spec.width / 2, 0), pt(0, spec.length / 2)];
     this.lessonLabels.forEach((l, i) => {
       l.visible = lesson;
-      l.el.hidden = !lesson;
+      l.el.hidden = true;
       if (lesson) {
         const a = anchors[i],
           screen = project(a.x, a.y);
@@ -170,7 +170,7 @@ export class NavigationOverlay {
             );
           });
           l.visible = !covered;
-          l.el.hidden = covered;
+          l.el.hidden = true;
         }
       }
     });

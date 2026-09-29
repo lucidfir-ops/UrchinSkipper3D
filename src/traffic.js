@@ -169,7 +169,7 @@ function* planTraffic(w, kind, { start, patchId, art, fleetId } = {}) {
     // moving diver. Bubbles and floats do not trigger taxi avoidance.
     const sample = crossing && kind === 'taxi' && attempt < 6 ? pick(bubbleTargets, random) : null;
     const working = sample
-        ? { x: sample.x, y: sample.y }
+        ? { x: sample.x + (w.career?.day <= 3 ? 10 : 0), y: sample.y }
         : patch
           ? { x: patch.x, y: patch.y }
           : end,

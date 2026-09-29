@@ -5,7 +5,6 @@ import { renderHud } from './hud-view.js';
 import { renderNavigationWindows } from './minimap-view.js';
 import { HudWindows } from './hud-windows.js';
 import { departing, departureBoat } from './departure-transition.js';
-import { introActive } from './career-intro.js';
 import { resetSessionView } from './session-state.js';
 import { BackgroundSave } from './background-save.js';
 
@@ -307,17 +306,14 @@ class Ocean extends Phaser.Scene {
     };
     this.anchor.setPosition(b.x * C.pixelsPerMeter, b.y * C.pixelsPerMeter);
     const compactWheelhouse = input.touchEnabled && this.scale.height <= 500;
-    const compactLesson = introActive(world) && compactWheelhouse;
     const portraitWheelhouse = input.touchEnabled && this.scale.width < this.scale.height;
     this.cameras.main.setFollowOffset(
-      compactLesson ? (this.scale.width * 0.08) / this.cameras.main.zoom : 0,
-      compactLesson
-        ? (-this.scale.height * 0.13) / this.cameras.main.zoom
-        : compactWheelhouse
-          ? (-this.scale.height * 0.1) / this.cameras.main.zoom
-          : portraitWheelhouse
-            ? (-this.scale.height * (introActive(world) ? 0.115 : 0.035)) / this.cameras.main.zoom
-            : 0,
+      0,
+      compactWheelhouse
+        ? (-this.scale.height * 0.1) / this.cameras.main.zoom
+        : portraitWheelhouse
+          ? (-this.scale.height * 0.035) / this.cameras.main.zoom
+          : 0,
     );
     if (!preparing()) this.view.draw(world, this.playtest, dt);
     this.markers = this.view.markers;

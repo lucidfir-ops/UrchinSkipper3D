@@ -72,7 +72,7 @@ test('boat card keeps readings available when a skipper hides independent instru
     speed: false,
     depth: false,
     fuel: false,
-    load: false,
+    load: true,
     condition: true,
     commands: false,
   });

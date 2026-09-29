@@ -14,9 +14,11 @@ export function submergedContrast(depth, turbidity = 1) {
   return Math.exp(-d * 0.11) * (1 - t * t * (3 - 2 * t));
 }
 
-export function waterColumnMaterials(source) {
+export function waterColumnMaterials(source, { visibilityDepth = 5, contrast = 1 } = {}) {
   const uniforms = {
     uColumnTime: { value: 0 },
+    uColumnLimit: { value: visibilityDepth },
+    uColumnContrast: { value: contrast },
     uColumnTurbidity: { value: 1 },
     uColumnLight: { value: 1 },
   };
@@ -37,6 +39,8 @@ export function waterColumnMaterials(source) {
           shader.fragmentShader =
             `varying vec3 vColumnPosition;
           uniform float uColumnTime;
+          uniform float uColumnLimit;
+          uniform float uColumnContrast;
           uniform float uColumnTurbidity;
           uniform float uColumnLight;\n` + shader.fragmentShader;
           shader.fragmentShader = shader.fragmentShader.replace(
@@ -46,19 +50,19 @@ export function waterColumnMaterials(source) {
           float ripple = sin(vColumnPosition.x*5.0 + uColumnTime*1.8)
             * sin(vColumnPosition.z*4.1 - uColumnTime*1.4);
           float transmission = exp(-columnDepth*.11)
-            * (1.0-smoothstep(1.8,5.0,columnDepth));
+            * (1.0-smoothstep(1.8,uColumnLimit,columnDepth));
           vec3 absorption = exp(-columnDepth*vec3(.62,.085,.29));
           vec3 backscatter = vec3(.024,.075,.052)*(.2+.8*uColumnLight);
           outgoingLight = mix(outgoingLight * absorption, backscatter,
             1.0-exp(-columnDepth*.18));
           outgoingLight += vec3(.022,.033,.025)*ripple*min(.4,columnDepth*.18)*transmission;
-          diffuseColor.a *= transmission;
+          diffuseColor.a *= min(1.0, transmission*uColumnContrast);
           if (diffuseColor.a < .005) discard;
           #include <opaque_fragment>
         `,
           );
         };
-        material.customProgramCacheKey = () => 'bc-water-column-v1';
+        material.customProgramCacheKey = () => 'bc-water-column-v2';
         cache.set(original, material);
       }
       return [key, cache.get(original)];

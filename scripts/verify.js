@@ -32,6 +32,8 @@ async function ready() {
   }
 }
 const suites = {
+  feedback: ['scripts/feedback-2026-review.js'],
+  'feedback-water': ['scripts/feedback-2026-review.js', '--environment-only'],
   equipment: ['scripts/equipment-review.js'],
   learning: ['scripts/browser-smoke.js', '--learning-interface-only'],
   operations: ['scripts/browser-smoke.js', '--diver-operations-only'],
@@ -69,10 +71,14 @@ try {
     for (let i = 0; i < 100 && !(await ready()); i++)
       await new Promise((resolve) => setTimeout(resolve, 100));
     if (!(await ready())) throw new Error('Production server not ready');
-    const selected = process.argv.find((a) => a.startsWith('--suite='))?.slice(8);
-    if (selected && !Object.hasOwn(suites, selected)) throw new Error('Unknown suite: ' + selected);
+    const selected = process.argv
+      .find((a) => a.startsWith('--suite='))
+      ?.slice(8)
+      .split(',');
+    if (selected?.some((name) => !Object.hasOwn(suites, name)))
+      throw new Error('Unknown suite: ' + selected);
     for (const [name, args] of Object.entries(suites)) {
-      if (selected ? selected !== name : name === 'firefox') continue;
+      if (selected ? !selected.includes(name) : name === 'firefox') continue;
       // Browser suites use isolated contexts. Keep their failure status while
       // collecting the rest of the matrix instead of hiding later defects.
       try {

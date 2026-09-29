@@ -1,0 +1,393 @@
+{
+  "date": "2026-09-29T07:41:03.189968+00:00",
+  "baseCommit": "a4917a605dbec84821ffdda14d9ab5791cf844f8",
+  "sourceSha256": {
+    "scripts/equipment-review.js": "c1e56a4d2151dc6863c1d465a3290a46bb4ca7b229980f7e36c8e09eaffe682d",
+    "scripts/verify.js": "f7f6bd50578d3c1717eeffde9c521d6ff383fec1b02505fa04c1b4f55737cdbc",
+    "src/assists.js": "0cefa80d8358a8e9cca3488124c6ccd8cd696720600021b28775f312113a344c",
+    "src/diver-safety.js": "caabc141e6b8145e4662283d049852594d2c100a984e5740d89962b255a5a3eb",
+    "src/equipment-view.js": "579a4870cce5696192f14bf1c0629e9ad9b31f45a30bad04ec92f96c18a39149",
+    "src/hud-defaults.js": "9dc7f4870802a5038ebefe3f0d56d0aa478a6f38e0ca87c5ea09d9c2ff94b9c8",
+    "src/hud-view.js": "e025906cbf67e418ede415cfc617d90123e2cca43c45a9162a400f8da5e68199",
+    "src/intro-view.js": "e06e161233d3bcf737b91c5c67e8ed1f1afedce3e9bad504de4faa718d167f34",
+    "src/main.js": "ab10855744d5a2af79d14947b916040e0f2d875cbeca3eeb59a4393b526258c9",
+    "src/menu-polish.css": "e22e6ca770bbe3aa4b4dad252d95b013110b01b0824706b8971a33863d28e400",
+    "src/three/diver-cues.js": "161d92fc80b7c34227778ad979de3e407697adc7f3f67c2fbaa685c8be656cb7",
+    "src/three/fitting-preview.js": "a7a4f2b883a2f60a5ce4718c7e6e9378ac70a08f9a1063268e28b8d993ec1657",
+    "src/three/fleet-profiles.js": "76472052f39ed1d123cb78b71dcbf600834e1ffccfe3d604d10dabbcc6d3c6dd",
+    "src/three/navigation.js": "d4739ddfa6cf9982214a03e9599adbd77ef2f9c4715afbffc0356257aa2dc0e9",
+    "src/three/presentation.css": "ada1795199bb90a97cc4969221b142da0f80f45d5f9bf56c04e5e8b8af389f80",
+    "src/three/renderer.js": "b2e884838e61ecd3329acd6a72585499d41cf97ef73c715fe232ed1fb2cea289",
+    "src/three/vessels.js": "813d0458c04ff63e5852e388017a4af96d317e8b5718eff9c9b9f6d3d1de62d5",
+    "src/three/water-optics.js": "c5012adb4d0df52ab5fd8f7c10238a0a08f016964c3e56731e1b1aad4cb6285e",
+    "src/three/world.js": "74382fd14af303425982231ba0e2434440629701a6e8a3bbd1b0667ecc0c71bf",
+    "src/traffic-motion.js": "9f17602116fb32fc0457b38cd7b1772daf5a6f63a2cda9671549eec36298b4cc",
+    "src/traffic.js": "3d22248d91b078c28820f3e7a37a757517b6f76ebbc3c6a3e9fb2635780d617c",
+    "src/vessel-art.js": "076ea85b16bc92866c1c3d89e189a355dc6b7d9d5339feb14ee22442199fcb4d",
+    "tests/minimap-layout.test.js": "78c63b4138f3448d67611176d229eb948990f28112c99e020e1c889cfb8c7cef",
+    "tests/s22-latest.test.js": "0239d3813e901dcb7eb279d71c3c7fc47add913ebfdffff01031f87bd986799b",
+    "tests/september13.test.js": "9c356aea3c135dbfb223700a5934cdcb9d9ca155eef25353748c94620d9631c6",
+    "tests/september25.test.js": "1e5e67351dff1aa1a7804155c00908104b028003cbc88b8dd242ecaced8c97c8",
+    "tests/tablet-feedback.test.js": "0e22282216e0130751b2cc316066fc416f0c4338ece0f7cef037696cff98c94e",
+    "tests/three-port.test.js": "6bf9e3e585f51e540b7c40603ccd9a74e1a585e765f5819a459bc9d6576b37cd",
+    "tests/traffic.test.js": "22fa20acb8748a529d5e224a2b95caea0377e5c4a04339811c6c8a5b366cea44",
+    "tests/wheelhouse-layout.test.js": "62d5005ef1b83e957c79d59c017358f949b01ddf9b0d3b874e1c5b972bbbd860",
+    "tests/working-day.test.js": "304e805960e780937c5dd0f0ee6348d1f77a94a93d494f7da9d92ee8708a65b2",
+    "scripts/feedback-2026-review.js": "3b77f6208cd8257b2f1b38fe20dca76d62304d792a7a2f14431a4db31908de66",
+    "src/sea-messages.js": "3aa1d6a87ba9298e6503a0234676f3d0af8e02f59905d34c940a797634b94386",
+    "src/tutorial-speech.js": "3a9ea9005e59d7e8fed525c73eb6b448374b0da930418f620df5b85d42d5dec6",
+    "src/three/current-field.js": "1d0fdbd46ca52a23fa64624d72ac152280c5b3e20c2822734d094db926359a23",
+    "src/three/kelp-patches.js": "a193ad774508fcf740438e4ccd5a11b5b5824f829b9409d319a4b7f7e51daec9",
+    "tests/playtest-feedback.test.js": "6c2125168f8398d79033633eddf784936be0eccbc293520302e3dd89fc4b07e5"
+  },
+  "productionIndexSha256": "dabfd4d8d413de6f5acc900c7f21474fa4354e7f8bf427282bc1aaa63a13f953",
+  "tests": {
+    "total": 522,
+    "passed": 521,
+    "failed": 0,
+    "skipped": 1
+  },
+  "verification": {
+    "feedback,input,equipment,fleet,performance": {
+      "started": "2026-09-29T07:22:20.973Z",
+      "ended": "2026-09-29T07:24:43.320Z",
+      "passed": true,
+      "results": [
+        {
+          "label": "lint",
+          "code": 0,
+          "seconds": 6
+        },
+        {
+          "label": "format",
+          "code": 0,
+          "seconds": 6
+        },
+        {
+          "label": "unit regressions",
+          "code": 0,
+          "seconds": 27
+        },
+        {
+          "label": "production build",
+          "code": 0,
+          "seconds": 7
+        },
+        {
+          "label": "feedback",
+          "code": 0,
+          "seconds": 46
+        },
+        {
+          "label": "equipment",
+          "code": 0,
+          "seconds": 18
+        },
+        {
+          "label": "fleet",
+          "code": 0,
+          "seconds": 6
+        },
+        {
+          "label": "input",
+          "code": 0,
+          "seconds": 18
+        },
+        {
+          "label": "performance",
+          "code": 0,
+          "seconds": 8
+        }
+      ]
+    },
+    "equipment,fleet": {
+      "started": "2026-09-29T07:28:28.071Z",
+      "ended": "2026-09-29T07:29:39.731Z",
+      "passed": true,
+      "results": [
+        {
+          "label": "lint",
+          "code": 0,
+          "seconds": 6
+        },
+        {
+          "label": "format",
+          "code": 0,
+          "seconds": 5
+        },
+        {
+          "label": "unit regressions",
+          "code": 0,
+          "seconds": 27
+        },
+        {
+          "label": "production build",
+          "code": 0,
+          "seconds": 7
+        },
+        {
+          "label": "equipment",
+          "code": 0,
+          "seconds": 19
+        },
+        {
+          "label": "fleet",
+          "code": 0,
+          "seconds": 6
+        }
+      ]
+    },
+    "feedback,weather,voyage": {
+      "started": "2026-09-29T07:26:10.959Z",
+      "ended": "2026-09-29T07:27:22.669Z",
+      "passed": true,
+      "results": [
+        {
+          "label": "feedback",
+          "code": 0,
+          "seconds": 48
+        },
+        {
+          "label": "weather",
+          "code": 0,
+          "seconds": 4
+        },
+        {
+          "label": "voyage",
+          "code": 0,
+          "seconds": 18
+        }
+      ]
+    },
+    "feedback,fleet": {
+      "started": "2026-09-29T07:31:59.952Z",
+      "ended": "2026-09-29T07:32:54.238Z",
+      "passed": true,
+      "results": [
+        {
+          "label": "feedback",
+          "code": 0,
+          "seconds": 47
+        },
+        {
+          "label": "fleet",
+          "code": 0,
+          "seconds": 5
+        }
+      ]
+    },
+    "feedback": {
+      "started": "2026-09-29T07:36:43.314Z",
+      "ended": "2026-09-29T07:37:39.372Z",
+      "passed": true,
+      "results": [
+        {
+          "label": "feedback",
+          "code": 0,
+          "seconds": 54
+        }
+      ]
+    },
+    "feedback-water": {
+      "started": "2026-09-29T07:34:46.366Z",
+      "ended": "2026-09-29T07:35:01.991Z",
+      "passed": true,
+      "results": [
+        {
+          "label": "feedback-water",
+          "code": 0,
+          "seconds": 14
+        }
+      ]
+    },
+    "final main checkout": {
+      "started": "2026-09-29T07:39:05.757Z",
+      "ended": "2026-09-29T07:39:50.116Z",
+      "passed": true,
+      "results": [
+        {
+          "label": "lint",
+          "code": 0,
+          "seconds": 6
+        },
+        {
+          "label": "format",
+          "code": 0,
+          "seconds": 5
+        },
+        {
+          "label": "unit regressions",
+          "code": 0,
+          "seconds": 26
+        },
+        {
+          "label": "production build",
+          "code": 0,
+          "seconds": 7
+        }
+      ]
+    }
+  },
+  "feedback": {
+    "records": [
+      {
+        "viewport": [
+          390,
+          844
+        ],
+        "boat": {
+          "x": 195.00000000000017,
+          "y": 392.4600000000002
+        },
+        "kelp": 371,
+        "frank": {
+          "x": 6,
+          "y": 90,
+          "width": 378,
+          "height": 136,
+          "top": 90,
+          "right": 384,
+          "bottom": 226,
+          "left": 6
+        },
+        "visibleHud": [
+          "diverPanel",
+          "frankAboard"
+        ]
+      },
+      {
+        "name": "phone",
+        "models": [
+          {
+            "id": "outboard",
+            "model": "outboard",
+            "loaded": "true"
+          },
+          {
+            "id": "basic",
+            "model": "basic",
+            "loaded": "true"
+          }
+        ]
+      },
+      {
+        "viewport": [
+          844,
+          390
+        ],
+        "boat": {
+          "x": 422,
+          "y": 155.99999999999983
+        },
+        "kelp": 371,
+        "frank": {
+          "x": 10,
+          "y": 60,
+          "width": 300,
+          "height": 121.515625,
+          "top": 60,
+          "right": 310,
+          "bottom": 181.515625,
+          "left": 10
+        },
+        "visibleHud": [
+          "diverPanel",
+          "frankAboard"
+        ]
+      },
+      {
+        "name": "landscape",
+        "models": [
+          {
+            "id": "outboard",
+            "model": "outboard",
+            "loaded": "true"
+          },
+          {
+            "id": "basic",
+            "model": "basic",
+            "loaded": "true"
+          }
+        ]
+      },
+      {
+        "viewport": [
+          1280,
+          800
+        ],
+        "boat": {
+          "x": 640,
+          "y": 399.99999999999966
+        },
+        "kelp": 371,
+        "frank": {
+          "x": 360,
+          "y": 60,
+          "width": 560,
+          "height": 123.78125,
+          "top": 60,
+          "right": 920,
+          "bottom": 183.78125,
+          "left": 360
+        },
+        "visibleHud": [
+          "diverPanel",
+          "frankAboard"
+        ]
+      },
+      {
+        "name": "desktop",
+        "models": [
+          {
+            "id": "outboard",
+            "model": "outboard",
+            "loaded": "true"
+          },
+          {
+            "id": "basic",
+            "model": "basic",
+            "loaded": "true"
+          }
+        ]
+      },
+      {
+        "helm": -1,
+        "drives": [
+          0.58,
+          0.58
+        ]
+      },
+      {
+        "helm": 1,
+        "drives": [
+          -0.58,
+          -0.58
+        ]
+      }
+    ],
+    "errors": []
+  },
+  "exports": {
+    "UrchinSkipper3D-TEMP-ITCHIO.zip": {
+      "bytes": 102177015,
+      "sha256": "0320d924231b358826ec88cce5df8c5fc94bb7649b67d9f0e401f28149821ba9",
+      "crcAndProductionBytesVerified": true
+    },
+    "Urchin Skipper 3D TEMP.zip": {
+      "bytes": 102205531,
+      "sha256": "bd42cc6617f8de32219f3eafc7c14ee5f2464fedde1b70a806589084144da820",
+      "crcAndProductionBytesVerified": true
+    }
+  },
+  "localExportServer": {
+    "port": 5198,
+    "productionHeaderCheck": "passed"
+  },
+  "review": "docs/review/independent-feedback-2026-09-29.md",
+  "limitations": [
+    "Synthetic controllers and emulated touch do not verify physical controllers or real mobile devices.",
+    "Touch uses existing career working-space framing above lower controls.",
+    "Fleet models and kelp remain stylized; whitecap distribution has a regular pattern at wide zoom.",
+    "Existing large geography bundle warning remains."
+  ]
+}

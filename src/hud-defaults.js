@@ -185,6 +185,17 @@ export function defaultHudRect(
   targetPoint,
 ) {
   let rect;
+  if (id === 'frankAboard' && tutorial) {
+    const portrait = width < height;
+    if (touch && height < 500)
+      return { left: 10, top: 60, width: Math.min(300, width / 2 - 76), height: 126 };
+    return {
+      left: portrait ? 6 : Math.max(12, (width - 560) / 2),
+      top: portrait ? 90 : 60,
+      width: portrait ? width - 12 : Math.min(560, width - 260),
+      height: height < 500 ? 122 : 136,
+    };
+  }
   if (id === 'message' && activeMessage && !tutorial && !(touch && width < height)) {
     if (touch && height < 500)
       return { left: 140, top: 86, width: Math.min(220, width * 0.292), height: 134 };

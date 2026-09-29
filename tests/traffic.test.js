@@ -119,9 +119,10 @@ test('spawned taxis cross a patch at 30 knots; tourists use remaining nine-ships
   assert(dfo.route.some((q) => q.x === p.x && q.y === p.y));
   assert.notEqual(tourist.art, w.career.opponents.find((t) => t.hidden).art);
 });
-test('taxi ignores underwater bubbles but a surfaced diver strike uses existing fatal collision rules', () => {
+test('after season one taxi ignores underwater bubbles but a surfaced diver strike can be fatal', () => {
   const w = world(),
     a = actor();
+  w.career.day = 10;
   w.traffic.actors = [a];
   Object.assign(w.diver, { state: 'harvesting', x: 100, y: 250 });
   for (let i = 0; i < 60; i++) {

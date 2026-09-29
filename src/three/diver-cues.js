@@ -1,3 +1,4 @@
+import { seaMessage } from '../sea-messages.js';
 import * as THREE from 'three';
 import { assist, pickupTolerance, visibilityRange } from '../assists.js';
 import { diverVisual, interactionDiver } from '../presentation.js';
@@ -6,31 +7,15 @@ import { selectDiver } from '../world.js';
 import { boatSpec } from '../boats.js';
 import { introActive } from '../career-intro.js';
 import { C } from '../config.js';
-import { placeSpeech } from './cue-placement.js';
-import { diverMotion, portRecoveryPoint } from '../diver-motion.js';
+import { diverMotion } from '../diver-motion.js';
 
 // A direct translation of the original surface prompts, speech and delayed assistance.
 export class DiverCues {
-  constructor(scene, layer) {
+  constructor(scene) {
     this.group = new THREE.Group();
     scene.add(this.group);
     this.time = 0;
     this.outside = [0, 0];
-    this.hudObstacles = [];
-    this.nextObstacleRead = 0;
-    this.labels = [0, 1].map(() => {
-      const label = document.createElement('div'),
-        speech = document.createElement('div'),
-        leader = document.createElement('div');
-      label.style.cssText =
-        'position:absolute;transform:translate(-50%,-100%);white-space:pre;text-align:center;padding:5px 7px;border-radius:4px;background:#102e3be8;color:#eed4a4;font:11px/1.4 system-ui';
-      speech.style.cssText =
-        'position:absolute;transform:translate(-50%,-100%);padding:7px 9px;border-radius:8px;width:max-content;max-width:210px;text-align:center;background:#fff5df;color:#19383d;box-shadow:0 3px 12px #00151a44;font:12px/1.4 system-ui';
-      leader.style.cssText =
-        'position:absolute;height:1px;transform-origin:0 50%;background:#fff5dfaa;pointer-events:none';
-      layer.append(leader, label, speech);
-      return { label, speech, leader, nextSpeechLayout: 0, nextLabelLayout: 0 };
-    });
     this.ring = new THREE.Mesh(
       new THREE.RingGeometry(1.98, 2.02, 48),
       new THREE.MeshBasicMaterial({
@@ -67,23 +52,10 @@ export class DiverCues {
     );
     this.group.add(this.pickupWater);
     this.pickupWater.renderOrder = 2;
-    this.pickupLabel = document.createElement('div');
-    this.pickupLabel.dataset.diverPickup = '';
-    this.pickupLabel.style.cssText =
-      'position:absolute;transform:translate(-100%,-50%);pointer-events:none;padding:5px 8px;border-left:2px solid #90dcb9;border-radius:3px;background:#102d2bdc;color:#c5f2dc;font:600 10px/1.45 system-ui;letter-spacing:.035em;white-space:pre;text-align:right';
-    layer.append(this.pickupLabel);
   }
   reset() {
     this.time = 0;
     this.outside = [0, 0];
-    this.hudObstacles = [];
-    this.nextObstacleRead = 0;
-    for (const entry of this.labels) {
-      entry.speechBox = null;
-      entry.nextSpeechLayout = 0;
-      entry.labelBox = null;
-      entry.nextLabelLayout = 0;
-    }
   }
   update(world, ui, title, project) {
     const b = world.boat,
@@ -92,47 +64,7 @@ export class DiverCues {
     this.time = world.time;
     const hidden = title || !!ui.screen,
       indicators = assist(world, 'diverIndicators', ui.realistic, ui.debug),
-      arrows = [],
-      labelBoxes = [],
-      now = performance.now();
-    const hudObstacles = () => {
-      if (now >= this.nextObstacleRead) {
-        this.hudObstacles = [
-          ...document.querySelectorAll(
-            '[data-hud-window], #keyboardHelm, #touchControls, #touchMenu, #touchHudToggle, #touchLockToggle',
-          ),
-        ]
-          .slice(0, 32)
-          .flatMap((panel) => {
-            const style = getComputedStyle(panel),
-              box = panel.getBoundingClientRect();
-            return !panel.hidden &&
-              style.display !== 'none' &&
-              style.visibility !== 'hidden' &&
-              Number(style.opacity) > 0.25 &&
-              box.width > 0 &&
-              box.height > 0
-              ? [{ left: box.left, right: box.right, top: box.top, bottom: box.bottom }]
-              : [];
-          });
-        this.nextObstacleRead = now + 100;
-      }
-      return this.hudObstacles;
-    };
-    const context = ui.hudMessageActive && !hidden ? document.getElementById('message') : null,
-      contextStyle = context && getComputedStyle(context),
-      contextBox = context?.getBoundingClientRect(),
-      contextHit =
-        contextBox && document.elementFromPoint(contextBox.left + 12, contextBox.top + 12),
-      contextSuppliesTarget =
-        ui.hudMessageActive &&
-        !context?.hidden &&
-        context?.hasAttribute('data-default-position') &&
-        contextBox?.height > 0 &&
-        contextStyle?.visibility === 'visible' &&
-        Number(contextStyle.opacity) >= 0.9 &&
-        !!contextHit &&
-        (contextHit === context || context.contains(contextHit));
+      arrows = [];
     this.group.visible = !hidden;
     this.ring.visible =
       indicators &&
@@ -148,155 +80,24 @@ export class DiverCues {
     this.ring.position.set(target.x, 0.27, target.y);
     for (const d of world.divers) {
       const visual = diverVisual(d),
-        motion = diverMotion(world, d),
         distance = Math.hypot(d.x - b.x, d.y - b.y),
         physicallyVisible = distance <= visibilityRange(world),
         p = project(d.x, d.y),
-        onScreen = p.x >= 15 && p.y >= 15 && p.x <= innerWidth - 15 && p.y <= innerHeight - 15,
-        entry = this.labels[d.id],
-        { label, speech, leader } = entry;
-      const pickup =
-        visual.surface && physicallyVisible && assist(world, 'actionPrompts', ui.realistic);
-      label.hidden =
-        hidden ||
-        !onScreen ||
-        (!pickup && (!indicators || visual.aboard)) ||
-        (pickup && d.id === target.id && contextSuppliesTarget);
-      if (!label.hidden) {
-        const status = pickup
-          ? recoveryStatus(world, pickupTolerance(world, ui.realistic), d)
-          : null;
-        const phases = {
-          preparing: 'Checking kit',
-          entering: 'Entering water',
-          descending: 'Descending',
-          searching: 'Searching',
-          working: 'Picking',
-          ascending: 'Ascending',
-        };
-        const text = pickup
-          ? `${status.available ? '✓' : '↧'} ${d.name} · ${Math.round(distance)} m\n${d.hooking ? (motion.phase === 'boarding' ? 'Climbing aboard…' : motion.phase === 'approaching' ? 'Swimming to ladder…' : 'Hauling…') : status.available ? (d.bagHandled ? 'Bag aboard' : 'Ready to hook') : status.reason === 'SLOW DOWN' ? 'Match the float’s drift' : status.reason === 'OUT OF RANGE' ? 'Bring the left side alongside' : status.reason}`
-          : `${d.id === target.id ? '› ' : ''}${d.name}${phases[motion.phase] ? ` · ${phases[motion.phase]}` : ''}`;
-        const changed = label.textContent !== text;
-        if (changed) label.textContent = text;
-        label.style.color = status?.available ? '#a0edcc' : '#f3d499';
-        const overlaps = (box, obstacle) =>
-          box &&
-          box.left < obstacle.right &&
-          box.left + box.width > obstacle.left &&
-          box.top < obstacle.bottom &&
-          box.top + box.height > obstacle.top;
-        if (
-          changed ||
-          !entry.labelBox ||
-          now >= entry.nextLabelLayout ||
-          labelBoxes.some((box) => overlaps(entry.labelBox, box))
-        ) {
-          const size = { width: label.offsetWidth, height: label.offsetHeight };
-          entry.labelBox = placeSpeech(
-            p,
-            size,
-            { width: innerWidth, height: innerHeight },
-            [...hudObstacles(), ...labelBoxes],
-            {
-              left: p.x + (d.id ? 20 : -20) - size.width / 2,
-              top: p.y - 26 - d.id * 17 - size.height,
-            },
-          );
-          entry.nextLabelLayout = now + 100;
-        }
-        const box = entry.labelBox;
-        label.style.left = box.left + box.width / 2 + 'px';
-        label.style.top = box.top + box.height + 'px';
-        label.hidden = [...hudObstacles(), ...labelBoxes].some((obstacle) =>
-          overlaps(box, obstacle),
-        );
-        if (!label.hidden)
-          labelBoxes.push({
-            left: box.left,
-            top: box.top,
-            right: box.left + box.width,
-            bottom: box.top + box.height,
-          });
-      } else entry.labelBox = null;
+        onScreen = p.x >= 15 && p.y >= 15 && p.x <= innerWidth - 15 && p.y <= innerHeight - 15;
       const talking =
         !hidden &&
         visual.surface &&
         physicallyVisible &&
         distance < 28 &&
         d.speech?.until > world.time;
-      speech.hidden = !talking;
-      leader.hidden = !talking;
-      if (talking) {
-        const text = `${d.speech.icon}${d.speech.text ? ' ' + d.speech.text : ''}`,
-          changed = speech.textContent !== text;
-        if (changed) speech.textContent = text;
-        const partner = world.divers.some(
-          (o) =>
-            o !== d &&
-            o.state === 'surface' &&
-            o.speech?.until > world.time &&
-            Math.hypot(o.x - d.x, o.y - d.y) < 14,
+      if (talking)
+        seaMessage(
+          ui,
+          `diver-${d.id}`,
+          `${d.speech.until}:${d.speech.text}`,
+          `${d.name} · ${d.speech.icon}${d.speech.text ? ' ' + d.speech.text : ''}`,
         );
-        if (changed || !entry.speechBox || world.time >= entry.nextSpeechLayout) {
-          const obstacles = [...hudObstacles(), ...labelBoxes];
-          const spec = boatSpec(world),
-            corners = [-1, 1].flatMap((sx) =>
-              [-1, 1].map((sy) => {
-                const x = (sx * spec.width) / 2,
-                  y = (sy * spec.length) / 2;
-                return project(
-                  b.x + x * Math.cos(b.heading) - y * Math.sin(b.heading),
-                  b.y + x * Math.sin(b.heading) + y * Math.cos(b.heading),
-                );
-              }),
-            );
-          obstacles.push({
-            left: Math.min(...corners.map((corner) => corner.x)) - 12,
-            right: Math.max(...corners.map((corner) => corner.x)) + 12,
-            top: Math.min(...corners.map((corner) => corner.y)) - 12,
-            bottom: Math.max(...corners.map((corner) => corner.y)) + 12,
-          });
-          for (const diver of world.divers) {
-            if (
-              !diverVisual(diver).surface ||
-              Math.hypot(diver.x - b.x, diver.y - b.y) > visibilityRange(world)
-            )
-              continue;
-            const float = project(diver.x, diver.y);
-            obstacles.push({
-              left: float.x - 12,
-              right: float.x + 12,
-              top: float.y - 12,
-              bottom: float.y + 12,
-            });
-          }
-          const size = { width: speech.offsetWidth, height: speech.offsetHeight };
-          entry.speechBox = placeSpeech(
-            p,
-            size,
-            { width: innerWidth, height: innerHeight },
-            obstacles,
-            {
-              left: p.x + (partner ? (d.id ? 90 : -90) : 0) - size.width / 2,
-              top: p.y - 76 - size.height,
-            },
-          );
-          entry.nextSpeechLayout = world.time + 0.1;
-          speech.style.left = entry.speechBox.left + size.width / 2 + 'px';
-          speech.style.top = entry.speechBox.top + size.height + 'px';
-        }
-        const box = entry.speechBox,
-          x = Math.max(box.left, Math.min(box.left + box.width, p.x)),
-          y = Math.max(box.top, Math.min(box.top + box.height, p.y)),
-          dx = p.x - x,
-          dy = p.y - y;
-        leader.hidden = Math.hypot(dx, dy) < 12;
-        leader.style.left = x + 'px';
-        leader.style.top = y + 'px';
-        leader.style.width = Math.hypot(dx, dy) + 'px';
-        leader.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
-      }
+
       this.outside[d.id] = onScreen || visual.aboard ? 0 : this.outside[d.id] + dt;
       if (
         !hidden &&
@@ -342,7 +143,6 @@ export class DiverCues {
       );
     this.sector.visible = !hidden && (ui.debug || ((prompts || introActive(world)) && !!nearby));
     this.pickupWater.visible = this.sector.visible;
-    this.pickupLabel.hidden = !this.sector.visible;
     if (this.sector.visible) {
       const spec = boatSpec(world),
         tolerance = pickupTolerance(world, ui.realistic),
@@ -394,28 +194,10 @@ export class DiverCues {
       }
       const status = nearby?.state === 'surface' ? recoveryStatus(world, tolerance, nearby) : null,
         ready = status?.available,
-        color = ready ? 0x91e4b5 : 0x9fc7b7,
-        point = portRecoveryPoint(world, 1.05),
-        p = project(point.x, point.y);
+        color = ready ? 0x91e4b5 : 0x9fc7b7;
       this.sector.material.color.setHex(color);
       this.pickupWater.material.color.setHex(color);
       this.pickupWater.material.opacity = ready ? 0.085 : 0.04;
-      this.pickupLabel.textContent = `PORT LADDER · LEFT SIDE\n${ready ? (nearby.hooking ? 'Hold this drift · recovery in progress' : 'Alongside · ready to recover') : status?.reason === 'SLOW DOWN' ? 'Neutral · match the float’s drift' : 'Bring the float alongside here'}`;
-      this.pickupLabel.style.left = p.x - 18 + 'px';
-      this.pickupLabel.style.top = p.y + 23 + 'px';
-      const labelBox = this.pickupLabel.getBoundingClientRect();
-      // Compact touch places the live recovery card beside the rail. That card
-      // already names the port ladder: keep its text clear instead of stacking
-      // a duplicate callout over its duration, refusal or urgent information.
-      this.pickupLabel.hidden =
-        !!contextBox &&
-        !context.hidden &&
-        contextStyle?.visibility === 'visible' &&
-        Number(contextStyle.opacity) > 0.5 &&
-        labelBox.left < contextBox.right + 4 &&
-        labelBox.right > contextBox.left - 4 &&
-        labelBox.top < contextBox.bottom + 4 &&
-        labelBox.bottom > contextBox.top - 4;
       this.sector.position.set(b.x, 0, b.y);
       this.sector.rotation.y = -b.heading;
       this.pickupWater.position.copy(this.sector.position);

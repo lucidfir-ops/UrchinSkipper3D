@@ -252,6 +252,7 @@ test('surface opinions report new sampled information despite chatter cooldown a
 });
 test('selfish rival identity is persistent; ordinary routes increasingly cross working beds without changing event cadence', () => {
   const w = careerWorld(createCareer(171709));
+  w.career.day = 10;
   chooseGround(w, 'near');
   assert.equal(rivalHabit({ id: 'team-1' }), 'encroaching');
   assert.equal(rivalHabit({ id: 'team-0' }), 'independent');

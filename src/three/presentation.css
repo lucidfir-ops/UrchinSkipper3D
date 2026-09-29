@@ -810,3 +810,53 @@ body.touch-playing #touchControls #touchBoat {
     height: 74px;
   }
 }
+
+/* September 28 screenshot layout: brief speech lives at the HUD edge. */
+#seaSpeech {
+  position: fixed;
+  z-index: 24;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  padding: 7px 12px;
+  border-radius: 12px 12px 4px 12px;
+  background: #fff1d8;
+  color: #173537;
+  box-shadow: 0 3px 14px #001a2460;
+  font: 500 12px/1.35 system-ui;
+  text-align: center;
+  pointer-events: none;
+}
+#seaSpeech::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 24px;
+  border: 5px solid transparent;
+  border-top-color: #fff1d8;
+  border-bottom: 0;
+}
+body #playtest .vessel-model canvas {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 720 / 440;
+  object-fit: contain;
+}
+body #playtest .vessel-model {
+  width: 100%;
+  min-width: 0;
+}
+body #playtest .preview-unavailable::after {
+  content: '3D preview unavailable';
+  display: block;
+  font-size: 12px;
+}
+
+body.intro-playing #frankAboard .frank-helm[hidden] {
+  display: none;
+}
+body #playtest .vessel-model canvas {
+  max-height: none;
+}
+body #playtest .vessel-model {
+  max-width: none;
+}

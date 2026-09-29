@@ -82,7 +82,7 @@ test('Custom restores chosen toggles, realistic allows UI but excludes hidden ai
   assert(w.career.assists.diverPortraits);
   assert.equal(toggleAssist(w, 'groundDots'), false);
   toggleAssist(w, 'weatherOverlay');
-  assert.equal(w.career.assists.weatherOverlay, false);
+  assert.equal(w.career.assists.weatherOverlay, true);
   delete w.career.assists.diverCards;
   normalizeAssists(w.career);
   assert(w.career.assists.diverCards);

@@ -108,6 +108,14 @@ try {
     const button = await page.locator('.shop-inline-buy').boundingBox();
     assert(button.height >= 44);
     await page.locator('.shop-inline-buy').tap();
+    await page.waitForTimeout(500);
+    await shot(`touch-confirm-${viewport.width}`);
+    const detailBox = await page.locator('.career-detail').boundingBox();
+    const cancelBox = await page.locator('[data-action="cancel-purchase"]').boundingBox();
+    assert(
+      detailBox.y + detailBox.height <= cancelBox.y,
+      'cost details must not overlap purchase buttons',
+    );
     await page.locator('[data-action="cancel-purchase"]').tap();
   }
   await page.setViewportSize({ width: 1280, height: 800 });

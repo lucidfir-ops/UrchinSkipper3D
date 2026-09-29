@@ -169,6 +169,8 @@ test('water arrows follow mode independently of dashboard across coasts and relo
     w.day.groundId = def.id;
     enterSector(w, def.id);
     setPreset(w, 'easy');
+    assert(!assist(w, 'currentOverlay'));
+    toggleAssist(w, 'currentOverlay');
     toggleAssist(w, 'currentOverlay');
     assert(assist(w, 'currentArrows'));
     assert(!assist(w, 'currentOverlay'));
@@ -176,7 +178,7 @@ test('water arrows follow mode independently of dashboard across coasts and relo
     assert(!assist(w, 'currentArrows'));
   }
   setPreset(w, 'easy');
-  toggleAssist(w, 'currentOverlay');
+  assert(!assist(w, 'currentOverlay'));
   w = decode(encode(w));
   assert(assist(w, 'currentArrows'));
   assert(!assist(w, 'currentOverlay'));
@@ -218,8 +220,9 @@ test('taxi curves past player without stop-start and completes its committed pas
     assert(deflection > 15);
   }
 });
-test('taxi aims at undiscovered bubbles once at spawn, without homing afterward', () => {
+test('after training days taxi aims at undiscovered bubbles once at spawn, without homing afterward', () => {
   const w = sea();
+  w.career.day = 10;
   Object.assign(w.boat, { x: 400, y: 450 });
   Object.assign(w.divers[0], { x: 300, y: 300, state: 'searching', patch: null });
   const a = spawnTraffic(w, 'taxi');
@@ -238,6 +241,7 @@ test('fatal surface strikes from every boat leave saved blood; underwater marker
     const w = sea(),
       d = w.divers[0],
       b = { ...w.boat, id: 'striker', kind, speed: 10, vx: 0, vy: -10, throttle: 1 };
+    w.career.day = 10;
     Object.assign(d, { x: 300, y: 295, state: 'surface' });
     if (kind === 'player') Object.assign(w.boat, b);
     checkDiverSafety(

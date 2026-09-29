@@ -1,12 +1,19 @@
 # Urchin Skipper 3D — current status
 
-September 28, 2026 · cohesive working-boat, diver and coastal revision of the independent Three.js edition. Work, exports and publication belong only to this project and [lucidfir-ops/UrchinSkipper3D](https://github.com/lucidfir-ops/UrchinSkipper3D). The original 2D project and repository were used read-only.
+September 29, 2026 · screenshot feedback revision of the independent Three.js edition. Work, exports and publication belong only to this project and [lucidfir-ops/UrchinSkipper3D](https://github.com/lucidfir-ops/UrchinSkipper3D). The original 2D project and repository were used read-only.
 
 ## Design authority
 
 The inherited [living Bible](bible.md) governs gameplay. Its September 26 amendments authorize this separate Three.js presentation and live coastal title; the September 27 commission authorizes substantial menu and HUD restructuring. The September 28 playtest commission extends equipment fitting, physical dive operations, the near-surface water column, training and navigation while preserving playtested behaviour. Preserve the orthographic following camera, exactly two autonomous divers, established information rules and original simulation geometry. Historical links in copied reference documents describe provenance in the 2D workspace, not additional active 3D requirements.
 
 ## Playable build
+
+
+The September 29 feedback revision follows `feedback/9-28`: tutorial instruments give way to Frank and a clear working viewport, while career defaults keep five gauges, crew and controls. Pickup text is short-lived speech above Frank (or at the HUD edge in career). Tutorial and career use matching camera framing; compact touch retains its existing space above the lower controls. Saved custom layouts remain intact.
+
+All twelve fleet cards now render the corresponding 3D model and remain stable through reload. Named boats have distinct cabin positions, hull forms, colours and source-specific deck fittings; outboards and legs turn with the rudder. Port cranes, bottle racks, timber cockpit furniture, tug winch/fenders, bow ramp, lockers, work mats and catamaran nets complement the retained ladder, tanks and crew animation. Chandlery costs stay above the purchase buttons, and the fitting locator/caption are red.
+
+Taxi contact cannot injure on career days 1–3, can only injure through the rest of season one, and regains normal consequences afterward. Near-miss routes also avoid surfaced divers during the first three days. Current arrows sample a fixed water grid across the viewport; procedural kelp follows current and tide, including Frank’s cove. Physical boulders fade through the near-surface column, and wind drives sparse whitecaps that disappear at zero wind. Damage sheen uses irregular translucent patches instead of circular rings.
 
 The full career, 15 physical maps, 12 career hulls, crew, controls, working-day simulation and procedural audio remain. Three.js draws all visible world geometry, with explicit profiles for all twelve career boats and twenty-five inherited traffic identities. The water is darker, greener and less transparent; kelp occupies localized stands. Divers prepare, enter, descend, work, ascend, approach the port ladder, lift their bags and climb aboard. Bodies lose colour and contrast through the water column and disappear by about five metres; physical visibility does not grant hidden status information.
 
@@ -20,28 +27,25 @@ Build with `npm ci && npm run build`; `npm start` serves http://127.0.0.1:5184/.
 
 ## Verification
 
-- Full regression suite: 518 tests, 517 pass, 0 fail, 1 intentional private-save skip. Lint, formatting and production build pass.
-- Chromium hardware rendering and Firefox keyboard/input checks pass. Keyboard helm persistence, neutral/centre, deployment, one-press bag exchange, boarding, pause, chart and graphics persistence verified.
-- Synthetic controller career purchase/departure and complete natural voyage pass: 300 lb landed on time, 100% hull, both divers fit. No browser page or network errors.
-- Vessel contracts cover source-exact bag positions/layers, 97-bag buffer growth, rival catch/divers, all twelve career profiles, twenty-five traffic profiles, night visibility, work-light switches, departure fading, propulsion wash and incident cues.
-- Day/fog/rain/night captures and contracts pass on AMD hardware. Weather visibility, mist alignment, actor concealment and simulation non-mutation verified. Coastline/intertidal depths agree with simulation within float precision.
-- Nested production subdirectory/iframe loading passes with no missing assets. WebGL context interruption/recovery was exercised: a readable pause notice appears and rendering resumes after restoration.
-- Default desktop, compact touch tutorial and career phone layouts pass screenshot review. Native touch actions, 44px core controls at 100%, deliberate smaller scales, rotated layouts and maximum-zoom button hit testing pass.
-- Eighteen production Chromium suites pass: the thirteen retained checks plus equipment, learning, diver operations, career fleet and traffic fleet reviews. These exercise purchase/cancel/fit, native volume input, chart markers, all boat previews, actual diver commands and frozen depth/phase presentation fixtures. The final HUD rerun replaces a fixed-delay fixture race with waiting for its actual rendered result; the release receipt preserves that follow-up separately. Static captures receive separate visual review and are not treated as animation or physical-input proof.
-- Independent reviewers inspected equipment, all twelve/twenty-five boat galleries, depth/phase captures, chart, lessons, volume and underwater crew information. They caught and drove corrections to water banding, misleading equipment actions, duplicate recovery overlays, clipped labels and invalid screenshot fixtures. Separate CPU review reproduced and verified three final physical continuity fixes; interrupted catch transfer and old saves remain correct. Saved custom window rectangles retain precedence over default layout changes.
-- Reviewed 1280×800 and 844×390 desktop views. The measured AMD RADV VANGOGH scene sustained 60 FPS over 240 live frames at 1280×800 with shadows; this is a controlled sample, not a guarantee for every device or scenario.
+- Full regression suite: 522 tests, 521 pass, 0 fail, 1 intentional private-save skip. Lint, formatting and production build pass; the existing large geography-chunk warning remains.
+- Production Chromium checks pass for feedback layouts, equipment, all twelve fleet models, keyboard/touch input, performance, day/fog/rain/night rendering and a complete career voyage. Synthetic controller checks cover equipment purchase/cancel and the career voyage; they do not establish physical controller support.
+- Phone 390×844, landscape touch 844×390 and desktop 1280×800 tutorial/pickup/starter captures; three reload checks preserve boat identities; speech expires after 2.6 seconds. Portrait/landscape purchase confirmations keep their detail box above the buttons.
+- Frozen tide/wind fixtures show boulder depth 5/2/0.3/−1.5 m, kelp exposure at tides −1/+2/+5 m, and wind 0/5/15. Actual twin outboard transforms turn together at both helm extremes. Current lattice samples remain fixed after ownship moves. These fixtures test presentation, not natural tide timing or physical input.
+- A complete career voyage lands 300 lb on time with 100% hull and both divers fit. Taxi tests cover days 1–3, 4/9 and later-season fatal risk without resetting onboarding protection. Rendering/non-mutation tests now include physical rock geometry.
+- AMD RADV VANGOGH measured 240 frames in four seconds at 1280×800, approximately 60 FPS. This controlled sample is not a device-wide performance guarantee.
+- Separate [visual review](docs/review/independent-feedback-2026-09-29.md) drove fixes to landscape Frank placement, capture timing, whitecap shape, five-metre rock contrast, wide-view current arrow readability and source-specific fleet fittings.
 
-Reproduce using `npm run verify`; install Playwright Chromium first. Targeted Firefox is available through `--browsers-only --suite=firefox`. Local evidence is under `test-results/`; the committed scripts recreate it. [Playtest guide](PLAYTEST_GUIDE.md).
+Reproduce with `npm run verify -- --suite=feedback,equipment,fleet,input,performance,weather,voyage`. Local evidence is in `test-results/`; the [release receipt](docs/review/release-verification-2026-09-29-feedback.json) records verification and export hashes. Earlier September 28 validation remains documented in the existing review records.
 
 ## Remaining acceptance
 
-Physical USB Xbox/Steam Deck controls, mobile device performance, Safari, actual itch.io hosting and long-career upgrade balance need human playtesting in this edition. Synthetic input does not establish physical controller behaviour. Near-surface people are recognizable close up but remain physically small at the widest orthographic zoom. Some commercial hulls share a family silhouette, and unusual traffic artwork is interpreted rather than reproduced exactly. The presentation is deliberately stylized; completed implementation and automated checks are not full device, balance or new-player acceptance.
+Physical USB Xbox/Steam Deck controls, mobile device performance, Safari, actual itch.io hosting and long-career upgrade balance need human playtesting in this edition. Synthetic input does not establish physical controller behaviour. Near-surface people are recognizable close up but remain physically small at the widest orthographic zoom. Career boats now have distinct source-based fittings and layouts, but remain stylized models rather than exact raster reconstructions. The wide wind-crest pattern can still look regular, and kelp blades are a stylized interpretation. Unusual traffic artwork is interpreted rather than reproduced exactly. The presentation is deliberately stylized; completed implementation and automated checks are not full device, balance or new-player acceptance.
 
 ## GitHub backup and release workflow
 
 Use this independent Git repository normally; never synchronize into or push the 2D repository. Selected rebuildable source, assets and essential documentation belong in Git. Dependencies, builds, private saves, browser profiles, recordings, test output and TEMP ZIPs stay outside it. New exports are additive; preserve older exports.
 
-The latest cohesive-operations release is under `exports/2026-09-28-cohesive-operations/`; the earlier September 28 interface and September 26 exports are retained:
+The latest feedback release is under `exports/2026-09-29-feedback/`; all September 28 and September 26 exports are retained:
 
 - `UrchinSkipper3D-TEMP-ITCHIO.zip`: standalone HTML build for the separate 3D itch.io project; upload remains manual.
 - `Urchin Skipper 3D TEMP.zip` and its extracted folder: local/Wi-Fi edition with isolated port 5198 and portable launcher.

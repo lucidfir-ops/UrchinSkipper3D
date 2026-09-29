@@ -1,3 +1,5 @@
+import { CurrentField } from './current-field.js';
+import { updateSeaMessages } from '../sea-messages.js';
 import * as THREE from 'three';
 import { Sky } from 'three/addons/objects/Sky.js';
 import { CoastalWorld } from './world.js';
@@ -7,7 +9,7 @@ import { boatSpec } from '../boats.js';
 import { departureBoat } from '../departure-transition.js';
 import { lightningState } from '../weather-effects.js';
 import { assist } from '../assists.js';
-import { currentAt, createWorld } from '../world.js';
+import { createWorld } from '../world.js';
 import { NavigationOverlay } from './navigation.js';
 import { DiverCues } from './diver-cues.js';
 import { coastalDaylight } from './water-optics.js';
@@ -65,23 +67,8 @@ export class MarineRenderer {
     this.vessels = new VesselView(this.scene);
     this.markers = [];
     this.lessonCues = { labels: this.navigation.lessonLabels };
-    this.currentArrows = new THREE.Group();
+    this.currentArrows = new CurrentField();
     this.scene.add(this.currentArrows);
-    for (let i = 0; i < 9; i++) {
-      const arrow = new THREE.ArrowHelper(
-        new THREE.Vector3(0, 0, -1),
-        new THREE.Vector3(),
-        3,
-        0xbfe3d3,
-        0.7,
-        0.42,
-      );
-      arrow.line.material.transparent = true;
-      arrow.line.material.opacity = 0.32;
-      arrow.cone.material.transparent = true;
-      arrow.cone.material.opacity = 0.45;
-      this.currentArrows.add(arrow);
-    }
     this.rain = this.makeRain();
     this.resize = () => {
       this.width = window.innerWidth;
@@ -232,7 +219,7 @@ export class MarineRenderer {
       this.target.x -= ((span * this.width) / this.height) * 0.18;
       this.target.z -= 5;
     } else {
-      // Preserve the original compact touch lesson's screen-space framing.
+      // Tutorial and career share the same working viewport framing.
       // Phaser follows target minus offset; Three's tilted orthographic view
       // foreshortens the sea-level Z axis, which we account for here.
       const offset = this.host.cameras.main.followOffset;
@@ -269,21 +256,11 @@ export class MarineRenderer {
     this.navigation.update(world, ui, title, (x, y) => this.project(x, y));
     this.diverCues.update(world, ui, title, (x, y) => this.project(x, y));
     this.currentArrows.visible = !title && assist(world, 'currentArrows', ui.realistic, ui.debug);
-    this.currentArrows.children.forEach((a, i) => {
-      const x = b.x + ((i % 3) - 1) * 19,
-        z = b.y + (Math.floor(i / 3) - 1) * 19;
-      const c = currentAt(world, x, z),
-        speed = Math.hypot(c.x, c.y);
-      a.visible = speed > 0.035;
-      a.position.set(x, 0.18, z);
-      if (speed > 0.035) {
-        a.setDirection(new THREE.Vector3(c.x, 0, c.y).normalize());
-        a.setLength(Math.min(5, 1.4 + speed * 3), 0.7, 0.4);
-      }
-    });
+    this.currentArrows.update(world, ((span * this.width) / this.height) * 1.12, span * 1.3);
     this.rain.visible = (world.weather?.rain || 0) > 0.06;
     this.rain.position.set(b.x, 8 - ((world.time * 19) % 8), b.y);
     this.rain.material.opacity = Math.min(0.4, (world.weather?.rain || 0) * 0.35);
+    updateSeaMessages(ui);
     this.renderer.render(this.scene, this.camera);
     document.body.classList.toggle('three-title', title);
     document.body.classList.toggle('three-at-sea', ui.started && !ui.screen);

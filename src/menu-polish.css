@@ -280,7 +280,9 @@ body #playtest:is([data-screen='purchase'], [data-screen='buyboat']) .career-lay
   overflow: visible;
 }
 body #playtest:is([data-screen='purchase'], [data-screen='buyboat']) .career-detail {
-  max-height: 35dvh;
+  max-height: none;
+  flex: 0 0 auto;
+  overflow: visible;
   min-height: 0;
 }
 body #playtest:is([data-screen='purchase'], [data-screen='buyboat']) .career-detail p:last-child {
