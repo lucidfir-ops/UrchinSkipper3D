@@ -5,6 +5,7 @@ import { careerWorld, decode, encode } from '../src/career-save.js';
 import { chooseGround, latestDeparture } from '../src/day.js';
 import {
   advanceDebugTime,
+  createDebugTimeAdvance,
   debugActivate,
   debugChoices,
   setDebugTide,
@@ -105,4 +106,36 @@ test('set-time choices clearly reject clock rewind', () => {
   const choices = debugChoices({ screen: 'debug-time' }, w);
   assert(choices.includes('12:00 · already passed'));
   assert(choices.includes('Advance to 15:00'));
+});
+
+test('incremental debug time exposes progress, stops without overshoot, and restores held clock', () => {
+  const w = workingWorld();
+  w.career.testConditions = { freezeClock: true };
+  const start = w.day.minute;
+  const job = createDebugTimeAdvance(w, 30);
+  assert.equal(job.progress, 0);
+  assert.equal(w.career.testConditions.freezeClock, false);
+  for (let i = 0; i < 120; i++) job.tick();
+  assert(job.progress > 0 && job.progress < 1);
+  assert(Math.abs(w.day.minute - start - 1) < 1e-7);
+  job.stop();
+  job.tick();
+  assert(job.done);
+  assert.match(job.finish().reason, /Advanced 1 minutes.*stopped here/);
+  assert.equal(w.career.testConditions.freezeClock, true);
+  assert(Math.abs(w.day.minute - start - 1) < 1e-7);
+});
+
+test('incremental time stops at mandatory rescue and rejects unavailable time changes', () => {
+  const w = workingWorld(),
+    start = w.time;
+  const job = createDebugTimeAdvance(w, 30);
+  w.emergency = { mandatoryRescue: true };
+  job.tick();
+  assert(job.done);
+  assert.equal(w.time, start);
+  assert.match(job.finish().reason, /mandatory emergency/);
+  assert(createDebugTimeAdvance(w, -1).error);
+  w.day.phase = 'planning';
+  assert(createDebugTimeAdvance(w, 30).error);
 });

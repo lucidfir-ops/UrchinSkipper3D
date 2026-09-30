@@ -1,3 +1,4 @@
+import { updateWorkLightWater } from './work-light-water.js';
 import { CurrentField } from './current-field.js';
 import { updateSeaMessages } from '../sea-messages.js';
 import * as THREE from 'three';
@@ -252,6 +253,8 @@ export class MarineRenderer {
     this.coast.setVisibility?.(world, ui);
     this.coast.update(world, dt, this.camera);
     this.vessels.update(world, dt);
+    if (this.coast.water)
+      updateWorkLightWater(this.coast.water.material.uniforms, this.vessels.workSpots);
     this.markers = this.vessels.markers || [];
     this.navigation.update(world, ui, title, (x, y) => this.project(x, y));
     this.diverCues.update(world, ui, title, (x, y) => this.project(x, y));

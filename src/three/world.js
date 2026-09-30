@@ -1,3 +1,4 @@
+import { workLightUniforms, workLightFragment } from './work-light-water.js';
 import * as THREE from 'three';
 import { bedDepthAt, seaLevel } from '../terrain.js';
 import { CoastalLife } from './coastal-life.js';
@@ -145,7 +146,9 @@ const waterVertex = /* glsl */ `
     gl_Position = projectionMatrix * viewMatrix * world;
   }
 `;
-const waterFragment = /* glsl */ `
+const waterFragment =
+  workLightFragment +
+  /* glsl */ `
   uniform sampler2D uDepth;
   uniform sampler2D uRipples;
   uniform float uSize;
@@ -235,6 +238,7 @@ const waterFragment = /* glsl */ `
     whitecaps *= smoothstep(.25,1.3,actualDepth);
     color = mix(color,vec3(.70,.80,.75),whitecaps);
     color *= .12 + .88*uDaylight;
+    color += workLightWater(vWorld, normal, view, uRough, microA.b);
     // Turbid coastal water retains bottom/shadow detail only on very shallow
     // shelves. Deep green is absorption, not a transparent blue floor tint.
     float alpha = mix(.69,.997,smoothstep(.0,5.0,depth));
@@ -651,6 +655,7 @@ export class CoastalWorld {
     this.depthTexture.needsUpdate = true;
     const uniforms = THREE.UniformsUtils.merge([
       THREE.UniformsLib.fog,
+      workLightUniforms(),
       {
         uDepth: { value: this.depthTexture },
         uRipples: { value: this.textures.ripples },

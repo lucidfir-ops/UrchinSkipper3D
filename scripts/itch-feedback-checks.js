@@ -98,7 +98,7 @@ export async function itchFeedbackChecks(browser) {
       e.dispatchEvent(new Event('input'));
       e.dispatchEvent(new Event('change'));
     });
-    await page.waitForFunction(() => localStorage.getItem('urchin-time-speed-v1') === '100');
+    await page.waitForFunction(() => localStorage.getItem('urchin-time-speed-v2') === '100');
     await shot('settings');
     await page.locator('#timeSpeed').evaluate((e) => {
       e.value = '25';

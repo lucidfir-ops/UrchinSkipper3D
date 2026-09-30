@@ -41,8 +41,10 @@ export class CoastalMist {
           vec2 sea=vWorld-uShift;
           float distanceFromSkipper=length(sea-uBoat);
           float wisps=texture2D(uNoise,sea*.003+vec2(uTime*.00065,-uTime*.0003)).b;
-          float haze=smoothstep(uRange*(.24+wisps*.16),uRange,distanceFromSkipper);
-          haze*=.91+wisps*.12;
+          // Continuous extinction avoids a bright, hard fog donut around
+          // an unnaturally untouched central circle.
+          float opticalDistance=distanceFromSkipper/uRange;
+          float haze=1.0-exp(-3.8*pow(opticalDistance,1.35)*(.9+wisps*.2));
           // Nothing beyond the original sight limit is exposed by moving mist.
           haze=max(haze,smoothstep(uRange*.91,uRange,distanceFromSkipper));
           if(haze<.003) discard;
@@ -70,6 +72,10 @@ export class CoastalMist {
     this.uniforms.uBoat.value.set(world.boat.x, world.boat.y);
     this.mesh.position.set(world.boat.x, 80, world.boat.y);
     this.uniforms.uTint.value.copy(this.scene.fog?.color || new THREE.Color('#9bafb0'));
+    if (!world.weather?.night)
+      this.uniforms.uTint.value.multiplyScalar(
+        0.45 + 0.55 * Math.sqrt(world.weather?.sunlight ?? 1),
+      );
     if (camera) {
       camera.getWorldDirection(this.direction);
       const scale = this.mesh.position.y / Math.min(-0.05, this.direction.y);

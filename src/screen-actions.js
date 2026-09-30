@@ -186,6 +186,7 @@ export function choices(world) {
   return ['Back / Close'];
 }
 export function activate(world) {
+  if (this.debugAdvancing) return;
   if (this.index <= -3) {
     this.panel.querySelector(`[data-choice-index="${this.index}"]`)?.click();
     return;

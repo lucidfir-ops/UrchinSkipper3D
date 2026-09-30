@@ -27,27 +27,142 @@ function markAssisted(w) {
 // Debug clock changes move the same simulation that ordinary play moves. They
 // are deliberately forward-only: assigning an earlier clock would rewind the
 // display while leaving crew, catch, traffic and safety history in the future.
-export function advanceDebugTime(w, minutes) {
+export function createDebugTimeAdvance(w, minutes) {
   if (!['working', 'practice'].includes(w.day.phase))
-    return { ok: false, reason: 'Start a working trip before advancing simulation time.' };
+    return { error: 'Start a working trip before advancing simulation time.' };
   if (!Number.isFinite(minutes) || minutes <= 0)
-    return { ok: false, reason: 'Debug time can only move forward.' };
-  const start = debugClockMinute(w),
-    seconds = minutes / C.day.minutesPerSecond,
+    return { error: 'Debug time can only move forward.' };
+  const seconds = minutes / C.day.minutesPerSecond,
     steps = Math.ceil(seconds * 60),
     dt = seconds / steps,
+    start = debugClockMinute(w),
     held = w.career?.testConditions?.freezeClock;
+  let completed = 0,
+    stopped = false,
+    finished = false;
   if (held) w.career.testConditions.freezeClock = false;
   markAssisted(w);
-  for (let i = 0; i < steps && !w.emergency?.mandatoryRescue; i++) step(w, {}, dt);
-  if (held) w.career.testConditions.freezeClock = true;
-  const advanced = debugClockMinute(w) - start;
   return {
-    ok: advanced > 0,
-    reason: w.emergency?.mandatoryRescue
-      ? `Advanced ${Math.max(0, Math.round(advanced))} minutes; stopped at a mandatory emergency.`
-      : `Simulation advanced ${Math.round(advanced)} minutes to ${formatClock(debugClockMinute(w))}.`,
+    start,
+    target: start + minutes,
+    get progress() {
+      return completed / steps;
+    },
+    get done() {
+      return (
+        completed >= steps ||
+        stopped ||
+        !!w.emergency?.mandatoryRescue ||
+        !['working', 'practice'].includes(w.day.phase)
+      );
+    },
+    tick() {
+      if (!this.done) {
+        step(w, {}, dt);
+        completed++;
+      }
+    },
+    stop() {
+      stopped = true;
+    },
+    finish() {
+      if (!finished && held) w.career.testConditions.freezeClock = true;
+      finished = true;
+      const advanced = completed * dt * C.day.minutesPerSecond;
+      return {
+        ok: completed > 0,
+        reason:
+          `Advanced ${Math.round(advanced)} minutes to ${formatClock(debugClockMinute(w))}` +
+          (w.emergency?.mandatoryRescue
+            ? '; stopped at a mandatory emergency.'
+            : stopped
+              ? '; stopped here.'
+              : '.'),
+      };
+    },
   };
+}
+
+// Headless callers can drain the same job. The player-facing path yields between
+// short batches, keeping painting, input and the progress clock responsive.
+export function advanceDebugTime(w, minutes) {
+  const job = createDebugTimeAdvance(w, minutes);
+  if (job.error) return { ok: false, reason: job.error };
+  try {
+    while (!job.done) job.tick();
+  } finally {
+    job.finish();
+  }
+  return job.finish();
+}
+
+export async function advanceDebugTimeWithFeedback(ui, w, minutes) {
+  if (ui.debugAdvancing) return;
+  const job = createDebugTimeAdvance(w, minutes);
+  if (job.error) {
+    ui.menuNotice = job.error;
+    ui.signature = null;
+    return;
+  }
+  ui.debugAdvancing = job;
+  const previousFocus = document.activeElement;
+  const dialog = document.createElement('dialog');
+  dialog.className = 'time-advance';
+  dialog.setAttribute('aria-labelledby', 'timeAdvanceTitle');
+  dialog.innerHTML = `<div class="time-advance-dial" aria-hidden="true"><i></i><b></b></div>
+    <div class="eyebrow">SIMULATION RUNNING</div><h2 id="timeAdvanceTitle">Advancing time</h2>
+    <div class="time-advance-clock"></div><p class="time-advance-route"></p>
+    <progress max="1" value="0" aria-label="Time advance progress"></progress>
+    <p class="time-advance-detail" role="status" aria-live="polite"></p>
+    <p>The boat, crew, tide and weather are moving forward.</p>
+    <button type="button">Stop here</button>`;
+  const clock = dialog.querySelector('.time-advance-clock'),
+    progress = dialog.querySelector('progress'),
+    detail = dialog.querySelector('.time-advance-detail'),
+    dial = dialog.querySelector('.time-advance-dial');
+  dialog.querySelector('.time-advance-route').textContent =
+    `${formatClock(job.start)} → ${formatClock(job.target)}`;
+  dialog.querySelector('button').onclick = () => job.stop();
+  dialog.addEventListener('cancel', (event) => {
+    event.preventDefault();
+    job.stop();
+  });
+  const paint = () => {
+    clock.textContent = formatClock(debugClockMinute(w));
+    progress.value = job.progress;
+    const percent = Math.floor(job.progress * 100);
+    detail.textContent = `${percent}% complete`;
+    dial.style.setProperty('--clock-turn', `${job.progress * minutes * 6}deg`);
+  };
+  document.body.append(dialog);
+  paint();
+  dialog.showModal();
+  // A full paint before the first simulation batch, even on a slow phone.
+  const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
+  try {
+    await frame();
+    await frame();
+    while (!job.done) {
+      const until = performance.now() + 8;
+      do {
+        job.tick();
+      } while (!job.done && performance.now() < until);
+      paint();
+      await frame();
+    }
+    ui.menuNotice = job.finish().reason;
+  } catch (error) {
+    ui.menuNotice = `Time advance stopped: ${error.message}. Progress so far is kept.`;
+  } finally {
+    job.finish();
+    dialog.close();
+    dialog.remove();
+    ui.debugAdvancing = null;
+    ui.input?.suppress?.();
+    ui.signature = null;
+    ui.hooks.save?.();
+    if (previousFocus?.isConnected) previousFocus.focus();
+  }
 }
 
 export function setDebugWeather(w, kind) {
@@ -142,6 +257,7 @@ export function debugChoices(ui, w) {
 }
 
 export function debugActivate(ui, w) {
+  if (ui.debugAdvancing) return true;
   if (!isDebugScreen(ui.screen) || !w.career) return false;
   const choice = debugChoices(ui, w)[ui.index];
   let result;
@@ -151,14 +267,16 @@ export function debugActivate(ui, w) {
       now = debugClockMinute(w);
     result =
       target > now
-        ? advanceDebugTime(w, target - now)
+        ? void advanceDebugTimeWithFeedback(ui, w, target - now)
         : { ok: false, reason: 'That time has passed. Debug time is forward-only.' };
   } else if (ui.screen === 'debug-weather')
     result = setDebugWeather(w, ['natural', ...Object.keys(WEATHER)][ui.index]);
   else if (ui.screen === 'debug-tide')
     result = setDebugTide(w, ui.index === 0 ? null : TIDE_HEIGHTS[ui.index - 1]);
-  else if (choice === 'Skip forward 30 minutes') result = advanceDebugTime(w, 30);
-  else if (choice.startsWith('Set time')) ui.open('debug-time');
+  else if (choice === 'Skip forward 30 minutes') {
+    void advanceDebugTimeWithFeedback(ui, w, 30);
+    return true;
+  } else if (choice.startsWith('Set time')) ui.open('debug-time');
   else if (choice.startsWith('Set weather')) ui.open('debug-weather');
   else if (choice.startsWith('Set tide height')) ui.open('debug-tide');
   else if (choice.startsWith('Godmode:')) result = toggleGodmode(w);
@@ -179,6 +297,7 @@ export function debugActivate(ui, w) {
             ? 'tourist'
             : 'dfo',
     );
+  if (ui.debugAdvancing) return true;
   if (result) ui.menuNotice = result.reason;
   ui.hooks.save?.();
   ui.signature = null;

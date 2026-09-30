@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { kelpMotion } from './kelp-motion.js';
 import { currentAt } from '../environment.js';
 import { seaLevel } from '../terrain.js';
 import { kelpPatches, eelgrassPatches } from './kelp-patches.js';
@@ -7,6 +8,11 @@ import { waterColumnMaterials, waterTurbidity } from './water-optics.js';
 
 function part(geometry, kind) {
   geometry.deleteAttribute('uv');
+  if (!geometry.hasAttribute('plantBlade'))
+    geometry.setAttribute(
+      'plantBlade',
+      new THREE.Float32BufferAttribute(new Float32Array(geometry.attributes.position.count), 1),
+    );
   geometry.setAttribute(
     'plantPart',
     new THREE.Float32BufferAttribute(
@@ -18,7 +24,8 @@ function part(geometry, kind) {
 }
 function ribbons({ grass = false, variant = 0 } = {}) {
   const positions = [],
-    indices = [];
+    indices = [],
+    phases = [];
   const blades = grass ? 1 : 7;
   for (let blade = 0; blade < blades; blade++) {
     const start = positions.length / 3;
@@ -30,6 +37,7 @@ function ribbons({ grass = false, variant = 0 } = {}) {
         ? 0.034 * Math.sin(Math.PI * t) ** 0.5 + 0.004 * (1 - t)
         : (0.085 + blade * 0.009) * Math.sin(Math.PI * t) ** 0.65 + 0.012 * (1 - t);
       for (const side of [-1, 0, 1]) {
+        phases.push(phase);
         if (grass) positions.push(side * halfWidth, t, t * t * 0.25);
         else
           positions.push(
@@ -60,6 +68,7 @@ function ribbons({ grass = false, variant = 0 } = {}) {
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   geometry.setIndex(indices);
+  geometry.setAttribute('plantBlade', new THREE.Float32BufferAttribute(phases, 1));
   geometry.computeVertexNormals();
   return part(geometry, 2);
 }
@@ -88,6 +97,8 @@ export class MarineVegetation {
     this.build(this.grass, true);
     this.build(this.kelp, false);
     this.nextFlow = 0;
+    this.flowBlend = { value: 1 };
+    this.lastFlow = null;
   }
   build(plants, grass) {
     if (!plants.length) return;
@@ -105,14 +116,19 @@ export class MarineVegetation {
       compile(shader);
       shader.uniforms.uPlantTime = this.time;
       shader.uniforms.uPlantTide = this.tide;
+      shader.uniforms.uFlowBlend = this.flowBlend;
       shader.vertexShader =
         `uniform float uPlantTime;
         uniform float uPlantTide;
+        uniform float uFlowBlend;
+        attribute vec3 plantFlow;
+        attribute vec3 previousFlow;
         attribute vec2 plantSize;
+        attribute float plantBlade;
         attribute float plantPart;\n` + shader.vertexShader;
       shader.vertexShader = shader.vertexShader.replace(
         '#include <begin_vertex>',
-        '#include <begin_vertex>\n' +
+        '#include <begin_vertex>\nvec3 flow = mix(previousFlow, plantFlow, uFlowBlend);\n' +
           (grass
             ? `
           float t = position.y;
@@ -120,18 +136,18 @@ export class MarineVegetation {
           float water = max(.1, plantSize.x + uPlantTide - .1);
           transformed.y = min(height, water);
           transformed.x += max(0.0, height-water)*.7;
-          transformed.x += t*t*(.35 + plantSize.y*.2);
+          transformed.x += t*t*(.12 + plantSize.y*.3)*(.22+.78*flow.y);
           transformed.z += sin(uPlantTime*.8 + instanceMatrix[3].x + t*4.0)*t*t*.12;
         `
             : `
           float wetDepth = max(0.0, plantSize.x + uPlantTide);
           float slack = max(0.0, plantSize.y - wetDepth);
-          float reach = .7 + slack*.85;
-          float top = min(plantSize.y, wetDepth+.035);
+          float reach = (.35 + slack*.85)*(.42+.58*flow.y);
+          float top = min(sqrt(max(.01, plantSize.y*plantSize.y-reach*reach)), wetDepth+.035);
           float phase = instanceMatrix[3].x*.43 + instanceMatrix[3].z*.21;
           if (plantPart < .5) {
             float t = position.y;
-            transformed.x += reach*t;
+            transformed.x += reach*t*t;
             float rise = smoothstep(0.0, min(1.0, wetDepth/plantSize.y+.18), t);
             transformed.y = top*rise;
             transformed.z += sin(t*5.0+phase+uPlantTime*.7)*t*.06;
@@ -140,14 +156,30 @@ export class MarineVegetation {
             transformed.y += top;
           } else {
             float t = position.x / 5.3;
-            transformed.x += reach;
-            transformed.y += top - t*t*(.12 + max(0.0, 1.5-slack)*.32);
+            float looseness = 1.0-flow.y;
+            // Ribbons keep their length: slack gathers in broad folds instead
+            // of a rigid half-turn. The tips follow later than the bulb.
+            float curl = looseness*(3.1+sin(phase+plantBlade)*1.1);
+            float handed = sin(phase+plantBlade*.7) < 0.0 ? -1.0 : 1.0;
+            float bend = (flow.z-flow.x)*t + handed*curl*t;
+            // Integrate a curved blade, retaining its arclength instead of
+            // squeezing a sine wave into an accordion at slack water.
+            float sinc = abs(bend)<.001 ? 1.0 : sin(bend)/bend;
+            float arc = abs(bend)<.001 ? 0.0 : (1.0-cos(bend))/bend;
+            transformed.x = reach + position.x*sinc;
+            transformed.z = position.z + position.x*arc;
+            transformed.y += top - t*t*(.12 + max(0.0, 1.5-slack)*.32)
+              - sin(t*3.0+phase+plantBlade)*t*looseness*.10;
             transformed.z += sin(position.x*2.6+phase+uPlantTime*.9)*t*.16;
           }
-        `),
+        `) +
+          `
+          float c = cos(flow.x), s = sin(flow.x);
+          transformed.xz = mat2(c,-s,s,c) * transformed.xz;
+        `,
       );
     };
-    material.customProgramCacheKey = () => (grass ? 'eelgrass-v1' : 'bull-kelp-v1');
+    material.customProgramCacheKey = () => (grass ? 'eelgrass-flow-v2' : 'bull-kelp-flow-v2');
     const shapes = grass ? [ribbons({ grass: true })] : [0, 1, 2].map(bullKelpGeometry);
     const cells = new Map();
     for (const p of plants) {
@@ -167,6 +199,13 @@ export class MarineVegetation {
           2,
         ),
       );
+      const motions = new Float32Array(cell.length * 3);
+      for (const name of ['plantFlow', 'previousFlow']) {
+        geometry.setAttribute(
+          name,
+          new THREE.InstancedBufferAttribute(motions.slice(), 3).setUsage(THREE.DynamicDrawUsage),
+        );
+      }
       const mesh = new THREE.InstancedMesh(geometry, material, cell.length);
       mesh.name = grass
         ? 'Separate eelgrass blades · 2–6 m'
@@ -175,7 +214,7 @@ export class MarineVegetation {
       mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
       cell.forEach((p, i) => {
         pose.position.set(p.x, p.y, p.z);
-        pose.rotation.y = p.variation * Math.PI * 2;
+        pose.rotation.y = 0;
         pose.scale.set(0.7 + p.variation * 0.6, 1, 0.7 + p.tint * 0.6);
         pose.updateMatrix();
         mesh.setMatrixAt(i, pose.matrix);
@@ -196,22 +235,26 @@ export class MarineVegetation {
     this.tide.value = tide;
     this.group.position.y = -tide;
     if (elapsed >= this.nextFlow) {
-      this.nextFlow = elapsed + 0.25;
-      const pose = new THREE.Object3D();
+      const initial = this.lastFlow === null;
+      const dt = initial ? 0 : Math.min(0.25, elapsed - this.lastFlow);
+      this.lastFlow = elapsed;
+      this.nextFlow = elapsed + 0.1;
       for (const { mesh, plants } of this.cells) {
+        const next = mesh.geometry.attributes.plantFlow;
+        const previous = mesh.geometry.attributes.previousFlow;
+        previous.array.set(next.array);
         plants.forEach((p, i) => {
-          const flow = currentAt(world, p.x, p.z);
-          // Retain the last direction at slack water; no arbitrary snapping.
-          if (Math.hypot(flow.x, flow.y) > 0.015) p.angle = -Math.atan2(flow.y, flow.x);
-          pose.position.set(p.x, p.y, p.z);
-          pose.rotation.y = p.angle ?? p.variation * Math.PI * 2;
-          pose.scale.set(0.7 + p.variation * 0.6, 1, 0.7 + p.tint * 0.6);
-          pose.updateMatrix();
-          mesh.setMatrixAt(i, pose.matrix);
+          p.motion = kelpMotion(currentAt(world, p.x, p.z), p.variation, p.motion, dt);
+          p.angle = p.motion.angle;
+          next.setXYZ(i, p.motion.angle, p.motion.extension, p.motion.tip);
         });
-        mesh.instanceMatrix.needsUpdate = true;
+        if (initial) previous.array.set(next.array);
+        previous.needsUpdate = next.needsUpdate = true;
       }
     }
+    // Interpolate sampled poses in the vertex shader for smooth motion even
+    // though local current is only sampled ten times per second.
+    this.flowBlend.value = Math.min(1, Math.max(0, (elapsed - this.lastFlow) / 0.1));
     for (const column of this.materials) {
       column.uniforms.uColumnTime.value = elapsed;
       column.uniforms.uColumnTurbidity.value = waterTurbidity(world);

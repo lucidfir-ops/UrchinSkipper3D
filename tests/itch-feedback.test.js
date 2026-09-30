@@ -33,18 +33,20 @@ function world() {
   w.patches = [];
   return w;
 }
-test('pace changes scale the complete world with finite 0–100% increase bounds', () => {
+test('pace changes scale the complete world with finite −100–100% adjustment bounds', () => {
   for (const [increase, scale] of [
-    [0, 1],
-    [25, 1.25],
-    [100, 2],
+    [0, 2],
+    [25, 2.5],
+    [100, 4],
     [-50, 1],
-    [200, 2],
+    [-100, 0],
+    [-200, 0],
+    [200, 4],
   ]) {
     setTimeIncrease(increase);
     assert.equal(worldTimeScale(), scale);
   }
-  assert.equal(clampTimeIncrease('bad'), 50);
+  assert.equal(clampTimeIncrease('bad'), 0);
   setTimeIncrease(25);
 });
 test('open-water scouting alternates seven-second legs around the ordered course', () => {

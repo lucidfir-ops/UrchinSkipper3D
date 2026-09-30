@@ -32,6 +32,7 @@ import './three/presentation.css';
 import './interface-theme.css';
 import './menu-polish.css';
 import './wheelhouse.css';
+import './time-advance.css';
 import { C } from './config.js';
 import { CHART_ATLAS, installChartMaterial } from './chart-material.js';
 import { vesselCanvas, prepareVesselArt } from './vessel-art.js';
@@ -269,7 +270,7 @@ class Ocean extends Phaser.Scene {
     }
     this.playtest.collectFeedback(world, stopped ? {} : a);
     this.metrics.mark('effectsMs');
-    if (world.career && performance.now() - lastSave > 10000) {
+    if (world.career && !this.playtest.debugAdvancing && performance.now() - lastSave > 10000) {
       lastSave = performance.now();
       if (!preparing() && (savedWorld !== world || savedTime !== world.time)) {
         const saving = world,

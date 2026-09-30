@@ -77,6 +77,10 @@ try {
               w.environment.seaLevel = tide;
               w.environment.current = { x: direction * 0.8, y: 0 };
               r.coast.vegetation.nextFlow = 0;
+              // Current response has physical presentation memory. Let this
+              // static direction fixture settle; transitional motion has its
+              // own sequence in lighting-kelp-review.js.
+              for (let i = 0; i < 600; i++) r.coast.update(w, 0.1, r.camera);
               r.draw(w, { ...d.ui, screen: null, started: true }, 0);
               const plants = r.coast.kelpPatches;
               return {
@@ -116,8 +120,8 @@ try {
   assert(
     exposure[0].surfaced > exposure[2].surfaced && exposure[2].surfaced > exposure[3].surfaced,
   );
-  assert(exposure[0].angles.every((a) => Math.abs(a) < 0.001));
-  assert(exposure[1].angles.every((a) => Math.abs(Math.abs(a) - Math.PI) < 0.001));
+  assert(exposure[0].angles.every((a) => Math.abs(Math.sin(a)) < 0.001 && Math.cos(a) > 0));
+  assert(exposure[1].angles.every((a) => Math.abs(Math.sin(a)) < 0.001 && Math.cos(a) < 0));
   await page.evaluate(() => {
     const d = urchinDebug,
       r = d.three,

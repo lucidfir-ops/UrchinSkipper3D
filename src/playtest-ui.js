@@ -249,6 +249,7 @@ export class PlaytestUI {
     return escapeMenu.call(this);
   }
   get lockReason() {
+    if (this.debugAdvancing) return 'ADVANCING SIMULATION TIME';
     if (this.bindingPicker?.open) return 'CHOOSING A BINDING';
     if (this.ended) return 'SESSION ENDED';
     if (!this.started) return 'PRESS A CONTROLLER BUTTON OR ENTER';
@@ -312,6 +313,10 @@ export class PlaytestUI {
     return activate.call(this, world);
   }
   update(a, world, dt = 1 / 60) {
+    if (this.debugAdvancing) {
+      if (a.back || a.pause || a.confirm) this.debugAdvancing.stop();
+      return true;
+    }
     if (this.bindingPicker?.open) return true;
     const wasBlocked = this.blocked,
       wasStarted = this.started,

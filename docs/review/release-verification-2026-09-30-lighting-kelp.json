@@ -1,0 +1,358 @@
+{
+  "date": "2026-09-30T17:32:19.015099+00:00",
+  "baseCommit": "8e4fe59fe6ee54b61fcb1646e9605fefe5610308",
+  "sourceSha256": {
+    "scripts/itch-feedback-checks.js": "1f4c9ad44f0e1c21b8c1def6ea99af92bf808706e312648f805b867e64dc328f",
+    "scripts/vegetation-review.js": "58ab026a7a7e1f7f229c3164517629355f944abd92241a00a2d8b22bc91c6a17",
+    "scripts/verify.js": "8ae39476163229fc15b1686a0222ecff7bdab6f4b188346745c49e1fab1622b8",
+    "src/debug-mode.js": "d3074417e285696b31efb7e2f4a3f549c0e0d439a8b8bf04ced4ba8c78431fb7",
+    "src/main.js": "daae64eccca2b8f9451e5bcfad07c5e824ba7831da1b0a9503c31839f8d20ab5",
+    "src/menu-polish.css": "03542b175955a3a15eeb969b767938e6c948bdc1e8c9e35a287dc6e765d6c1da",
+    "src/menu-preferences.js": "7857679be9b16a09985c99793839eeaa270d63bd33688f1ceccdc6549f3dd3a1",
+    "src/playtest-ui.js": "fca1f8fba1fc20cb1c551f8d55bbcfcff132ef2ab357e87dab87ed65e060373f",
+    "src/screen-actions.js": "a80507c193f9140acc0c570a2dc5774552210aaeb7ae0c93e86dce5034c62852",
+    "src/screen-navigation.js": "0a2a0a95b1000205a3af7421f46d66f45e543a3833eb9961fcc6429ddb0e07bc",
+    "src/three/coastal-mist.js": "17c603bb046a793cd57db22a620dd009d856a009d3701d779741d1618b815992",
+    "src/three/marine-vegetation.js": "e7a951768bcee924f2f6eec346e45f9f5c65718572b509ffb839a05b855d0164",
+    "src/three/renderer.js": "1c6e0f38e1042850b30b5a1f53396b949182c819c427a12a1d796b073de93839",
+    "src/three/vessels.js": "0324981051f0794913026936393388d30c0a63e02e2161bbf26b43eaea4b4842",
+    "src/three/world.js": "3071e6ff4f322b882052edeec9a40221c084f369d783acad18f129507931c21e",
+    "src/time-speed.js": "f5a5d901d024501a15f836d678a0efd1c7cafca9594b29ae898ee2e71f0f58f3",
+    "tests/debug-mode.test.js": "fe931e71780d0bf1486e2b0da43fa1255f53b9698b05d860a3c4a35264da1182",
+    "tests/itch-feedback.test.js": "cc0924f48690f0602d718a33d03fc4b1f2a4021fe2a2ede5c921e027d23abcf7",
+    "tests/marine-vegetation.test.js": "3e3043920689ee307e4f1b6a96147fd6f0034fa0fa01fcd358be9f12e6b4a5aa",
+    "tests/working-day.test.js": "2261b64e34145476651efe5353f38e752d8243a47745372232c0be06ffb408cc",
+    "scripts/lighting-kelp-review.js": "2d788e5ec1e144715deec5b1f2c5c445da84b1bd35fa3514a51fbfe3cb1580b7",
+    "src/three/diver-torch.js": "220f524e44f1eea3aef6c7fd9065fdce085504dd214d2b4bc627d22660917ec4",
+    "src/three/kelp-motion.js": "f88fc9340e7dc5d665f5edf6eca008b7392f3cdc5500cd9297ca14283a8e0f90",
+    "src/three/work-light-water.js": "475305967b31b91da04520612b6ab080dee8febed2f3f11901b10a0e149dda63",
+    "src/time-advance.css": "1be92ba144c5406df13f43fb5b9e44b450a66a14807b90f2ad3b9a6c898d9db7",
+    "tests/night-lighting.test.js": "1c723049baa8f3589ecadc35ba77e2f5645bcd66f4e0143fa333d83e6a9fb366"
+  },
+  "productionIndexSha256": "06b8087499ab28f926472604200a813e080d82a0404b128592b7e5f219cbf6af",
+  "tests": {
+    "total": 532,
+    "passed": 531,
+    "failed": 0,
+    "skipped": 1
+  },
+  "finalVerification": {
+    "started": "2026-09-30T17:28:06.376Z",
+    "ended": "2026-09-30T17:29:13.138Z",
+    "passed": true,
+    "results": [
+      {
+        "label": "lint",
+        "code": 0,
+        "seconds": 6
+      },
+      {
+        "label": "format",
+        "code": 0,
+        "seconds": 6
+      },
+      {
+        "label": "unit regressions",
+        "code": 0,
+        "seconds": 28
+      },
+      {
+        "label": "production build",
+        "code": 0,
+        "seconds": 7
+      },
+      {
+        "label": "lighting-kelp",
+        "code": 0,
+        "seconds": 19
+      }
+    ]
+  },
+  "earlierInputVoyagePerformance": {
+    "results": [
+      {
+        "label": "input",
+        "code": 0,
+        "seconds": 20
+      },
+      {
+        "label": "voyage",
+        "code": 0,
+        "seconds": 18
+      },
+      {
+        "label": "performance",
+        "code": 0,
+        "seconds": 8
+      }
+    ],
+    "note": "The initial lighting fixture failed by using a nonexistent diver state. Corrected fixture and final focused production run pass. Final UI-only copy/style revision was then rechecked with the focused suite."
+  },
+  "vegetationVerification": {
+    "started": "2026-09-30T17:29:46.307Z",
+    "ended": "2026-09-30T17:30:37.485Z",
+    "passed": true,
+    "results": [
+      {
+        "label": "vegetation",
+        "code": 0,
+        "seconds": 49
+      }
+    ]
+  },
+  "visualFixture": {
+    "records": [
+      {
+        "phase": "slack",
+        "motion": [
+          {
+            "angle": 0,
+            "tip": 0,
+            "extension": 0.023741184708827568,
+            "velocity": 0
+          },
+          {
+            "angle": 0,
+            "tip": 0,
+            "extension": 0.004237065960589739,
+            "velocity": 0
+          },
+          {
+            "angle": 0,
+            "tip": 0,
+            "extension": 0.005276632438685882,
+            "velocity": 0
+          },
+          {
+            "angle": 0,
+            "tip": 0,
+            "extension": 0.002215752187747766,
+            "velocity": 0
+          },
+          {
+            "angle": 0,
+            "tip": 0,
+            "extension": 0.011102497080835274,
+            "velocity": 0
+          }
+        ]
+      },
+      {
+        "phase": "kelp-turn-1",
+        "motion": [
+          {
+            "angle": 0.622253069490681,
+            "tip": 0.1801212195011346,
+            "extension": 0.08366957126048753,
+            "velocity": 0.7445260938936304
+          },
+          {
+            "angle": -0.6229497213517063,
+            "tip": -0.24566670677732513,
+            "extension": 0.09347271547097255,
+            "velocity": -0.7404654064136247
+          },
+          {
+            "angle": -0.6234440713304881,
+            "tip": -0.23819406373181612,
+            "extension": 0.09178097957517214,
+            "velocity": -0.7414774679337575
+          },
+          {
+            "angle": -0.6211707238059909,
+            "tip": -0.26651345071503546,
+            "extension": 0.09841839994958655,
+            "velocity": -0.7373243951161713
+          },
+          {
+            "angle": 0.6242678257052565,
+            "tip": 0.21108734729179696,
+            "extension": 0.08647799199539623,
+            "velocity": 0.7442719474635378
+          }
+        ]
+      },
+      {
+        "phase": "kelp-turn-3",
+        "motion": [
+          {
+            "angle": 2.148456416989381,
+            "tip": 1.259492164566106,
+            "extension": 0.15177763300492228,
+            "velocity": 0.746763760416322
+          },
+          {
+            "angle": -2.1165598746647856,
+            "tip": -1.500655479994099,
+            "extension": 0.1676686710195988,
+            "velocity": -0.6641099762486827
+          },
+          {
+            "angle": -2.122668296092633,
+            "tip": -1.4777505139661098,
+            "extension": 0.1663531708605048,
+            "velocity": -0.6747521256347581
+          },
+          {
+            "angle": -2.0977771964099032,
+            "tip": -1.558802840921038,
+            "extension": 0.17057458399158074,
+            "velocity": -0.6355739430303977
+          },
+          {
+            "angle": 2.13995286897111,
+            "tip": 1.3848603165574505,
+            "extension": 0.16032896378787592,
+            "velocity": 0.7127575637793697
+          }
+        ]
+      },
+      {
+        "phase": "kelp-ebb",
+        "motion": [
+          {
+            "angle": 3.077006295883567,
+            "tip": 2.9804021069427615,
+            "extension": 0.8143754127084596,
+            "velocity": 0.016053836166102266
+          },
+          {
+            "angle": -2.983780712368531,
+            "tip": -2.940252788750552,
+            "extension": 0.8175234336004141,
+            "velocity": -0.028527444162470682
+          },
+          {
+            "angle": -2.994474499141653,
+            "tip": -2.947863714728282,
+            "extension": 0.8188845118543735,
+            "velocity": -0.027253281571526643
+          },
+          {
+            "angle": -2.954622633098096,
+            "tip": -2.9177260712433513,
+            "extension": 0.8123202033067727,
+            "velocity": -0.0318974599705722
+          },
+          {
+            "angle": 3.033643223062039,
+            "tip": 2.9709091458293146,
+            "extension": 0.8206762302751183,
+            "velocity": 0.022340340007480027
+          }
+        ]
+      },
+      {
+        "tide": -1,
+        "surfaced": 637
+      },
+      {
+        "tide": 2,
+        "surfaced": 262
+      },
+      {
+        "tide": 5,
+        "surfaced": 0
+      },
+      {
+        "torchIntensity": 11.298465535998186
+      },
+      {
+        "litSceneFPS": 59.88916776421919,
+        "renderer": "ANGLE (AMD, Vulkan 1.4.330 (AMD Custom GPU 0405 (RADV VANGOGH) (0x0000163F)), radv)"
+      },
+      {
+        "advanceStart": "0.0002777777777777778",
+        "notice": "Advanced 30 minutes to 10:30."
+      },
+      {
+        "inputs": "Pointer/native touch tap, keyboard Enter/Escape and synthetic controller confirm/back time advance; saved speed reload."
+      }
+    ],
+    "errors": []
+  },
+  "performance": {
+    "device": {
+      "renderer": "ANGLE (AMD, Vulkan 1.4.330 (AMD Custom GPU 0405 (RADV VANGOGH) (0x0000163F)), radv)",
+      "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "pixelRatio": 1,
+      "framebuffer": [
+        1280,
+        800
+      ],
+      "screen": null,
+      "started": true
+    },
+    "results": [
+      {
+        "label": "native",
+        "elapsed": 4013.9000000001397,
+        "renderFrames": 240,
+        "rafFrames": 240,
+        "fps": 59.79222202844905,
+        "fields": {
+          "frameMs": {
+            "mean": 16.66583333333333,
+            "p95": 16.700000000000728
+          },
+          "inputMs": {
+            "mean": 0.8262499999943732,
+            "p95": 1.0999999998603016
+          },
+          "simulationMs": {
+            "mean": 0.3824999999992239,
+            "p95": 0.5999999998603016
+          },
+          "drawMs": {
+            "mean": 6.265416666670353,
+            "p95": 16.299999999813735
+          },
+          "hudMs": {
+            "mean": 0.4695833333360497,
+            "p95": 3.3999999999068677
+          },
+          "totalCpuMs": {
+            "mean": 8.004166666671518,
+            "p95": 20.700000000186265
+          }
+        },
+        "render": {
+          "frame": 327,
+          "calls": 95,
+          "triangles": 350422,
+          "points": 0,
+          "lines": 96
+        }
+      }
+    ],
+    "errors": []
+  },
+  "independentReviews": [
+    "docs/review/independent-lighting-kelp-2026-09-30.md"
+  ],
+  "exports": [
+    {
+      "path": "exports/2026-09-30-lighting-kelp/UrchinSkipper3D-TEMP-ITCHIO.zip",
+      "bytes": 102182137,
+      "sha256": "fef18d0e67241523994a5af6c9ba4298641428904c5d1ffe81e8ae4eea56567e",
+      "crcAndProductionBytesVerified": true
+    },
+    {
+      "path": "exports/2026-09-30-lighting-kelp/Urchin Skipper 3D TEMP.zip",
+      "bytes": 102210628,
+      "sha256": "732ac093c527cbca53bd774ebde234fb247bd40dbce7bb30e61ec7e925234088",
+      "crcAndProductionBytesVerified": true
+    }
+  ],
+  "portableServer": {
+    "url": "http://127.0.0.1:5198/",
+    "productionEditionCheck": "pass",
+    "launch": "Exported scripts/serve-build.js; GUI launcher not invoked."
+  },
+  "limits": [
+    "Synthetic controller only; physical Xbox/Deck unverified.",
+    "No physical mobile, Safari or actual itch.io publication test.",
+    "Lighting/plant optics are real-time approximations; independent still-image review is not a photorealism or fluid-simulation claim.",
+    "Existing large geography chunk warning remains."
+  ]
+}

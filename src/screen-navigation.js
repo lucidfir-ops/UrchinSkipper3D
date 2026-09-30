@@ -72,6 +72,7 @@ export function forward() {
 }
 
 export function open(screen, { replace = false, navigation = false } = {}) {
+  if (this.debugAdvancing) return;
   if (this.hooks.world().day.returnFade !== undefined && screen) return;
   if (!navigation) this.forwardHistory = [];
   if (

@@ -5,6 +5,7 @@ import { kelpPatches, eelgrassPatches, kelpExposure } from '../src/three/kelp-pa
 import { bedDepthAt } from '../src/terrain.js';
 import { introTerrain } from '../src/career-intro.js';
 import { MarineVegetation } from '../src/three/marine-vegetation.js';
+import { kelpMotion } from '../src/three/kelp-motion.js';
 import { animateDrives } from '../src/three/vessels.js';
 
 function flatTerrain(depth) {
@@ -59,7 +60,27 @@ test('falling tide exposes longer surface stems, rising tide submerges shorter c
   }
 });
 
-test('rendered vegetation reverses with current, retains slack direction, and never moves its roots', () => {
+test('kelp retracts at slack, gathers before reversing, and extends gradually into renewed current', () => {
+  const flow = { x: 0.8, y: 0 };
+  let m = kelpMotion(flow, 0.3);
+  const strong = m.extension;
+  for (let i = 0; i < 50; i++) m = kelpMotion({ x: 0, y: 0 }, 0.3, m, 0.1);
+  assert(m.extension < strong * 0.02);
+  assert.equal(m.angle, 0);
+  m = kelpMotion(flow, 0.3);
+  const first = kelpMotion({ x: -0.8, y: 0 }, 0.3, m, 0.1);
+  assert(Math.abs(first.angle) < 0.05, 'no instantaneous reversal');
+  assert(first.extension < strong, 'canopy starts gathering before swinging');
+  m = first;
+  for (let i = 0; i < 30; i++) m = kelpMotion({ x: -0.8, y: 0 }, 0.3, m, 0.1);
+  assert(m.extension < 0.3);
+  assert(Math.abs(m.tip) < Math.abs(m.angle), 'trailing blades lag the float');
+  for (let i = 0; i < 300; i++) m = kelpMotion({ x: -0.8, y: 0 }, 0.3, m, 0.1);
+  assert(Math.cos(m.angle) < -0.999);
+  assert(m.extension > 0.8);
+});
+
+test('rendered vegetation retains roots and tide exposure while interpolating flow poses', () => {
   const world = {
     terrain: flatTerrain(5),
     environment: { model: 'uniform', current: { x: 1, y: 0 }, seaLevel: 0 },
@@ -69,24 +90,24 @@ test('rendered vegetation reverses with current, retains slack direction, and ne
   const matrix = new THREE.Matrix4();
   try {
     const roots = plants.kelp.map((p) => [p.x, p.y, p.z]);
-    for (const [time, x, y] of [
-      [0, 1, 0],
-      [1, -1, 0],
-      [2, 0, 1],
-    ]) {
-      world.environment.current = { x, y };
-      plants.update(world, time);
-      for (const cell of plants.cells) {
-        cell.mesh.getMatrixAt(0, matrix);
-        const forward = new THREE.Vector3(1, 0, 0).transformDirection(matrix);
-        assert(forward.dot(new THREE.Vector3(x, 0, y)) > 0.999);
-      }
+    plants.update(world, 0);
+    world.environment.current = { x: -1, y: 0 };
+    plants.update(world, 0.1);
+    assert(plants.kelp.every((p) => Math.abs(p.angle) < 0.05));
+    for (let i = 2; i < 400; i++) plants.update(world, i * 0.1);
+    for (const cell of plants.cells) {
+      cell.mesh.getMatrixAt(0, matrix);
+      const p = cell.plants[0];
+      assert.deepEqual(
+        matrix.elements.slice(12, 15).map((v) => Math.round(v * 100) / 100),
+        [p.x, p.y, p.z].map((v) => Math.round(v * 100) / 100),
+      );
+      assert(Math.cos(cell.mesh.geometry.attributes.plantFlow.getX(0)) < -0.995);
     }
     world.environment.current = { x: 0, y: 0 };
     world.environment.seaLevel = 3;
-    plants.update(world, 3);
+    plants.update(world, 40);
     assert.equal(plants.group.position.y, -3);
-    assert(plants.kelp.every((p) => p.angle === -Math.PI / 2));
     assert.deepEqual(
       plants.kelp.map((p) => [p.x, p.y, p.z]),
       roots,

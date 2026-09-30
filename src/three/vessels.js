@@ -1,8 +1,9 @@
+import { DiverTorch } from './diver-torch.js';
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { boatDefinition, boatSpec } from '../boats.js';
-import { workLightsOn } from '../equipment-controls.js';
+import { workLightsOn, enabledEquipment } from '../equipment-controls.js';
 import { surfaceBlood } from '../sea-cues.js';
 import { bubbleOpacity } from '../bubble-visibility.js';
 import { visibilityRange } from '../assists.js';
@@ -1739,37 +1740,30 @@ export function addFittings(vessel, spec, materials, installed) {
         );
       }
     } else if (id === 'lights') {
-      for (const side of [-1, 1]) {
-        rod(
-          station,
-          materials.metal,
-          [side * width * 0.27, cabinTop, cabinZ],
-          [side * width * 0.27, cabinTop + 0.34, cabinZ],
-          0.03,
+      vessel.userData.workLampPositions = [
+        new THREE.Vector3(0, cabinTop + 0.38, cabinZ - cabinLength * 0.5 - 0.12),
+        new THREE.Vector3(-width * 0.34, cabinTop + 0.38, cabinZ + cabinLength * 0.25),
+      ];
+      const targets = [
+        new THREE.Vector3(0, -0.3, -length * 0.5 - 17),
+        new THREE.Vector3(-width * 0.5 - 7, -0.6, length * 0.15),
+      ];
+      vessel.userData.workLenses = [];
+      vessel.userData.workLampPositions.forEach((position, i) => {
+        rod(station, materials.metal, [position.x, cabinTop, position.z], position.toArray(), 0.03);
+        const fixture = new THREE.Group();
+        fixture.userData.dynamic = true;
+        fixture.position.copy(position);
+        fixture.quaternion.setFromUnitVectors(
+          new THREE.Vector3(0, 0, -1),
+          targets[i].clone().sub(position).normalize(),
         );
-        box(
-          station,
-          materials.darkMetal,
-          0.28,
-          0.2,
-          0.18,
-          side * width * 0.27,
-          cabinTop + 0.38,
-          cabinZ,
-          0.035,
-        );
-        box(
-          station,
-          materials.lamp,
-          0.22,
-          0.13,
-          0.025,
-          side * width * 0.27,
-          cabinTop + 0.38,
-          cabinZ + 0.1,
-          0.02,
-        );
-      }
+        station.add(fixture);
+        box(fixture, materials.darkMetal, 0.34, 0.22, 0.2, 0, 0, 0, 0.025);
+        const lens = box(fixture, materials.lamp, 0.28, 0.16, 0.02, 0, 0, -0.11, 0.012);
+        lens.castShadow = false;
+        vessel.userData.workLenses.push(lens);
+      });
     } else if (['plotter', 'scanner', 'forecast'].includes(id)) {
       const x = (['plotter', 'scanner', 'forecast'].indexOf(id) - 1) * 0.32;
       box(
@@ -1886,11 +1880,13 @@ class WakeField {
     this.material.customProgramCacheKey = () => 'vessel-foam-opacity-v1';
     this.mesh = new THREE.InstancedMesh(this.geometry, this.material, this.size);
     this.mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    this.particleColor = new THREE.Color();
+    for (let i = 0; i < this.size; i++) this.mesh.setColorAt(i, this.particleColor);
     this.mesh.frustumCulled = false;
     this.mesh.renderOrder = 3;
     scene.add(this.mesh);
   }
-  emit(x, z, size, vx, vz, life, spread = 0, bubble = false) {
+  emit(x, z, size, vx, vz, life, spread = 0, bubble = false, torch = false) {
     const p = this.particles[this.index++ % this.size];
     Object.assign(p, {
       x,
@@ -1902,6 +1898,7 @@ class WakeField {
       maxLife: life,
       spread,
       bubble,
+      torch,
       spin: this.index * 2.39996,
     });
   }
@@ -2012,9 +2009,14 @@ class WakeField {
       }
       scratchObject.updateMatrix();
       this.mesh.setMatrixAt(i, scratchObject.matrix);
+      const glowing = p.torch && world?.weather?.night && enabledEquipment(world).includes('torch');
+      this.particleColor.set(glowing ? '#c4ffe3' : '#ffffff');
+      this.particleColor.multiplyScalar(world?.weather?.night ? (glowing ? 1.3 : 0.4) : 1);
+      this.mesh.setColorAt(i, this.particleColor);
     }
     this.mesh.instanceMatrix.needsUpdate = true;
     this.opacities.needsUpdate = true;
+    this.mesh.instanceColor.needsUpdate = true;
   }
   reset() {
     for (const p of this.particles) p.life = 0;
@@ -2201,47 +2203,23 @@ export class VesselView {
     this.identity = '';
     this.traffic = new Map();
     this.divers = [];
+    this.diverTorches = [new DiverTorch(scene), new DiverTorch(scene)];
     this.elapsed = 0;
     this.wakeAccumulator = 0;
     this.wakes = new WakeField(scene);
     this.surfaceCues = new SurfaceCues(scene);
     this.lightRig = new THREE.Group();
-    const lightTexture = radialTexture('#ffedba', false);
-    this.lightTexture = lightTexture;
-    this.lightPatches = [];
-    for (const [x, z, width, length] of [
-      [0, -13, 12, 26],
-      [-7, 1, 16, 12],
-    ]) {
-      const material = new THREE.MeshBasicMaterial({
-        color: '#ffe5ad',
-        map: lightTexture,
-        transparent: true,
-        opacity: 0.23,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-      });
-      const plane = mesh(
-        this.lightRig,
-        new THREE.PlaneGeometry(width, length),
-        material,
-        x,
-        0.11,
-        z,
-      );
-      plane.rotation.x = -Math.PI / 2;
-      plane.castShadow = false;
-      plane.receiveShadow = false;
-      plane.renderOrder = 4;
-      this.lightPatches.push(plane);
-    }
     this.workSpots = [];
     for (const [x, z, tx, tz, angle] of [
       [0, -2, 0, -18, 0.55],
       [-1.1, 0, -8, 1, 0.8],
     ]) {
-      const light = new THREE.SpotLight('#ffe9b2', 0, 40, angle, 0.9, 1.3);
+      const light = new THREE.SpotLight('#fff3db', 0, 40, angle, 0.7, 2);
       light.position.set(x, 3.2, z);
+      light.castShadow = true;
+      light.shadow.mapSize.set(512, 512);
+      light.shadow.bias = -0.0002;
+      light.shadow.normalBias = 0.025;
       light.target.position.set(tx, 0, tz);
       this.lightRig.add(light, light.target);
       this.workSpots.push(light);
@@ -2288,9 +2266,11 @@ export class VesselView {
       crew.rotation.x = Math.sin(this.elapsed * 0.7 + i) * 0.022;
       if (!d) {
         visual.group.visible = false;
+        this.diverTorches[i].group.visible = false;
         continue;
       }
       const pose = diverMotion(world, d);
+      this.diverTorches[i].update(world, pose);
       crew.visible = pose.phase === 'aboard';
       visual.group.userData.motion = pose;
       visual.group.visible =
@@ -2491,6 +2471,7 @@ export class VesselView {
               1.8,
               0.16,
               true,
+              !!world.weather?.night && enabledEquipment(world).includes('torch'),
             );
           }
         }
@@ -2516,11 +2497,20 @@ export class VesselView {
     this.wakes.update(dt, surfaceY, world);
     this.surfaceCues.update(world, spec, surfaceY);
     const lights = workLightsOn(world) && boat.alpha > 0.01;
-    this.lightRig.position.set(boat.x, surfaceY, boat.y);
-    this.lightRig.rotation.y = -boat.heading;
-    for (const patch of this.lightPatches) patch.visible = lights;
+    this.lightRig.position.copy(this.boat.position);
+    this.lightRig.quaternion.copy(this.boat.quaternion);
+    const positions = this.boat.userData.workLampPositions;
+    this.workSpots[0].position.copy(
+      positions?.[0] || new THREE.Vector3(0, 3.2, -spec.length * 0.24),
+    );
+    this.workSpots[1].position.copy(
+      positions?.[1] || new THREE.Vector3(-spec.width * 0.48, 2.8, spec.length * 0.1),
+    );
+    this.workSpots[0].target.position.set(0, -0.3, -spec.length * 0.5 - 17);
+    this.workSpots[1].target.position.set(-spec.width * 0.5 - 7, -0.6, spec.length * 0.15);
+    for (const lens of this.boat.userData.workLenses || []) lens.visible = lights;
     this.workSpots.forEach((light) => {
-      light.intensity = lights ? 80 * boat.alpha : 0;
+      light.intensity = lights ? 240 * boat.alpha : 0;
     });
   }
   effect(event, world) {
@@ -2566,15 +2556,16 @@ export class VesselView {
     this.surfaceCues.reset();
     this.identity = '';
     for (const d of this.divers) d.group.visible = false;
+    for (const torch of this.diverTorches) torch.group.visible = false;
   }
   dispose() {
     this.reset();
     this.wakes.dispose();
     this.surfaceCues.dispose();
-    for (const patch of this.lightPatches) patch.material.dispose();
     disposeGroup(this.lightRig);
-    this.lightTexture.dispose();
+    for (const light of this.workSpots) light.dispose();
     this.column.dispose();
+    for (const torch of this.diverTorches) torch.dispose();
     for (const d of this.divers) disposeGroup(d.group);
     const textures = new Set();
     for (const material of Object.values(this.materials)) {

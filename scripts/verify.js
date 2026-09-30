@@ -32,6 +32,7 @@ async function ready() {
   }
 }
 const suites = {
+  'lighting-kelp': ['scripts/lighting-kelp-review.js'],
   vegetation: ['scripts/vegetation-review.js'],
   feedback: ['scripts/feedback-2026-review.js'],
   'feedback-water': ['scripts/feedback-2026-review.js', '--environment-only'],

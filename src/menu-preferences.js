@@ -41,10 +41,10 @@ export function preferenceActions(ui) {
     ];
   if (ui.screen === 'gameplay-speed')
     return [
-      action('time-slower', `−5% · now +${timeIncrease()}%`, () =>
+      action('time-slower', `−5% · now ${timeIncrease() > 0 ? '+' : ''}${timeIncrease()}%`, () =>
         setTimeIncrease(timeIncrease() - 5),
       ),
-      action('time-faster', `+5% · now +${timeIncrease()}%`, () =>
+      action('time-faster', `+5% · now ${timeIncrease() > 0 ? '+' : ''}${timeIncrease()}%`, () =>
         setTimeIncrease(timeIncrease() + 5),
       ),
       back,
@@ -73,7 +73,7 @@ export function renderPreferences(ui, world, bind) {
   }
   if (ui.panel.querySelector('.preference-view')?.dataset.preference !== ui.screen) {
     const speed = ui.screen === 'gameplay-speed';
-    ui.panel.innerHTML = `<div class="day-heading"><div><div class="eyebrow">PREFERENCES · SAVED ON THIS DEVICE</div><h2>${speed ? 'Set your working pace.' : 'A comfortable view.'}</h2><p class="menu-introduction">${speed ? 'The whole world moves together.' : 'Scale your menus and instruments together.'}</p></div></div><div class="career-layout preference-view"><div class="career-choices choices"></div><article class="career-detail">${speed ? '<label for="timeSpeed">World time speed increase: <strong></strong></label><input id="timeSpeed" type="range" min="0" max="100" step="5"/><p>0% is the original pace; +100% runs twice as fast. Bags, days, boats and weather all speed up together. Default: +50%.</p><p>Use the −5%/+5% buttons with a controller, or drag the slider.</p>' : '<h3>Easy to read. Room to work.</h3><p>Make menus and interface text smaller or larger, or restore the default size.</p><p>Your saved instrument positions stay yours. Touch control size is adjusted separately in Touchscreen Options.</p>'}</article></div>`;
+    ui.panel.innerHTML = `<div class="day-heading"><div><div class="eyebrow">PREFERENCES · SAVED ON THIS DEVICE</div><h2>${speed ? 'Set your working pace.' : 'A comfortable view.'}</h2><p class="menu-introduction">${speed ? 'The whole world moves together.' : 'Scale your menus and instruments together.'}</p></div></div><div class="career-layout preference-view"><div class="career-choices choices"></div><article class="career-detail">${speed ? '<label for="timeSpeed">World speed adjustment: <strong></strong></label><input id="timeSpeed" type="range" min="-100" max="100" step="5"/><p>0% default · −50% half · +100% double.<br>−100% pauses the world.</p><p>Default matches the former maximum. Saved pace is preserved.</p>' : '<h3>Easy to read. Room to work.</h3><p>Make menus and interface text smaller or larger, or restore the default size.</p><p>Your saved instrument positions stay yours. Touch control size is adjusted separately in Touchscreen Options.</p>'}</article></div>`;
     ui.panel.querySelector('.preference-view').dataset.preference = ui.screen;
     const list = ui.panel.querySelector('.career-choices');
     actions.forEach((action, index) =>
@@ -88,7 +88,10 @@ export function renderPreferences(ui, world, bind) {
   const slider = ui.panel.querySelector('#timeSpeed');
   if (slider) {
     if (slider.value !== String(timeIncrease())) slider.value = String(timeIncrease());
-    setText(ui.panel.querySelector('label[for="timeSpeed"] strong'), `+${timeIncrease()}%`);
+    setText(
+      ui.panel.querySelector('label[for="timeSpeed"] strong'),
+      `${timeIncrease() > 0 ? '+' : ''}${timeIncrease()}%`,
+    );
   }
 }
 

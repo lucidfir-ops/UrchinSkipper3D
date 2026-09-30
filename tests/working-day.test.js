@@ -288,8 +288,8 @@ test('selfish rival identity is persistent; ordinary routes increasingly cross w
   stepTraffic(w, 1);
   assert(p.remaining < stock && fleet.gross > 0);
 });
-test('new browser day pace defaults to plus fifty percent', () =>
-  assert.equal(DEFAULT_TIME_INCREASE, 50));
+test('new browser pace uses the former maximum as the zero adjustment', () =>
+  assert.equal(DEFAULT_TIME_INCREASE, 0));
 
 test('morning offload windows include their exact opening and advance safely across multi-day trips', () => {
   assert.equal(offloadWindow(1140), 1140);
