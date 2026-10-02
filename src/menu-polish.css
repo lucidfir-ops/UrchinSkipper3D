@@ -1310,11 +1310,10 @@ body #playtest .intro-chart-brief .skipper-note p {
     margin: auto;
   }
 }
-/* On a short touch screen, the live recovery cue and labelled action buttons
-   replace the generic helm primer until the operation is finished. */
+/* On a short touch screen, transient crew/recovery speech and the labelled
+   action buttons replace the generic helm primer while the speech is visible. */
 @media (max-height: 500px) {
-  body.touch-playing:has(#message[data-context='active']:not([hidden]))
-    #help[data-default-position] {
+  body.touch-playing:has(#seaSpeech:not([hidden])) #help[data-default-position] {
     display: none;
   }
 }

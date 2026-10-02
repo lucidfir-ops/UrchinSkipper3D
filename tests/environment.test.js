@@ -77,7 +77,7 @@ test('ebb, slack and flood are separate from tide height; sheltered water lags t
   assert(magnitude(slack) < magnitude(flood) * 0.2, 'near slack in main channel');
   at(675);
   assert(Math.abs(w.environment.flow) > 0.4, 'high water is not forced to be slack');
-  const shelter = at(776.25, 245, 432);
+  const shelter = at(776.25, 300, 228);
   assert(magnitude(shelter) > 0.004, 'residual/lagged eddy survives main-channel slack');
 });
 test('separated surfaced divers drift differently and each samples its own current', () => {

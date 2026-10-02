@@ -3,9 +3,10 @@ import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { boatDefinition, boatSpec } from '../boats.js';
-import { workLightsOn, enabledEquipment } from '../equipment-controls.js';
+import { workLightsOn, workLightStrength, enabledEquipment } from '../equipment-controls.js';
 import { surfaceBlood } from '../sea-cues.js';
 import { bubbleOpacity } from '../bubble-visibility.js';
+import { currentAt } from '../environment.js';
 import { visibilityRange } from '../assists.js';
 import { departureBoat } from '../departure-transition.js';
 import { trafficPose } from '../traffic-view.js';
@@ -1665,7 +1666,7 @@ export function addFittings(vessel, spec, materials, installed) {
   fittings.userData.dynamic = true;
   vessel.add(fittings);
   vessel.userData.fittings = {};
-  for (const id of installed) {
+  for (const id of installed.filter((id) => !['lights-double', 'lights-quad'].includes(id))) {
     const station = new THREE.Group();
     station.name = `Installed · ${id}`;
     vessel.userData.fittings[id] = station;
@@ -1740,6 +1741,13 @@ export function addFittings(vessel, spec, materials, installed) {
         );
       }
     } else if (id === 'lights') {
+      const output = installed.includes('lights-quad')
+        ? 4
+        : installed.includes('lights-double')
+          ? 2
+          : 1;
+      for (const upgrade of ['lights-double', 'lights-quad'])
+        if (installed.includes(upgrade)) vessel.userData.fittings[upgrade] = station;
       vessel.userData.workLampPositions = [
         new THREE.Vector3(0, cabinTop + 0.38, cabinZ - cabinLength * 0.5 - 0.12),
         new THREE.Vector3(-width * 0.34, cabinTop + 0.38, cabinZ + cabinLength * 0.25),
@@ -1759,10 +1767,24 @@ export function addFittings(vessel, spec, materials, installed) {
           targets[i].clone().sub(position).normalize(),
         );
         station.add(fixture);
-        box(fixture, materials.darkMetal, 0.34, 0.22, 0.2, 0, 0, 0, 0.025);
-        const lens = box(fixture, materials.lamp, 0.28, 0.16, 0.02, 0, 0, -0.11, 0.012);
-        lens.castShadow = false;
-        vessel.userData.workLenses.push(lens);
+        const columns = output > 1 ? 2 : 1,
+          rows = output > 2 ? 2 : 1;
+        box(fixture, materials.darkMetal, 0.34 * columns, 0.22 * rows, 0.2, 0, 0, 0, 0.025);
+        for (let panel = 0; panel < output; panel++) {
+          const lens = box(
+            fixture,
+            materials.lamp,
+            0.28,
+            0.16,
+            0.02,
+            ((panel % columns) - (columns - 1) / 2) * 0.32,
+            (Math.floor(panel / columns) - (rows - 1) / 2) * 0.21,
+            -0.11,
+            0.012,
+          );
+          lens.castShadow = false;
+          vessel.userData.workLenses.push(lens);
+        }
       });
     } else if (['plotter', 'scanner', 'forecast'].includes(id)) {
       const x = (['plotter', 'scanner', 'forecast'].indexOf(id) - 1) * 0.32;
@@ -1899,6 +1921,7 @@ class WakeField {
       spread,
       bubble,
       torch,
+      flowTime: 0,
       spin: this.index * 2.39996,
     });
   }
@@ -1988,6 +2011,16 @@ class WakeField {
   }
   update(dt, surfaceY = 0, world = null) {
     const range = world ? visibilityRange(world) : Infinity;
+    // Current is measured per simulation second. Pausing or changing the
+    // world pace must not leave bubbles moving in a different water mass
+    // from the diver and physical foam. Expansion/fading remains visual time.
+    const flowDt = world
+      ? this.flowWorld === world
+        ? Math.max(0, world.time - this.flowWorldTime)
+        : 0
+      : dt;
+    this.flowWorld = world;
+    this.flowWorldTime = world?.time;
     for (let i = 0; i < this.size; i++) {
       const p = this.particles[i];
       p.life -= dt;
@@ -1998,8 +2031,18 @@ class WakeField {
       if (p.life <= 0) {
         scratchObject.scale.setScalar(0);
       } else {
-        p.x += p.vx * dt;
-        p.z += p.vz * dt;
+        // Foam and exhaled bubbles travel with the same local water as the
+        // hull and divers. Cache the field at 10 Hz; decorative wash still
+        // spreads relative to that moving water.
+        p.flowTime -= flowDt;
+        if (world && p.flowTime <= 0) {
+          const flow = currentAt(world, p.x, p.z);
+          p.flowX = flow.x;
+          p.flowZ = flow.y;
+          p.flowTime = 0.1;
+        }
+        p.x += p.vx * dt + (world ? p.flowX || 0 : 0) * flowDt;
+        p.z += p.vz * dt + (world ? p.flowZ || 0 : 0) * flowDt;
         const age = p.maxLife - p.life,
           fade = Math.min(1, p.life / 1.5);
         const size = (p.size + age * p.spread) * Math.sqrt(fade);
@@ -2020,6 +2063,8 @@ class WakeField {
   }
   reset() {
     for (const p of this.particles) p.life = 0;
+    this.flowWorld = null;
+    this.flowWorldTime = undefined;
   }
   dispose() {
     this.mesh.removeFromParent();
@@ -2510,7 +2555,9 @@ export class VesselView {
     this.workSpots[1].target.position.set(-spec.width * 0.5 - 7, -0.6, spec.length * 0.15);
     for (const lens of this.boat.userData.workLenses || []) lens.visible = lights;
     this.workSpots.forEach((light) => {
-      light.intensity = lights ? 240 * boat.alpha : 0;
+      const output = workLightStrength(world);
+      light.intensity = lights ? 240 * output * boat.alpha : 0;
+      light.distance = 40 * Math.sqrt(output || 1);
     });
   }
   effect(event, world) {

@@ -408,7 +408,29 @@ export const UPGRADES = [
     price: 1100,
     rank: 0,
     detail:
-      'Lights the port recovery area and a forward-facing cone after dark; restores normal night pickup range.',
+      'Lights the port recovery area and a forward-facing cone; restores normal night pickup range and up to 38 m night sight in clear weather. Choose OFF, AUTO after dark, or ON at any time in Equipment switches.',
+  },
+  {
+    id: 'lights-double',
+    slot: 'mast',
+    name: 'Double-strength work lights',
+    price: 3200,
+    rank: 1,
+    requires: 'lights',
+    fixed: true,
+    detail:
+      'Upgrade the fitted work lights to twice the light output, with up to 54 m night sight in clear weather. Requires the standard lights. Uses their OFF / AUTO / ON switch; fog still limits sight. Price is additional to the original fitting.',
+  },
+  {
+    id: 'lights-quad',
+    slot: 'mast',
+    name: 'Quadruple-strength work lights',
+    price: 8500,
+    rank: 2,
+    requires: 'lights-double',
+    fixed: true,
+    detail:
+      'Upgrade the double-strength lamps to four times standard light output, with up to 76 m night sight in clear weather. Requires the double-strength package. Uses the same OFF / AUTO / ON switch; fog still limits sight. Output replaces the previous rating and does not stack.',
   },
   {
     id: 'torch',

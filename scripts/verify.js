@@ -32,6 +32,10 @@ async function ready() {
   }
 }
 const suites = {
+  boundary: ['scripts/boundary-review.js'],
+  'surface-drift': ['scripts/surface-drift-review.js'],
+  'work-lights': ['scripts/work-lights-review.js'],
+  currents: ['scripts/coastal-current-review.js'],
   'lighting-kelp': ['scripts/lighting-kelp-review.js'],
   vegetation: ['scripts/vegetation-review.js'],
   feedback: ['scripts/feedback-2026-review.js'],

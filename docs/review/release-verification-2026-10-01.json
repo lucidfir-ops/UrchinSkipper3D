@@ -1,0 +1,192 @@
+{
+  "date": "2026-10-01",
+  "edition": "Urchin Skipper 3D",
+  "unit_tests": {
+    "total": 555,
+    "pass": 554,
+    "fail": 0,
+    "skip": 1,
+    "skip_reason": "Optional private career save is not included in Git."
+  },
+  "checks": {
+    "lint": true,
+    "format": true,
+    "build": true,
+    "diff_check": true
+  },
+  "production": {
+    "started": "2026-10-02T06:38:56.133Z",
+    "ended": "2026-10-02T06:42:12.787Z",
+    "passed": true,
+    "results": [
+      {
+        "label": "boundary",
+        "code": 0,
+        "seconds": 27
+      },
+      {
+        "label": "surface-drift",
+        "code": 0,
+        "seconds": 9
+      },
+      {
+        "label": "work-lights",
+        "code": 0,
+        "seconds": 16
+      },
+      {
+        "label": "currents",
+        "code": 0,
+        "seconds": 60
+      },
+      {
+        "label": "lighting-kelp",
+        "code": 0,
+        "seconds": 19
+      },
+      {
+        "label": "operations",
+        "code": 0,
+        "seconds": 22
+      },
+      {
+        "label": "input",
+        "code": 0,
+        "seconds": 18
+      },
+      {
+        "label": "voyage",
+        "code": 0,
+        "seconds": 15
+      },
+      {
+        "label": "performance",
+        "code": 0,
+        "seconds": 8
+      }
+    ]
+  },
+  "performance": {
+    "device": {
+      "renderer": "ANGLE (AMD, Vulkan 1.4.330 (AMD Custom GPU 0405 (RADV VANGOGH) (0x0000163F)), radv)",
+      "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "pixelRatio": 1,
+      "framebuffer": [
+        1280,
+        800
+      ],
+      "screen": null,
+      "started": true
+    },
+    "results": [
+      {
+        "label": "native",
+        "elapsed": 4000.199999999255,
+        "renderFrames": 240,
+        "rafFrames": 240,
+        "fps": 59.99700015000367,
+        "fields": {
+          "frameMs": {
+            "mean": 16.66625,
+            "p95": 16.700000000000728
+          },
+          "inputMs": {
+            "mean": 0.763333333353512,
+            "p95": 1
+          },
+          "simulationMs": {
+            "mean": 0.3870833333581686,
+            "p95": 0.599999999627471
+          },
+          "drawMs": {
+            "mean": 6.637499999961195,
+            "p95": 16.300000000745058
+          },
+          "hudMs": {
+            "mean": 0.505416666669771,
+            "p95": 3.599999999627471
+          },
+          "totalCpuMs": {
+            "mean": 8.355000000012417,
+            "p95": 20.90000000037253
+          }
+        },
+        "render": {
+          "frame": 323,
+          "calls": 98,
+          "triangles": 351018,
+          "points": 0,
+          "lines": 96
+        }
+      }
+    ],
+    "errors": []
+  },
+  "export_validation": {
+    "zip_crc": true,
+    "all_build_bytes_match": true,
+    "local_server_port": 5198,
+    "production_identity_check": true
+  },
+  "exports": [
+    {
+      "path": "exports/2026-10-01-coastal-operations/Urchin Skipper 3D TEMP.zip",
+      "bytes": 104439750,
+      "sha256": "be4d22b6ac1cadffbbe76b0470ba7d201e012093219974b6fc2af6632213c0ca"
+    },
+    {
+      "path": "exports/2026-10-01-coastal-operations/UrchinSkipper3D-TEMP-ITCHIO.zip",
+      "bytes": 104411259,
+      "sha256": "4b8e8e05bc7a2c7f5a37a4f07ed84f57d2fd952675ff967262c99dee20083469"
+    }
+  ],
+  "build_files": [
+    {
+      "path": "dist/index.html",
+      "bytes": 2621,
+      "sha256": "539f4964ae4a85bd2f090d90a54e5884ff392909ae657b06a4e2d7184772be06"
+    },
+    {
+      "path": "dist/assets/geography-DRCAA4xL.js",
+      "bytes": 8817073,
+      "sha256": "11d61e00a1b80b0ed5b9dc2f4e304adee5df52dff4fd9c5a704bd204c2953842"
+    },
+    {
+      "path": "dist/assets/index-Cswrfgfp.js",
+      "bytes": 941325,
+      "sha256": "9fc1c7aa754660008f5c8011539983c8893430af959ec137994120c31b716942"
+    },
+    {
+      "path": "dist/assets/save.worker-CeKzy45w.js",
+      "bytes": 333,
+      "sha256": "dd8c2f74598cec68dcadb7b256f796d3f1601bb8168953693ebf462e6e87b0ff"
+    },
+    {
+      "path": "dist/assets/simulationSupport-BTGbtjln.js",
+      "bytes": 1387441,
+      "sha256": "a9aaf981bfd2da2a4381c5bb73dd5064897ef0781500f2e2a7cfc72f0fe7c4f0"
+    },
+    {
+      "path": "dist/assets/three-CfIQgPqf.js",
+      "bytes": 521453,
+      "sha256": "5477f77d6c3f4d39296a7b82d61102c382607e833397d988f6acced6c16fafbc"
+    },
+    {
+      "path": "dist/assets/index-BiM7Fb_j.css",
+      "bytes": 170022,
+      "sha256": "bf8b4dfd4ec9c28cf4c880b3d67ced9ef561c060cf6bf5870274e18cd8b587f7"
+    }
+  ],
+  "manual_acceptance_remaining": [
+    "Physical Xbox/Steam Deck controls",
+    "Physical phone/tablet performance and Safari",
+    "Actual itch.io upload",
+    "Late-coast fishing and long-career upgrade balance",
+    "Unaided recognition of eddies from natural cues"
+  ],
+  "known_limits": [
+    "Geography chunk remains large (about 3.88 MB gzip).",
+    "6 m flow approximation and dominant overlapping wakes; submerged shelves deflect flow without explicit vortices unless drying.",
+    "Wide zoom makes divers small; repeated kelp ribbons and a broad fog halo remain visible."
+  ]
+}

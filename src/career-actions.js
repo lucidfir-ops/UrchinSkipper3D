@@ -1,7 +1,12 @@
 import { preferenceActions } from './menu-preferences.js';
 import { crewRoster } from './crew-roster.js';
 import { marketOffers, chooseBuyer } from './buyer.js';
-import { enabledEquipment, toggleEquipment } from './equipment-controls.js';
+import {
+  enabledEquipment,
+  toggleEquipment,
+  workLightMode,
+  setWorkLightMode,
+} from './equipment-controls.js';
 import { startDump } from './deck-work.js';
 import { confirmAction, confirmPurchase, purchaseActions } from './purchase.js';
 import { coastWarning } from './frank-advice.js';
@@ -120,15 +125,25 @@ export function careerActions(ui, w) {
       ];
     case 'equipment-controls':
       return [
+        ...(c.fleet[w.boat.configuration]?.equipment.includes('lights')
+          ? ['off', 'auto', 'on'].map((mode) =>
+              action(
+                `switch-lights-${mode}`,
+                `${workLightMode(w) === mode ? '✓ ' : ''}Work lights: ${mode.toUpperCase()}${mode === 'auto' ? ' · after dark' : mode === 'on' ? ' · always lit' : ''}`,
+                () => setWorkLightMode(w, mode),
+                { pressed: workLightMode(w) === mode },
+              ),
+            )
+          : []),
         ...(c.fleet[w.boat.configuration]?.equipment || [])
           .filter((id) => {
             const item = UPGRADES.find((u) => u.id === id);
-            return item?.slot !== 'timepiece' && !item?.fixed;
+            return id !== 'lights' && item?.slot !== 'timepiece' && !item?.fixed;
           })
           .map((id) =>
             action(
               `switch-${id}`,
-              `${UPGRADES.find((u) => u.id === id)?.name || id}: ${enabledEquipment(w).includes(id) ? (id === 'lights' ? 'AUTO · after dark' : 'ON') : 'OFF'}`,
+              `${UPGRADES.find((u) => u.id === id)?.name || id}: ${enabledEquipment(w).includes(id) ? 'ON' : 'OFF'}`,
               () => toggleEquipment(w, id),
             ),
           ),

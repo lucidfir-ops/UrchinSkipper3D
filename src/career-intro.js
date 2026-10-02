@@ -43,7 +43,7 @@ export const INTRO_STEPS = [
   ],
   [
     'Return through the south edge',
-    'Recover everyone, then drive all the way through the SOUTH edge of the map to return to harbour. I’ll cover today’s fuel. Once we get home, we’ll choose your own boat.',
+    'Recover everyone, then cross the amber line at the SOUTH edge of the map. Confirm “Return to harbour?” when you are ready, or cancel to keep fishing. I’ll cover today’s fuel. Once we get home, we’ll choose your own boat.',
   ],
 ];
 // Optional explanations remain beside the action they explain, rather than
@@ -226,7 +226,7 @@ export function advanceIntro(w, actions = {}, screen = null) {
     aboard && w.catch > 0,
     intro.discovery,
     aboard && w.catch > (intro.markedLanded || 0),
-    aboard && crossedReturnBoundary(w),
+    aboard && crossedReturnBoundary(w) && w.day.returnConfirmed,
   ][intro.step];
   if (!passed) return false;
   if (intro.step === 6) intro.markedLanded = w.catch;

@@ -9,6 +9,7 @@ import { chooseGround } from '../src/day.js';
 import { updateEnvironment } from '../src/environment.js';
 import { forecast } from '../src/almanac.js';
 import { RECIPES } from '../world-source/sectors.js';
+import { diverSpec } from '../src/crew.js';
 function calm(id = 'twinjet') {
   const w = createWorld({ practice: true, boatId: id });
   w.terrain.depths = w.terrain.depths.slice().fill(20);
@@ -91,17 +92,59 @@ test('diver station keeping holds through two knots and slips one knot at three'
     assert(Math.abs(d.x - 200 - slip.x * 10) < 1e-6);
   }
 });
-test('strong current leaves a braced working diver picking with conserved stock', () => {
-  const w = calm();
-  w.environment.current = { x: 3 / C.knotsPerMps, y: 0 };
-  const patch = { x: 200, y: 200, radius: 4, remaining: 1000, quality: 0.8, rate: 10 };
-  w.patches = [patch];
-  Object.assign(w.diver, { state: 'harvesting', x: 200, y: 200, patch, air: 100 });
-  tick(w, 15);
-  assert.equal(w.diver.state, 'harvesting');
-  assert.equal(w.diver.x, 200);
-  assert(w.diver.bag > 149 && w.diver.bag < 151);
-  assert(Math.abs(w.diver.bag + patch.remaining - 1000) < 1e-7);
+test('working divers hold manageable current but strong flow sweeps them off with a conserved partial bag', () => {
+  for (const knots of [1.9, 3, 4.5]) {
+    const w = calm();
+    w.environment.current = { x: knots / C.knotsPerMps, y: 0 };
+    const patch = { x: 200, y: 200, radius: 4, remaining: 1000, quality: 0.8, rate: 10 };
+    w.patches = [patch];
+    Object.assign(w.diver, { state: 'harvesting', x: 200, y: 200, patch, air: 100 });
+    tick(w, 15);
+    if (knots < 2) {
+      assert.equal(w.diver.state, 'harvesting');
+      assert.equal(w.diver.x, 200);
+      assert(w.diver.bag > 149 && w.diver.bag < 151);
+    } else {
+      assert.equal(w.diver.state, 'surface');
+      assert.equal(w.diver.reason, 'Swept off productive ground');
+      assert(w.diver.x > 204);
+      assert(w.diver.bag > 0 && w.diver.bag < 100);
+      assert(w.diver.currentDrift > 0);
+    }
+    assert(Math.abs(w.diver.bag + patch.remaining - 1000) < 1e-7);
+  }
+});
+test('current holding experience extends bottom work without granting an extra upstream swim allowance', () => {
+  const outcomes = [];
+  for (const experience of [0, 65000]) {
+    const w = calm(),
+      d = w.diver,
+      patch = {
+        x: 200,
+        y: 200,
+        radius: 5,
+        remaining: 1000,
+        quality: 0.8,
+        rate: 10,
+        clumps: [{ x: 197, y: 200, radius: 7, remaining: 1000, quality: 0.8 }],
+      };
+    Object.assign(d, {
+      crewId: 'robinson',
+      experience,
+      state: 'harvesting',
+      x: 200,
+      y: 200,
+      patch,
+    });
+    w.patches = [patch];
+    w.environment.current = { x: 4 / C.knotsPerMps, y: 0 };
+    const expectedSlip = diverSlip(w.environment.current, diverSpec(d).holdCurrentKnots).x;
+    tick(w, 4);
+    assert.equal(d.state, 'harvesting');
+    assert(Math.abs(d.x - 200 - expectedSlip * 4) < 1e-6);
+    outcomes.push(d.x);
+  }
+  assert(outcomes[0] > outcomes[1] + 0.5);
 });
 test('starter peaks stay workable, later channels reach 3–5 knots, and forecasts match live vectors', () => {
   for (const id of ['middle', 'far', 'storm-channel', 'storm-sound']) {

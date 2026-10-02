@@ -4,7 +4,12 @@ import assert from 'node:assert/strict';
 import { careerWorld, encode, decode } from '../src/career-save.js';
 import { chooseGround, returnToHarbour } from '../src/day.js';
 import { step } from '../src/simulation.js';
-import { beginDeparture, departureBoat, DEPARTURE_SECONDS } from '../src/departure-transition.js';
+import {
+  beginDeparture,
+  confirmDeparture,
+  departureBoat,
+  DEPARTURE_SECONDS,
+} from '../src/departure-transition.js';
 
 const tick = (w, seconds) => {
   for (let i = 0; i < Math.round(seconds * 60); i++)
@@ -27,6 +32,9 @@ test('physical exit visibly fades before offload; reload during travel settles e
   w.catch = 100;
   w.bags = [{ weight: 100, quality: 0.8, harvestMinute: w.day.minute }];
   step(w, {}, 1 / 60);
+  assert.equal(w.day.returnPending, true);
+  assert.equal(w.day.returnFade, undefined);
+  assert(confirmDeparture(w));
   assert.equal(w.day.returnFade, 0);
   assert.equal(w.day.phase, 'working');
   assert.equal(departureBoat(w).alpha, 1);

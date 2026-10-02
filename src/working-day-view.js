@@ -2,6 +2,7 @@ import { marketOffers, buyerNotice } from './buyer.js';
 import { calculateOffload } from './offload.js';
 import { passageMinutes, selectedGround } from './day.js';
 import { money } from './career-data.js';
+import { workLightMode, workLightStrength, workLightsOn } from './equipment-controls.js';
 
 export function workingDayDetail(w, screen) {
   if (screen === 'market') {
@@ -23,5 +24,6 @@ export function workingDayDetail(w, screen) {
   if (screen === 'deck-catch') {
     return `<h3>${Math.round(w.catch).toLocaleString()} lb aboard · ${w.bags.length} bags</h3><p>Newest bag first. Quality here is the sampled bag quality; shipping age and area price affect the sale. Select a bag to release it overboard.</p><p>Dumping takes exactly its original hauling time. Close this menu to continue a running operation. The boat keeps moving during deck work.</p>${w.day.dump ? `<p><strong>Dump in progress · ${w.day.dump.remaining.toFixed(1)} seconds left</strong></p>` : ''}<p>Catch released this trip: ${Math.round(w.discarded || 0)} lb. Dumped catch does not regenerate the bed or earn crew shares.</p>`;
   }
-  return '<h3>Equipment switches</h3><p>Each switch belongs to this boat and is saved. Working lights run automatically after dark when enabled. Dive equipment can be changed with both divers aboard; finish a lift before switching its hauler.</p><p>Use fuel from the auxiliary tank before isolating it. Cosmetic clock faces remain selectable in Arrange UI.</p>';
+  const output = workLightStrength(w);
+  return `<h3>Equipment switches</h3>${output ? `<p class="equipment-status"><strong>WORK LIGHTS ${workLightsOn(w) ? 'LIT' : 'DARK'}</strong> · ${workLightMode(w).toUpperCase()} · ${output}× standard output</p><p>Choose <strong>ON</strong> for light at any time, <strong>AUTO</strong> for automatic night lighting, or <strong>OFF</strong>. Your selected mode is marked ✓ and stays with this boat.</p>` : '<p>Fit work lights in the Chandlery to light the forward water and port recovery rail.</p>'}<p>Each switch belongs to this boat and is saved. Dive equipment can be changed with both divers aboard; finish a lift before switching its hauler.</p><p>Use fuel from the auxiliary tank before isolating it. Cosmetic clock faces remain selectable in Arrange UI.</p>`;
 }

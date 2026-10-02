@@ -46,7 +46,7 @@ export async function workingDayChecks(browser) {
       assert.equal(await page.evaluate(() => urchinDebug.world.career.buyerToday.id), 'premium');
       await page.screenshot({ path: `test-results/working-${name}-${renderer}-market.png` });
       await open('equipment-controls');
-      await action('switch-lights');
+      await action('switch-lights-off');
       assert(
         await page.evaluate(() =>
           urchinDebug.world.career.fleet.twinjet.disabledEquipment.includes('lights'),
@@ -177,7 +177,7 @@ export async function workingDayChecks(browser) {
       });
       await page.waitForFunction(() => urchinDebug.terrainView.scene.view.speechLabels[0].visible);
       await page.screenshot({ path: `test-results/working-${name}-${renderer}-pickup.png` });
-      // Night and day use the same equipment switch; never a daylight beam.
+      // Automatic mode follows darkness; manual ON is available independently.
       await page.evaluate(() => {
         const d = urchinDebug;
         d.world.career.fleet[d.world.boat.configuration].equipment = ['lights', 'torch'];
@@ -187,7 +187,7 @@ export async function workingDayChecks(browser) {
       });
       await page.screenshot({ path: `test-results/working-${name}-${renderer}-night.png` });
       await open('equipment-controls');
-      await action('switch-lights');
+      await action('switch-lights-off');
       await open(null);
       await page.screenshot({ path: `test-results/working-${name}-${renderer}-lights-off.png` });
       await page.setViewportSize({ width: 402, height: 873 });

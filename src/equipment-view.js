@@ -25,7 +25,7 @@ const symbols = {
     '<rect x="4" y="6" width="24" height="18" rx="2"/><path d="M8 19l5-6 5 3 6-6M12 28h8m-4-4v4"/>',
 };
 export function equipmentIcon(item) {
-  return `<svg class="equipment-icon" viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">${symbols[item.id] || symbols.default}</svg>`;
+  return `<svg class="equipment-icon" viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">${symbols[item.id.startsWith('lights') ? 'lights' : item.id] || symbols.default}</svg>`;
 }
 export function fittingPreview(w, item) {
   const owned = !item || w.career.fleet[w.boat.configuration].equipment.includes(item.id);

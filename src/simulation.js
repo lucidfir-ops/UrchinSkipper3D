@@ -50,7 +50,7 @@ import {
 } from './world.js';
 import { stepBoat } from './boat.js';
 import { advanceDay } from './day.js';
-import { departing, beginDeparture, advanceDeparture } from './departure-transition.js';
+import { departing, requestDeparture, advanceDeparture } from './departure-transition.js';
 import { updateEnvironment } from './environment.js';
 import { recordFishingPressure, subAreaYield } from './quota-areas.js';
 import { driftUnderwater, moveOnBottom } from './diver-current.js';
@@ -410,8 +410,7 @@ function stepDiver(w, d, a, dt, tolerance) {
     }
   } else if (d.state === 'searching' || d.state === 'harvesting') {
     d.holdCurrentKnots = diverSpec(d).holdCurrentKnots;
-    if (d.state === 'searching') driftUnderwater(w, d, dt);
-    else d.currentDrift = 0;
+    driftUnderwater(w, d, dt);
     workCrew(w, d, dt);
     d.air = Math.max(C.diver.reserve, d.air - diveAirUse(w, d) * dt);
     d.diveTime += dt;
@@ -568,6 +567,7 @@ function stepDiver(w, d, a, dt, tolerance) {
 }
 export function step(w, a, dt, { tolerance = C.recovery.tolerance } = {}) {
   if (!activeDay(w) || w.emergency?.mandatoryRescue) return;
+  if (w.day.returnPending) return;
   w.time += dt;
   if (departing(w)) {
     advanceDeparture(w, dt);
@@ -600,7 +600,7 @@ export function step(w, a, dt, { tolerance = C.recovery.tolerance } = {}) {
     );
   }
   stepRocks(w, previous);
-  if (beginDeparture(w)) return;
+  if (requestDeparture(w)) return;
   releaseRunoff(w);
   stepLogs(w, dt, previous);
   checkDiverSafety(w, previous);

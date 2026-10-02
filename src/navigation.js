@@ -1,4 +1,4 @@
-// Edge crossings are simulation facts. Menus and input devices cannot offload.
+// Edge crossings are simulation facts. Travel also needs an explicit decision.
 export const EDGE_NAMES = { north: 'NORTH', east: 'EAST', south: 'SOUTH', west: 'WEST' };
 export const EDGE_BEARINGS = { north: 0, east: 90, south: 180, west: 270 };
 export function crossedReturnBoundary(w) {

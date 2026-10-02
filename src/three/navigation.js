@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { SectorBoundary } from './sector-boundary.js';
 import { assist } from '../assists.js';
 import { patchVisible } from '../hidden-ground.js';
 import { outlineStrokes, patchStyle, patchLabel, legendMarkup } from '../patch-style.js';
@@ -21,6 +22,7 @@ export class NavigationOverlay {
     this.layer.style.cssText =
       'position:fixed;inset:0;pointer-events:none;z-index:2;overflow:hidden';
     document.body.append(this.layer);
+    this.boundary = new SectorBoundary(scene, this.layer);
     this.lessonLabels = ['PORT · PICKUP', 'STERN · KEEP CLEAR'].map((text, i) => {
       const el = document.createElement('span');
       el.textContent = text;
@@ -35,6 +37,7 @@ export class NavigationOverlay {
     scene.add(this.rails);
   }
   update(world, ui, title, project) {
+    this.boundary.update(world, ui, title, project);
     if (this.patches !== world.patches) {
       for (const { line, label } of this.items) {
         line.geometry.dispose();

@@ -1,4 +1,5 @@
 import { skipperPortrait } from './patrol-view.js';
+import { renderReturn } from './harbour-return.js';
 import { canForward } from './screen-navigation.js';
 import { setText } from './dom-view.js';
 import { isRadioMessage } from './radio-history.js';
@@ -151,7 +152,8 @@ export function render(world) {
       ...EXPEDITION_SCREENS,
     ].includes(this.screen),
   );
-  if (this.screen === 'layout') layoutEditor(this).render(world);
+  if (this.screen === 'harbour-return') renderReturn(this, world, bind);
+  else if (this.screen === 'layout') layoutEditor(this).render(world);
   else if (['settings', 'ui-scale', 'gameplay-speed'].includes(this.screen))
     renderPreferences(this, world, bind);
   else if (this.screen === 'touch-options') renderTouchOptions(this, world);
@@ -178,7 +180,7 @@ export function render(world) {
     if (i.naming)
       info = `${i.naming.waitRelease ? 'Release every button, then press' : 'Press'} physical ${(i.naming.recoveryOnly ? ['X', 'Y'] : ['A', 'B', 'X', 'Y'])[i.naming.index]} · ${Math.ceil(i.naming.remaining)}s · Escape cancels. ${i.naming.recoveryOnly ? 'X will handle bags / send down; Y will board.' : 'Gameplay bindings will stay unchanged.'}`;
     if (this.screen === 'help')
-      info = `Sticks adjust persistent throttle and rudder. Release holds the command. Bring the orange float to PORT and match its drift (below ${(C.recovery.maxRelativeSpeed * C.knotsPerMps).toFixed(1)} kn relative to the float). ${bind('recoverDiver')} deploys from deck or boards diver + bag. ${bind('work')} takes and replaces one diver’s bag with one press. They return to work if ready, or explain the refusal in a bubble. ${bind('recall')} recalls underwater bubbles within 5 m after a 2–5 second response and clang. Keep clear of the hull: striking a surfaced diver can injure or kill them. ${bind('cycleDiver')} selects the other diver for deployment and orders; nearby pickup is automatic. ${bind('instructions')} opens compass orders. Both divers need to be aboard before travel. Drive across the marked harbour-facing sector boundary to return. The chart shows when to leave for the ${formatClock(C.day.deadlineMinute)} offload. Bag work and boarding choose the nearest eligible port-side float. All Off hides optional telemetry. Bubbles are the only underwater representation. Menus pause the game.${!world.career || world.career.sandbox ? ' Developer reveal is available separately through test settings.' : ''}`;
+      info = `Sticks adjust persistent throttle and rudder. Release holds the command. Bring the orange float to PORT and match its drift (below ${(C.recovery.maxRelativeSpeed * C.knotsPerMps).toFixed(1)} kn relative to the float). ${bind('recoverDiver')} deploys from deck or boards diver + bag. ${bind('work')} takes and replaces one diver’s bag with one press. They return to work if ready, or explain the refusal in a bubble. ${bind('recall')} recalls underwater bubbles within 5 m after a 2–5 second response and clang. Keep clear of the hull: striking a surfaced diver can injure or kill them. ${bind('cycleDiver')} selects the other diver for deployment and orders; nearby pickup is automatic. ${bind('instructions')} opens compass orders. Both divers need to be aboard before travel. Cross the gold harbour-facing boundary, then confirm your return. Cancel keeps you here in neutral. The chart shows when to leave for the ${formatClock(C.day.deadlineMinute)} offload. Bag work and boarding choose the nearest eligible port-side float. All Off hides optional telemetry. Bubbles mark submerged divers; bodies fade from sight with depth. Menus pause the game.${!world.career || world.career.sandbox ? ' Developer reveal is available separately through test settings.' : ''}`;
     if (this.screen === 'radio')
       info =
         (world.career?.radioLog || this.radioLog || [])

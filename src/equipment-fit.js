@@ -1,7 +1,7 @@
 import { UPGRADES, RANKS, rankOf, money } from './career-data.js';
 import { boatDefinition, boatSpec } from './boats.js';
 import { boatFamily } from './vessel-catalog.js';
-import { enabledEquipment } from './equipment-controls.js';
+import { enabledEquipment, workLightMode, workLightStrength } from './equipment-controls.js';
 
 // Stations describe physical installation, never capacity. Several compatible
 // fittings can share a station, and each hull retains its own purchases.
@@ -35,7 +35,7 @@ export const equipmentStation = (item) =>
 export const equipmentLocation = (item) => equipmentStation(item)?.name || item?.slot || 'Boat';
 export function equipmentGroup(item) {
   if (['drive', 'bow', 'hull', 'aft deck'].includes(item.slot)) return 'Propulsion & range';
-  if (['working deck', 'dive gear'].includes(item.slot) || item.id === 'lights')
+  if (['working deck', 'dive gear'].includes(item.slot) || item.id.startsWith('lights'))
     return 'Deck & diving';
   if (item.slot === 'timepiece' || item.slot === 'skipper') return 'Wheelhouse & personal';
   return 'Navigation & weather';
@@ -84,6 +84,14 @@ export function equipmentAvailability(w, item) {
       reason: `Supplier requires ${rank.name}: ${Math.round(w.career.xp).toLocaleString()} / ${rank.xp.toLocaleString()} experience. Earn experience by landing catch and completing working days.`,
     };
   }
+  if (item.requires && !vessel.equipment.includes(item.requires)) {
+    const prerequisite = UPGRADES.find((fitting) => fitting.id === item.requires);
+    return {
+      ok: false,
+      label: `Fit ${prerequisite.name} first`,
+      reason: `This output upgrade builds on ${prerequisite.name.toLowerCase()}. Fit that package to this boat first; its purchase is separate.`,
+    };
+  }
   if (w.career.cash < item.price)
     return {
       ok: false,
@@ -103,9 +111,15 @@ export function equipmentOperatingState(w, item) {
     return w.career.preferences?.timepiece === item.id
       ? 'Owned · selected face'
       : 'Owned · stored face';
+  if (item.id.startsWith('lights')) {
+    const mode = workLightMode(w);
+    return mode === 'off'
+      ? `Installed · switched off · ${workLightStrength(w)}× output fitted`
+      : `Installed · ${mode === 'on' ? 'ON · always lit' : 'AUTO · after dark'} · ${workLightStrength(w)}× output`;
+  }
   if (item.fixed) return 'Installed · permanent';
   if (!enabledEquipment(w).includes(item.id)) return 'Installed · switched off';
-  return item.id === 'lights' ? 'Installed · automatic at night' : 'Installed · on';
+  return 'Installed · on';
 }
 
 export function equipmentBenefit(item) {
@@ -115,7 +129,9 @@ export function equipmentBenefit(item) {
       'fuel-system': '12% less fuel used, with either engine package.',
       hoist: 'A bag exchanged in 2.2 seconds instead of 3.',
       nitrox: 'Longer fictional dive allowance and tank endurance.',
-      lights: 'Light the working side and forward water after dark.',
+      lights: 'Light the working side and forward water whenever needed.',
+      'lights-double': 'Twice the light output; night sight grows from 38 to 54 m.',
+      'lights-quad': 'Four times standard output; night sight grows from 54 to 76 m.',
       torch: 'Both divers can work after dark.',
       plotter: 'Keep your depth tracks and reef observations between trips.',
       bowthruster: 'Push the front of the boat sideways at low speed.',
@@ -179,6 +195,18 @@ export function equipmentPreview(w, item) {
   if (item.id === 'nitrox') {
     add('Depth-time allowance', enabledEquipment(w).includes('nitrox') ? 160 : 100, 160, '%', 0);
     add('Tank endurance', enabledEquipment(w).includes('nitrox') ? 120 : 100, 120, '%', 0);
+  }
+  if (item.id.startsWith('lights')) {
+    const from = workLightStrength(w),
+      to = Math.max(from, item.id === 'lights-quad' ? 4 : item.id === 'lights-double' ? 2 : 1);
+    add('Fitted lamp output', from * 100, to * 100, '%', 0);
+    add(
+      'Clear-weather night sight, lights on',
+      from ? 38 * Math.sqrt(from) : 16,
+      38 * Math.sqrt(to),
+      'm',
+      0,
+    );
   }
   return { owned, before, after, rows };
 }

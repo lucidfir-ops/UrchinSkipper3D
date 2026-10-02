@@ -154,6 +154,32 @@ export function driftSurface(w, object, dt, flow = null) {
 // swept wet-path checks without doing them for every speck on every physics
 // step. Physical logs, divers and floats retain their full simulation cadence.
 const debrisFlows = new WeakMap();
+function replenishDrift(w, item, flow, index) {
+  const size = w.terrain.size,
+    exitX = (item.x <= 0 && flow.x < 0) || (item.x >= size && flow.x > 0),
+    exitY = (item.y <= 0 && flow.y < 0) || (item.y >= size && flow.y > 0);
+  if (!exitX && !exitY) return;
+  // Decorative material leaving this small surveyed sector is replaced by
+  // incoming material. Never recycle divers, physical logs or inland foam,
+  // and never introduce foam from a dry or outgoing shore.
+  for (let attempt = 0; attempt < 16; attempt++) {
+    const horizontal = exitX && (!exitY || Math.abs(flow.x) >= Math.abs(flow.y)),
+      cross = attempt
+        ? 1 + ((index * 0.618034 + attempt * 0.381966) % 1) * (size - 2)
+        : Math.max(1, Math.min(size - 1, horizontal ? item.y : item.x)),
+      x = horizontal ? (flow.x > 0 ? 1 : size - 1) : cross,
+      y = horizontal ? cross : flow.y > 0 ? 1 : size - 1;
+    if (depthAt(w, x, y) <= 0.2) continue;
+    const incoming = currentAt(w, x, y),
+      enters = horizontal ? incoming.x * flow.x > 0 : incoming.y * flow.y > 0;
+    if (!enters) continue;
+    item.x = x;
+    item.y = y;
+    flow.x = incoming.x;
+    flow.y = incoming.y;
+    return;
+  }
+}
 export function driftDebris(w, dt) {
   for (let i = 0; i < w.debris.length; i++) {
     const item = w.debris[i];
@@ -169,6 +195,7 @@ export function driftDebris(w, dt) {
     flow.x = c.x;
     flow.y = c.y;
     driftSurface(w, item, flow.elapsed, flow);
+    replenishDrift(w, item, flow, i);
     flow.elapsed = 0;
     flow.next = w.time + 0.08 + (i % 5) * 0.01;
   }

@@ -19,6 +19,8 @@ export async function diverOperationsChecks(browser) {
   async function stageRecovery() {
     await page.evaluate(() => {
       const w = urchinDebug.world;
+      urchinDebug.ui.importantNotice = null;
+      urchinDebug.ui.seaMessages?.clear();
       w.career.intro.status = 'complete';
       w.day.phase = 'working';
       w.day.crewRest = 0;
@@ -123,15 +125,18 @@ export async function diverOperationsChecks(browser) {
     await page.waitForFunction(() => !document.getElementById('touchControls').hidden);
     await page.locator('[data-touch="recoverDiver"]').tap();
     await page.waitForFunction(() => urchinDebug.world.divers[0].hooking);
-    await page.waitForFunction(
-      () => getComputedStyle(document.getElementById('help')).display === 'none',
-    );
-    await page.waitForFunction(
-      () => !/DIVER ABOARD/.test(urchinDebug.ui.importantNotice?.text || ''),
+    await page.waitForFunction(() => {
+      const speech = document.getElementById('seaSpeech');
+      return speech && !speech.hidden && /ladder|recovery|climbing/i.test(speech.textContent);
+    });
+    assert.equal(
+      await page.evaluate(() => getComputedStyle(document.getElementById('help')).display),
+      'none',
+      'brief recovery speech replaces the overlapping compact helm primer',
     );
     assert(
-      await page.evaluate(() => urchinDebug.three.diverCues.pickupLabel.hidden),
-      'the compact recovery card replaces an overlapping duplicate port callout',
+      await page.locator('#message').evaluate((element) => element.hidden),
+      'the obsolete permanent pickup panel must stay hidden',
     );
     await page.screenshot({ path: `${output}/touch-port-recovery.png` });
     await page.waitForFunction(() => urchinDebug.world.divers[0].state === 'ready', null, {
@@ -141,7 +146,8 @@ export async function diverOperationsChecks(browser) {
     await page.waitForFunction(
       () =>
         !urchinDebug.world.career.assists.controlsHelp ||
-        getComputedStyle(document.getElementById('help')).display !== 'none',
+        (document.getElementById('seaSpeech').hidden &&
+          getComputedStyle(document.getElementById('help')).display !== 'none'),
     );
     records.push({ kind: 'native-touch-port-recovery', catchAdded: 150 });
     console.log('Diver operations: touch recovery passed');

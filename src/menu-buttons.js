@@ -11,6 +11,7 @@ export function choiceButton(
   if (action) button.dataset.action = action.id;
   button.textContent = label;
   button.disabled = !!action?.disabled;
+  if (action?.pressed !== undefined) button.setAttribute('aria-pressed', String(action.pressed));
   const selected = index === ui.index;
   button.classList.toggle('selected', selected);
   button.setAttribute('aria-current', String(selected));

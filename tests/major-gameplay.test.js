@@ -1,4 +1,5 @@
 import './matter-helper.js';
+import { confirmDeparture } from '../src/departure-transition.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { C } from '../src/config.js';
@@ -135,7 +136,7 @@ test('bow contact permits forward leverage to swing the stern, then reverse into
     assert(hullDepth(w) > 2.3);
   }
 });
-test('return requires the harbour edge, blocks with divers out, and commits by physical movement once', () => {
+test('return requires the harbour edge, blocks with divers out, and commits after explicit approval once', () => {
   for (const [id, edge] of [
     ['near', 'south'],
     ['middle', 'west'],
@@ -161,6 +162,11 @@ test('return requires the harbour edge, blocks with divers out, and commits by p
     assert(w.boat.y <= 595 && w.boat.x >= 5);
     w.divers[1].state = 'ready';
     tick(w, 7);
+    assert.equal(w.day.phase, 'working');
+    assert.equal(w.day.returnPending, true);
+    assert.equal(w.catch, 300, 'crossing cannot offload before confirmation');
+    assert(confirmDeparture(w));
+    tick(w, 3);
     assert.equal(w.day.phase, 'complete');
     assert.equal(w.day.offloaded, 300);
     assert.equal(w.catch, 0);

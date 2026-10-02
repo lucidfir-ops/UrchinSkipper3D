@@ -124,7 +124,7 @@ export function snapshot(w, copy = true) {
   syncVessel(w);
   const divers = w.divers.map((d) => {
     const { patch, clump, target, ...state } = d;
-    return { ...state, patchId: patch?.id, clumpId: clump?.id, targetId: target?.id };
+    return { ...take(state), patchId: patch?.id, clumpId: clump?.id, targetId: target?.id };
   });
   return {
     schema: 1,

@@ -41,6 +41,8 @@ Drop on promising bottom. The sounder shows depth; kelp and the chart help you f
 
 Bring the float to port and match its drift. Pickup speed is relative to the float: drifting together at two knots is fine. Keep the float outside the hull and away from powered propellers.
 
+Read the water before a drop. Foam and floating weed travel with the local current; kelp trails with it. Behind a headland the water can slow or curl back against the race. That lee changes sides when the tide turns. Check the almanac, then watch the water beside the actual ground. Strong flow can sweep a working diver off a bed with a partial bag.
+
 ${bind('work')} takes and replaces one diver’s bag with one press. They go straight back down if air, ground and dive allowance permit; otherwise they tell you why. Both bag work and boarding use the diver alongside, regardless of your selected portrait. Selection still chooses who scouts or deploys next. ${bind('recoverDiver')} brings diver and any catch aboard, supplies an empty bag and a fresh tank. Partial bags stay safely on deck. The next deployment starts a new search.
 
 When diver readouts are enabled, check the surfacing reason: full bag, air reserve, exhausted ground, a table break or the quality order. Fresh tanks do not clear accumulated dive exposure; heed requests for surface intervals. Repeated deep days can lead to suspected decompression sickness and a medical return. These are fictional game tables, never real dive guidance. Reports are written to the chart as the catch comes aboard.
@@ -53,5 +55,5 @@ Fatigue builds through the working day, slowing picking, swimming and current ho
 
 An early departure before 07:00 adds 6% fatigue once; darkness also makes unlit work harder. Rest ashore or warm up the crew at sea. Experience builds over worked trips; check each diver's level in Meet the crew.
 
-${bind('debug')} cycles the permitted information presets: Easy / Realistic / All Off in Easy careers, Realistic / All Off in Realistic careers. ${bind('assists')} opens the assists menu. For identity and selection only, disable Diver indicators and enable the portrait-only selector. ${bind('chart')} opens your current area's chart. ${bind('almanac')} opens tides, or use the Tide & current almanac button. Bring both divers home across the marked harbour edge for 19:00 offload. Injuries need medical help; sinking or a fatality needs radio assistance.`;
+${bind('debug')} cycles the permitted information presets: Easy / Realistic / All Off in Easy careers, Realistic / All Off in Realistic careers. ${bind('assists')} opens the assists menu. For identity and selection only, disable Diver indicators and enable the portrait-only selector. ${bind('chart')} opens your current area's chart. ${bind('almanac')} opens tides, or use the Tide & current almanac button. Bring both divers aboard, cross the gold harbour boundary and confirm your return for 19:00 offload. Cancel keeps you on the water in neutral. Injuries need medical help; sinking or a fatality needs radio assistance.`;
 }

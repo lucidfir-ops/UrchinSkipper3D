@@ -32,7 +32,7 @@ export function moveOnBottom(w, d, x, y) {
     speed = Math.hypot(slip.x, slip.y);
   // Station keeping already spends the diver's upstream effort. Do not give
   // search/harvest locomotion a second upstream swim allowance in strong flow.
-  if (speed && d.state !== 'harvesting') {
+  if (speed) {
     const ux = slip.x / speed,
       uy = slip.y / speed,
       upstream = Math.min(0, dx * ux + dy * uy);

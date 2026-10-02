@@ -52,6 +52,7 @@ export function createDebugTimeAdvance(w, minutes) {
       return (
         completed >= steps ||
         stopped ||
+        !!w.day.returnPending ||
         !!w.emergency?.mandatoryRescue ||
         !['working', 'practice'].includes(w.day.phase)
       );
@@ -73,11 +74,13 @@ export function createDebugTimeAdvance(w, minutes) {
         ok: completed > 0,
         reason:
           `Advanced ${Math.round(advanced)} minutes to ${formatClock(debugClockMinute(w))}` +
-          (w.emergency?.mandatoryRescue
-            ? '; stopped at a mandatory emergency.'
-            : stopped
-              ? '; stopped here.'
-              : '.'),
+          (w.day.returnPending
+            ? '; stopped at the harbour boundary for your decision.'
+            : w.emergency?.mandatoryRescue
+              ? '; stopped at a mandatory emergency.'
+              : stopped
+                ? '; stopped here.'
+                : '.'),
       };
     },
   };

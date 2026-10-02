@@ -5,6 +5,7 @@ import { RECIPES } from '../world-source/sectors.js';
 import { bedDepthAt } from '../src/terrain.js';
 import { terrainFeatures, habitatSuitability } from './world/habitat.js';
 import { generateCurrentField, authorFlow, shelterAt } from './world/current-field.js';
+import { generateCoastalField } from './world/coastal-flow.js';
 
 const round = (v) => Math.round(v * 100) / 100;
 import { seededRandom } from '../src/math.js';
@@ -227,6 +228,7 @@ export function generateSector(recipe) {
   const clumpRandom = seededRandom(recipe.seed + 4711);
   for (const p of terrain.patches) p.clumps = createClumps(p, clumpRandom);
   terrain.currentField = generateCurrentField(recipe, terrain);
+  terrain.coastalCurrent = generateCoastalField(recipe, terrain);
   const {
     id,
     name,

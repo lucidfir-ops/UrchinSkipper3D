@@ -1,4 +1,5 @@
 import { answerPatrol, crewAboard } from './fishery.js';
+import { RETURN_CHOICES, activateReturn } from './harbour-return.js';
 import { introChoices, introActivate } from './intro-view.js';
 import { expeditionChoices, expeditionActivate } from './career-chart.js';
 
@@ -25,6 +26,7 @@ import { touchOptionsActions } from './touch-options.js';
 import { preferenceActions } from './menu-preferences.js';
 
 export function choices(world) {
+  if (this.screen === 'harbour-return') return RETURN_CHOICES;
   const preferences = preferenceActions(this);
   if (preferences) return preferences.map((action) => action.label);
   if (this.screen === 'touch-options') return touchOptionsActions(this).map((a) => a.label);
@@ -207,6 +209,10 @@ export function activate(world) {
   }
   if (this.screen === 'touch-options') {
     touchOptionsActions(this)[this.index]?.run();
+    return;
+  }
+  if (this.screen === 'harbour-return') {
+    activateReturn(this, world);
     return;
   }
   if (introActivate(this)) return;

@@ -6,6 +6,7 @@ export function workLightUniforms() {
     uWorkDirection: { value: [new THREE.Vector3(), new THREE.Vector3()] },
     uWorkCone: { value: [new THREE.Vector2(), new THREE.Vector2()] },
     uWorkPower: { value: [0, 0] },
+    uWorkRange: { value: [40, 40] },
   };
 }
 
@@ -20,6 +21,7 @@ export function updateWorkLightWater(uniforms, lights) {
       Math.cos(light.angle * (1 - light.penumbra)),
     );
     uniforms.uWorkPower.value[i] = light.intensity;
+    uniforms.uWorkRange.value[i] = light.distance || 40;
   }
 }
 
@@ -31,6 +33,7 @@ export const workLightFragment = /* glsl */ `
   uniform vec3 uWorkDirection[2];
   uniform vec2 uWorkCone[2];
   uniform float uWorkPower[2];
+  uniform float uWorkRange[2];
   vec3 workLightWater(vec3 point, vec3 normal, vec3 view, float rough, float ripple) {
     vec3 radiance = vec3(0.0);
     for(int i=0;i<2;i++) {
@@ -41,7 +44,7 @@ export const workLightFragment = /* glsl */ `
       float cone = smoothstep(uWorkCone[i].x,uWorkCone[i].y,
         dot(-incoming,uWorkDirection[i]));
       float attenuation = cone * uWorkPower[i] / max(1.0,distance2);
-      attenuation *= pow(clamp(1.0-pow(sqrt(distance2)/40.0,4.0),0.0,1.0),2.0);
+      attenuation *= pow(clamp(1.0-pow(sqrt(distance2)/uWorkRange[i],4.0),0.0,1.0),2.0);
       float nl = max(dot(normal,incoming),0.0);
       float nv = max(dot(normal,view),.01);
       vec3 halfway = normalize(incoming+view);

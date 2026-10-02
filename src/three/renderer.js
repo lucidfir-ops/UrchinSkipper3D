@@ -1,5 +1,6 @@
 import { updateWorkLightWater } from './work-light-water.js';
 import { CurrentField } from './current-field.js';
+import { SurfaceDrift } from './surface-drift.js';
 import { updateSeaMessages } from '../sea-messages.js';
 import * as THREE from 'three';
 import { Sky } from 'three/addons/objects/Sky.js';
@@ -70,6 +71,8 @@ export class MarineRenderer {
     this.lessonCues = { labels: this.navigation.lessonLabels };
     this.currentArrows = new CurrentField();
     this.scene.add(this.currentArrows);
+    this.surfaceDrift = new SurfaceDrift();
+    this.scene.add(this.surfaceDrift);
     this.rain = this.makeRain();
     this.resize = () => {
       this.width = window.innerWidth;
@@ -260,6 +263,7 @@ export class MarineRenderer {
     this.diverCues.update(world, ui, title, (x, y) => this.project(x, y));
     this.currentArrows.visible = !title && assist(world, 'currentArrows', ui.realistic, ui.debug);
     this.currentArrows.update(world, ((span * this.width) / this.height) * 1.12, span * 1.3);
+    this.surfaceDrift.update(world, ((span * this.width) / this.height) * 1.12, span * 1.3);
     this.rain.visible = (world.weather?.rain || 0) > 0.06;
     this.rain.position.set(b.x, 8 - ((world.time * 19) % 8), b.y);
     this.rain.material.opacity = Math.min(0.4, (world.weather?.rain || 0) * 0.35);

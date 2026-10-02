@@ -1,5 +1,5 @@
 import { C } from './config.js';
-import { enabledEquipment } from './equipment-controls.js';
+import { enabledEquipment, workLightRange } from './equipment-controls.js';
 import { UI_OPTIONS } from './assist-options.js';
 export const ASSISTS = {
   timepiece: 'Timepiece',
@@ -219,7 +219,7 @@ export function pickupTolerance(w, realistic = false) {
 }
 export function visibilityRange(w) {
   let range = w.weather?.visibility ?? 1000;
-  if (w.weather?.night) range = Math.min(range, gear(w, 'lights') ? 38 : 16);
+  if (w.weather?.night) range = Math.min(range, workLightRange(w));
   return range;
 }
 export function reefRange(w) {

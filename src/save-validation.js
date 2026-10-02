@@ -92,6 +92,8 @@ export function validateSnapshot(data) {
       'vessel condition',
     );
     assert(Array.isArray(v.equipment), 'vessel fittings');
+    if (v.workLightMode !== undefined)
+      assert(['off', 'auto', 'on'].includes(v.workLightMode), 'work light mode');
     if (v.disabledEquipment !== undefined)
       assert(
         Array.isArray(v.disabledEquipment) &&
@@ -109,6 +111,11 @@ export function validateSnapshot(data) {
     finite(data.time, 0) && finite(data.catch, 0) && Array.isArray(data.bags),
     'working totals',
   );
+  for (const bag of data.bags) {
+    assert(bag && finite(bag.weight, 0) && finite(bag.quality, 0, 1.000001), 'bag totals');
+    for (const key of ['harvestMinute', 'recoveredMinute', 'haulSeconds'])
+      assert(bag[key] === undefined || finite(bag[key], 0), 'bag history');
+  }
   const b = data.boat;
   if (c.buyerToday)
     assert(
@@ -126,6 +133,16 @@ export function validateSnapshot(data) {
         finite(data.day.dump.duration, 0.1, 10) &&
         finite(data.day.dump.remaining, 0, data.day.dump.duration),
       'deck operation',
+    );
+  for (const key of ['returnPending', 'returnDismissed', 'returnConfirmed'])
+    if (data.day[key] !== undefined) assert(typeof data.day[key] === 'boolean', 'return decision');
+  if (data.day.returnPending)
+    assert(
+      ['working', 'practice'].includes(data.day.phase) &&
+        data.day.returnFade === undefined &&
+        ['north', 'east', 'south', 'west'].includes(data.day.returnExit?.edge) &&
+        data.divers?.every((d) => d.state === 'ready'),
+      'pending harbour return',
     );
   if (data.day.returnFade !== undefined)
     assert(
@@ -145,6 +162,14 @@ export function validateSnapshot(data) {
   );
   assert(b.fuel >= 0 && Math.abs(b.throttle) <= 1 && Math.abs(b.rudder) <= 1, 'helm or fuel');
   assert(Array.isArray(data.divers) && data.divers.length === 2, 'divers');
+  assert(
+    data.divers.every((d, index) => d?.id === index),
+    'diver berth identities',
+  );
+  assert(
+    data.selectedDiverId === undefined || [0, 1].includes(data.selectedDiverId),
+    'selected diver',
+  );
   if (data.logField !== undefined) {
     assert(
       data.logField.version === 2 &&
@@ -231,6 +256,10 @@ export function validateSnapshot(data) {
     }
   }
   for (const d of data.divers) {
+    assert(finite(d.qualitySum, 0), 'diver quality total');
+    for (const key of ['hook', 'diveTime', 'searchTime', 'harvestTime'])
+      assert(d[key] === undefined || finite(d[key], 0), 'diver operation clock');
+    assert(d.timer === undefined || finite(d.timer, -1), 'diver transition clock');
     assert(
       d.deckWalkStarted == null || finite(d.deckWalkStarted, 0, data.time + 0.001),
       'diver deck arrival',

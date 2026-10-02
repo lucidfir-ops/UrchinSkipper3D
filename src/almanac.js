@@ -71,7 +71,7 @@ export function estimatedCurrents(f) {
     for (let x = step; x < f.terrain.size - step / 2; x += step) {
       const v = currentAt(view, x, y),
         speed = Math.hypot(v.x, v.y);
-      if (speed < 0.07) continue;
+      if (speed < 0.018) continue;
       const angle = (Math.round(Math.atan2(v.y, v.x) / (Math.PI / 8)) * Math.PI) / 8;
       arrows.push({ x, y, angle, strength: speed < 0.3 ? 1 : speed < 0.8 ? 2 : 3 });
     }

@@ -1,6 +1,7 @@
 import { C } from './config.js';
 import { clamp, depthAt, sampleGridChannels } from './terrain.js';
 import { regionalLimits } from './regional-conditions.js';
+import { sampleCoastalCurrent } from './coastal-current-grid.js';
 
 const TAU = Math.PI * 2;
 const channels = new Float64Array(7);
@@ -67,8 +68,22 @@ export function currentAt(w, x, y) {
   if (e.model !== 'spatial-v1' || !grid) return e.current;
   const depth = depthAt(w, x, y);
   if (depth <= 0) return { x: 0, y: 0 };
-  sampleGridChannels(grid, grid.values, x, y, channels);
-  const lag = channels[6];
+  // Keep the original authoring inputs solely for deterministic habitat/bed
+  // placement. Every live boat, diver, chart, kelp and drifter shares this field.
+  const coastal = w.day?.groundId && w.terrain.coastalCurrent;
+  let lag;
+  if (coastal) {
+    sampleCoastalCurrent(coastal, e.seaLevel, x, y, channels);
+    channels[4] = channels[5] = 0;
+    // Recirculating water turns later than the race. Directional asymmetry
+    // comes from the coastline, so slack memory cannot create a fixed safe zone.
+    const asymmetric = Math.hypot(channels[0] + channels[2], channels[1] + channels[3]);
+    const total = Math.hypot(channels[0], channels[1]) + Math.hypot(channels[2], channels[3]);
+    lag = 10 * clamp(asymmetric / Math.max(0.001, total), 0, 1);
+  } else {
+    sampleGridChannels(grid, grid.values, x, y, channels);
+    lag = channels[6];
+  }
   const flow = lag ? sampleCurve(e.currentCurve, e.minute - lag) : e.flow;
   const flood = Math.max(0, flow),
     ebb = Math.max(0, -flow),
@@ -80,7 +95,7 @@ export function currentAt(w, x, y) {
   let vx = (channels[0] * flood + channels[2] * ebb + channels[4] * residual) * wet * squeeze;
   let vy = (channels[1] * flood + channels[3] * ebb + channels[5] * residual) * wet * squeeze;
   const basin = w.terrain.tidalBasin;
-  if (basin && Math.hypot(x - basin.x, y - basin.y) < basin.radius - 12) {
+  if (!coastal && basin && Math.hypot(x - basin.x, y - basin.y) < basin.radius - 12) {
     // Exposed boulder rims break the race; high water overtops their shoulders.
     const shelter = 0.025 + 0.975 * clamp((e.seaLevel - 0.25) / 1.45, 0, 1);
     vx *= shelter;

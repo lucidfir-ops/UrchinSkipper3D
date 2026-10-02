@@ -1,12 +1,20 @@
 # Urchin Skipper 3D — current status
 
-September 30, 2026 · lighting, tide/current motion and responsive time advance revision of the independent Three.js edition. Work, exports and publication belong only to this project and [lucidfir-ops/UrchinSkipper3D](https://github.com/lucidfir-ops/UrchinSkipper3D). The original 2D project and repository were used read-only.
+October 1, 2026 · geography-driven currents, explicit harbour return, stronger work lights and working-diver/save fixes. Work, exports and publication belong only to this project and [lucidfir-ops/UrchinSkipper3D](https://github.com/lucidfir-ops/UrchinSkipper3D). The original 2D project and repository were used read-only.
 
 ## Design authority
 
 The inherited [living Bible](bible.md) governs gameplay. Its September 26 amendments authorize this separate Three.js presentation and live coastal title; the September 27 commission authorizes substantial menu and HUD restructuring. The September 28 playtest commission extends equipment fitting, physical dive operations, the near-surface water column, training and navigation while preserving playtested behaviour. Preserve the orthographic following camera, exactly two autonomous divers, established information rules and original simulation geometry. Historical links in copied reference documents describe provenance in the 2D workspace, not additional active 3D requirements.
 
 ## Playable build
+
+The October 1 revision maps live currents from the actual connected shoreline and seabed on all fifteen career maps. Flood and ebb have separate geographic wakes, lee backflow, headland deflection and channel acceleration; tide-height layers model drying rims. Exposed late-coast races retain the existing 5-knot ceiling. All original bathymetry, fishing-bed data and habitat-authoring inputs are hash-verified unchanged. The new field is baked offline, packed losslessly and interpolated at runtime. Actual current-driven foam and weed now render in 3D; wash and bubbles also advect with simulation time, including paused and accelerated play. [Independent flow and screenshot review](docs/review/independent-current-review-2026-10-01.md).
+
+Work lights now offer explicit OFF / AUTO / ON controls saved per boat. Standard lights retain their cost and appearance; $3,200 double-strength and $8,500 quadruple-strength packages require the previous tier plus Working/Coastal Skipper reputation. The shop explains output and fog-limited night sight. All playable edges have visible markings, with an amber harbour exit. Crossing it with both divers aboard pauses for “Return to harbour?”, initially on Cancel; only confirmation travels home. Cancellation neutralizes the helm and requires moving 12 m inward before another crossing prompts. Tutorial, save/load, keyboard, controller menus and touch share this behavior. [Independent operations review](docs/review/independent-operations-2026-10-01.md).
+
+Harvesting divers no longer have unlimited immunity to current: holding ability, experience and fatigue determine drift, and a diver swept off ground surfaces with the conserved partial bag. Save snapshots isolate nested diver state; malformed berth identities, operation clocks and catch values cannot replace a valid backup. Bag-exchange and ladder-climb reloads land catch exactly once. Short landscape touch now hides the overlapping helm primer while recovery speech is visible.
+
+Current approximation limits: submerged shelves deflect and resist flow, while explicit separated wakes come from drying obstacles. Closely overlapping wakes use a dominant contribution and 6 m sampling; this is a game approximation. Foam is easier to read in motion than still screenshots. Long-career lamp affordability and extreme-coast fishing balance need human playtesting.
 
 
 The September 30 revision follows all four recordings in `feedback/9-30/`. Debug time advances now paint a running clock, destination and real progress, yield between simulation batches, and support stopping at the current time. Neutral forward/port work lamps replace the flat yellow ovals; actual fixture pose drives both geometry lighting and water reflection/scattering. Diver torches have attenuated underwater beams and subtly brighter visible bubbles. Kelp gathers into soft curls at slack, swings with lagging tips and re-extends into current; tide changes canopy exposure through the existing water column. The former maximum world pace becomes the new default 0%, adjustable ±100%, with existing saved physical pace preserved. Fog extinction is smoother. [Implementation and evidence](docs/review/lighting-kelp-feedback-2026-09-30.md), [independent review](docs/review/independent-lighting-kelp-2026-09-30.md).
@@ -32,6 +40,9 @@ Build with `npm ci && npm run build`; `npm start` serves http://127.0.0.1:5184/.
 
 ## Verification
 
+- October 1: full unit regression run passes 554 tests, zero failures, with one intentional private-save skip. New geometry tests rotate actual T-shaped terrain through four inflow directions, test flooded/closed pools, submerged ridges, tide interpolation and late-coast danger/shelter. Deterministic generation reproduces the baked data exactly and a separate hash guards all original terrain/bed records. Production build passes; the geography chunk remains large (about 3.88 MB gzip after lossless current packing).
+- October 1 final production matrix passes boundary, surface drift, work-light purchase/control/rendering, 36 coastal-current fixtures, prior lighting/kelp, diving operations, input, full voyage and performance suites. Keyboard, native browser touch and synthetic controllers are covered. The voyage lands 300 lb on time with 100% hull and two fit divers after an explicit harbour confirmation. The isolated 1280×800 RADV VANGOGH sample measures approximately 60 FPS. Lint, formatting and diff checks pass. [Release receipt](docs/review/release-verification-2026-10-01.json).
+
 - September 30 production checks pass for clock/progress painting, a complete 30-minute advance, native touch/keyboard/synthetic-controller cancellation, saved speed, actual lamp pose/switch-off and torch attenuation. Desktop, phone portrait and landscape screenshots received independent review. A complete production voyage lands 300 lb on time with an intact hull and two fit divers. The 1280×800 controlled performance sample is approximately 59.79 FPS; a lit-scene fixture also measures approximately 60 FPS. These are not physical phone/controller acceptance.
 
 - Full regression suite: 532 tests, 531 pass, 0 fail, 1 intentional private-save skip. Lint, formatting and production build pass; the existing large geography-chunk warning remains.
@@ -42,7 +53,7 @@ Build with `npm ci && npm run build`; `npm start` serves http://127.0.0.1:5184/.
 - AMD RADV VANGOGH measured 240 frames in four seconds at 1280×800, approximately 59.95 FPS in the latest sample. This controlled sample is not a device-wide performance guarantee.
 - Latest [independent screenshot reviews](docs/review/independent-vegetation-feedback-2026-09-29.md) drove darker kelp, smoother stipes, denser grass and varied proportions, and confirmed readable speech/current arrows. The earlier [visual review](docs/review/independent-feedback-2026-09-29.md) drove fixes to landscape Frank placement, capture timing, whitecap shape, five-metre rock contrast, wide-view current arrow readability and source-specific fleet fittings.
 
-Reproduce the latest pass with `PLAYWRIGHT_BROWSERS_PATH=.browser-cache npm run verify -- --suite=lighting-kelp,input,voyage,performance`. Local evidence is in `test-results/`; the [release receipt](docs/review/release-verification-2026-09-30-lighting-kelp.json) records verification and export hashes. Earlier September 28 validation remains documented in the existing review records.
+Reproduce the latest pass with `PLAYWRIGHT_BROWSERS_PATH=.browser-cache npm run verify -- --suite=boundary,work-lights,currents,surface-drift,operations,input,voyage,performance,lighting-kelp`. Local evidence is in `test-results/`; the [release receipt](docs/review/release-verification-2026-10-01.json) records verification and export hashes. Earlier validation remains documented in the previous review records.
 
 ## Remaining acceptance
 
@@ -52,7 +63,7 @@ Physical USB Xbox/Steam Deck controls, mobile device performance, Safari, actual
 
 Use this independent Git repository normally; never synchronize into or push the 2D repository. Selected rebuildable source, assets and essential documentation belong in Git. Dependencies, builds, private saves, browser profiles, recordings, test output and TEMP ZIPs stay outside it. New exports are additive; preserve older exports.
 
-The latest feedback release is under `exports/2026-09-30-lighting-kelp/`; the earlier September 29, September 28 and September 26 exports are retained:
+The latest feedback release is under `exports/2026-10-01-coastal-operations/`; all earlier dated exports are retained:
 
 - `UrchinSkipper3D-TEMP-ITCHIO.zip`: standalone HTML build for the separate 3D itch.io project; upload remains manual.
 - `Urchin Skipper 3D TEMP.zip` and its extracted folder: local/Wi-Fi edition with isolated port 5198 and portable launcher.
