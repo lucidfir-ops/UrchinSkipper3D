@@ -1,4 +1,6 @@
 import { workLightUniforms, workLightFragment } from './work-light-water.js';
+import { windCrestFragment } from './wind-crests.js';
+import { oceanApron, oceanDepthFragment } from './ocean-edge.js';
 import * as THREE from 'three';
 import { bedDepthAt, seaLevel } from '../terrain.js';
 import { CoastalLife } from './coastal-life.js';
@@ -169,10 +171,8 @@ const waterFragment =
     vec2 i = floor(p), f = fract(p); f = f*f*(3.0-2.0*f);
     return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);
   }
-  float depthAt(vec2 p) {
-    if(p.x<0.0||p.y<0.0||p.x>uSize||p.y>uSize) return 50.0;
-    return texture2D(uDepth, p/uSize*(1.0-uDepthStep)+uDepthStep*.5).r + uSeaLevel;
-  }
+  ${windCrestFragment}
+  ${oceanDepthFragment}
   void main() {
     vec2 p = vWater;
     float actualDepth = depthAt(p);
@@ -217,24 +217,7 @@ const waterFragment =
     color = mix(color,vec3(.67,.76,.73),clamp(foam+edge,0.0,.8));
     // Broken crests travel downwind; wind sets coverage and size.
     // With zero wind this contribution is exactly zero, even with swell.
-    float windSpeed = length(uWind);
-    vec2 wind = uWind / max(.001,windSpeed);
-    vec2 across = vec2(-wind.y,wind.x);
-    float strength = clamp(windSpeed/15.0,0.0,1.0);
-    vec2 windUV = vec2(dot(p,across),dot(p,wind)-uTime*(.35+windSpeed*.10));
-    vec2 cell = floor(windUV/8.0);
-    float seed = hash(cell);
-    vec2 local = mod(windUV,8.0)-4.0;
-    local -= vec2(hash(cell+19.0),hash(cell+43.0))*2.2-1.1;
-    float halfWidth = mix(.45,2.5,strength)*(.7+seed*.45);
-    float edgeFade = 1.0-smoothstep(halfWidth*.35,halfWidth,abs(local.x));
-    float front = local.y + local.x*local.x*.16;
-    float crest = exp(-pow(front/(.09+strength*.16),2.0));
-    float broken = .55+.45*valueNoise(windUV*2.4);
-    float lifetime = smoothstep(.2,.7,.5+.5*sin(uTime*.7+seed*24.0));
-    float coverage = smoothstep(1.0-strength*.7,1.05-strength*.7,seed);
-    float whitecaps = crest*edgeFade*broken*lifetime*coverage
-      *smoothstep(.2,7.0,windSpeed)*(.16+strength*.30);
+    float whitecaps = windCrests(p, uWind, uTime);
     whitecaps *= smoothstep(.25,1.3,actualDepth);
     color = mix(color,vec3(.70,.80,.75),whitecaps);
     color *= .12 + .88*uDaylight;
@@ -366,6 +349,7 @@ export class CoastalWorld {
         mesh.receiveShadow = true;
         this.bed.add(mesh);
       }
+    this.bed.add(oceanApron(terrain, geometry, colors, material));
     geometry.dispose();
   }
   buildForest(world) {

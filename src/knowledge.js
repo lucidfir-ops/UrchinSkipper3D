@@ -4,6 +4,7 @@ import { seaLevel } from './terrain.js';
 import { soundingDepth } from './hazard-depth.js';
 import { gear } from './assists.js';
 import { currentAt } from './environment.js';
+import { careerDayAt } from './career-calendar.js';
 // Tools make local measurements; they never alter hidden terrain/productivity.
 export function instrumentReadings(w) {
   const b = w.boat,
@@ -42,17 +43,18 @@ export function recordKnowledge(w) {
   if (!w.career || w.day.phase !== 'working' || w.time < (w.nextObservation || 0)) return;
   w.nextObservation = w.time + 2;
   const c = w.career,
+    day = careerDayAt(w),
     id = w.day.groundId,
     k = (c.knowledge[id] ??= { depths: {}, grounds: {}, visits: 1 }),
     b = w.boat;
   if (gear(w, 'plotter')) {
-    recordTrack(k, b, c.day, w.day.trip?.id || w.day.groundId, w.time);
+    recordTrack(k, b, day, w.day.trip?.id || w.day.groundId, w.time);
     const key = `${Math.round(b.x / 6)},${Math.round(b.y / 6)}`;
     k.depths[key] = {
       x: b.x,
       y: b.y,
       bed: Math.round((soundingDepth(w, b.x, b.y) - seaLevel(w)) * 2) / 2,
-      day: c.day,
+      day,
     };
   }
   for (const d of w.divers) recordDiverReport(w, d, { automatic: !!diverSpec(d).autoChart });
@@ -62,7 +64,7 @@ export function recordKnowledge(w) {
         x: point.x,
         y: point.y,
         bed: Math.round((point.depth - (w.environment.seaLevel || 0)) * 2) / 2,
-        day: c.day,
+        day,
       };
     }
   // Scanner and sounder share one bounded ledger, including oversized old saves.
@@ -100,7 +102,7 @@ export function recordDiverReport(w, d, { recovered = false, automatic = false }
     quality: d.bag
       ? Math.round((d.qualitySum / d.bag) * 100) / 100
       : (d.groundSample?.quality ?? previous?.quality ?? null),
-    day: c.day,
+    day: careerDayAt(w),
     reporter: d.name,
     minute: w.day.minute,
     sampleX: d.x,
@@ -128,7 +130,7 @@ export function markPosition(w) {
     sector: w.day.groundId,
     x: w.boat.x,
     y: w.boat.y,
-    day: w.career.day,
+    day: careerDayAt(w),
     label: `Mark ${marks.length + 1}`,
   });
   return { ok: true, reason: 'Position marked on your chart.' };

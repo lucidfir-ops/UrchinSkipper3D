@@ -6,6 +6,7 @@ import { diverSpec } from './crew.js';
 import { gear } from './assists.js';
 import { godmode } from './godmode.js';
 import { diverDepth, diveTransit } from './diver-motion.js';
+import { careerDayAt } from './career-calendar.js';
 
 // Fictional game balance, NOT US Navy tables or real-world dive guidance.
 // All durations below are accelerated game minutes. See docs/DIVE_EXPOSURE.md.
@@ -125,9 +126,10 @@ export function stepDiveExposure(w, d, dt) {
     applyDiveInjury(w, d);
     return false;
   }
-  if (h.lastDiveDay !== w.career.day) {
-    h.consecutiveDays = h.lastDiveDay === w.career.day - 1 ? h.consecutiveDays + 1 : 1;
-    h.lastDiveDay = w.career.day;
+  const day = careerDayAt(w);
+  if (h.lastDiveDay !== day) {
+    h.consecutiveDays = h.lastDiveDay === day - 1 ? h.consecutiveDays + 1 : 1;
+    h.lastDiveDay = day;
     h.bottomMinutes = 0;
   }
   const amount = minutes / (depthBudget(Math.max(0, depthAt(w, d.x, d.y))) * nitroxFactor(w));
@@ -152,14 +154,16 @@ export function applyDiveInjury(w, d) {
   h.threshold = threshold(w.career, d.crewId, h.dcsCount);
   record.condition = d.condition = 'injured';
   record.injuryCause = 'DCS';
+  const day = careerDayAt(w);
   recordMedical(
     w.career,
     d.crewId,
     'Unfit to dive',
     'Suspected decompression sickness after repeated depth exposure.',
-    w.career.day + DIVE_EXPOSURE.injuryDays,
+    day + DIVE_EXPOSURE.injuryDays,
+    day,
   );
-  record.availableDay = Math.max(record.availableDay || 0, w.career.day + DIVE_EXPOSURE.injuryDays);
+  record.availableDay = Math.max(record.availableDay || 0, day + DIVE_EXPOSURE.injuryDays);
   d.reason = 'Suspected DCS — bring aboard';
   d.hooking = false;
   d.hook = 0;

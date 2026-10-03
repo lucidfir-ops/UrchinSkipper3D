@@ -4,12 +4,14 @@ import { boatDefinition, boatSpec } from './boats.js';
 import { hullDistance, sweptPoses, toHull, fromHull } from './collision-geometry.js';
 import { engineState } from './operating-state.js';
 import { godmode } from './godmode.js';
-import { seasonStatus } from './season.js';
+import { SEASON } from './season.js';
+import { careerDayAt } from './career-calendar.js';
 
 export function taxiSafetyStage(w, source) {
   if (source?.kind !== 'taxi' || !w.career) return 'normal';
-  if (w.career.day <= 3) return 'near miss';
-  return seasonStatus(w.career).season === 1 ? 'injury' : 'normal';
+  const day = careerDayAt(w);
+  if (day <= 3) return 'near miss';
+  return day <= SEASON.days ? 'injury' : 'normal';
 }
 export function closingImpact(pose, diver, spec, vx, vy) {
   const q = toHull(pose, diver.x, diver.y);

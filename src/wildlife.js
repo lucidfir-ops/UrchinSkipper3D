@@ -6,6 +6,7 @@ import { depthAt } from './terrain.js';
 import { nearShore } from './shore-hazards.js';
 import { coastTier } from './coasts.js';
 import { rockVisualBand } from './rock-depth.js';
+import { careerDayAt } from './career-calendar.js';
 
 export const WILDLIFE = Object.freeze({
   maxEncounters: 2,
@@ -406,7 +407,7 @@ export function updateWildlifeInteractions(w) {
           w.career.wildlifeStrikes = (w.career.wildlifeStrikes || 0) + 1;
           w.career.dfoAttentionThrough = Math.max(
             w.career.dfoAttentionThrough || 0,
-            w.career.day + 6,
+            careerDayAt(w) + 6,
           );
           w.career.news.unshift(
             `Whale strike: $${fine.toLocaleString()} fine; increased DFO attention for six days.`,

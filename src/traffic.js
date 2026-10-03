@@ -12,6 +12,7 @@ import { stepPatrol } from './patrol.js';
 import { inspectionDue } from './inspection-schedule.js';
 import { recordFishingPressure, subAreaYield } from './quota-areas.js';
 import { fishingRoute, rivalDayPlan, rivalPatches, rivalWater, trafficHull } from './rival-plan.js';
+import { taxiSafetyStage } from './diver-safety.js';
 
 const pick = (values, random) => values[Math.floor(random() * values.length)];
 export function prepareTraffic(w) {
@@ -169,7 +170,7 @@ function* planTraffic(w, kind, { start, patchId, art, fleetId } = {}) {
     // moving diver. Bubbles and floats do not trigger taxi avoidance.
     const sample = crossing && kind === 'taxi' && attempt < 6 ? pick(bubbleTargets, random) : null;
     const working = sample
-        ? { x: sample.x + (w.career?.day <= 3 ? 10 : 0), y: sample.y }
+        ? { x: sample.x + (taxiSafetyStage(w, actor) === 'near miss' ? 10 : 0), y: sample.y }
         : patch
           ? { x: patch.x, y: patch.y }
           : end,

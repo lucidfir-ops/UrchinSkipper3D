@@ -3,6 +3,7 @@ import { trafficSettings } from './traffic-settings.js';
 import { diverSpec } from './crew.js';
 import { seededRandom } from './math.js';
 import { inspectionSchedule } from './inspection-schedule.js';
+import { careerDayAt } from './career-calendar.js';
 
 export const FISHERY = { undersizeChance: 0.01, detectionChance: 0.25, finePerUrchin: 1000 };
 export const crewAboard = (w) => w.divers.every((d) => d.state === 'ready');
@@ -48,7 +49,8 @@ export function beginInspection(w) {
 export function finishInspection(w, { dock = false } = {}) {
   const i = w.day.inspection;
   if (!i || ['cleared', 'departing'].includes(i.status)) return 0;
-  const random = seededRandom(w.career.seed ^ Math.imul(w.career.day, 63149) ^ 0x4df0);
+  const day = careerDayAt(w, i.minute ?? w.day.minute),
+    random = seededRandom(w.career.seed ^ Math.imul(day, 63149) ^ 0x4df0);
   let found = 0;
   for (const bag of w.bags) {
     const count = Math.max(0, Math.floor(bag.undersizeCount || 0));
@@ -64,7 +66,7 @@ export function finishInspection(w, { dock = false } = {}) {
     i.transitionSeconds = 1.4;
     w.boat.throttle = w.boat.rudder = 0;
   }
-  inspectionSchedule(w.career).completed = true;
+  inspectionSchedule(w.career, day).completed = true;
   w.day.inspectionFine = (w.day.inspectionFine || 0) + fine;
   w.events.push(
     `DFO · ${fine ? `${found} undersized urchin${found === 1 ? '' : 's'} found. $${fine.toLocaleString()} fine to the boat, payable at offload.` : 'Inspection complete. All in order.'}`,
@@ -97,7 +99,9 @@ export function stepFishery(w, dt) {
   }
 }
 export const patrolSkipper = (w) =>
-  (w.career.seed + w.career.day) % 2 ? 'Officer Morgan' : 'Officer Singh';
+  (w.career.seed + careerDayAt(w, w.day.inspection?.minute ?? w.day.minute)) % 2
+    ? 'Officer Morgan'
+    : 'Officer Singh';
 export function patrolBriefing(w) {
   const i = w.day.inspection;
   if (!i) return 'No inspection pending.';

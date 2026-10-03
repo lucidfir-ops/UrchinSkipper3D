@@ -32,6 +32,8 @@ async function ready() {
   }
 }
 const suites = {
+  'ocean-edge': ['scripts/ocean-edge-review.js'],
+  'wind-crests': ['scripts/wind-crest-review.js'],
   boundary: ['scripts/boundary-review.js'],
   'surface-drift': ['scripts/surface-drift-review.js'],
   'work-lights': ['scripts/work-lights-review.js'],

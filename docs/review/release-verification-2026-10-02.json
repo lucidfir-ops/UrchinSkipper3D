@@ -1,0 +1,385 @@
+{
+  "date": "2026-10-02",
+  "edition": "Urchin Skipper 3D",
+  "unit_tests": {
+    "total": 566,
+    "pass": 565,
+    "fail": 0,
+    "skip": 1,
+    "skip_reason": "Optional private career save is not included in Git.",
+    "command": "npm test",
+    "execution": "Executed outside the restricted sandbox; named test cases confirmed."
+  },
+  "checks": {
+    "lint": true,
+    "format": true,
+    "build": true,
+    "diff_check": true
+  },
+  "production": {
+    "started": "2026-10-03T06:04:32.046Z",
+    "ended": "2026-10-03T06:06:25.713Z",
+    "passed": true,
+    "results": [
+      {
+        "label": "ocean-edge",
+        "code": 0,
+        "seconds": 6
+      },
+      {
+        "label": "wind-crests",
+        "code": 0,
+        "seconds": 8
+      },
+      {
+        "label": "boundary",
+        "code": 0,
+        "seconds": 26
+      },
+      {
+        "label": "operations",
+        "code": 0,
+        "seconds": 22
+      },
+      {
+        "label": "input",
+        "code": 0,
+        "seconds": 18
+      },
+      {
+        "label": "weather",
+        "code": 0,
+        "seconds": 5
+      },
+      {
+        "label": "voyage",
+        "code": 0,
+        "seconds": 18
+      },
+      {
+        "label": "performance",
+        "code": 0,
+        "seconds": 8
+      }
+    ]
+  },
+  "performance": {
+    "device": {
+      "renderer": "ANGLE (AMD, Vulkan 1.4.330 (AMD Custom GPU 0405 (RADV VANGOGH) (0x0000163F)), radv)",
+      "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "pixelRatio": 1,
+      "framebuffer": [
+        1280,
+        800
+      ],
+      "screen": null,
+      "started": true
+    },
+    "results": [
+      {
+        "label": "native",
+        "elapsed": 4013.5,
+        "renderFrames": 241,
+        "rafFrames": 241,
+        "fps": 60.04734022673477,
+        "fields": {
+          "frameMs": {
+            "mean": 16.66597510373444,
+            "p95": 16.700000000000728
+          },
+          "inputMs": {
+            "mean": 0.7979253113455298,
+            "p95": 1
+          },
+          "simulationMs": {
+            "mean": 0.39294605804182187,
+            "p95": 0.6000000014901161
+          },
+          "drawMs": {
+            "mean": 6.556431535275893,
+            "p95": 16.200000002980232
+          },
+          "hudMs": {
+            "mean": 0.47842323631666506,
+            "p95": 3.399999998509884
+          },
+          "totalCpuMs": {
+            "mean": 8.287136929411117,
+            "p95": 20.700000002980232
+          }
+        },
+        "render": {
+          "frame": 326,
+          "calls": 99,
+          "triangles": 360622,
+          "points": 0,
+          "lines": 96
+        }
+      }
+    ],
+    "errors": []
+  },
+  "wind_shader": {
+    "records": [
+      {
+        "wind": 0,
+        "zoom": 0.3,
+        "image": "wind-0-wide.png",
+        "unchanged": true
+      },
+      {
+        "wind": 5,
+        "zoom": 0.3,
+        "image": "wind-5-wide.png",
+        "unchanged": true
+      },
+      {
+        "wind": 15,
+        "zoom": 0.3,
+        "image": "wind-15-wide.png",
+        "unchanged": true
+      },
+      {
+        "wind": 0,
+        "zoom": 1.2,
+        "image": "wind-0-close.png",
+        "unchanged": true
+      },
+      {
+        "wind": 5,
+        "zoom": 1.2,
+        "image": "wind-5-close.png",
+        "unchanged": true
+      },
+      {
+        "wind": 15,
+        "zoom": 1.2,
+        "image": "wind-15-close.png",
+        "unchanged": true
+      },
+      {
+        "source": "served water material",
+        "renderer": "ANGLE (AMD, Vulkan 1.4.330 (AMD Custom GPU 0405 (RADV VANGOGH) (0x0000163F)), radv)",
+        "resolution": 1024,
+        "span": 256,
+        "zero": {
+          "total": 0,
+          "count": 0,
+          "max": 0
+        },
+        "zeroLater": {
+          "total": 0,
+          "count": 0,
+          "max": 0
+        },
+        "moderate": {
+          "total": 7440,
+          "count": 523,
+          "max": 48
+        },
+        "strong": {
+          "total": 171872,
+          "count": 7200,
+          "max": 111
+        },
+        "movement": [
+          {
+            "wind": [
+              15,
+              0
+            ],
+            "pausedPixelsDiffer": 0,
+            "downwind": 0.8925685123521411,
+            "upwind": 0,
+            "unshifted": 0
+          },
+          {
+            "wind": [
+              -15,
+              0
+            ],
+            "pausedPixelsDiffer": 0,
+            "downwind": 0.9121487796009012,
+            "upwind": 0,
+            "unshifted": 0
+          },
+          {
+            "wind": [
+              0,
+              15
+            ],
+            "pausedPixelsDiffer": 0,
+            "downwind": 0.8933791333210915,
+            "upwind": 0,
+            "unshifted": 0
+          },
+          {
+            "wind": [
+              0,
+              -15
+            ],
+            "pausedPixelsDiffer": 0,
+            "downwind": 0.9256901012533398,
+            "upwind": 0,
+            "unshifted": 0
+          }
+        ]
+      }
+    ],
+    "errors": []
+  },
+  "ocean_edge": {
+    "records": [
+      {
+        "name": "wide-low",
+        "tide": -1,
+        "unchanged": true,
+        "renderer": "ANGLE (AMD, Vulkan 1.4.330 (AMD Custom GPU 0405 (RADV VANGOGH) (0x0000163F)), radv)",
+        "render": {
+          "frame": 53,
+          "calls": 184,
+          "triangles": 2995154,
+          "points": 0,
+          "lines": 37
+        }
+      },
+      {
+        "name": "wide-mean",
+        "tide": 1.15,
+        "unchanged": true,
+        "renderer": "ANGLE (AMD, Vulkan 1.4.330 (AMD Custom GPU 0405 (RADV VANGOGH) (0x0000163F)), radv)",
+        "render": {
+          "frame": 54,
+          "calls": 184,
+          "triangles": 2995154,
+          "points": 0,
+          "lines": 37
+        }
+      },
+      {
+        "name": "wide-high",
+        "tide": 5,
+        "unchanged": true,
+        "renderer": "ANGLE (AMD, Vulkan 1.4.330 (AMD Custom GPU 0405 (RADV VANGOGH) (0x0000163F)), radv)",
+        "render": {
+          "frame": 55,
+          "calls": 184,
+          "triangles": 2995154,
+          "points": 0,
+          "lines": 37
+        }
+      },
+      {
+        "name": "east-low",
+        "tide": -1,
+        "unchanged": true,
+        "renderer": "ANGLE (AMD, Vulkan 1.4.330 (AMD Custom GPU 0405 (RADV VANGOGH) (0x0000163F)), radv)",
+        "render": {
+          "frame": 56,
+          "calls": 96,
+          "triangles": 605316,
+          "points": 0,
+          "lines": 0
+        }
+      },
+      {
+        "name": "south-mean",
+        "tide": 1.15,
+        "unchanged": true,
+        "renderer": "ANGLE (AMD, Vulkan 1.4.330 (AMD Custom GPU 0405 (RADV VANGOGH) (0x0000163F)), radv)",
+        "render": {
+          "frame": 57,
+          "calls": 102,
+          "triangles": 617540,
+          "points": 0,
+          "lines": 2
+        }
+      }
+    ],
+    "errors": []
+  },
+  "voyage": {
+    "landed_lb": 300,
+    "on_time": true,
+    "net": 104.47,
+    "hull": 1,
+    "crew": [
+      "fit",
+      "fit"
+    ],
+    "errors": []
+  },
+  "export_validation": {
+    "zip_crc": true,
+    "all_build_bytes_match": true,
+    "local_server_port": 5198,
+    "production_identity_check": true,
+    "production_entry_module_bytes_match": true
+  },
+  "exports": [
+    {
+      "path": "exports/2026-10-02-calendar-ocean/Urchin Skipper 3D TEMP.zip",
+      "bytes": 104440665,
+      "sha256": "d8418275c49d62ee3458b117ac90b0fd09ab234a2e226ec6b51b3a68894e14ac"
+    },
+    {
+      "path": "exports/2026-10-02-calendar-ocean/UrchinSkipper3D-TEMP-ITCHIO.zip",
+      "bytes": 104412158,
+      "sha256": "872ae9732b14a2f630b325aca14b0ff75c44ae14d0b9d67f074f04e0909ea7dc"
+    }
+  ],
+  "build_files": [
+    {
+      "path": "dist/index.html",
+      "bytes": 2621,
+      "sha256": "d1815ff2c665d4b25b2edf5d23f8fb0382ce8f7fbecca78f87443251c63c7f7a"
+    },
+    {
+      "path": "dist/assets/geography-DRCAA4xL.js",
+      "bytes": 8817073,
+      "sha256": "11d61e00a1b80b0ed5b9dc2f4e304adee5df52dff4fd9c5a704bd204c2953842"
+    },
+    {
+      "path": "dist/assets/index-D8veRAib.js",
+      "bytes": 943706,
+      "sha256": "cba7d81ffcfd0bfd14f6c689df34e19ed01066e7895d94fd28253ee605be3081"
+    },
+    {
+      "path": "dist/assets/save.worker-CeKzy45w.js",
+      "bytes": 333,
+      "sha256": "dd8c2f74598cec68dcadb7b256f796d3f1601bb8168953693ebf462e6e87b0ff"
+    },
+    {
+      "path": "dist/assets/simulationSupport-BTGbtjln.js",
+      "bytes": 1387441,
+      "sha256": "a9aaf981bfd2da2a4381c5bb73dd5064897ef0781500f2e2a7cfc72f0fe7c4f0"
+    },
+    {
+      "path": "dist/assets/three-CFpc-5E9.js",
+      "bytes": 521453,
+      "sha256": "8e38bd19e01b911dfc8e9742a80f6792dcd6ebbd36f8ed7320937488c630f5e8"
+    },
+    {
+      "path": "dist/assets/index-BiM7Fb_j.css",
+      "bytes": 170022,
+      "sha256": "bf8b4dfd4ec9c28cf4c880b3d67ced9ef561c060cf6bf5870274e18cd8b587f7"
+    }
+  ],
+  "reviews": [
+    "docs/review/independent-ocean-review-2026-10-02.md",
+    "docs/review/multi-night-calendar-2026-10-02.md"
+  ],
+  "manual_acceptance_remaining": [
+    "Physical Xbox/Steam Deck controls",
+    "Physical phone/tablet performance and Safari",
+    "Actual itch.io upload",
+    "Late-coast fishing and long-career upgrade balance",
+    "Unaided recognition of eddies from natural cues"
+  ],
+  "known_limits": [
+    "Geography chunk remains large (about 3.88 MB gzip).",
+    "Close wind strokes remain stylized; kelp and shoreline foam retain repetition.",
+    "Low-tide cove has a broad soft shallow-water halo; wide zoom makes people and boats small.",
+    "Calendar fixtures cover listed consequences, not general long-voyage balance."
+  ]
+}

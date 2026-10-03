@@ -2,11 +2,11 @@ import { diverSpec } from './crew.js';
 const escape = (value) =>
   String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 
-export function recordMedical(c, id, outcome, cause, availableDay) {
+export function recordMedical(c, id, outcome, cause, availableDay, day = c?.day) {
   if (!c?.people[id]) return;
   const log = (c.people[id].medicalHistory ||= []);
-  if (log.some((e) => e.day === c.day && e.outcome === outcome && e.cause === cause)) return;
-  log.push({ day: c.day, outcome, cause, availableDay });
+  if (log.some((e) => e.day === day && e.outcome === outcome && e.cause === cause)) return;
+  log.push({ day, outcome, cause, availableDay });
 }
 export function medicalHistoryMarkup(c, id) {
   const r = c.people[id],

@@ -4,7 +4,7 @@ import { clamp, angleDelta } from './math.js';
 import { boatSpec } from './boats.js';
 import { clearWater, waterSegment, waterRoute } from './water-route.js';
 import { rivalWater, trafficHull } from './rival-plan.js';
-import { checkDiverSafety } from './diver-safety.js';
+import { checkDiverSafety, taxiSafetyStage } from './diver-safety.js';
 import { hullDistance, fromHull } from './collision-geometry.js';
 import { surfacedWildlifePoints } from './wildlife.js';
 import { taxiSteering } from './taxi-steering.js';
@@ -67,7 +67,7 @@ export function moveTraffic(w, actor, dt) {
         .map((a) => ({ ...a, radius: (a.length + actor.length) / 2 + 3 })),
       ...(actor.kind === 'taxi' ? surfacedWildlifePoints(w) : []),
     ];
-  if (actor.kind !== 'taxi' || (w.career && w.career.day <= 3))
+  if (actor.kind !== 'taxi' || taxiSafetyStage(w, actor) === 'near miss')
     for (const d of [
       ...w.divers,
       ...(w.traffic?.actors || []).filter((a) => a !== actor).flatMap((a) => a.divers || []),

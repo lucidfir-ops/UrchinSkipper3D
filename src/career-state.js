@@ -22,6 +22,7 @@ import { C } from './config.js';
 import { recoverCrewExposure } from './dive-exposure.js';
 import { boatSpec, boatDefinition } from './boats.js';
 import { equipmentAvailability, equipmentLocation } from './equipment-fit.js';
+import { careerDayAt } from './career-calendar.js';
 export const freshVessel = (id) => ({
   id,
   hullHealth: 1,
@@ -357,13 +358,17 @@ export function settleCareer(w, result) {
         p.condition = 'deceased';
         p.availableDay = 999999;
       } else if (d.condition === 'injured') {
+        const incident = w.safety?.incidents?.findLast(
+            (event) => event.diverId === d.id && event.outcome === 'injury',
+          ),
+          newlyInjured = !!incident || p.condition !== 'injured',
+          injuryDay = careerDayAt(w, incident?.minute ?? w.day.minute);
         p.condition = 'injured';
-        p.injuryCause =
-          w.safety?.incidents?.find((incident) => incident.diverId === d.id)?.cause ||
-          p.injuryCause ||
-          'working injury';
-        p.availableDay = Math.max(p.availableDay || 0, c.day + 3);
-        recordMedical(c, d.crewId, 'Injured', p.injuryCause, p.availableDay);
+        p.injuryCause = incident?.cause || p.injuryCause || 'working injury';
+        if (newlyInjured) {
+          p.availableDay = Math.max(p.availableDay || 0, injuryDay + 3);
+          recordMedical(c, d.crewId, 'Injured', p.injuryCause, p.availableDay, injuryDay);
+        }
       }
     }
   for (const crew of result.crew || []) {
