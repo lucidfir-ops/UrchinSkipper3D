@@ -128,47 +128,18 @@ export async function learningInterfaceChecks(browser) {
     assert(await page.locator('#diverPanel').isVisible());
     assert.equal(await page.locator('#divers > button:visible').count(), 2);
     assert.match(await page.locator('#divers').textContent(), /Searching|Harvesting/);
-    const labelCheck = await page.evaluate(() => {
-      const visible = (element) => {
-        const style = getComputedStyle(element),
-          rect = element.getBoundingClientRect();
-        return (
-          !element.hidden &&
-          style.display !== 'none' &&
-          style.visibility !== 'hidden' &&
-          Number(style.opacity) > 0.25 &&
-          rect.width > 0 &&
-          rect.height > 0
-        );
-      };
-      const labels = urchinDebug.three.diverCues.labels.map((entry) => entry.label).filter(visible),
-        panels = [
-          ...document.querySelectorAll('[data-hud-window], #keyboardHelm, #touchControls'),
-        ].filter(visible),
-        overlaps = (a, b) =>
-          a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
-      return {
-        count: labels.length,
-        overlaps: labels.flatMap((label) =>
-          panels
-            .filter((panel) =>
-              overlaps(label.getBoundingClientRect(), panel.getBoundingClientRect()),
-            )
-            .map((panel) => panel.id),
-        ),
-        mutualOverlap:
-          labels.length === 2 &&
-          overlaps(labels[0].getBoundingClientRect(), labels[1].getBoundingClientRect()),
-      };
-    });
-    assert.equal(labelCheck.count, 2, 'both on-screen Easy diver labels remain visible');
-    assert.deepEqual(
-      labelCheck.overlaps,
-      [],
-      'world labels clear the visible instruments and crew cards',
+    // The September 29 presentation moved diver status into the crew cards;
+    // the former floating DOM labels no longer exist. Check the current Easy
+    // assistance ring, and its information boundary under Realistic below.
+    const cues = await page.evaluate(() => ({
+      groupVisible: urchinDebug.three.diverCues.group.visible,
+      ringVisible: urchinDebug.three.diverCues.ring.visible,
+    }));
+    assert(
+      cues.groupVisible && cues.ringVisible,
+      'Easy permits the selected underwater diver ring',
     );
-    assert.equal(labelCheck.mutualOverlap, false, 'the two divers do not share a text position');
-    records.push({ kind: 'easy-world-label-placement', ...labelCheck });
+    records.push({ kind: 'easy-underwater-assistance', ...cues });
     await shot('easy-underwater-neutral');
     await preset('realistic');
     await page.waitForTimeout(250);
@@ -181,6 +152,10 @@ export async function learningInterfaceChecks(browser) {
     assert.doesNotMatch(
       await page.locator('#message').textContent(),
       /Diver searching|Diver working|Diver surfacing/i,
+    );
+    assert(
+      !(await page.evaluate(() => urchinDebug.three.diverCues.ring.visible)),
+      'Realistic does not expose the underwater diver ring',
     );
     await shot('realistic-underwater-neutral');
     await preset('off');

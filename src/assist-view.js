@@ -1,6 +1,6 @@
 import { choiceButton } from './menu-buttons.js';
 import { UI_OPTIONS, DIFFICULTY_OPTIONS, OPTION_DETAILS } from './assist-options.js';
-import { presetLabel } from './assists.js';
+import { assist, presetLabel } from './assists.js';
 import { setText } from './dom-view.js';
 
 const GROUPS = [
@@ -132,7 +132,7 @@ export function renderAssistOptions(ui, w, actions) {
     const button = ui.panel.querySelector(`[data-action="${action.id}"]`);
     if (!button) continue;
     if (action.id.startsWith('assist-')) {
-      const checked = !!w.career.assists[action.id.slice(7)];
+      const checked = !!assist(w, action.id.slice(7), ui.realistic);
       setText(button, checked ? 'ON' : 'OFF');
       button.setAttribute('aria-checked', String(checked));
     } else if (['easy', 'realistic', 'off', 'custom'].includes(action.id)) {

@@ -1,0 +1,4831 @@
+{
+  "date": "2026-10-03",
+  "edition": "Urchin Skipper 3D",
+  "unit_tests": {
+    "total": 617,
+    "pass": 616,
+    "fail": 0,
+    "skip": 1,
+    "command": "npm test via npm run verify",
+    "execution": "Outside restricted sandbox; named cases confirmed",
+    "skip_reason": "Optional private career save is not included in Git."
+  },
+  "checks": {
+    "lint": true,
+    "format": true,
+    "build": true,
+    "diff_check": true
+  },
+  "production": {
+    "passed": true,
+    "scope": "Same production build: full static checks and twelve browser suites, followed by corrected HUD-context fixture. Only the fixture changed between runs.",
+    "results": [
+      {
+        "label": "lint",
+        "code": 0,
+        "seconds": 7
+      },
+      {
+        "label": "format",
+        "code": 0,
+        "seconds": 6
+      },
+      {
+        "label": "unit regressions",
+        "code": 0,
+        "seconds": 39
+      },
+      {
+        "label": "production build",
+        "code": 0,
+        "seconds": 7
+      },
+      {
+        "label": "training-preferences",
+        "code": 0,
+        "seconds": 45
+      },
+      {
+        "label": "keyboard-reading",
+        "code": 0,
+        "seconds": 82
+      },
+      {
+        "label": "keyboard-reading-firefox",
+        "code": 0,
+        "seconds": 89
+      },
+      {
+        "label": "tutorial-retry",
+        "code": 0,
+        "seconds": 56
+      },
+      {
+        "label": "continuous-weather",
+        "code": 0,
+        "seconds": 31
+      },
+      {
+        "label": "learning",
+        "code": 0,
+        "seconds": 12
+      },
+      {
+        "label": "operations",
+        "code": 0,
+        "seconds": 20
+      },
+      {
+        "label": "accessibility",
+        "code": 0,
+        "seconds": 23
+      },
+      {
+        "label": "input",
+        "code": 0,
+        "seconds": 19
+      },
+      {
+        "label": "weather",
+        "code": 0,
+        "seconds": 5
+      },
+      {
+        "label": "voyage",
+        "code": 0,
+        "seconds": 15
+      },
+      {
+        "label": "performance",
+        "code": 0,
+        "seconds": 8
+      },
+      {
+        "label": "hud-context",
+        "code": 0,
+        "seconds": 50
+      }
+    ],
+    "initial_run": {
+      "started": "2026-10-03T08:43:16.521Z",
+      "ended": "2026-10-03T08:51:11.285Z",
+      "passed": false,
+      "results": [
+        {
+          "label": "lint",
+          "code": 0,
+          "seconds": 7
+        },
+        {
+          "label": "format",
+          "code": 0,
+          "seconds": 6
+        },
+        {
+          "label": "unit regressions",
+          "code": 0,
+          "seconds": 39
+        },
+        {
+          "label": "production build",
+          "code": 0,
+          "seconds": 7
+        },
+        {
+          "label": "training-preferences",
+          "code": 0,
+          "seconds": 45
+        },
+        {
+          "label": "keyboard-reading",
+          "code": 0,
+          "seconds": 82
+        },
+        {
+          "label": "keyboard-reading-firefox",
+          "code": 0,
+          "seconds": 89
+        },
+        {
+          "label": "tutorial-retry",
+          "code": 0,
+          "seconds": 56
+        },
+        {
+          "label": "continuous-weather",
+          "code": 0,
+          "seconds": 31
+        },
+        {
+          "label": "learning",
+          "code": 0,
+          "seconds": 12
+        },
+        {
+          "label": "operations",
+          "code": 0,
+          "seconds": 20
+        },
+        {
+          "label": "accessibility",
+          "code": 0,
+          "seconds": 23
+        },
+        {
+          "label": "hud-context",
+          "code": 1,
+          "seconds": 11
+        },
+        {
+          "label": "input",
+          "code": 0,
+          "seconds": 19
+        },
+        {
+          "label": "weather",
+          "code": 0,
+          "seconds": 5
+        },
+        {
+          "label": "voyage",
+          "code": 0,
+          "seconds": 15
+        },
+        {
+          "label": "performance",
+          "code": 0,
+          "seconds": 8
+        }
+      ]
+    },
+    "hud_context_rerun": {
+      "started": "2026-10-03T08:52:24.030Z",
+      "ended": "2026-10-03T08:53:16.531Z",
+      "passed": true,
+      "results": [
+        {
+          "label": "hud-context",
+          "code": 0,
+          "seconds": 50
+        }
+      ]
+    },
+    "initial_launcher_exit_code": 1,
+    "hud_rerun_exit_code": 0,
+    "fixture_correction": "The synchronous saved-Frank geometry mutation was captured before the next renderer frame repositioned its speech. The fixture now waits for the actual bubble width, centre and upper edge, without assigning speech geometry. Initial failure and screenshot are retained."
+  },
+  "keyboard_reading": {
+    "chromium": {
+      "passed": true,
+      "failure": null,
+      "base": "http://127.0.0.1:5186/",
+      "startedAt": "2026-10-03T08:45:02.316Z",
+      "completedAt": "2026-10-03T08:46:23.259Z",
+      "records": [
+        {
+          "name": "desktop",
+          "forecast": {
+            "before": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 0,
+              "max": 295,
+              "focus": true
+            },
+            "paged": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 295,
+              "max": 295,
+              "focus": true
+            },
+            "end": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 295,
+              "max": 295,
+              "focus": true
+            },
+            "arrow": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 40,
+              "max": 295,
+              "focus": true
+            }
+          },
+          "almanac": {
+            "before": {
+              "label": "Tide and current forecast",
+              "role": "region",
+              "top": 0,
+              "max": 0,
+              "focus": true
+            },
+            "paged": {
+              "label": "Tide and current forecast",
+              "role": "region",
+              "top": 0,
+              "max": 0,
+              "focus": true
+            },
+            "end": {
+              "label": "Tide and current forecast",
+              "role": "region",
+              "top": 0,
+              "max": 0,
+              "focus": true
+            },
+            "arrow": {
+              "label": "Tide and current forecast",
+              "role": "region",
+              "top": 0,
+              "max": 0,
+              "focus": true
+            }
+          },
+          "chart": {
+            "before": {
+              "label": "Tidal chart and notes",
+              "role": "region",
+              "top": 0,
+              "max": 24,
+              "focus": true
+            },
+            "paged": {
+              "label": "Tidal chart and notes",
+              "role": "region",
+              "top": 24,
+              "max": 24,
+              "focus": true
+            },
+            "end": {
+              "label": "Tidal chart and notes",
+              "role": "region",
+              "top": 24,
+              "max": 24,
+              "focus": true
+            },
+            "arrow": {
+              "label": "Tidal chart and notes",
+              "role": "region",
+              "top": 24,
+              "max": 24,
+              "focus": true
+            }
+          },
+          "chartBounds": {
+            "readerTop": 211.421875,
+            "readerBottom": 706.953125,
+            "lastTop": 642.421875,
+            "lastBottom": 685.609375,
+            "chartWidth": 402.640625
+          },
+          "orders": {
+            "before": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 0,
+              "max": 112,
+              "focus": true
+            },
+            "paged": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 112,
+              "max": 112,
+              "focus": true
+            },
+            "end": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 112,
+              "max": 112,
+              "focus": true
+            },
+            "arrow": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 40,
+              "max": 112,
+              "focus": true
+            }
+          },
+          "historyTop": 295,
+          "paused": {
+            "minute": 360.07499999999993,
+            "throttle": 0,
+            "rudder": 0,
+            "catch": 0,
+            "orders": [
+              {
+                "minQuality": 0,
+                "searchLimit": 70,
+                "maxBagSeconds": 0
+              },
+              {
+                "minQuality": 0,
+                "searchLimit": 70,
+                "maxBagSeconds": 0
+              }
+            ]
+          },
+          "helmDefaultsPreserved": true
+        },
+        {
+          "name": "compact",
+          "forecast": {
+            "before": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 0,
+              "max": 458,
+              "focus": true
+            },
+            "paged": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 218.75,
+              "max": 458,
+              "focus": true
+            },
+            "end": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 458.75,
+              "max": 458,
+              "focus": true
+            },
+            "arrow": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 50,
+              "max": 458,
+              "focus": true
+            }
+          },
+          "almanac": {
+            "before": {
+              "label": "Tide and current forecast",
+              "role": "region",
+              "top": 118.75,
+              "max": 165,
+              "focus": true
+            },
+            "paged": {
+              "label": "Tide and current forecast",
+              "role": "region",
+              "top": 165,
+              "max": 165,
+              "focus": true
+            },
+            "end": {
+              "label": "Tide and current forecast",
+              "role": "region",
+              "top": 165,
+              "max": 165,
+              "focus": true
+            },
+            "arrow": {
+              "label": "Tide and current forecast",
+              "role": "region",
+              "top": 50,
+              "max": 165,
+              "focus": true
+            }
+          },
+          "chart": {
+            "before": {
+              "label": "Tidal chart and notes",
+              "role": "region",
+              "top": 0,
+              "max": 165,
+              "focus": true
+            },
+            "paged": {
+              "label": "Tidal chart and notes",
+              "role": "region",
+              "top": 165,
+              "max": 165,
+              "focus": true
+            },
+            "end": {
+              "label": "Tidal chart and notes",
+              "role": "region",
+              "top": 165,
+              "max": 165,
+              "focus": true
+            },
+            "arrow": {
+              "label": "Tidal chart and notes",
+              "role": "region",
+              "top": 50,
+              "max": 165,
+              "focus": true
+            }
+          },
+          "chartBounds": {
+            "readerTop": 130.5625,
+            "readerBottom": 341,
+            "lastTop": 304.140625,
+            "lastBottom": 332.921875,
+            "chartWidth": 278.828125
+          },
+          "controllerReading": [
+            {
+              "key": "almanac-curves",
+              "top": 165,
+              "max": 165
+            },
+            {
+              "key": "almanac-map",
+              "top": 57.5,
+              "max": 165
+            }
+          ],
+          "orders": {
+            "before": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 0,
+              "max": 321,
+              "focus": true
+            },
+            "paged": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 221.25,
+              "max": 321,
+              "focus": true
+            },
+            "end": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 320,
+              "max": 321,
+              "focus": true
+            },
+            "arrow": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 50,
+              "max": 321,
+              "focus": true
+            }
+          },
+          "historyTop": 458.75,
+          "paused": {
+            "minute": 360.10833333333323,
+            "throttle": 0,
+            "rudder": 0,
+            "catch": 0,
+            "orders": [
+              {
+                "minQuality": 0,
+                "searchLimit": 70,
+                "maxBagSeconds": 0
+              },
+              {
+                "minQuality": 0,
+                "searchLimit": 70,
+                "maxBagSeconds": 0
+              }
+            ]
+          },
+          "helmDefaultsPreserved": true
+        },
+        {
+          "name": "portrait",
+          "forecast": {
+            "before": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 0,
+              "max": 906,
+              "focus": true
+            },
+            "paged": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 565,
+              "max": 906,
+              "focus": true
+            },
+            "end": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 907.5,
+              "max": 906,
+              "focus": true
+            },
+            "arrow": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 50,
+              "max": 906,
+              "focus": true
+            }
+          },
+          "almanac": {
+            "before": {
+              "label": "Tide, current and chart details",
+              "role": "region",
+              "top": 0,
+              "max": 360,
+              "focus": true
+            },
+            "paged": {
+              "label": "Tide, current and chart details",
+              "role": "region",
+              "top": 360,
+              "max": 360,
+              "focus": true
+            },
+            "end": {
+              "label": "Tide, current and chart details",
+              "role": "region",
+              "top": 360,
+              "max": 360,
+              "focus": true
+            },
+            "arrow": {
+              "label": "Tide, current and chart details",
+              "role": "region",
+              "top": 50,
+              "max": 360,
+              "focus": true
+            }
+          },
+          "chartBounds": {
+            "readerTop": 208.796875,
+            "readerBottom": 744.265625,
+            "lastTop": 692,
+            "lastBottom": 726.53125,
+            "chartWidth": 320.4375
+          },
+          "controllerReading": [
+            {
+              "key": "almanac-curves",
+              "top": 56.25,
+              "max": 343
+            }
+          ],
+          "orders": {
+            "before": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 0,
+              "max": 82,
+              "focus": true
+            },
+            "paged": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 82.5,
+              "max": 82,
+              "focus": true
+            },
+            "end": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 82.5,
+              "max": 82,
+              "focus": true
+            },
+            "arrow": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 50,
+              "max": 82,
+              "focus": true
+            }
+          },
+          "historyTop": 907.5,
+          "paused": {
+            "minute": 360.0583333333333,
+            "throttle": 0,
+            "rudder": 0,
+            "catch": 0,
+            "orders": [
+              {
+                "minQuality": 0,
+                "searchLimit": 70,
+                "maxBagSeconds": 0
+              },
+              {
+                "minQuality": 0,
+                "searchLimit": 70,
+                "maxBagSeconds": 0
+              }
+            ]
+          },
+          "helmDefaultsPreserved": true
+        }
+      ],
+      "errors": []
+    },
+    "firefox": {
+      "passed": true,
+      "failure": null,
+      "base": "http://127.0.0.1:5186/",
+      "startedAt": "2026-10-03T08:46:24.075Z",
+      "completedAt": "2026-10-03T08:47:52.079Z",
+      "records": [
+        {
+          "name": "desktop",
+          "forecast": {
+            "before": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 0,
+              "max": 296,
+              "focus": true
+            },
+            "paged": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 296,
+              "max": 296,
+              "focus": true
+            },
+            "end": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 296,
+              "max": 296,
+              "focus": true
+            },
+            "arrow": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 57,
+              "max": 296,
+              "focus": true
+            }
+          },
+          "almanac": {
+            "before": {
+              "label": "Tide and current forecast",
+              "role": "region",
+              "top": 0,
+              "max": 0,
+              "focus": true
+            },
+            "paged": {
+              "label": "Tide and current forecast",
+              "role": "region",
+              "top": 0,
+              "max": 0,
+              "focus": true
+            },
+            "end": {
+              "label": "Tide and current forecast",
+              "role": "region",
+              "top": 0,
+              "max": 0,
+              "focus": true
+            },
+            "arrow": {
+              "label": "Tide and current forecast",
+              "role": "region",
+              "top": 0,
+              "max": 0,
+              "focus": true
+            }
+          },
+          "chart": {
+            "before": {
+              "label": "Tidal chart and notes",
+              "role": "region",
+              "top": 0,
+              "max": 25,
+              "focus": true
+            },
+            "paged": {
+              "label": "Tidal chart and notes",
+              "role": "region",
+              "top": 25,
+              "max": 25,
+              "focus": true
+            },
+            "end": {
+              "label": "Tidal chart and notes",
+              "role": "region",
+              "top": 25,
+              "max": 25,
+              "focus": true
+            },
+            "arrow": {
+              "label": "Tidal chart and notes",
+              "role": "region",
+              "top": 25,
+              "max": 25,
+              "focus": true
+            }
+          },
+          "chartBounds": {
+            "readerTop": 211.39999389648438,
+            "readerBottom": 706.9499816894531,
+            "lastTop": 641.4000244140625,
+            "lastBottom": 684.6000366210938,
+            "chartWidth": 402.6333312988281
+          },
+          "orders": {
+            "before": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 0,
+              "max": 112,
+              "focus": true
+            },
+            "paged": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 112,
+              "max": 112,
+              "focus": true
+            },
+            "end": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 112,
+              "max": 112,
+              "focus": true
+            },
+            "arrow": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 57,
+              "max": 112,
+              "focus": true
+            }
+          },
+          "historyTop": 296,
+          "paused": {
+            "minute": 360.0583333333333,
+            "throttle": 0,
+            "rudder": 0,
+            "catch": 0,
+            "orders": [
+              {
+                "minQuality": 0,
+                "searchLimit": 70,
+                "maxBagSeconds": 0
+              },
+              {
+                "minQuality": 0,
+                "searchLimit": 70,
+                "maxBagSeconds": 0
+              }
+            ]
+          },
+          "helmDefaultsPreserved": true
+        },
+        {
+          "name": "compact",
+          "forecast": {
+            "before": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 0,
+              "max": 459,
+              "focus": true
+            },
+            "paged": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 226.25,
+              "max": 459,
+              "focus": true
+            },
+            "end": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 458.75,
+              "max": 459,
+              "focus": true
+            },
+            "arrow": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 56.25,
+              "max": 459,
+              "focus": true
+            }
+          },
+          "almanac": {
+            "before": {
+              "label": "Tide and current forecast",
+              "role": "region",
+              "top": 120,
+              "max": 165,
+              "focus": true
+            },
+            "paged": {
+              "label": "Tide and current forecast",
+              "role": "region",
+              "top": 165,
+              "max": 165,
+              "focus": true
+            },
+            "end": {
+              "label": "Tide and current forecast",
+              "role": "region",
+              "top": 165,
+              "max": 165,
+              "focus": true
+            },
+            "arrow": {
+              "label": "Tide and current forecast",
+              "role": "region",
+              "top": 67.5,
+              "max": 165,
+              "focus": true
+            }
+          },
+          "chart": {
+            "before": {
+              "label": "Tidal chart and notes",
+              "role": "region",
+              "top": 0,
+              "max": 165,
+              "focus": true
+            },
+            "paged": {
+              "label": "Tidal chart and notes",
+              "role": "region",
+              "top": 165,
+              "max": 165,
+              "focus": true
+            },
+            "end": {
+              "label": "Tidal chart and notes",
+              "role": "region",
+              "top": 165,
+              "max": 165,
+              "focus": true
+            },
+            "arrow": {
+              "label": "Tidal chart and notes",
+              "role": "region",
+              "top": 67.5,
+              "max": 165,
+              "focus": true
+            }
+          },
+          "chartBounds": {
+            "readerTop": 130.60000610351562,
+            "readerBottom": 340.96665954589844,
+            "lastTop": 304.20001220703125,
+            "lastBottom": 333.00001525878906,
+            "chartWidth": 278.79998779296875
+          },
+          "controllerReading": [
+            {
+              "key": "almanac-curves",
+              "top": 165,
+              "max": 165
+            },
+            {
+              "key": "almanac-map",
+              "top": 55,
+              "max": 165
+            }
+          ],
+          "orders": {
+            "before": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 0,
+              "max": 320,
+              "focus": true
+            },
+            "paged": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 228.75,
+              "max": 320,
+              "focus": true
+            },
+            "end": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 320,
+              "max": 320,
+              "focus": true
+            },
+            "arrow": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 56.25,
+              "max": 320,
+              "focus": true
+            }
+          },
+          "historyTop": 458.75,
+          "paused": {
+            "minute": 360.10833333333323,
+            "throttle": 0,
+            "rudder": 0,
+            "catch": 0,
+            "orders": [
+              {
+                "minQuality": 0,
+                "searchLimit": 70,
+                "maxBagSeconds": 0
+              },
+              {
+                "minQuality": 0,
+                "searchLimit": 70,
+                "maxBagSeconds": 0
+              }
+            ]
+          },
+          "helmDefaultsPreserved": true
+        },
+        {
+          "name": "portrait",
+          "forecast": {
+            "before": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 0,
+              "max": 907,
+              "focus": true
+            },
+            "paged": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 608.75,
+              "max": 907,
+              "focus": true
+            },
+            "end": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 907.5,
+              "max": 907,
+              "focus": true
+            },
+            "arrow": {
+              "label": "Forecast details",
+              "role": "region",
+              "top": 56.25,
+              "max": 907,
+              "focus": true
+            }
+          },
+          "almanac": {
+            "before": {
+              "label": "Tide, current and chart details",
+              "role": "region",
+              "top": 0,
+              "max": 360,
+              "focus": true
+            },
+            "paged": {
+              "label": "Tide, current and chart details",
+              "role": "region",
+              "top": 360,
+              "max": 360,
+              "focus": true
+            },
+            "end": {
+              "label": "Tide, current and chart details",
+              "role": "region",
+              "top": 360,
+              "max": 360,
+              "focus": true
+            },
+            "arrow": {
+              "label": "Tide, current and chart details",
+              "role": "region",
+              "top": 67.5,
+              "max": 360,
+              "focus": true
+            }
+          },
+          "chartBounds": {
+            "readerTop": 208.86666870117188,
+            "readerBottom": 744.2333679199219,
+            "lastTop": 692.2166748046875,
+            "lastBottom": 726.7500152587891,
+            "chartWidth": 320.4000244140625
+          },
+          "controllerReading": [
+            {
+              "key": "almanac-curves",
+              "top": 50,
+              "max": 343
+            }
+          ],
+          "orders": {
+            "before": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 0,
+              "max": 84,
+              "focus": true
+            },
+            "paged": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 83.75,
+              "max": 84,
+              "focus": true
+            },
+            "end": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 83.75,
+              "max": 84,
+              "focus": true
+            },
+            "arrow": {
+              "label": "Diver search orders",
+              "role": "region",
+              "top": 67.5,
+              "max": 84,
+              "focus": true
+            }
+          },
+          "historyTop": 907.5,
+          "paused": {
+            "minute": 360.07499999999993,
+            "throttle": 0,
+            "rudder": 0,
+            "catch": 0,
+            "orders": [
+              {
+                "minQuality": 0,
+                "searchLimit": 70,
+                "maxBagSeconds": 0
+              },
+              {
+                "minQuality": 0,
+                "searchLimit": 70,
+                "maxBagSeconds": 0
+              }
+            ]
+          },
+          "helmDefaultsPreserved": true
+        }
+      ],
+      "errors": []
+    }
+  },
+  "training_preferences": {
+    "passed": true,
+    "failure": null,
+    "base": "http://127.0.0.1:5186/",
+    "startedAt": "2026-10-03T08:44:17.166Z",
+    "endedAt": "2026-10-03T08:45:01.628Z",
+    "production": true,
+    "fixture": "Staged working career, fitted twinjet, lesson positions and desktop remaps; native keyboard/touch actions. Not a natural tutorial completion or physical-device test.",
+    "records": [
+      {
+        "name": "desktop",
+        "kind": "binding-aware-training",
+        "instructions": "Select Neutral with X / Space, then hold J / L to push the bow (front) left / right. Throttle and bow thrust cannot run together. Try both directions before continuing."
+      },
+      {
+        "name": "desktop",
+        "kind": "keyboard-pause-continue",
+        "tabs": 5,
+        "lesson": "Twin-jet pivot"
+      },
+      {
+        "name": "desktop",
+        "kind": "one-explicit-instrument",
+        "panels": {
+          "timepiecePanel": true,
+          "depthInstrumentPanel": false,
+          "speedPanel": false,
+          "throttlePanel": false,
+          "fuelPanel": false
+        }
+      },
+      {
+        "name": "desktop",
+        "kind": "chosen-instruments-unobscured",
+        "panels": [
+          {
+            "selector": "#timepiecePanel",
+            "rect": {
+              "left": 246,
+              "top": 14,
+              "right": 370.65625,
+              "bottom": 126
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": "digital-clock"
+              },
+              {
+                "clear": true,
+                "covering": "digital-clock"
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": "digital-clock"
+              },
+              {
+                "clear": true,
+                "covering": "digital-clock"
+              }
+            ]
+          },
+          {
+            "selector": "#clock",
+            "rect": {
+              "left": 1086,
+              "top": 134,
+              "right": 1266,
+              "bottom": 206
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          },
+          {
+            "selector": "#electronics",
+            "rect": {
+              "left": 378.65625,
+              "top": 14,
+              "right": 602.65625,
+              "bottom": 126
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": "weather-instrument"
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "desktop",
+        "kind": "rendered-scouting-sounder",
+        "step": 4,
+        "text": "Sounder \u00b7 11.0 m beneath us",
+        "rect": {
+          "top": 145,
+          "bottom": 160.390625,
+          "left": 373,
+          "right": 907
+        },
+        "visibleActions": [
+          {
+            "selector": ".frank-helm",
+            "rect": {
+              "left": 373,
+              "top": 145,
+              "right": 907,
+              "bottom": 160.390625
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              }
+            ]
+          },
+          {
+            "selector": "[data-intro=\"chart\"]",
+            "rect": {
+              "left": 373,
+              "top": 247,
+              "right": 547,
+              "bottom": 283
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          },
+          {
+            "selector": "[data-intro=\"next\"]",
+            "rect": {
+              "left": 553,
+              "top": 247,
+              "right": 727,
+              "bottom": 283
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          },
+          {
+            "selector": "[data-intro=\"skip\"]",
+            "rect": {
+              "left": 733,
+              "top": 247,
+              "right": 907,
+              "bottom": 283
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "desktop",
+        "kind": "rendered-scouting-sounder",
+        "step": 7,
+        "text": "Sounder \u00b7 11.0 m beneath us",
+        "rect": {
+          "top": 145,
+          "bottom": 160.390625,
+          "left": 373,
+          "right": 907
+        },
+        "visibleActions": [
+          {
+            "selector": ".frank-helm",
+            "rect": {
+              "left": 373,
+              "top": 145,
+              "right": 907,
+              "bottom": 160.390625
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              }
+            ]
+          },
+          {
+            "selector": "[data-intro=\"chart\"]",
+            "rect": {
+              "left": 373,
+              "top": 247,
+              "right": 547,
+              "bottom": 283
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          },
+          {
+            "selector": "[data-intro=\"next\"]",
+            "rect": {
+              "left": 553,
+              "top": 247,
+              "right": 727,
+              "bottom": 283
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          },
+          {
+            "selector": "[data-intro=\"skip\"]",
+            "rect": {
+              "left": 733,
+              "top": 247,
+              "right": 907,
+              "bottom": 283
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "desktop",
+        "kind": "training-save-isolation",
+        "preservedOnReload": true
+      },
+      {
+        "name": "phone",
+        "kind": "binding-aware-training",
+        "instructions": "Select Neutral with Neutral, then hold Bow left / Bow right to push the bow (front) left / right. Throttle and bow thrust cannot run together. Try both directions before continuing."
+      },
+      {
+        "name": "phone",
+        "kind": "one-explicit-instrument",
+        "panels": {
+          "timepiecePanel": true,
+          "depthInstrumentPanel": false,
+          "speedPanel": false,
+          "throttlePanel": false,
+          "fuelPanel": false
+        }
+      },
+      {
+        "name": "phone",
+        "kind": "chosen-instruments-unobscured",
+        "panels": [
+          {
+            "selector": "#timepiecePanel",
+            "rect": {
+              "left": 4,
+              "top": 50,
+              "right": 78,
+              "bottom": 122
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": "digital-clock"
+              },
+              {
+                "clear": true,
+                "covering": "digital-clock"
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": "digital-clock"
+              },
+              {
+                "clear": true,
+                "covering": "digital-clock"
+              }
+            ]
+          },
+          {
+            "selector": "#clock",
+            "rect": {
+              "left": 4,
+              "top": 296,
+              "right": 138,
+              "bottom": 364
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          },
+          {
+            "selector": "#electronics",
+            "rect": {
+              "left": 252,
+              "top": 296,
+              "right": 386,
+              "bottom": 380
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": "weather-instrument"
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "phone",
+        "kind": "rendered-scouting-sounder",
+        "step": 4,
+        "text": "Sounder \u00b7 11.0 m beneath us",
+        "rect": {
+          "top": 100,
+          "bottom": 115.390625,
+          "left": 16,
+          "right": 374
+        },
+        "visibleActions": [
+          {
+            "selector": ".frank-helm",
+            "rect": {
+              "left": 16,
+              "top": 100,
+              "right": 374,
+              "bottom": 115.390625
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              }
+            ]
+          },
+          {
+            "selector": "[data-intro=\"chart\"]",
+            "rect": {
+              "left": 16,
+              "top": 206,
+              "right": 131.328125,
+              "bottom": 250
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          },
+          {
+            "selector": "[data-intro=\"next\"]",
+            "rect": {
+              "left": 137.328125,
+              "top": 206,
+              "right": 252.671875,
+              "bottom": 250
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          },
+          {
+            "selector": "[data-intro=\"skip\"]",
+            "rect": {
+              "left": 258.671875,
+              "top": 206,
+              "right": 374,
+              "bottom": 250
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "phone",
+        "kind": "touch-lesson-reading",
+        "step": 4,
+        "trace": [
+          {
+            "top": 0,
+            "max": 5,
+            "x": 248.70000000000002,
+            "from": 201,
+            "to": 128.390625
+          },
+          {
+            "top": 5,
+            "max": 5,
+            "x": 248.70000000000002,
+            "from": 201,
+            "to": 128.390625
+          }
+        ]
+      },
+      {
+        "name": "phone",
+        "kind": "rendered-scouting-sounder",
+        "step": 7,
+        "text": "Sounder \u00b7 11.0 m beneath us",
+        "rect": {
+          "top": 100,
+          "bottom": 115.390625,
+          "left": 16,
+          "right": 374
+        },
+        "visibleActions": [
+          {
+            "selector": ".frank-helm",
+            "rect": {
+              "left": 16,
+              "top": 100,
+              "right": 374,
+              "bottom": 115.390625
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              }
+            ]
+          },
+          {
+            "selector": "[data-intro=\"chart\"]",
+            "rect": {
+              "left": 16,
+              "top": 206,
+              "right": 131.328125,
+              "bottom": 250
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          },
+          {
+            "selector": "[data-intro=\"next\"]",
+            "rect": {
+              "left": 137.328125,
+              "top": 206,
+              "right": 252.671875,
+              "bottom": 250
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          },
+          {
+            "selector": "[data-intro=\"skip\"]",
+            "rect": {
+              "left": 258.671875,
+              "top": 206,
+              "right": 374,
+              "bottom": 250
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "phone",
+        "kind": "touch-lesson-reading",
+        "step": 7,
+        "trace": [
+          {
+            "top": 0,
+            "max": 5,
+            "x": 248.70000000000002,
+            "from": 201,
+            "to": 128.390625
+          },
+          {
+            "top": 5,
+            "max": 5,
+            "x": 248.70000000000002,
+            "from": 201,
+            "to": 128.390625
+          }
+        ]
+      },
+      {
+        "name": "phone",
+        "kind": "training-save-isolation",
+        "preservedOnReload": true
+      },
+      {
+        "name": "landscape",
+        "kind": "binding-aware-training",
+        "instructions": "Select Neutral with Neutral, then hold Bow left / Bow right to push the bow (front) left / right. Throttle and bow thrust cannot run together. Try both directions before continuing."
+      },
+      {
+        "name": "landscape",
+        "kind": "one-explicit-instrument",
+        "panels": {
+          "timepiecePanel": true,
+          "depthInstrumentPanel": false,
+          "speedPanel": false,
+          "throttlePanel": false,
+          "fuelPanel": false
+        }
+      },
+      {
+        "name": "landscape",
+        "kind": "chosen-instruments-unobscured",
+        "panels": [
+          {
+            "selector": "#timepiecePanel",
+            "rect": {
+              "left": 532,
+              "top": 54,
+              "right": 676,
+              "bottom": 130
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": "digital-clock"
+              },
+              {
+                "clear": true,
+                "covering": "digital-clock"
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          },
+          {
+            "selector": "#clock",
+            "rect": {
+              "left": 682,
+              "top": 54,
+              "right": 826,
+              "bottom": 130
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          },
+          {
+            "selector": "#electronics",
+            "rect": {
+              "left": 532,
+              "top": 136,
+              "right": 676,
+              "bottom": 212
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": "weather-instrument"
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "landscape",
+        "kind": "rendered-scouting-sounder",
+        "step": 4,
+        "text": "Sounder \u00b7 11.0 m beneath us",
+        "rect": {
+          "top": 67,
+          "bottom": 82.390625,
+          "left": 17,
+          "right": 303
+        },
+        "visibleActions": [
+          {
+            "selector": ".frank-helm",
+            "rect": {
+              "left": 17,
+              "top": 67,
+              "right": 303,
+              "bottom": 82.390625
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              }
+            ]
+          },
+          {
+            "selector": "[data-intro=\"chart\"]",
+            "rect": {
+              "left": 17,
+              "top": 135,
+              "right": 109,
+              "bottom": 179
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          },
+          {
+            "selector": "[data-intro=\"next\"]",
+            "rect": {
+              "left": 114,
+              "top": 135,
+              "right": 206,
+              "bottom": 179
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          },
+          {
+            "selector": "[data-intro=\"skip\"]",
+            "rect": {
+              "left": 211,
+              "top": 135,
+              "right": 303,
+              "bottom": 179
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "landscape",
+        "kind": "touch-lesson-reading",
+        "step": 4,
+        "trace": [
+          {
+            "top": 0,
+            "max": 33,
+            "x": 202.9,
+            "from": 130,
+            "to": 95.390625
+          },
+          {
+            "top": 20,
+            "max": 33,
+            "x": 202.9,
+            "from": 130,
+            "to": 95.390625
+          },
+          {
+            "top": 33,
+            "max": 33,
+            "x": 202.9,
+            "from": 130,
+            "to": 95.390625
+          }
+        ]
+      },
+      {
+        "name": "landscape",
+        "kind": "rendered-scouting-sounder",
+        "step": 7,
+        "text": "Sounder \u00b7 11.0 m beneath us",
+        "rect": {
+          "top": 67,
+          "bottom": 82.390625,
+          "left": 17,
+          "right": 303
+        },
+        "visibleActions": [
+          {
+            "selector": ".frank-helm",
+            "rect": {
+              "left": 17,
+              "top": 67,
+              "right": 303,
+              "bottom": 82.390625
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              },
+              {
+                "clear": true,
+                "covering": "frank-helm"
+              }
+            ]
+          },
+          {
+            "selector": "[data-intro=\"chart\"]",
+            "rect": {
+              "left": 17,
+              "top": 135,
+              "right": 109,
+              "bottom": 179
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          },
+          {
+            "selector": "[data-intro=\"next\"]",
+            "rect": {
+              "left": 114,
+              "top": 135,
+              "right": 206,
+              "bottom": 179
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          },
+          {
+            "selector": "[data-intro=\"skip\"]",
+            "rect": {
+              "left": 211,
+              "top": 135,
+              "right": 303,
+              "bottom": 179
+            },
+            "inViewport": true,
+            "samples": [
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              },
+              {
+                "clear": true,
+                "covering": ""
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "landscape",
+        "kind": "touch-lesson-reading",
+        "step": 7,
+        "trace": [
+          {
+            "top": 0,
+            "max": 33,
+            "x": 202.9,
+            "from": 130,
+            "to": 95.390625
+          },
+          {
+            "top": 20,
+            "max": 33,
+            "x": 202.9,
+            "from": 130,
+            "to": 95.390625
+          },
+          {
+            "top": 33,
+            "max": 33,
+            "x": 202.9,
+            "from": 130,
+            "to": 95.390625
+          }
+        ]
+      },
+      {
+        "name": "landscape",
+        "kind": "training-save-isolation",
+        "preservedOnReload": true
+      },
+      {
+        "kind": "realistic-career-defaults",
+        "panels": {
+          "timepiecePanel": true,
+          "depthInstrumentPanel": true,
+          "speedPanel": true,
+          "throttlePanel": true,
+          "fuelPanel": true
+        }
+      }
+    ],
+    "errors": []
+  },
+  "natural_tutorial": {
+    "source_commit": "efbda474137ddbc0f57f006ae7a9b8d984c207a4",
+    "completed": true,
+    "lessons": 10,
+    "initial_funds": 20000,
+    "starter": "Island Tender",
+    "starter_cost": 15000,
+    "final_cash": 5000,
+    "fresh_divers": 2,
+    "practice_catch_carried_to_career": 0,
+    "evidence": "test-results/tutorial-completion-2026-10-03",
+    "scope": "Frozen preceding build. Actual keyboard and two ordinary initial button clicks; no state staging/pace changes/skips. Informed agent used read-only telemetry/source familiarity; not unaided human acceptance. Browser pageerror listener absent in this audit."
+  },
+  "hud_context": {
+    "passed": true,
+    "failure": null,
+    "base": "http://127.0.0.1:5186/",
+    "startedAt": "2026-10-03T08:52:26.548Z",
+    "completedAt": "2026-10-03T08:53:16.379Z",
+    "production": true,
+    "fixture": "Staged calm-water recovery and custom Frank geometry after actual tutorial entry; native keyboard/touch boarding and reload. Not a natural voyage or physical-device acceptance.",
+    "results": [
+      {
+        "name": "keyboard-desktop-tutorial-ready",
+        "viewport": [
+          1280,
+          800
+        ],
+        "touch": false,
+        "text": "Ada is alongside \u00b7 1 to bring aboard.",
+        "rect": {
+          "x": 400,
+          "y": 98,
+          "width": 480,
+          "height": 30.1875,
+          "top": 98,
+          "right": 880,
+          "bottom": 128.1875,
+          "left": 400
+        },
+        "above": true,
+        "float": {
+          "x": 600.4029391773964,
+          "y": 397.34979071145517
+        },
+        "boat": {
+          "x": 639.9999999999998,
+          "y": 397.35459569546975
+        },
+        "floatClear": true,
+        "boatClear": true,
+        "frankVisible": true,
+        "frank": {
+          "x": 360,
+          "y": 134,
+          "width": 560,
+          "height": 123.78125,
+          "top": 134,
+          "right": 920,
+          "bottom": 257.78125,
+          "left": 360
+        },
+        "crewVisible": true,
+        "crew": {
+          "x": 14,
+          "y": 134,
+          "width": 224,
+          "height": 242,
+          "top": 134,
+          "right": 238,
+          "bottom": 376,
+          "left": 14
+        },
+        "crewClear": true,
+        "oldPanelHidden": true,
+        "operation": {
+          "state": "surface",
+          "action": null,
+          "hooking": false,
+          "hook": 0,
+          "phase": "waiting"
+        },
+        "touchActions": [
+          {
+            "label": "Menu / help",
+            "width": 116.46875,
+            "height": 45
+          }
+        ]
+      },
+      {
+        "name": "keyboard-desktop-tutorial-wrong-side",
+        "viewport": [
+          1280,
+          800
+        ],
+        "touch": false,
+        "text": "Bring Ada\u2019s float to the port ladder \u2014 the left side.",
+        "rect": {
+          "x": 400,
+          "y": 98,
+          "width": 480,
+          "height": 30.1875,
+          "top": 98,
+          "right": 880,
+          "bottom": 128.1875,
+          "left": 400
+        },
+        "above": true,
+        "float": {
+          "x": 679.607816710602,
+          "y": 397.34128480592005
+        },
+        "boat": {
+          "x": 640,
+          "y": 397.35459569546975
+        },
+        "floatClear": true,
+        "boatClear": true,
+        "frankVisible": true,
+        "frank": {
+          "x": 360,
+          "y": 134,
+          "width": 560,
+          "height": 123.78125,
+          "top": 134,
+          "right": 920,
+          "bottom": 257.78125,
+          "left": 360
+        },
+        "crewVisible": true,
+        "crew": {
+          "x": 14,
+          "y": 134,
+          "width": 224,
+          "height": 242,
+          "top": 134,
+          "right": 238,
+          "bottom": 376,
+          "left": 14
+        },
+        "crewClear": true,
+        "oldPanelHidden": true,
+        "operation": {
+          "state": "surface",
+          "action": null,
+          "hooking": false,
+          "hook": 0,
+          "phase": "waiting"
+        },
+        "touchActions": [
+          {
+            "label": "Menu / help",
+            "width": 116.46875,
+            "height": 45
+          }
+        ]
+      },
+      {
+        "name": "keyboard-desktop",
+        "kind": "semantic-speech-expiry",
+        "passed": true
+      },
+      {
+        "name": "keyboard-desktop-native-boarding",
+        "viewport": [
+          1280,
+          800
+        ],
+        "touch": false,
+        "text": "Ada is coming alongside. Hold this drift.",
+        "rect": {
+          "x": 400,
+          "y": 98,
+          "width": 480,
+          "height": 30.1875,
+          "top": 98,
+          "right": 880,
+          "bottom": 128.1875,
+          "left": 400
+        },
+        "above": true,
+        "float": {
+          "x": 602.7118707826855,
+          "y": 401.5434615094833
+        },
+        "boat": {
+          "x": 639.9999999999998,
+          "y": 397.35459569546975
+        },
+        "floatClear": true,
+        "boatClear": true,
+        "frankVisible": true,
+        "frank": {
+          "x": 360,
+          "y": 134,
+          "width": 560,
+          "height": 123.78125,
+          "top": 134,
+          "right": 920,
+          "bottom": 257.78125,
+          "left": 360
+        },
+        "crewVisible": true,
+        "crew": {
+          "x": 14,
+          "y": 134,
+          "width": 224,
+          "height": 242,
+          "top": 134,
+          "right": 238,
+          "bottom": 376,
+          "left": 14
+        },
+        "crewClear": true,
+        "oldPanelHidden": true,
+        "operation": {
+          "state": "surface",
+          "action": "recoverDiver",
+          "hooking": true,
+          "hook": 0.15,
+          "phase": "approaching"
+        },
+        "touchActions": []
+      },
+      {
+        "name": "keyboard-desktop",
+        "kind": "native-recovery-accounting",
+        "catch": 30,
+        "bags": [
+          30
+        ]
+      },
+      {
+        "name": "keyboard-desktop-career-speech",
+        "viewport": [
+          1280,
+          800
+        ],
+        "touch": false,
+        "text": "Ada Chen \u00b7 RECOVERY UNAVAILABLE \u2014 BRING FLOAT TO PORT SIDE \u00b7 Bag full \u00b7 30 lb in bag",
+        "rect": {
+          "x": 400,
+          "y": 132,
+          "width": 480,
+          "height": 46.375,
+          "top": 132,
+          "right": 880,
+          "bottom": 178.375,
+          "left": 400
+        },
+        "above": true,
+        "float": {
+          "x": 679.6023192025577,
+          "y": 397.350806650323
+        },
+        "boat": {
+          "x": 640,
+          "y": 397.35459569546936
+        },
+        "floatClear": true,
+        "boatClear": true,
+        "frankVisible": false,
+        "frank": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "crewVisible": true,
+        "crew": {
+          "x": 14,
+          "y": 134,
+          "width": 224,
+          "height": 242,
+          "top": 134,
+          "right": 238,
+          "bottom": 376,
+          "left": 14
+        },
+        "crewClear": true,
+        "oldPanelHidden": true,
+        "operation": {
+          "state": "surface",
+          "action": null,
+          "hooking": false,
+          "hook": 0,
+          "phase": "waiting"
+        },
+        "touchActions": []
+      },
+      {
+        "name": "keyboard-desktop-custom-frank",
+        "viewport": [
+          1280,
+          800
+        ],
+        "touch": false,
+        "text": "Ada is alongside \u00b7 1 to bring aboard.",
+        "rect": {
+          "x": 18,
+          "y": 34,
+          "width": 330,
+          "height": 30.1875,
+          "top": 34,
+          "right": 348,
+          "bottom": 64.1875,
+          "left": 18
+        },
+        "above": true,
+        "float": {
+          "x": 600.4314580672196,
+          "y": 397.3006855419944
+        },
+        "boat": {
+          "x": 639.9999999999998,
+          "y": 397.35459569546975
+        },
+        "floatClear": true,
+        "boatClear": true,
+        "frankVisible": true,
+        "frank": {
+          "x": 18,
+          "y": 70,
+          "width": 330,
+          "height": 178,
+          "top": 70,
+          "right": 348,
+          "bottom": 248,
+          "left": 18
+        },
+        "crewVisible": true,
+        "crew": {
+          "x": 14,
+          "y": 134,
+          "width": 224,
+          "height": 242,
+          "top": 134,
+          "right": 238,
+          "bottom": 376,
+          "left": 14
+        },
+        "crewClear": false,
+        "oldPanelHidden": true,
+        "operation": {
+          "state": "surface",
+          "action": null,
+          "hooking": false,
+          "hook": 0,
+          "phase": "waiting"
+        },
+        "touchActions": []
+      },
+      {
+        "name": "keyboard-desktop",
+        "kind": "saved-custom-layout-reload",
+        "saved": {
+          "left": 18,
+          "top": 70,
+          "width": 330,
+          "height": 178
+        },
+        "rect": {
+          "left": 18,
+          "top": 70,
+          "width": 330,
+          "height": 178
+        },
+        "custom": true
+      },
+      {
+        "name": "keyboard-compact-tutorial-ready",
+        "viewport": [
+          844,
+          390
+        ],
+        "touch": false,
+        "text": "Ada is alongside \u00b7 1 to bring aboard.",
+        "rect": {
+          "x": 10,
+          "y": 24,
+          "width": 300,
+          "height": 30.1875,
+          "top": 24,
+          "right": 310,
+          "bottom": 54.1875,
+          "left": 10
+        },
+        "above": true,
+        "float": {
+          "x": 382.4014153347613,
+          "y": 192.35231008272456
+        },
+        "boat": {
+          "x": 422,
+          "y": 192.35459569546978
+        },
+        "floatClear": true,
+        "boatClear": true,
+        "frankVisible": true,
+        "frank": {
+          "x": 10,
+          "y": 60,
+          "width": 300,
+          "height": 126,
+          "top": 60,
+          "right": 310,
+          "bottom": 186,
+          "left": 10
+        },
+        "crewVisible": true,
+        "crew": {
+          "x": 660,
+          "y": 138,
+          "width": 176,
+          "height": 132,
+          "top": 138,
+          "right": 836,
+          "bottom": 270,
+          "left": 660
+        },
+        "crewClear": true,
+        "oldPanelHidden": true,
+        "operation": {
+          "state": "surface",
+          "action": null,
+          "hooking": false,
+          "hook": 0,
+          "phase": "waiting"
+        },
+        "touchActions": [
+          {
+            "label": "Menu / help",
+            "width": 116.46875,
+            "height": 45
+          }
+        ]
+      },
+      {
+        "name": "keyboard-compact-tutorial-wrong-side",
+        "viewport": [
+          844,
+          390
+        ],
+        "touch": false,
+        "text": "Bring Ada\u2019s float to the port ladder \u2014 the left side.",
+        "rect": {
+          "x": 10,
+          "y": 8,
+          "width": 300,
+          "height": 46.375,
+          "top": 8,
+          "right": 310,
+          "bottom": 54.375,
+          "left": 10
+        },
+        "above": true,
+        "float": {
+          "x": 461.6076117245164,
+          "y": 192.3417458522211
+        },
+        "boat": {
+          "x": 421.99999999999983,
+          "y": 192.35459569546978
+        },
+        "floatClear": true,
+        "boatClear": true,
+        "frankVisible": true,
+        "frank": {
+          "x": 10,
+          "y": 60,
+          "width": 300,
+          "height": 126,
+          "top": 60,
+          "right": 310,
+          "bottom": 186,
+          "left": 10
+        },
+        "crewVisible": true,
+        "crew": {
+          "x": 660,
+          "y": 138,
+          "width": 176,
+          "height": 132,
+          "top": 138,
+          "right": 836,
+          "bottom": 270,
+          "left": 660
+        },
+        "crewClear": true,
+        "oldPanelHidden": true,
+        "operation": {
+          "state": "surface",
+          "action": null,
+          "hooking": false,
+          "hook": 0,
+          "phase": "waiting"
+        },
+        "touchActions": [
+          {
+            "label": "Menu / help",
+            "width": 116.46875,
+            "height": 45
+          }
+        ]
+      },
+      {
+        "name": "keyboard-compact",
+        "kind": "semantic-speech-expiry",
+        "passed": true
+      },
+      {
+        "name": "keyboard-compact-native-boarding",
+        "viewport": [
+          844,
+          390
+        ],
+        "touch": false,
+        "text": "Ada is coming alongside. Hold this drift.",
+        "rect": {
+          "x": 10,
+          "y": 24,
+          "width": 300,
+          "height": 30.1875,
+          "top": 24,
+          "right": 310,
+          "bottom": 54.1875,
+          "left": 10
+        },
+        "above": true,
+        "float": {
+          "x": 385.4767536044689,
+          "y": 197.95304740095528
+        },
+        "boat": {
+          "x": 422,
+          "y": 192.35459569546978
+        },
+        "floatClear": true,
+        "boatClear": true,
+        "frankVisible": true,
+        "frank": {
+          "x": 10,
+          "y": 60,
+          "width": 300,
+          "height": 126,
+          "top": 60,
+          "right": 310,
+          "bottom": 186,
+          "left": 10
+        },
+        "crewVisible": true,
+        "crew": {
+          "x": 660,
+          "y": 138,
+          "width": 176,
+          "height": 132,
+          "top": 138,
+          "right": 836,
+          "bottom": 270,
+          "left": 660
+        },
+        "crewClear": true,
+        "oldPanelHidden": true,
+        "operation": {
+          "state": "surface",
+          "action": "recoverDiver",
+          "hooking": true,
+          "hook": 0.19999999999999998,
+          "phase": "approaching"
+        },
+        "touchActions": []
+      },
+      {
+        "name": "keyboard-compact",
+        "kind": "native-recovery-accounting",
+        "catch": 30,
+        "bags": [
+          30
+        ]
+      },
+      {
+        "name": "keyboard-compact-career-speech",
+        "viewport": [
+          844,
+          390
+        ],
+        "touch": false,
+        "text": "Ada Chen \u00b7 RECOVERY UNAVAILABLE \u2014 BRING FLOAT TO PORT SIDE \u00b7 Bag full \u00b7 30 lb in bag",
+        "rect": {
+          "x": 182,
+          "y": 132,
+          "width": 480,
+          "height": 46.375,
+          "top": 132,
+          "right": 662,
+          "bottom": 178.375,
+          "left": 182
+        },
+        "above": true,
+        "float": {
+          "x": 461.60425591148044,
+          "y": 192.3475120531351
+        },
+        "boat": {
+          "x": 421.99999999999983,
+          "y": 192.35459569546938
+        },
+        "floatClear": true,
+        "boatClear": true,
+        "frankVisible": false,
+        "frank": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "crewVisible": true,
+        "crew": {
+          "x": 8,
+          "y": 104,
+          "width": 176,
+          "height": 132,
+          "top": 104,
+          "right": 184,
+          "bottom": 236,
+          "left": 8
+        },
+        "crewClear": true,
+        "oldPanelHidden": true,
+        "operation": {
+          "state": "surface",
+          "action": null,
+          "hooking": false,
+          "hook": 0,
+          "phase": "waiting"
+        },
+        "touchActions": []
+      },
+      {
+        "name": "keyboard-compact-custom-frank",
+        "viewport": [
+          844,
+          390
+        ],
+        "touch": false,
+        "text": "Ada is alongside \u00b7 1 to bring aboard.",
+        "rect": {
+          "x": 18,
+          "y": 34,
+          "width": 330,
+          "height": 30.1875,
+          "top": 34,
+          "right": 348,
+          "bottom": 64.1875,
+          "left": 18
+        },
+        "above": true,
+        "float": {
+          "x": 382.43124151027456,
+          "y": 192.29746387557523
+        },
+        "boat": {
+          "x": 421.99999999999983,
+          "y": 192.35459569547015
+        },
+        "floatClear": true,
+        "boatClear": true,
+        "frankVisible": true,
+        "frank": {
+          "x": 18,
+          "y": 70,
+          "width": 330,
+          "height": 178,
+          "top": 70,
+          "right": 348,
+          "bottom": 248,
+          "left": 18
+        },
+        "crewVisible": true,
+        "crew": {
+          "x": 660,
+          "y": 138,
+          "width": 176,
+          "height": 132,
+          "top": 138,
+          "right": 836,
+          "bottom": 270,
+          "left": 660
+        },
+        "crewClear": true,
+        "oldPanelHidden": true,
+        "operation": {
+          "state": "surface",
+          "action": null,
+          "hooking": false,
+          "hook": 0,
+          "phase": "waiting"
+        },
+        "touchActions": []
+      },
+      {
+        "name": "keyboard-compact",
+        "kind": "saved-custom-layout-reload",
+        "saved": {
+          "left": 18,
+          "top": 70,
+          "width": 330,
+          "height": 178
+        },
+        "rect": {
+          "left": 18,
+          "top": 70,
+          "width": 330,
+          "height": 178
+        },
+        "custom": true
+      },
+      {
+        "name": "touch-phone-tutorial-ready",
+        "viewport": [
+          390,
+          844
+        ],
+        "touch": true,
+        "text": "Ada is alongside \u00b7 Deploy / board to bring aboard.",
+        "rect": {
+          "x": 8,
+          "y": 54,
+          "width": 374,
+          "height": 30.1875,
+          "top": 54,
+          "right": 382,
+          "bottom": 84.1875,
+          "left": 8
+        },
+        "above": true,
+        "float": {
+          "x": 155.40141533476128,
+          "y": 389.8123100827244
+        },
+        "boat": {
+          "x": 195,
+          "y": 389.8145956954696
+        },
+        "floatClear": true,
+        "boatClear": true,
+        "frankVisible": true,
+        "frank": {
+          "x": 6,
+          "y": 90,
+          "width": 378,
+          "height": 120.78125,
+          "top": 90,
+          "right": 384,
+          "bottom": 210.78125,
+          "left": 6
+        },
+        "crewVisible": true,
+        "crew": {
+          "x": 4,
+          "y": 780,
+          "width": 382,
+          "height": 60,
+          "top": 780,
+          "right": 386,
+          "bottom": 840,
+          "left": 4
+        },
+        "crewClear": true,
+        "oldPanelHidden": true,
+        "operation": {
+          "state": "surface",
+          "action": null,
+          "hooking": false,
+          "hook": 0,
+          "phase": "waiting"
+        },
+        "touchActions": [
+          {
+            "label": "Menu / help",
+            "width": 72,
+            "height": 44
+          },
+          {
+            "label": "Reverse",
+            "width": 45.53125,
+            "height": 44
+          },
+          {
+            "label": "Neutral",
+            "width": 44.375,
+            "height": 44
+          },
+          {
+            "label": "Ahead",
+            "width": 44,
+            "height": 44
+          },
+          {
+            "label": "Deploy / board",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Bag / send down",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Recall",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Orders",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Select diver",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Chart",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Zoom \u2212",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Zoom +",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Centre rudder",
+            "width": 80.125,
+            "height": 44
+          },
+          {
+            "label": "",
+            "width": 52.796966552734375,
+            "height": 120.92193603515625
+          },
+          {
+            "label": "Hide UI",
+            "width": 72,
+            "height": 44
+          },
+          {
+            "label": "Adjust UI: OFF",
+            "width": 72,
+            "height": 44
+          }
+        ]
+      },
+      {
+        "name": "touch-phone-tutorial-wrong-side",
+        "viewport": [
+          390,
+          844
+        ],
+        "touch": true,
+        "text": "Bring Ada\u2019s float to the port ladder \u2014 the left side.",
+        "rect": {
+          "x": 8,
+          "y": 54,
+          "width": 374,
+          "height": 30.1875,
+          "top": 54,
+          "right": 382,
+          "bottom": 84.1875,
+          "left": 8
+        },
+        "above": true,
+        "float": {
+          "x": 234.60761172451663,
+          "y": 389.8017458522213
+        },
+        "boat": {
+          "x": 195,
+          "y": 389.81459569547
+        },
+        "floatClear": true,
+        "boatClear": true,
+        "frankVisible": true,
+        "frank": {
+          "x": 6,
+          "y": 90,
+          "width": 378,
+          "height": 120.78125,
+          "top": 90,
+          "right": 384,
+          "bottom": 210.78125,
+          "left": 6
+        },
+        "crewVisible": true,
+        "crew": {
+          "x": 4,
+          "y": 780,
+          "width": 382,
+          "height": 60,
+          "top": 780,
+          "right": 386,
+          "bottom": 840,
+          "left": 4
+        },
+        "crewClear": true,
+        "oldPanelHidden": true,
+        "operation": {
+          "state": "surface",
+          "action": null,
+          "hooking": false,
+          "hook": 0,
+          "phase": "waiting"
+        },
+        "touchActions": [
+          {
+            "label": "Menu / help",
+            "width": 72,
+            "height": 44
+          },
+          {
+            "label": "Reverse",
+            "width": 45.53125,
+            "height": 44
+          },
+          {
+            "label": "Neutral",
+            "width": 44.375,
+            "height": 44
+          },
+          {
+            "label": "Ahead",
+            "width": 44,
+            "height": 44
+          },
+          {
+            "label": "Deploy / board",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Bag / send down",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Recall",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Orders",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Select diver",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Chart",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Zoom \u2212",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Zoom +",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Centre rudder",
+            "width": 80.125,
+            "height": 44
+          },
+          {
+            "label": "",
+            "width": 52.79962158203125,
+            "height": 120.923095703125
+          },
+          {
+            "label": "Hide UI",
+            "width": 72,
+            "height": 44
+          },
+          {
+            "label": "Adjust UI: OFF",
+            "width": 72,
+            "height": 44
+          }
+        ]
+      },
+      {
+        "name": "touch-phone",
+        "kind": "semantic-speech-expiry",
+        "passed": true
+      },
+      {
+        "name": "touch-phone-native-boarding",
+        "viewport": [
+          390,
+          844
+        ],
+        "touch": true,
+        "text": "Ada is coming alongside. Hold this drift.",
+        "rect": {
+          "x": 8,
+          "y": 54,
+          "width": 374,
+          "height": 30.1875,
+          "top": 54,
+          "right": 382,
+          "bottom": 84.1875,
+          "left": 8
+        },
+        "above": true,
+        "float": {
+          "x": 157.20813437827866,
+          "y": 393.04234245481933
+        },
+        "boat": {
+          "x": 194.9999999999998,
+          "y": 389.8145956954696
+        },
+        "floatClear": true,
+        "boatClear": true,
+        "frankVisible": true,
+        "frank": {
+          "x": 6,
+          "y": 90,
+          "width": 378,
+          "height": 120.78125,
+          "top": 90,
+          "right": 384,
+          "bottom": 210.78125,
+          "left": 6
+        },
+        "crewVisible": true,
+        "crew": {
+          "x": 4,
+          "y": 780,
+          "width": 382,
+          "height": 60,
+          "top": 780,
+          "right": 386,
+          "bottom": 840,
+          "left": 4
+        },
+        "crewClear": true,
+        "oldPanelHidden": true,
+        "operation": {
+          "state": "surface",
+          "action": "recoverDiver",
+          "hooking": true,
+          "hook": 0.11666666666666665,
+          "phase": "approaching"
+        },
+        "touchActions": [
+          {
+            "label": "Menu / help",
+            "width": 72,
+            "height": 44
+          },
+          {
+            "label": "Reverse",
+            "width": 45.53125,
+            "height": 44
+          },
+          {
+            "label": "Neutral",
+            "width": 44.375,
+            "height": 44
+          },
+          {
+            "label": "Ahead",
+            "width": 44,
+            "height": 44
+          },
+          {
+            "label": "Deploy / board",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Bag / send down",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Recall",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Orders",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Select diver",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Chart",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Zoom \u2212",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Zoom +",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Centre rudder",
+            "width": 80.125,
+            "height": 44
+          },
+          {
+            "label": "",
+            "width": 52.840850830078125,
+            "height": 120.94110107421875
+          },
+          {
+            "label": "Hide UI",
+            "width": 72,
+            "height": 44
+          },
+          {
+            "label": "Adjust UI: OFF",
+            "width": 72,
+            "height": 44
+          }
+        ]
+      },
+      {
+        "name": "touch-phone",
+        "kind": "native-recovery-accounting",
+        "catch": 30,
+        "bags": [
+          30
+        ]
+      },
+      {
+        "name": "touch-phone-career-speech",
+        "viewport": [
+          390,
+          844
+        ],
+        "touch": true,
+        "text": "Ada Chen \u00b7 RECOVERY UNAVAILABLE \u2014 BRING FLOAT TO PORT SIDE \u00b7 Bag full \u00b7 30 lb in bag",
+        "rect": {
+          "x": 10,
+          "y": 126,
+          "width": 370,
+          "height": 46.375,
+          "top": 126,
+          "right": 380,
+          "bottom": 172.375,
+          "left": 10
+        },
+        "above": true,
+        "float": {
+          "x": 234.60232489559002,
+          "y": 389.81078842142335
+        },
+        "boat": {
+          "x": 195,
+          "y": 389.8145956954696
+        },
+        "floatClear": true,
+        "boatClear": true,
+        "frankVisible": false,
+        "frank": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "crewVisible": true,
+        "crew": {
+          "x": 4,
+          "y": 780,
+          "width": 382,
+          "height": 60,
+          "top": 780,
+          "right": 386,
+          "bottom": 840,
+          "left": 4
+        },
+        "crewClear": true,
+        "oldPanelHidden": true,
+        "operation": {
+          "state": "surface",
+          "action": null,
+          "hooking": false,
+          "hook": 0,
+          "phase": "waiting"
+        },
+        "touchActions": [
+          {
+            "label": "Menu / help",
+            "width": 72,
+            "height": 44
+          },
+          {
+            "label": "Reverse",
+            "width": 45.53125,
+            "height": 44
+          },
+          {
+            "label": "Neutral",
+            "width": 44.375,
+            "height": 44
+          },
+          {
+            "label": "Ahead",
+            "width": 44,
+            "height": 44
+          },
+          {
+            "label": "Deploy / board",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Bag / send down",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Recall",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Orders",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Select diver",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Chart",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Zoom \u2212",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Zoom +",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Centre rudder",
+            "width": 80.125,
+            "height": 44
+          },
+          {
+            "label": "",
+            "width": 52.797393798828125,
+            "height": 120.922119140625
+          },
+          {
+            "label": "Hide UI",
+            "width": 72,
+            "height": 44
+          },
+          {
+            "label": "Adjust UI: OFF",
+            "width": 72,
+            "height": 44
+          }
+        ]
+      },
+      {
+        "name": "touch-phone-custom-frank",
+        "viewport": [
+          390,
+          844
+        ],
+        "touch": true,
+        "text": "Ada is alongside \u00b7 Deploy / board to bring aboard.",
+        "rect": {
+          "x": 8,
+          "y": 34,
+          "width": 330,
+          "height": 30.1875,
+          "top": 34,
+          "right": 338,
+          "bottom": 64.1875,
+          "left": 8
+        },
+        "above": true,
+        "float": {
+          "x": 155.43413494485287,
+          "y": 389.7526020975993
+        },
+        "boat": {
+          "x": 194.9999999999998,
+          "y": 389.81459569547
+        },
+        "floatClear": true,
+        "boatClear": true,
+        "frankVisible": true,
+        "frank": {
+          "x": 8,
+          "y": 70,
+          "width": 330,
+          "height": 178,
+          "top": 70,
+          "right": 338,
+          "bottom": 248,
+          "left": 8
+        },
+        "crewVisible": true,
+        "crew": {
+          "x": 4,
+          "y": 780,
+          "width": 382,
+          "height": 60,
+          "top": 780,
+          "right": 386,
+          "bottom": 840,
+          "left": 4
+        },
+        "crewClear": true,
+        "oldPanelHidden": true,
+        "operation": {
+          "state": "surface",
+          "action": null,
+          "hooking": false,
+          "hook": 0,
+          "phase": "waiting"
+        },
+        "touchActions": [
+          {
+            "label": "Menu / help",
+            "width": 72,
+            "height": 44
+          },
+          {
+            "label": "Reverse",
+            "width": 45.53125,
+            "height": 44
+          },
+          {
+            "label": "Neutral",
+            "width": 44.375,
+            "height": 44
+          },
+          {
+            "label": "Ahead",
+            "width": 44,
+            "height": 44
+          },
+          {
+            "label": "Deploy / board",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Bag / send down",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Recall",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Orders",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Select diver",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Chart",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Zoom \u2212",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Zoom +",
+            "width": 91.5,
+            "height": 44
+          },
+          {
+            "label": "Centre rudder",
+            "width": 80.125,
+            "height": 44
+          },
+          {
+            "label": "",
+            "width": 52.80511474609375,
+            "height": 120.92547607421875
+          },
+          {
+            "label": "Hide UI",
+            "width": 72,
+            "height": 44
+          },
+          {
+            "label": "Adjust UI: OFF",
+            "width": 72,
+            "height": 44
+          }
+        ]
+      },
+      {
+        "name": "touch-phone",
+        "kind": "saved-custom-layout-reload",
+        "saved": {
+          "left": 8,
+          "top": 70,
+          "width": 330,
+          "height": 178
+        },
+        "rect": {
+          "left": 8,
+          "top": 70,
+          "width": 330,
+          "height": 178
+        },
+        "custom": true
+      },
+      {
+        "name": "touch-landscape-tutorial-ready",
+        "viewport": [
+          844,
+          390
+        ],
+        "touch": true,
+        "text": "Ada is alongside \u00b7 Deploy / board to bring aboard.",
+        "rect": {
+          "x": 10,
+          "y": 8,
+          "width": 300,
+          "height": 46.375,
+          "top": 8,
+          "right": 310,
+          "bottom": 54.375,
+          "left": 10
+        },
+        "above": true,
+        "float": {
+          "x": 382.4029391773965,
+          "y": 153.3497907114554
+        },
+        "boat": {
+          "x": 421.99999999999983,
+          "y": 153.35459569546995
+        },
+        "floatClear": true,
+        "boatClear": true,
+        "frankVisible": true,
+        "frank": {
+          "x": 10,
+          "y": 60,
+          "width": 300,
+          "height": 107.34375,
+          "top": 60,
+          "right": 310,
+          "bottom": 167.34375,
+          "left": 10
+        },
+        "crewVisible": true,
+        "crew": {
+          "x": 6,
+          "y": 326,
+          "width": 494.390625,
+          "height": 60,
+          "top": 326,
+          "right": 500.390625,
+          "bottom": 386,
+          "left": 6
+        },
+        "crewClear": true,
+        "oldPanelHidden": true,
+        "operation": {
+          "state": "surface",
+          "action": null,
+          "hooking": false,
+          "hook": 0,
+          "phase": "waiting"
+        },
+        "touchActions": [
+          {
+            "label": "Menu / help",
+            "width": 72,
+            "height": 44
+          },
+          {
+            "label": "Reverse",
+            "width": 65.375,
+            "height": 44
+          },
+          {
+            "label": "Neutral",
+            "width": 63.828125,
+            "height": 44
+          },
+          {
+            "label": "Ahead",
+            "width": 56.046875,
+            "height": 44
+          },
+          {
+            "label": "Deploy / board",
+            "width": 97,
+            "height": 48
+          },
+          {
+            "label": "Bag / send down",
+            "width": 97,
+            "height": 48
+          },
+          {
+            "label": "Recall",
+            "width": 97,
+            "height": 48
+          },
+          {
+            "label": "Orders",
+            "width": 97,
+            "height": 48
+          },
+          {
+            "label": "Select diver",
+            "width": 97,
+            "height": 44
+          },
+          {
+            "label": "Chart",
+            "width": 97,
+            "height": 44
+          },
+          {
+            "label": "Zoom \u2212",
+            "width": 97,
+            "height": 44
+          },
+          {
+            "label": "Zoom +",
+            "width": 97,
+            "height": 44
+          },
+          {
+            "label": "Centre rudder",
+            "width": 102.15625,
+            "height": 44
+          },
+          {
+            "label": "",
+            "width": 52.79705810546875,
+            "height": 120.92194366455078
+          },
+          {
+            "label": "Hide UI",
+            "width": 72,
+            "height": 44
+          },
+          {
+            "label": "Adjust UI: OFF",
+            "width": 72,
+            "height": 44
+          }
+        ]
+      },
+      {
+        "name": "touch-landscape-tutorial-wrong-side",
+        "viewport": [
+          844,
+          390
+        ],
+        "touch": true,
+        "text": "Bring Ada\u2019s float to the port ladder \u2014 the left side.",
+        "rect": {
+          "x": 10,
+          "y": 8,
+          "width": 300,
+          "height": 46.375,
+          "top": 8,
+          "right": 310,
+          "bottom": 54.375,
+          "left": 10
+        },
+        "above": true,
+        "float": {
+          "x": 461.60301061997336,
+          "y": 153.34964625918786
+        },
+        "boat": {
+          "x": 421.99999999999983,
+          "y": 153.35459569546958
+        },
+        "floatClear": true,
+        "boatClear": true,
+        "frankVisible": true,
+        "frank": {
+          "x": 10,
+          "y": 60,
+          "width": 300,
+          "height": 121.515625,
+          "top": 60,
+          "right": 310,
+          "bottom": 181.515625,
+          "left": 10
+        },
+        "crewVisible": true,
+        "crew": {
+          "x": 6,
+          "y": 326,
+          "width": 494.390625,
+          "height": 60,
+          "top": 326,
+          "right": 500.390625,
+          "bottom": 386,
+          "left": 6
+        },
+        "crewClear": true,
+        "oldPanelHidden": true,
+        "operation": {
+          "state": "surface",
+          "action": null,
+          "hooking": false,
+          "hook": 0,
+          "phase": "waiting"
+        },
+        "touchActions": [
+          {
+            "label": "Menu / help",
+            "width": 72,
+            "height": 44
+          },
+          {
+            "label": "Reverse",
+            "width": 65.375,
+            "height": 44
+          },
+          {
+            "label": "Neutral",
+            "width": 63.828125,
+            "height": 44
+          },
+          {
+            "label": "Ahead",
+            "width": 56.046875,
+            "height": 44
+          },
+          {
+            "label": "Deploy / board",
+            "width": 97,
+            "height": 48
+          },
+          {
+            "label": "Bag / send down",
+            "width": 97,
+            "height": 48
+          },
+          {
+            "label": "Recall",
+            "width": 97,
+            "height": 48
+          },
+          {
+            "label": "Orders",
+            "width": 97,
+            "height": 48
+          },
+          {
+            "label": "Select diver",
+            "width": 97,
+            "height": 44
+          },
+          {
+            "label": "Chart",
+            "width": 97,
+            "height": 44
+          },
+          {
+            "label": "Zoom \u2212",
+            "width": 97,
+            "height": 44
+          },
+          {
+            "label": "Zoom +",
+            "width": 97,
+            "height": 44
+          },
+          {
+            "label": "Centre rudder",
+            "width": 102.15625,
+            "height": 44
+          },
+          {
+            "label": "",
+            "width": 52.79779052734375,
+            "height": 120.92227172851562
+          },
+          {
+            "label": "Hide UI",
+            "width": 72,
+            "height": 44
+          },
+          {
+            "label": "Adjust UI: OFF",
+            "width": 72,
+            "height": 44
+          }
+        ]
+      },
+      {
+        "name": "touch-landscape",
+        "kind": "semantic-speech-expiry",
+        "passed": true
+      },
+      {
+        "name": "touch-landscape-native-boarding",
+        "viewport": [
+          844,
+          390
+        ],
+        "touch": true,
+        "text": "Ada is coming alongside. Hold this drift.",
+        "rect": {
+          "x": 10,
+          "y": 24,
+          "width": 300,
+          "height": 30.1875,
+          "top": 24,
+          "right": 310,
+          "bottom": 54.1875,
+          "left": 10
+        },
+        "above": true,
+        "float": {
+          "x": 384.71995765979995,
+          "y": 157.50344954038218
+        },
+        "boat": {
+          "x": 422,
+          "y": 153.35459569546995
+        },
+        "floatClear": true,
+        "boatClear": true,
+        "frankVisible": true,
+        "frank": {
+          "x": 10,
+          "y": 60,
+          "width": 300,
+          "height": 107.34375,
+          "top": 60,
+          "right": 310,
+          "bottom": 167.34375,
+          "left": 10
+        },
+        "crewVisible": true,
+        "crew": {
+          "x": 6,
+          "y": 326,
+          "width": 494.390625,
+          "height": 60,
+          "top": 326,
+          "right": 500.390625,
+          "bottom": 386,
+          "left": 6
+        },
+        "crewClear": true,
+        "oldPanelHidden": true,
+        "operation": {
+          "state": "surface",
+          "action": "recoverDiver",
+          "hooking": true,
+          "hook": 0.15,
+          "phase": "approaching"
+        },
+        "touchActions": [
+          {
+            "label": "Menu / help",
+            "width": 72,
+            "height": 44
+          },
+          {
+            "label": "Reverse",
+            "width": 65.375,
+            "height": 44
+          },
+          {
+            "label": "Neutral",
+            "width": 63.828125,
+            "height": 44
+          },
+          {
+            "label": "Ahead",
+            "width": 56.046875,
+            "height": 44
+          },
+          {
+            "label": "Deploy / board",
+            "width": 97,
+            "height": 48
+          },
+          {
+            "label": "Bag / send down",
+            "width": 97,
+            "height": 48
+          },
+          {
+            "label": "Recall",
+            "width": 97,
+            "height": 48
+          },
+          {
+            "label": "Orders",
+            "width": 97,
+            "height": 48
+          },
+          {
+            "label": "Select diver",
+            "width": 97,
+            "height": 44
+          },
+          {
+            "label": "Chart",
+            "width": 97,
+            "height": 44
+          },
+          {
+            "label": "Zoom \u2212",
+            "width": 97,
+            "height": 44
+          },
+          {
+            "label": "Zoom +",
+            "width": 97,
+            "height": 44
+          },
+          {
+            "label": "Centre rudder",
+            "width": 102.15625,
+            "height": 44
+          },
+          {
+            "label": "",
+            "width": 52.85687255859375,
+            "height": 120.94805908203125
+          },
+          {
+            "label": "Hide UI",
+            "width": 72,
+            "height": 44
+          },
+          {
+            "label": "Adjust UI: OFF",
+            "width": 72,
+            "height": 44
+          }
+        ]
+      },
+      {
+        "name": "touch-landscape",
+        "kind": "native-recovery-accounting",
+        "catch": 30,
+        "bags": [
+          30
+        ]
+      },
+      {
+        "name": "touch-landscape-career-speech",
+        "viewport": [
+          844,
+          390
+        ],
+        "touch": true,
+        "text": "Ada Chen \u00b7 RECOVERY UNAVAILABLE \u2014 BRING FLOAT TO PORT SIDE \u00b7 Bag full \u00b7 30 lb in bag",
+        "rect": {
+          "x": 10,
+          "y": 90,
+          "width": 300,
+          "height": 46.375,
+          "top": 90,
+          "right": 310,
+          "bottom": 136.375,
+          "left": 10
+        },
+        "above": true,
+        "float": {
+          "x": 461.6023248875277,
+          "y": 153.35078894891387
+        },
+        "boat": {
+          "x": 421.99999999999983,
+          "y": 153.35459569546958
+        },
+        "floatClear": true,
+        "boatClear": true,
+        "frankVisible": false,
+        "frank": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "crewVisible": true,
+        "crew": {
+          "x": 6,
+          "y": 326,
+          "width": 494.390625,
+          "height": 60,
+          "top": 326,
+          "right": 500.390625,
+          "bottom": 386,
+          "left": 6
+        },
+        "crewClear": true,
+        "oldPanelHidden": true,
+        "operation": {
+          "state": "surface",
+          "action": null,
+          "hooking": false,
+          "hook": 0,
+          "phase": "waiting"
+        },
+        "touchActions": [
+          {
+            "label": "Menu / help",
+            "width": 72,
+            "height": 44
+          },
+          {
+            "label": "Reverse",
+            "width": 65.375,
+            "height": 44
+          },
+          {
+            "label": "Neutral",
+            "width": 63.828125,
+            "height": 44
+          },
+          {
+            "label": "Ahead",
+            "width": 56.046875,
+            "height": 44
+          },
+          {
+            "label": "Deploy / board",
+            "width": 97,
+            "height": 48
+          },
+          {
+            "label": "Bag / send down",
+            "width": 97,
+            "height": 48
+          },
+          {
+            "label": "Recall",
+            "width": 97,
+            "height": 48
+          },
+          {
+            "label": "Orders",
+            "width": 97,
+            "height": 48
+          },
+          {
+            "label": "Select diver",
+            "width": 97,
+            "height": 44
+          },
+          {
+            "label": "Chart",
+            "width": 97,
+            "height": 44
+          },
+          {
+            "label": "Zoom \u2212",
+            "width": 97,
+            "height": 44
+          },
+          {
+            "label": "Zoom +",
+            "width": 97,
+            "height": 44
+          },
+          {
+            "label": "Centre rudder",
+            "width": 102.15625,
+            "height": 44
+          },
+          {
+            "label": "",
+            "width": 52.79742431640625,
+            "height": 120.9220962524414
+          },
+          {
+            "label": "Hide UI",
+            "width": 72,
+            "height": 44
+          },
+          {
+            "label": "Adjust UI: OFF",
+            "width": 72,
+            "height": 44
+          }
+        ]
+      },
+      {
+        "name": "touch-landscape-custom-frank",
+        "viewport": [
+          844,
+          390
+        ],
+        "touch": true,
+        "text": "Ada is alongside \u00b7 Deploy / board to bring aboard.",
+        "rect": {
+          "x": 18,
+          "y": 34,
+          "width": 330,
+          "height": 30.1875,
+          "top": 34,
+          "right": 348,
+          "bottom": 64.1875,
+          "left": 18
+        },
+        "above": true,
+        "float": {
+          "x": 382.4341349448531,
+          "y": 153.29260209759929
+        },
+        "boat": {
+          "x": 422,
+          "y": 153.35459569546995
+        },
+        "floatClear": true,
+        "boatClear": true,
+        "frankVisible": true,
+        "frank": {
+          "x": 18,
+          "y": 70,
+          "width": 330,
+          "height": 178,
+          "top": 70,
+          "right": 348,
+          "bottom": 248,
+          "left": 18
+        },
+        "crewVisible": true,
+        "crew": {
+          "x": 6,
+          "y": 326,
+          "width": 494.390625,
+          "height": 60,
+          "top": 326,
+          "right": 500.390625,
+          "bottom": 386,
+          "left": 6
+        },
+        "crewClear": true,
+        "oldPanelHidden": true,
+        "operation": {
+          "state": "surface",
+          "action": null,
+          "hooking": false,
+          "hook": 0,
+          "phase": "waiting"
+        },
+        "touchActions": [
+          {
+            "label": "Menu / help",
+            "width": 72,
+            "height": 44
+          },
+          {
+            "label": "Reverse",
+            "width": 65.375,
+            "height": 44
+          },
+          {
+            "label": "Neutral",
+            "width": 63.828125,
+            "height": 44
+          },
+          {
+            "label": "Ahead",
+            "width": 56.046875,
+            "height": 44
+          },
+          {
+            "label": "Deploy / board",
+            "width": 97,
+            "height": 48
+          },
+          {
+            "label": "Bag / send down",
+            "width": 97,
+            "height": 48
+          },
+          {
+            "label": "Recall",
+            "width": 97,
+            "height": 48
+          },
+          {
+            "label": "Orders",
+            "width": 97,
+            "height": 48
+          },
+          {
+            "label": "Select diver",
+            "width": 97,
+            "height": 44
+          },
+          {
+            "label": "Chart",
+            "width": 97,
+            "height": 44
+          },
+          {
+            "label": "Zoom \u2212",
+            "width": 97,
+            "height": 44
+          },
+          {
+            "label": "Zoom +",
+            "width": 97,
+            "height": 44
+          },
+          {
+            "label": "Centre rudder",
+            "width": 102.15625,
+            "height": 44
+          },
+          {
+            "label": "",
+            "width": 52.80511474609375,
+            "height": 120.92547607421875
+          },
+          {
+            "label": "Hide UI",
+            "width": 72,
+            "height": 44
+          },
+          {
+            "label": "Adjust UI: OFF",
+            "width": 72,
+            "height": 44
+          }
+        ]
+      },
+      {
+        "name": "touch-landscape",
+        "kind": "saved-custom-layout-reload",
+        "saved": {
+          "left": 18,
+          "top": 70,
+          "width": 330,
+          "height": 178
+        },
+        "rect": {
+          "left": 18,
+          "top": 70,
+          "width": 330,
+          "height": 178
+        },
+        "custom": true
+      }
+    ],
+    "errors": []
+  },
+  "performance": {
+    "device": {
+      "renderer": "ANGLE (AMD, Vulkan 1.4.330 (AMD Custom GPU 0405 (RADV VANGOGH) (0x0000163F)), radv)",
+      "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "pixelRatio": 1,
+      "framebuffer": [
+        1280,
+        800
+      ],
+      "screen": null,
+      "started": true
+    },
+    "results": [
+      {
+        "label": "native",
+        "elapsed": 4006.60000000149,
+        "renderFrames": 241,
+        "rafFrames": 241,
+        "fps": 60.15075126039793,
+        "fields": {
+          "frameMs": {
+            "mean": 16.665975103734443,
+            "p95": 16.700000000000728
+          },
+          "inputMs": {
+            "mean": 0.7601659750233547,
+            "p95": 1
+          },
+          "simulationMs": {
+            "mean": 0.36804979254348646,
+            "p95": 0.5
+          },
+          "drawMs": {
+            "mean": 6.1904564316527475,
+            "p95": 15.399999998509884
+          },
+          "hudMs": {
+            "mean": 0.4568464732516356,
+            "p95": 3.3000000044703484
+          },
+          "totalCpuMs": {
+            "mean": 7.832365145543552,
+            "p95": 19.80000000447035
+          }
+        },
+        "render": {
+          "frame": 326,
+          "calls": 99,
+          "triangles": 360622,
+          "points": 0,
+          "lines": 96
+        }
+      }
+    ],
+    "errors": []
+  },
+  "export_validation": {
+    "zip_crc": true,
+    "all_build_bytes_match": true,
+    "archive_checks": "scripts/package-temp.py verified both ZIP CRCs and every packaged production file",
+    "local_server_port": 5199,
+    "production_identity_check": true,
+    "production_html_bytes_match": true,
+    "production_entry_module_bytes_match": true,
+    "entry": "./assets/index-BzI065b1.js",
+    "entry_sha256": "742088d591af0e152796cab38cda54a418e694185017d3589ee26e0381d4457c"
+  },
+  "main_server_validation": {
+    "base": "http://127.0.0.1:5184/",
+    "production_identity_check": true,
+    "production_html_bytes_match": true,
+    "production_entry_module_bytes_match": true,
+    "entry": "./assets/index-BzI065b1.js",
+    "entry_sha256": "742088d591af0e152796cab38cda54a418e694185017d3589ee26e0381d4457c"
+  },
+  "exports": [
+    {
+      "path": "exports/2026-10-03-reading-and-training-r2/Urchin Skipper 3D TEMP.zip",
+      "bytes": 104445196,
+      "sha256": "f165236b5d983ff47e04bd1b2378b87faf471ab0fd474e42aa65b7e24dde5fa1"
+    },
+    {
+      "path": "exports/2026-10-03-reading-and-training-r2/UrchinSkipper3D-TEMP-ITCHIO.zip",
+      "bytes": 104416699,
+      "sha256": "d764ac6e978e2e338789a61c5e4c1d1583560896ef3cb2e2248534625baa89fe"
+    }
+  ],
+  "build_files": [
+    {
+      "path": "dist/assets/geography-DRCAA4xL.js",
+      "bytes": 8817073,
+      "sha256": "11d61e00a1b80b0ed5b9dc2f4e304adee5df52dff4fd9c5a704bd204c2953842"
+    },
+    {
+      "path": "dist/assets/index-BUMy7bDB.css",
+      "bytes": 172202,
+      "sha256": "d689bf4e134b17b55456a375a7848194361ae828ec80a2561723948935c78e60"
+    },
+    {
+      "path": "dist/assets/index-BzI065b1.js",
+      "bytes": 956249,
+      "sha256": "742088d591af0e152796cab38cda54a418e694185017d3589ee26e0381d4457c"
+    },
+    {
+      "path": "dist/assets/save.worker-CeKzy45w.js",
+      "bytes": 333,
+      "sha256": "dd8c2f74598cec68dcadb7b256f796d3f1601bb8168953693ebf462e6e87b0ff"
+    },
+    {
+      "path": "dist/assets/simulationSupport-BTGbtjln.js",
+      "bytes": 1387441,
+      "sha256": "a9aaf981bfd2da2a4381c5bb73dd5064897ef0781500f2e2a7cfc72f0fe7c4f0"
+    },
+    {
+      "path": "dist/assets/three-CFpc-5E9.js",
+      "bytes": 521453,
+      "sha256": "8e38bd19e01b911dfc8e9742a80f6792dcd6ebbd36f8ed7320937488c630f5e8"
+    },
+    {
+      "path": "dist/index.html",
+      "bytes": 2621,
+      "sha256": "790a088fed634fdb298a9429ad52502d498debc67508e00e82dcf15ab317e14e"
+    }
+  ],
+  "reviews": [
+    "docs/review/keyboard-reading-2026-10-03.md",
+    "docs/review/training-preferences-2026-10-03.md",
+    "docs/review/tutorial-completion-2026-10-03.md",
+    "docs/review/independent-keyboard-reading-2026-10-03.md",
+    "docs/review/independent-training-preferences-2026-10-03.md"
+  ],
+  "known_limits": [
+    "Compact readers and short landscape lessons require scrolling; some text remains small.",
+    "Auxiliary desktop Day 0 caption retains a partially clipped final word; main readings and action labels are clear.",
+    "Compact keyboard career speech briefly crosses the bow; the point-clearance fixture does not assert clearance of the whole hull.",
+    "Preserved deliberate custom positions may overlap other HUD elements.",
+    "Focused Frank-button Enter is separate from keyboard-only pause-menu Continue navigation.",
+    "Synthetic controllers/browser touch do not establish physical device behavior.",
+    "Geography chunk remains about 3.88 MB gzip.",
+    "Stylized wind/vegetation and wide-zoom object scale remain."
+  ],
+  "manual_acceptance_remaining": [
+    "Physical Xbox/Steam Deck controls",
+    "Physical phone/tablet performance and Safari",
+    "Actual itch.io hosting",
+    "Long-career fishing and upgrade balance",
+    "Broader unaided human-new-player tutorial completion"
+  ]
+}

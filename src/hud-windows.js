@@ -329,7 +329,10 @@ export class HudWindows {
                 assist(world, WINDOW_OPTIONS[id], ui.realistic) &&
                 (id !== 'loadPanel' || assist(world, 'exactLoad', ui.realistic)),
             )
-          : undefined;
+          : undefined,
+      tutorialInstruments = [...shelf, 'clock', 'electronics', 'sounderPanel'].filter((id) =>
+        assist(world, WINDOW_OPTIONS[id], ui.realistic),
+      );
     for (const [id, label] of Object.entries(WINDOWS)) {
       const panel = document.getElementById(id);
       if (!panel) continue;
@@ -351,6 +354,7 @@ export class HudWindows {
           !entry.positions.has(layout) && !entry.sizes.has(layout)
             ? ui.hudMessageTargetPoint
             : undefined,
+          tutorialInstruments,
         ),
         position = entry.positions.get(layout),
         size = entry.sizes.get(layout),

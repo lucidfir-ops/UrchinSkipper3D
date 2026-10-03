@@ -260,7 +260,6 @@ export function initializeIntroWorld(w) {
   if (w.career.trainingScenario === 'risk-reward') w.environment.current = { x: 0.32, y: 0.12 };
   w.day.phase = 'practice';
   if (!w.career.intro.helpInitialized) {
-    w.career.assists.controlsHelp = true;
     w.career.intro.helpInitialized = true;
   }
   w.day.minute = 600;

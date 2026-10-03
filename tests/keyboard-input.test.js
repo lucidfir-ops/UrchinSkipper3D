@@ -76,6 +76,130 @@ test('native menu Tab and focused button activation never also command the boat'
   }
 });
 
+test('a focused reading region owns scrolling keys without menu or helm commands', () => {
+  const { input, send } = setup(),
+    target = {
+      matches: (selector) => selector === '[data-menu-reading]',
+      closest: (selector) => (selector === '#playtest:not([hidden])' ? {} : null),
+    };
+  for (const code of [
+    'ArrowUp',
+    'ArrowDown',
+    'ArrowLeft',
+    'ArrowRight',
+    'PageUp',
+    'PageDown',
+    'Home',
+    'End',
+    'Space',
+    'Enter',
+    'NumpadEnter',
+  ]) {
+    assert(!send('keydown', code, { target }).prevented, `${code}: native reading`);
+    assert(!send('keyup', code, { target }).prevented);
+    const actions = input.poll();
+    for (const action of [
+      'menuUp',
+      'menuDown',
+      'menuLeft',
+      'menuRight',
+      'fullAhead',
+      'fullReverse',
+      'confirm',
+      'neutral',
+      'centerRudder',
+      'pivot',
+      'thruster',
+    ])
+      assert(!actions[action], `${code} must not also resolve ${action}`);
+  }
+  assert(send('keydown', 'Escape', { target }).prevented);
+  send('keyup', 'Escape', { target });
+  assert(input.poll().keyboardEscape, 'Escape still closes the menu');
+});
+
+test('Frank’s focused lesson buttons activate natively without changing the helm', () => {
+  const { input, send } = setup(),
+    target = {
+      matches: (selector) => selector === 'button',
+      closest: (selector) => (selector === '#frankAboard:not([hidden])' ? {} : null),
+    };
+  for (const code of ['Enter', 'NumpadEnter', 'Space']) {
+    assert(!send('keydown', code, { target }).prevented);
+    send('keyup', code, { target });
+    const actions = input.poll();
+    assert(!actions.confirm && !actions.centerRudder && !actions.neutral);
+  }
+  send('keydown', 'Tab');
+  send('keyup', 'Tab');
+  assert(input.poll().cycleDiver, 'Tab on the water still selects the other diver');
+  send('keydown', 'Enter');
+  send('keyup', 'Enter');
+  assert(input.poll().centerRudder, 'Enter at the helm still centres the rudder');
+});
+
+test('nested menu controls retain arrow actions and native activation or slider navigation', () => {
+  const { input, send } = setup(),
+    button = {
+      matches: (selector) => selector === 'button',
+      closest: () => ({}),
+    },
+    slider = {
+      matches: (selector) => selector === 'input,select,textarea,[contenteditable="true"]',
+      closest: (selector) => (selector.includes('data-menu-reading') ? {} : null),
+    };
+  for (const [code, action] of [
+    ['ArrowDown', 'menuDown'],
+    ['ArrowUp', 'menuUp'],
+  ]) {
+    // This button has a reading region ancestor, but it is not that region.
+    button.closest = (selector) =>
+      selector === '#playtest, #startup' || selector === '[data-menu-reading]' ? {} : null;
+    assert(send('keydown', code, { target: button }).prevented);
+    send('keyup', code, { target: button });
+    assert(input.poll()[action]);
+  }
+  assert(!send('keydown', 'Enter', { target: button }).prevented);
+  send('keyup', 'Enter', { target: button });
+  assert(!input.poll().confirm, 'button activates natively once');
+  for (const code of ['ArrowRight', 'PageDown', 'Home', 'End']) {
+    assert(!send('keydown', code, { target: slider }).prevented);
+    send('keyup', code, { target: slider });
+    const actions = input.poll();
+    assert(!actions.menuRight && !actions.fullReverse);
+  }
+});
+
+test('Page keys keep their helm defaults and can still be captured as custom bindings', () => {
+  const { input, send } = setup();
+  for (const [code, action] of [
+    ['PageUp', 'fullAhead'],
+    ['PageDown', 'fullReverse'],
+  ]) {
+    assert(send('keydown', code).prevented);
+    send('keyup', code);
+    assert(input.poll()[action]);
+  }
+  input.beginCapture('fullReverse', 'keyboard');
+  input.poll();
+  send('keydown', 'KeyZ');
+  send('keyup', 'KeyZ');
+  assert(input.map.fullReverse.includes('KeyZ'));
+  input.poll();
+  input.beginCapture('work', 'keyboard');
+  input.poll();
+  assert(send('keydown', 'PageDown').prevented);
+  send('keyup', 'PageDown');
+  assert(input.map.work.includes('PageDown'));
+  assert(!input.map.fullReverse.includes('PageDown'));
+  input.poll();
+  send('keydown', 'PageDown');
+  send('keyup', 'PageDown');
+  const actions = input.poll();
+  assert(actions.work, 'custom Page Down is honored away from focused text');
+  assert(!actions.fullReverse);
+});
+
 test('every requested keyboard key resolves its command, including arrow alternatives and separate neutral steering', () => {
   const { input, send } = setup();
   for (const [code, command, value] of [

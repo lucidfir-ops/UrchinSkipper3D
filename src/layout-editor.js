@@ -385,7 +385,12 @@ export class LayoutEditor {
         }
         if (entry) entry.layout = null;
       }
-      if (w.career && row.key && row.allowed && !!w.career.assists[row.key] !== row.enabled)
+      if (
+        w.career &&
+        row.key &&
+        row.allowed &&
+        !!assist(w, row.key, this.ui.realistic) !== row.enabled
+      )
         toggleAssist(w, row.key);
       else if (!w.career && row.key) {
         w.uiOptions ??= {};

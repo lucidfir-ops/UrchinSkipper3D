@@ -183,19 +183,57 @@ export function defaultHudRect(
   activeMessage = false,
   compactMessage = false,
   targetPoint,
+  tutorialInstruments = visibleShelf || [],
 ) {
   let rect;
+  if (tutorial && !touch && height < 560 && width > height && id === 'diverPanel')
+    return { left: width - 184, top: height - 252, width: 176, height: 132 };
+  if (tutorial && height < 560 && width > height && tutorialInstruments.includes(id)) {
+    // Opted-in tutorial instruments use the free starboard area, clear of
+    // Frank to port, the followed boat and the lower touch controls.
+    const columns = tutorialInstruments.length > 4 ? 3 : 2,
+      start = width / 2 + 110,
+      cell = (width - start - 12) / columns,
+      index = tutorialInstruments.indexOf(id),
+      left = start + (index % columns) * cell,
+      top = 54 + Math.floor(index / columns) * 82,
+      // The lower port column shares this band with the compact keyboard
+      // crew station at starboard. Keep a gap between their default borders.
+      panelWidth =
+        !touch && index >= columns && index % columns === 0
+          ? Math.min(cell - 6, width - 192 - left)
+          : cell - 6;
+    return {
+      left,
+      top,
+      width: panelWidth,
+      height: 76,
+    };
+  }
   if (id === 'frankAboard' && tutorial) {
-    const portrait = width < height;
-    if (touch && height < 500)
+    const portrait = width < height,
+      hasShelf = tutorialInstruments.some((item) => instrumentShelf(touch).includes(item));
+    if (height < 560 && !portrait)
       return { left: 10, top: 60, width: Math.min(300, width / 2 - 76), height: 126 };
     return {
       left: portrait ? 6 : Math.max(12, (width - 560) / 2),
-      top: portrait ? 90 : 60,
+      top: portrait ? (hasShelf ? 128 : 90) : 134,
       width: portrait ? width - 12 : Math.min(560, width - 260),
-      height: height < 500 ? 122 : 136,
+      height: portrait ? (hasShelf ? 132 : 170) : 160,
     };
   }
+  if (tutorial && touch && width < height) {
+    if (id === 'clock') return { left: 4, top: 296, width: 134, height: 68 };
+    if (id === 'electronics') return { left: width - 138, top: 296, width: 134, height: 84 };
+    if (id === 'sounderPanel') return { left: 4, top: 372, width: 134, height: 68 };
+  }
+  if (tutorial && !touch && height >= 560 && ['clock', 'sounderPanel'].includes(id))
+    return {
+      left: width - 194,
+      top: id === 'clock' ? 134 : 214,
+      width: 180,
+      height: 72,
+    };
   if (id === 'message' && activeMessage && !tutorial && !(touch && width < height)) {
     if (touch && height < 500)
       return { left: 140, top: 86, width: Math.min(220, width * 0.292), height: 134 };

@@ -138,6 +138,26 @@ test('Back and Forward retain scroll inside a weather detail pane', () => {
   ]);
 });
 
+test('almanac controller scrolling reaches both columns, the portrait reader and the touch page', () => {
+  const { ui, world } = setup();
+  ui.screen = 'almanac';
+  ui.navigate = () => {};
+  const curves = { top: 0, scrollBy: (_x, y) => (curves.top += y) },
+    map = { top: 0, scrollBy: (_x, y) => (map.top += y) },
+    portrait = { top: 0, scrollBy: (_x, y) => (portrait.top += y) };
+  ui.panel.querySelectorAll = () => [curves, map];
+  ui.update({ detailScroll: 1 }, world(), 0.1);
+  assert.equal(curves.top, 40);
+  assert.equal(map.top, 40, 'chart notes scroll with the curve column');
+  ui.panel.querySelectorAll = () => [portrait];
+  ui.update({ detailScroll: -0.5 }, world(), 0.1);
+  assert.equal(portrait.top, -20);
+  ui.panel.querySelectorAll = () => [];
+  ui.panel.scrollBy = (_x, y) => (ui.panel.scrollTop += y);
+  ui.update({ detailScroll: 1 }, world(), 0.1);
+  assert.equal(ui.panel.scrollTop, 40, 'expanded touch layout uses its outer scroll owner');
+});
+
 test('a completed purchase cannot apply the shop viewport to its new Harbour destination', () => {
   const { ui } = setup();
   ui.screen = 'starter';

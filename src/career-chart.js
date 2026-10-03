@@ -146,16 +146,17 @@ export function renderExpedition(ui, w, bind) {
           })
         : `<canvas width="${chartPixels}" height="${chartPixels}" aria-label="Persistent working chart"></canvas>`;
   ui.panel.innerHTML = `<div class="day-heading"><div><div class="eyebrow">DAY ${careerDayAt(w)} · ${formatClock(w.day.minute % 1440)}</div><h2>${title}</h2></div>${map ? chartModeMarkup(ui) : ''}</div><div class="day-layout expedition-layout">${map ? `<div class="sector-picture">${chartSurface}<div class="map-caption">Pink ×: charted rocks/outcrops; numbers give clearance over tops at chart datum (add tide). Some visible rocks and drifting logs are uncharted. Red: your track · blue: depth contours · amber: past diver reports.</div></div>` : ''}<article class="career-detail"><div class="expedition-copy">${detail}</div><div class="choices expedition-choices"></div></article></div><div class="day-footer">${ui.menuNotice || `${bind('menuUp')} / ${bind('menuDown')} Navigate · ${bind('confirm')} Select · Right stick scrolls detail · ${bind('back')} Back`}</div>`;
-  if (ui.screen === 'conditions')
-    ui.panel
-      .querySelector('.day-footer')
-      .replaceWith(
-        menuFooter(
-          ui,
-          bind,
-          ui.input.lastDevice === 'gamepad' ? 'Right stick scrolls forecast' : 'Scroll for more',
-        ),
-      );
+  if (ui.screen === 'conditions') {
+    const footer = menuFooter(
+      ui,
+      bind,
+      ui.input.lastDevice === 'gamepad' ? 'Right stick scrolls forecast' : 'Forecast details',
+    );
+    if (!ui.input.touchEnabled && ui.input.lastDevice !== 'gamepad')
+      footer.querySelector('.menu-legend').textContent =
+        `Tab to forecast · PgUp/PgDn scroll · Home/End · ${bind('confirm')} Select · ${bind('back')} Back`;
+    ui.panel.querySelector('.day-footer').replaceWith(footer);
+  }
   if (map) {
     bindChartModeToggle(ui.panel, ui);
     const surface = ui.panel.querySelector('.sector-picture > :is(canvas, svg)');

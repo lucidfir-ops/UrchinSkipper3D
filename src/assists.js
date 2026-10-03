@@ -37,6 +37,9 @@ export const ASSISTS = {
 export const REALISTIC_ASSISTS = new Set([
   'timepiece',
   'depthInstrument',
+  'speedGauge',
+  'throttleGauge',
+  'fuelGauge',
   'compassGauge',
   'hullGauge',
   'loadGauge',
@@ -68,12 +71,33 @@ const DEFAULT_OFF_ASSISTS = new Set([
   'compassGauge',
   'hullGauge',
 ]);
+const TUTORIAL_QUIET_ASSISTS = new Set([
+  'timepiece',
+  'depthInstrument',
+  'speedGauge',
+  'throttleGauge',
+  'fuelGauge',
+  'loadGauge',
+  'minimap',
+  'helmOverlay',
+  'weatherOverlay',
+  'departureGuidance',
+  'currentOverlay',
+  'almanacShortcut',
+  'pickingLegend',
+  'controlsHelp',
+  'clockOverlay',
+  'sounder',
+  'compassGauge',
+  'hullGauge',
+  'feedbackOverlay',
+]);
 export const presetLabel = (preset) =>
   ({ easy: 'Easy', realistic: 'Realistic', off: 'All Off', custom: 'Custom' })[preset] || 'Custom';
 export function presetAssists(preset) {
   return {
     version: 2,
-    layoutRevision: 3,
+    layoutRevision: 4,
     preset,
     base: preset,
     ...Object.fromEntries(
@@ -102,14 +126,55 @@ export function normalizeAssists(c) {
     delete c.savedAssists;
   }
   c.difficulty ??= 'easy';
-  // Refresh untouched shipped defaults once; preserve deliberate custom choices.
-  if (c.assists.layoutRevision !== 3) {
-    if (['easy', 'realistic', 'off'].includes(c.assists.preset))
-      Object.assign(c.assists, presetAssists(c.assists.preset));
-    c.assists.layoutRevision = 3;
+  // Older tutorials set this flag automatically, even though the lesson
+  // renderer hid it. It is not evidence that the player enabled the panel.
+  if (c.intro?.status === 'active' && c.intro.helpInitialized)
+    for (const saved of [c.assists, ...Object.values(c.assistPresets || {})]) {
+      // Cycling presets stored the same automatic flag in inactive slots.
+      // Clear it while the tutorial provenance still exists, before completion
+      // replaces the practice career. New manual metadata preserves opt-ins.
+      if (saved && !saved.manual) saved.controlsHelp = false;
+    }
+  // Recognize shipped defaults from before the quiet HUD revision as well as
+  // revision 3, which omitted three ordinary Realistic instruments. Refresh
+  // only a matching preset; changed values and Custom saves are deliberate.
+  if (c.assists.layoutRevision !== 4 && ['easy', 'realistic', 'off'].includes(c.assists.preset)) {
+    const mode = c.assists.preset,
+      previous = presetAssists(mode);
+    if (mode === 'realistic')
+      previous.speedGauge = previous.throttleGauge = previous.fuelGauge = false;
+    if ((c.assists.layoutRevision || 0) < 3)
+      for (const key of [
+        'loadGauge',
+        'minimap',
+        'helmOverlay',
+        'weatherOverlay',
+        'departureGuidance',
+        'currentOverlay',
+        'almanacShortcut',
+        'pickingLegend',
+      ])
+        previous[key] = mode === 'easy' || (mode === 'realistic' && REALISTIC_ASSISTS.has(key));
+    if (
+      !Object.keys(c.assists.manual || {}).length &&
+      Object.keys(ASSISTS).every(
+        (key) => c.assists[key] === undefined || c.assists[key] === previous[key],
+      )
+    ) {
+      Object.assign(c.assists, presetAssists(mode));
+    }
   }
+  c.assists.layoutRevision = 4;
   const defaults = presetAssists(c.assists.base || c.assists.preset);
   const fallback = c.assists.base === 'easy';
+  // Older saves did not record which switches were touched. Preserve the
+  // choices identifiable from differences without treating every inherited
+  // ON value in a Custom preset as a request to crowd Frank's lesson.
+  c.assists.manual ??= Object.fromEntries(
+    Object.keys(ASSISTS)
+      .filter((key) => typeof c.assists[key] === 'boolean' && c.assists[key] !== defaults[key])
+      .map((key) => [key, true]),
+  );
   for (const k of Object.keys(ASSISTS))
     c.assists[k] ??=
       k === 'almanacShortcut'
@@ -162,7 +227,8 @@ export function toggleAssist(w, key) {
   )
     return false;
   if (w.career.assists.base === 'off') w.career.assists.base = w.career.difficulty;
-  w.career.assists[key] = !w.career.assists[key];
+  w.career.assists[key] = !assist(w, key);
+  w.career.assists.manual[key] = true;
   w.career.assists.preset = 'custom';
   w.career.assistPresets ??= {};
   w.career.assistPresets[w.career.assists.base] = structuredClone(w.career.assists);
@@ -170,32 +236,13 @@ export function toggleAssist(w, key) {
   if (w.career.assists[key]) w.day.assisted = true;
 }
 export function assist(w, name, realistic = false, reveal = false) {
-  // Training temporarily replaces instruments with Frank, without changing the
-  // career's saved information choices. Crew and action controls remain visible.
+  // Quiet defaults apply per instrument. A deliberate switch choice survives
+  // reload and takes precedence without exposing untouched sibling windows.
   if (
     !reveal &&
     w.career?.intro?.status === 'active' &&
-    [
-      'timepiece',
-      'depthInstrument',
-      'speedGauge',
-      'throttleGauge',
-      'fuelGauge',
-      'loadGauge',
-      'minimap',
-      'helmOverlay',
-      'weatherOverlay',
-      'departureGuidance',
-      'currentOverlay',
-      'almanacShortcut',
-      'pickingLegend',
-      'controlsHelp',
-      'clockOverlay',
-      'sounder',
-      'compassGauge',
-      'hullGauge',
-      'feedbackOverlay',
-    ].includes(name)
+    TUTORIAL_QUIET_ASSISTS.has(name) &&
+    !w.career.assists.manual?.[name]
   )
     return false;
   return (

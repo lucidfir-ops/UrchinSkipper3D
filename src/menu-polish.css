@@ -1327,3 +1327,55 @@ body #playtest .intro-chart-brief .skipper-note p {
     line-height: 1.4;
   }
 }
+/* Native keyboard reading stays inside the focused pane. Menu controls keep
+   their own arrow navigation and activation behavior. */
+body #playtest [data-menu-reading]:focus-visible {
+  outline: 2px solid #f2d28b;
+  outline-offset: -3px;
+}
+body:not(.touchscreen) #playtest .almanac-curves {
+  overflow-y: auto;
+  padding: 4px 5px 4px 4px;
+}
+body:not(.touchscreen) #playtest .almanac-map {
+  overflow-y: auto;
+  justify-content: flex-start;
+  padding: 4px 5px 4px 4px;
+}
+body:not(.touchscreen) #playtest .almanac-map > * {
+  flex-shrink: 0;
+}
+body:not(.touchscreen) #playtest .almanac-map canvas {
+  box-sizing: border-box;
+}
+body #playtest .orders-reading-hint {
+  display: none;
+  flex: none;
+  margin: 0 0 8px;
+  color: #f2d28b;
+  font-size: 12px;
+  line-height: 1.5;
+}
+body #playtest.orders-panel:has([data-menu-reading]:focus-visible) .orders-reading-hint {
+  display: block;
+}
+@media (max-width: 700px) {
+  body:not(.touchscreen) #playtest .almanac-layout {
+    display: block;
+    overflow-y: auto;
+    padding: 4px 5px 4px 4px;
+  }
+  body:not(.touchscreen) #playtest :is(.almanac-curves, .almanac-map) {
+    overflow: visible;
+    padding: 0;
+  }
+  body:not(.touchscreen) #playtest .almanac-curves .tide-curves {
+    height: auto;
+    min-height: 0;
+    flex: none;
+    aspect-ratio: 630 / 263;
+  }
+  body:not(.touchscreen) #playtest .almanac-map {
+    margin-top: 20px;
+  }
+}

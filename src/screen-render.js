@@ -26,7 +26,14 @@ import { renderDayScreen } from './day-view.js';
 import { chartMode } from './chart-presentation.js';
 import { layoutEditor } from './layout-editor.js';
 import { renderTouchOptions } from './touch-options.js';
-import { renderPause, restoreMenuScroll, captureMenuScroll } from './menu-shell.js';
+import {
+  renderPause,
+  restoreMenuScroll,
+  captureMenuScroll,
+  decorateMenuReading,
+  captureMenuReadingFocus,
+  restoreMenuReadingFocus,
+} from './menu-shell.js';
 import { renderPreferences } from './menu-preferences.js';
 
 export function renderOrders(world, bind) {
@@ -43,6 +50,11 @@ export function renderOrders(world, bind) {
   if (signature === this.signature) return;
   this.signature = signature;
   this.panel.innerHTML = `<h2>DIVER ${d.diverId + 1} · SEARCH ORDERS</h2><div class="orders-layout"><div class="compass">${compassMarkup(d)}</div><div class="orders-help"><p>Point the left stick, or use arrow keys.<br>Centre the stick for no preference.</p><p>Minimum quality <strong>${d.quality ? Math.round(d.quality * 100) + '%' : 'Any'}</strong><br>${this.qualityControls.map(bind).join(' / ')} changes quality.</p><p>Hold ${bind('instructions')}, point, then release to apply.<br>Or tap to open and press ${bind('confirm')} to apply.</p><div class="order-quality"><button data-order="quality-less">Quality −</button><button data-order="quality-more">Quality +</button></div><button data-order="search">${bind('zoomIn')} · Search: ${d.searchLimit ? d.searchLimit + ' seconds' : 'until air reserve'}</button><button data-order="bag">${bind('zoomOut')} · Maximum bag time: ${d.maxBagSeconds ? d.maxBagSeconds + ' seconds' : 'Any speed'}</button><p>Bag time starts when picking begins. Slow picking brings up a partial bag and a report.</p><p>No preference chooses a new, gently varying heading each dive. The limit counts searching, not picking.</p><button data-order="apply">${bind('confirm')} · Apply orders</button><button data-order="clear">${bind('work')} · No preference</button><button data-order="cancel">${bind('back')} · Cancel</button></div></div>`;
+  const readingHint = document.createElement('p');
+  readingHint.className = 'orders-reading-hint';
+  readingHint.textContent =
+    'Text focused: arrows / PgUp / PgDn scroll · Home / End · Tab to a control for shortcuts.';
+  this.panel.querySelector('h2').after(readingHint);
   for (const [id, delta] of [
     ['quality-less', -1],
     ['quality-more', 1],
@@ -81,6 +93,7 @@ export function render(world) {
   const activeChoice = this.panel.contains(document.activeElement)
       ? document.activeElement.dataset.choiceIndex
       : undefined,
+    activeReading = this.screen ? captureMenuReadingFocus(this.panel) : undefined,
     renderingScreen = this.screen,
     outerScroll =
       this.panel.dataset.screen === (this.screen || '')
@@ -339,11 +352,13 @@ export function render(world) {
       }
     }
   }
+  if (this.screen) decorateMenuReading(this.panel, !i.capture && !i.naming);
   if (activeChoice !== undefined && renderingScreen === this.screen) {
     const focused = this.panel.querySelector(`[data-choice-index="${this.index}"]:not([hidden])`);
     if (focused && !focused.disabled && focused !== document.activeElement)
       focused.focus({ preventScroll: true });
   }
+  if (renderingScreen === this.screen) restoreMenuReadingFocus(this.panel, activeReading);
   // Touch menus scroll as a whole page; never rewind the player's swipe.
   if (!i.touchEnabled && !INTRO_SCREENS.includes(this.screen) && this.screen !== 'harbour') {
     this.panel.scrollTop = 0;

@@ -219,8 +219,24 @@ body.touchscreen #frankAboard {
   width: calc(100vw - 88px);
   max-height: min(220px, 35dvh);
 }
-.frank-helm {
-  display: none;
+.frank-helm:not([hidden]) {
+  display: block;
+}
+body.intro-playing #frankAboard[data-hud-window]:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+body.intro-playing #frankAboard .frank-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  scrollbar-width: thin;
+}
+body.intro-playing #frankAboard :is(.frank-helm, .frank-buttons) {
+  flex-shrink: 0;
 }
 body.touch-playing #groundLegend,
 body.touch-playing #help,
@@ -408,9 +424,6 @@ body.touch-playing.intro-playing #helmPanel[data-hud-window] {
   height: 16px;
   font-size: 11px;
   border-color: #89b2a755;
-}
-body.intro-playing :is(#help, #groundLegend, #currentReadout, #actionFeedback) {
-  display: none;
 }
 body.sandbox.intro-playing::after {
   display: none;

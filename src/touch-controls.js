@@ -34,6 +34,8 @@ export const TOUCH_LABELS = {
   right: 'Rudder right',
   thrustPort: 'Bow left',
   thrustStarboard: 'Bow right',
+  pivotPort: 'Rudder stick up',
+  pivotStarboard: 'Rudder stick down',
   almanac: 'Tides',
   debug: 'Information',
 };

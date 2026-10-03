@@ -437,13 +437,21 @@ export class PlaytestUI {
         const navigationHeader =
           this.index < 0 || /^Back( |$)/.test(this.choices(world)[this.index] || '');
         this.navigate(a);
-        if (Math.abs(a.detailScroll || 0) > 0.25)
-          (
-            this.panel.querySelector('.expedition-copy') ||
-            this.panel.querySelector(
-              '.career-detail,.yard-detail,.landing-receipt,.almanac-curves,.frank-lesson,.radio-history',
-            )
-          )?.scrollBy(0, a.detailScroll * 400 * dt);
+        if (Math.abs(a.detailScroll || 0) > 0.25) {
+          if (this.screen === 'almanac') {
+            // The pad scrolls both columns together, or the single stacked
+            // reader in portrait. Touch layouts may scroll the whole panel.
+            const readers = [...this.panel.querySelectorAll('[data-menu-reading]')];
+            for (const reader of readers.length ? readers : [this.panel])
+              reader.scrollBy(0, a.detailScroll * 400 * dt);
+          } else
+            (
+              this.panel.querySelector('.expedition-copy') ||
+              this.panel.querySelector(
+                '.career-detail,.yard-detail,.landing-receipt,.frank-lesson,.radio-history',
+              )
+            )?.scrollBy(0, a.detailScroll * 400 * dt);
+        }
         if (this.screen === 'bindings' && !navigationHeader && (a.menuLeft || a.menuRight)) {
           const current =
             this.bindingView || (this.remapDevice === 'keyboard' ? 'keyboard' : 'controller');

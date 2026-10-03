@@ -75,26 +75,31 @@ export function trainingLessons(w) {
   const spec = boatSpec(w),
     boat = boatDefinition(w.boat.configuration),
     scenario = w.career.trainingScenario || 'boat';
+  const handling = spec.vectorDrive
+    ? spec.jetCount
+      ? 'Jet steering follows nozzle thrust.'
+      : 'Turning authority follows engine thrust; reverse turns follow the thrust direction.'
+    : 'The rudder needs water flowing past it to turn the boat.';
   const lessons = [
     [
       `Your ${boat.name}`,
-      `${boat.controls} Practise a slow turn and reverse here. Throttle and rudder hold their last command; Neutral and Centre rudder reset them. This unlocked arcade showcase is a practice copy: no boat or equipment purchase is required, and your career waits unchanged.`,
+      `Use {throttleUp} / {throttleDown} for throttle and {left} / {right} to steer. Try a slow turn and reverse. ${handling} Commands hold after release; use {neutral} for Neutral. This is a practice copy; your career waits unchanged.`,
     ],
   ];
   if (spec.bowThrusterStrength)
     lessons.push([
       'Bow thruster',
-      'Select Neutral, then move the left stick sideways to push the bow. Throttle and bow thrust cannot run together. Try both directions and watch the bow swing before continuing.',
+      'Select Neutral with {neutral}, then hold {thrustPort} / {thrustStarboard} to push the bow (front) left / right. Throttle and bow thrust cannot run together. Try both directions before continuing.',
     ]);
   if (spec.pivotRate)
     lessons.push([
-      'Twin-jet pivot',
-      'With Neutral selected, move the right stick up/down to turn on the jets. Left-stick sideways still operates the bow thruster. Try turning on the spot, then centre the controls.',
+      spec.jetCount === 1 ? 'Waterjet pivot' : 'Twin-jet pivot',
+      'Select Neutral with {neutral}, then hold {pivotPort} / {pivotStarboard} to turn on the jets. Try both directions, then release the pivot. Use {left} / {right} to return the steering to centre.',
     ]);
   if (scenario === 'options')
     lessons.push([
       'Extra options',
-      'This machine has every equipment option fitted for demonstration. Open Chart, Weather & equipment, UI / difficulty options, and Arrange UI layout to compare information and controls. Nothing fitted here is bought or carried back to your career.',
+      'This machine has every equipment option fitted. Open Settings → Information & difficulty to enable an instrument, then Arrange UI layout to place it. Nothing here is bought or carried back to your career.',
     ]);
   if (scenario === 'risk-reward')
     lessons.push([
@@ -114,14 +119,14 @@ export function trainingLessons(w) {
       plotter:
         'Open Chart after moving to see your recorded track. During the coming scouting lesson, bring your discovery back to the boat.',
       radar:
-        'Look in Weather and equipment for surface returns. A clear cove may have none; radar does not show underwater divers.',
+        'Enable Settings → Information & difficulty → Weather and equipment for surface returns. A clear cove may have none; radar does not show underwater divers.',
       scanner:
-        'Move slowly towards the shelf and watch the ahead-depth samples in Weather and equipment change.',
+        'Enable Settings → Information & difficulty → Weather and equipment, then approach the shelf slowly and watch the ahead-depth samples change.',
       nitrox:
         'Watch air and readiness during the diving lesson. Extra allowance does not remove the need for surface recovery.',
       hoist: 'During the pickup lesson, try Bag / send down and watch the handling progress.',
       glasses: 'Look at the shallow shelf near the coast. The extra clarity applies in daylight.',
-      tank: 'Check fuel in the boat card. The extra tank increases capacity; fuel use still depends on your boat and work.',
+      tank: 'Enable Settings → Information & difficulty → Fuel gauge. The extra tank increases capacity; fuel use still depends on your boat and work.',
       forecast: 'Before a real departure, open Weather & tides for improved forecast confidence.',
       stabilizer:
         'Keep approaches slow even with reduced wave yaw; stabilizers do not cancel wind or current.',

@@ -15,7 +15,7 @@ import {
 import { appendChoices } from './menu-buttons.js';
 import { paintSectorMap, sectorChartSvg } from './chart-art.js';
 import { bindChartModeToggle, chartMode, chartModeMarkup } from './chart-presentation.js';
-import { depthAt } from './world.js';
+import { soundingDepth } from './hazard-depth.js';
 import { setText } from './dom-view.js';
 import { fullscreenLabel, toggleFullscreen } from './fullscreen.js';
 
@@ -170,7 +170,7 @@ export function updateIntro(ui, w, actions, dt = 0) {
     return;
   }
   panel.dataset.signature = signature;
-  panel.innerHTML = `<div class="frank-line"><img src="./assets/harbour/frank-v1.png" alt="Frank aboard"/><div><strong>Frank · ${trainingPreparation(w) ? `Equipment ${w.career.intro.prepIndex + 1}/${trainingLessons(w).length}` : `${step + 1}/${INTRO_STEPS.length}`} · ${lesson(w, ui)[0]}</strong><p>${w.emergency ? 'Let’s stop here and start fresh at harbour. You can skip the lesson without losing your starting funds.' : spoken}</p></div></div><div class="frank-buttons"><button data-intro="chart">Chart & notes</button><button data-intro="next" ${step === 9 ? 'disabled' : ''}>${step === 9 ? 'Drive through SOUTH edge' : trainingPreparation(w) ? 'Continue' : 'Skip this step'}</button><button data-intro="skip">${w.career.trainingReplay ? 'Leave training' : 'Skip tutorial'}</button></div>`;
+  panel.innerHTML = `<div class="frank-body"><div class="frank-line"><img src="./assets/harbour/frank-v1.png" alt="Frank aboard"/><div><strong>Frank · ${trainingPreparation(w) ? `Equipment ${w.career.intro.prepIndex + 1}/${trainingLessons(w).length}` : `${step + 1}/${INTRO_STEPS.length}`} · ${lesson(w, ui)[0]}</strong><p>${w.emergency ? 'Let’s stop here and start fresh at harbour. You can skip the lesson without losing your starting funds.' : spoken}</p></div></div></div><div class="frank-buttons"><button data-intro="chart">Chart & notes</button><button data-intro="next" ${step === 9 ? 'disabled' : ''}>${step === 9 ? 'Drive through SOUTH edge' : trainingPreparation(w) ? 'Continue' : 'Skip this step'}</button><button data-intro="skip">${w.career.trainingReplay ? 'Leave training' : 'Skip tutorial'}</button></div>`;
   panel.scrollTop = 0;
   panel.querySelector('[data-intro="chart"]').onclick = () => ui.open('introchart');
   panel.querySelector('[data-intro="next"]').onclick = () => {
@@ -188,7 +188,7 @@ export function updateIntro(ui, w, actions, dt = 0) {
     prompt.className = 'frank-scout-hint';
     prompt.setAttribute('role', 'status');
     prompt.textContent = INTRO_SCOUT_HINT;
-    panel.prepend(prompt);
+    panel.querySelector('.frank-body').prepend(prompt);
     panel.scrollTop = 0;
   }
   updateLessonReadout(panel, w);
@@ -199,10 +199,10 @@ function updateLessonReadout(panel, w) {
   // Soundings are needed for these tasks; keep them in Frank's advice rather
   // than restoring a separate instrument panel over the water.
   readout.hidden = ![4, 7].includes(w.career.intro.step);
-  setText(readout, `Sounder · ${depthAt(w, w.boat.x, w.boat.y).toFixed(1)} m beneath us`);
+  setText(readout, `Sounder · ${soundingDepth(w, w.boat.x, w.boat.y).toFixed(1)} m beneath us`);
 }
 
-function lesson(w, ui) {
+export function lesson(w, ui) {
   const current = introLesson(w);
   const result =
     trainingPreparation(w) ||

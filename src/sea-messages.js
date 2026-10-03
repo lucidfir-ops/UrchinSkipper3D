@@ -1,5 +1,15 @@
 // Brief, semantic notices occupy the HUD edge, never the recovery water.
 // Repeated telemetry updates do not extend a bubble's life.
+export function defaultSeaSpeechRect(width, height, touch = false) {
+  if (touch && width > height && height < 500)
+    return { left: 10, top: 90, width: Math.min(300, width / 2 - 76) };
+  const bubbleWidth = Math.min(width - 20, 480);
+  return {
+    left: (width - bubbleWidth) / 2,
+    top: width < height ? 126 : 132,
+    width: bubbleWidth,
+  };
+}
 export function seaMessage(ui, channel, key, text, seconds = 2.6) {
   ui.seaMessages ??= new Map();
   const prior = ui.seaMessages.get(channel);
@@ -31,8 +41,9 @@ export function updateSeaMessages(ui) {
       'px';
     panel.style.top = Math.max(4, rect.top - panel.offsetHeight - 6) + 'px';
   } else {
-    panel.style.width = Math.min(innerWidth - 20, 480) + 'px';
-    panel.style.left = '50%';
-    panel.style.top = innerWidth < innerHeight ? '126px' : '132px';
+    const rect = defaultSeaSpeechRect(innerWidth, innerHeight, ui.input?.touchEnabled);
+    panel.style.width = rect.width + 'px';
+    panel.style.left = rect.left + rect.width / 2 + 'px';
+    panel.style.top = rect.top + 'px';
   }
 }

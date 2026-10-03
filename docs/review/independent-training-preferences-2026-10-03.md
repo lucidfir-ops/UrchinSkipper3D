@@ -1,0 +1,53 @@
+# Independent training preferences review — October 3, 2026
+
+**Final handoff verdict:** the reviewed training-preference/readout repairs and the two assigned HUD default-placement fixes are accepted with limits. The handoff images show readable selected instruments/actions, compact tutorial crew clear of Frank, and touch-landscape career speech clear of the boat and float. A separate keyboard-compact career speech bubble still crosses the boat's upper bow; its center and float remain visible. Short compact reading windows, small type, the minor Day 0 caption clip and user-imposed custom-layout overlaps also remain. Passing fixture point-clearance checks are not a guarantee of full-hull clearance. Earlier rejected evidence is retained below, followed by the final handoff delta review.
+
+Reviewer: `visual_review`, separate from the assist/default/readout/prompt implementation author. I inspected all ten actual PNGs from `test-results/reading-training-final-2026-10-03/training/` and its passing production receipt, completed at 08:03:44 UTC. The images cover 1280×800 desktop, 390×844 phone and 844×390 landscape browser viewports. No browser or product changes were made during this review.
+
+The previously missing scouting sounder is now visible and readable inside Frank's card in lesson 5 and lesson 8 at every size. “Sounder · 11.0 m beneath us” sits beside the instruction that requires it, with the boat and steering controls still in view. The desktop Realistic career capture clearly shows time, depth, throttle/rudder, speed and fuel, while crew cards retain their restricted information presentation. The desktop training prompt uses keyboard labels; compact prompts name the touch controls. No unresolved action tokens appear in the inspected images.
+
+These first final-run captures nevertheless require another layout pass before visual acceptance:
+
+- `phone-chosen-instruments.png` hides the enabled clock's digits behind Frank. On desktop, the weather and day/clock panels are partially behind Frank; in landscape, day/weather content falls behind Frank and near the left helm controls. A nonzero element rectangle and `isVisible()` pass do not establish a readable opt-in instrument. The explicit preference needs usable default placement.
+- All six `*-lesson-{5,8}-sounder.png` captures cut the bottom of Frank's action row, leaving only button tops and partial or absent labels at the initial scroll position. This is within a scrollable card rather than evidence that the actions were removed, but adding the sounder has made the initial card less usable. The controls need sufficient visible space or clear, verified access; the current screenshot alone does not demonstrate that access.
+- The touch wording “Select Neutral with Neutral” is awkward, though the named Neutral action is unambiguous. Small landscape text remains a density limitation, separate from the occlusion above.
+
+The production fixture provides separate functional evidence: one explicit instrument opt-in, All Off/Custom restoration, unchanged saved career bytes after training/reload, sounder agreement with the authoritative sounding calculation, and five Realistic gauges. Its desktop equipment path includes native Enter activation after assigned focus; only the separately recorded Escape → five native Tab presses → Enter path establishes keyboard reachability through the pause menu. Lesson positions, fitted twin-jet boat and remaps are explicitly staged. These results do not imply a natural tutorial completion, physical touch/controller coverage or general accessibility acceptance.
+
+## Second independent reviewer
+
+`gameplay_audit` independently inspected the same ten images and did not author the assist/default/readout/prompt changes. They agree that the sounder/task prose is readable at all sizes and that the Realistic five-gauge view is clean. They independently flagged Frank's cut action row in all six scouting captures and the opted-in clock/weather/day-panel occlusion across viewports. They likewise do not accept the overall training layout from this first set.
+
+Root has assigned a targeted default-layout fix and stronger fixture checks. Revised production captures must be inspected before this document records final acceptance.
+
+## Replacement release captures — accepted with limits
+
+`visual_review` inspected all fourteen replacement PNGs under `test-results/reading-training-release-2026-10-03/training/` and the passing production receipt completed at 08:17:03 UTC. The earlier rejection above remains the record of the first capture set.
+
+The blocking layout issues are resolved in the replacement set. The phone's selected 10:00 clock is fully visible; day and weather/scanner cards sit beside the boat, clear of Frank. Landscape puts those panels in separate right-hand positions clear of Frank and the helm. Desktop clock/weather data are clear above Frank. All six initial scouting captures show both the sounder and the full labelled Chart, Skip and Leave-training action row. The four phone/landscape read-to-end captures show the final instruction sentences reachable while the sounder and actions remain fixed. Realistic's five gauges remain clearly separated and readable.
+
+I accept these scoped layout repairs. The landscape lesson body shows only a few lines at once and requires scrolling; the replacement fixture now demonstrates native touch swipes reaching the bottom and taps reaching the actions, rather than relying only on element visibility. Scanner/weather detail and compact body text remain small. In `desktop-chosen-instruments.png`, the auxiliary Day 0 caption wraps its final word “time” onto a partly clipped bottom line; the main DAY 0, time and weather readings remain visible. The awkward touch phrase “Select Neutral with Neutral” also remains. Neither residual reproduces the earlier hidden clock digits or inaccessible action labels.
+
+The stronger receipt reports viewport and occlusion sample checks, exact sounder values, native reading/action interactions, and protected real-career save bytes after reload. Those checks support the screenshots but retain the staged-fixture and device limitations already stated above.
+
+### Second independent final review
+
+`gameplay_audit` independently inspected all fourteen replacement captures and the same passing receipt. They accept the scoped repairs: selected instruments no longer sit behind Frank; the six initial lesson frames show complete action labels; touch read-to-end captures expose final task sentences with fixed actions; and Realistic's five-gauge layout remains clean. They independently retain the short landscape reading window, small scanner/weather text and partly clipped desktop Day 0 auxiliary caption as limitations. Their acceptance does not extend to physical devices or unaided tutorial completion.
+
+## Later HUD-context findings
+
+The refreshed broader HUD fixture exposed two additional default-placement problems outside those training screenshots. `visual_review` inspected the rejected images in `test-results/reading-training-release-2026-10-03/hud-context/`: `keyboard-compact-native-boarding.png` places Frank over Ada's crew card and the top of Milo's card; `touch-landscape-career-speech.png` places the recovery speech across the boat and the immediate recovery area. These are real occlusion problems, not scroll-position clipping. The earlier acceptance above covered the reviewed training-preference/readout fixes and does not approve these HUD contexts. Root assigned a narrow placement correction; the handoff captures require a final delta review.
+
+## Final handoff delta review
+
+`visual_review` inspected eleven actual HUD images from `test-results/reading-training-handoff-2026-10-03/hud-context/` and its passing receipt completed at 08:53:16 UTC. Six handoff training spot checks—desktop lesson 8, phone chosen instruments/lesson 5, and landscape chosen instruments/lesson 8/top and read-to-end—remain consistent with the accepted replacement training set and its new passing 08:45:01 receipt.
+
+The two assigned default-layout fixes pass visual review. Compact keyboard tutorial Ada/Milo cards now sit on the right, fully readable and separate from Frank and the keyboard dock; ready, wrong-side and actual boarding captures preserve distinct instructions. Touch-landscape career speech now sits at upper left and leaves the boat, float and touch action area clear. The phone boarding spot check is also clear. Native recovery in all four recorded viewports lands the staged 30 lb once; those are runtime fixture checks, not a natural voyage claim.
+
+The deliberate custom Frank rectangles and their speech anchors remain preserved after reload. All four custom images were inspected. Those arbitrary placements can still overlap other UI: desktop Frank covers Ada, phone speech intersects top utility controls, and landscape Frank intersects left controls. The saved geometry check demonstrates user-placement persistence, not universally safe custom layouts.
+
+One separate default residual is explicit: `keyboard-compact-career-speech.png` places the recovery speech across the boat's upper bow. The float, boat center and much of the hull remain visible, so the fixture's projected-point clearance checks pass; this does **not** mean the complete hull is unobscured. Root inspected the same frame and retained this as a limitation while accepting the two scoped fixes. This review does not claim all possible compact speech placements are clear.
+
+The first handoff HUD attempt measured a synchronously moved custom Frank card before the next render had repositioned its speech. The fixture owner diagnosed that timing race; the corrected fixture waits, with a bound, for the actual rendered geometry. No product change occurred between that failed attempt and the passing rerun on the same final build. `results-before-frame-settle.json` and `keyboard-desktop-custom-frank-before-frame-settle.png` preserve the failed evidence. This explanation is distinct from the real default-layout defects fixed before the handoff build.
+
+`gameplay_audit` separately inspected ten final HUD captures: compact keyboard ready/wrong-side/boarding, touch-landscape ready/boarding/career speech, and all four custom Frank images. They independently accept the two assigned default corrections and the saved-geometry behavior, with the same compact scrolling, tiny-float/type and custom-overlap limits. They also spot-checked the three handoff chosen-instrument captures and found them consistent with the previously accepted training layout. These are scoped visual reviews with staged runtime evidence, not physical-device or unaided-player acceptance.

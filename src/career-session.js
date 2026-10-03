@@ -62,7 +62,8 @@ export function createSessionHooks(scene, context) {
       const c = createCareer(old.seed, { chooseStarter: true });
       c.difficulty = old.difficulty;
       c.assists = structuredClone(old.assists);
-      c.assists.controlsHelp = false;
+      if (!c.assists.manual?.controlsHelp) c.assists.controlsHelp = false;
+      if (old.assistPresets) c.assistPresets = structuredClone(old.assistPresets);
       c.intro = { status: 'complete', skipped: !!skipped };
       context.world = careerWorld(c);
       persist();

@@ -58,10 +58,18 @@ export const keyboardChord = (e) =>
 export const editingKey = (e) =>
   (e.code === 'Tab' &&
     !!globalThis.document?.querySelector?.('#playtest:not([hidden]), #startup:not([hidden])')) ||
+  // Only the reading region itself owns these native keys. Buttons and sliders
+  // inside it retain their existing menu/form behavior.
+  (e.target?.matches?.('[data-menu-reading]') &&
+    e.target?.closest?.('#playtest:not([hidden])') &&
+    /^(Arrow(Up|Down|Left|Right)|PageUp|PageDown|Home|End|Space|Enter|NumpadEnter)$/.test(
+      e.code,
+    )) ||
   // A focused menu button owns native Enter/Space activation. Sending the same
   // press to gameplay as well can activate a different row or trigger it twice.
   ((e.target?.matches?.('button') || e.target?.matches?.('summary')) &&
-    e.target?.closest?.('#playtest, #startup') &&
+    (e.target?.closest?.('#playtest, #startup') ||
+      e.target?.closest?.('#frankAboard:not([hidden])')) &&
     /^(Enter|NumpadEnter|Space)$/.test(e.code)) ||
   (e.target?.matches?.('canvas[data-fitting-preview]') &&
     /^(ArrowLeft|ArrowRight)$/.test(e.code)) ||

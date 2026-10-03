@@ -44,6 +44,9 @@ async function ready(timeoutMs = probeTimeoutMs) {
   }
 }
 const suites = {
+  'training-preferences': ['scripts/training-preferences-review.js'],
+  'keyboard-reading': ['scripts/keyboard-reading-review.js'],
+  'keyboard-reading-firefox': ['scripts/keyboard-reading-review.js', '--firefox'],
   'shoal-recovery': ['scripts/shoal-recovery-review.js'],
   'tutorial-retry': ['scripts/tutorial-retry-review.js'],
   'continuous-weather': ['scripts/continuous-weather-review.js'],
@@ -114,7 +117,7 @@ try {
     if (selected?.some((name) => !Object.hasOwn(suites, name)))
       throw new Error('Unknown suite: ' + selected);
     for (const [name, args] of Object.entries(suites)) {
-      if (selected ? !selected.includes(name) : name === 'firefox') continue;
+      if (selected ? !selected.includes(name) : name.endsWith('firefox')) continue;
       // Browser suites use isolated contexts. Keep their failure status while
       // collecting the rest of the matrix instead of hiding later defects.
       try {

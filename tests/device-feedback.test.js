@@ -44,7 +44,7 @@ test('day starts are additive, immutable and load an earlier day without deletin
   assert.equal(decode(s.getItem(first.key)).career.day, 1);
   assert.equal(decode(s.getItem(first.key)).career.cash, w.career.cash + 500);
 });
-test('tutorial has navigable open water all around the map, with finite islands and default help', () => {
+test('tutorial has navigable open water all around the map, with finite islands and quiet help', () => {
   const terrain = introTerrain();
   for (let n = 0; n <= terrain.size; n += 2.5)
     for (const [x, y] of [
@@ -58,10 +58,10 @@ test('tutorial has navigable open water all around the map, with finite islands 
   const w = careerWorld(createCareer(94));
   w.career.intro = { status: 'active', step: 0 };
   initializeIntroWorld(w);
-  assert(w.career.assists.controlsHelp);
-  w.career.assists.controlsHelp = false;
+  assert(!w.career.assists.controlsHelp);
+  w.career.assists.controlsHelp = true;
   initializeIntroWorld(w);
-  assert(!w.career.assists.controlsHelp, 'a deliberate tutorial override survives reload');
+  assert(w.career.assists.controlsHelp, 'a deliberate tutorial override survives reload');
 });
 test('departure fade preserves a diagonal approach heading on every exit', () => {
   for (const [edge, heading] of [

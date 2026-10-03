@@ -225,6 +225,69 @@ export function restoreMenuScroll(panel, positions) {
   }
 }
 
+const READING_PANES = [
+  ['.expedition-copy', 'expedition-copy', 'Forecast and chart details'],
+  ['.career-detail', 'career-detail', 'Selected item details'],
+  ['.yard-detail', 'yard-detail', 'Boat details'],
+  ['.landing-receipt', 'landing-receipt', 'Landing receipt'],
+  ['.almanac-curves', 'almanac-curves', 'Tide and current forecast'],
+  ['.almanac-layout', 'almanac-curves', 'Tide, current and chart details'],
+  ['.almanac-map', 'almanac-map', 'Tidal chart and notes'],
+  ['.frank-lesson', 'frank-lesson', 'Skipper’s notes'],
+  ['.radio-history', 'radio-history', 'Radio history'],
+  ['.orders-help', 'orders', 'Diver search orders'],
+  ['.orders-layout', 'orders', 'Diver search orders'],
+  ['.intro-copy', 'intro-copy', 'Training notes'],
+  ['.assist-explanation', 'assist-explanation', 'Information and difficulty guidance'],
+  ['.controller-diagrams', 'controller-diagrams', 'Controller diagrams'],
+  ['.binding-figure', 'binding-figure', 'Control diagram'],
+];
+
+export function decorateMenuReading(panel, enabled = true) {
+  const readers = new Set();
+  for (const [selector, key, label] of READING_PANES) {
+    const pane = panel.querySelector(selector);
+    if (!pane) continue;
+    // Compact Orders scrolls its whole layout; desktop scrolls only its help.
+    // Expanded touch text and overflow:hidden layout wrappers are not readers.
+    const style = getComputedStyle(pane),
+      readable = enabled && !readers.has(key) && /^(auto|scroll)$/.test(style.overflowY);
+    if (readable) {
+      readers.add(key);
+      pane.dataset.menuReading = key;
+      pane.tabIndex = 0;
+      pane.setAttribute('role', 'region');
+      pane.setAttribute(
+        'aria-label',
+        key === 'expedition-copy' && panel.dataset.screen === 'conditions'
+          ? 'Forecast details'
+          : label,
+      );
+      pane.setAttribute(
+        'aria-description',
+        'Use arrow keys, Page Up, Page Down, Home or End to scroll. Tab moves to controls.',
+      );
+    } else if (pane.dataset.menuReading) {
+      delete pane.dataset.menuReading;
+      for (const attribute of ['tabindex', 'role', 'aria-label', 'aria-description'])
+        pane.removeAttribute(attribute);
+    }
+  }
+}
+
+export function captureMenuReadingFocus(panel) {
+  const active = panel.ownerDocument.activeElement;
+  return panel.contains(active) ? active.dataset.menuReading : undefined;
+}
+
+export function restoreMenuReadingFocus(panel, key) {
+  if (!key) return;
+  const pane = Array.from(panel.querySelectorAll('[data-menu-reading]')).find(
+    (candidate) => candidate.dataset.menuReading === key,
+  );
+  if (pane && pane !== panel.ownerDocument.activeElement) pane.focus({ preventScroll: true });
+}
+
 export function captureMenuScroll(panel) {
   return [
     '.career-choices',
@@ -244,9 +307,13 @@ export function captureMenuScroll(panel) {
     '.yard-detail',
     '.yard-choices',
     '.almanac-curves',
+    '.almanac-layout',
+    '.almanac-map',
     '.landing-receipt',
     '.radio-history',
     '.orders-help',
+    '.orders-layout',
+    '.frank-lesson',
   ].flatMap((selector) => {
     const element = panel.querySelector?.(selector);
     return element ? [{ selector, top: element.scrollTop, left: element.scrollLeft }] : [];

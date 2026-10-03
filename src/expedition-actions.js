@@ -4,7 +4,7 @@ import { groundTrip, allAboard } from './day.js';
 import { arrivalLanes } from './arrival.js';
 import { sectorDefinition } from './sectors.js';
 import { GROUNDS, chooseGround, formatClock } from './day.js';
-import { ASSISTS, REALISTIC_ASSISTS, setPreset, toggleAssist } from './assists.js';
+import { assist, ASSISTS, REALISTIC_ASSISTS, setPreset, toggleAssist } from './assists.js';
 import { changeDepartureTime } from './career-state.js';
 import { updateWeather } from './weather.js';
 import { markPosition, markReport, markBearing } from './knowledge.js';
@@ -229,9 +229,13 @@ export function expeditionActions(ui, w) {
               Object.hasOwn(UI_OPTIONS, key),
           )
           .map(([key, label]) =>
-            action(`assist-${key}`, `${label}: ${w.career.assists[key] ? 'ON' : 'OFF'}`, () => {
-              toggleAssist(w, key);
-            }),
+            action(
+              `assist-${key}`,
+              `${label}: ${assist(w, key, ui.realistic) ? 'ON' : 'OFF'}`,
+              () => {
+                toggleAssist(w, key);
+              },
+            ),
           ),
         back,
       ];

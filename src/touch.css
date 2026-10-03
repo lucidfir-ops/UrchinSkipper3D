@@ -774,8 +774,6 @@ body.touch-playing #message {
   padding: 7px;
   touch-action: pan-y;
 }
-body.intro-playing #navigation,
-body.intro-playing #electronics,
 body.intro-playing #message {
   display: none;
 }
@@ -849,10 +847,6 @@ body.touch-playing #divers button {
   font-size: calc(10px * var(--ui-scale));
 }
 
-/* The separate boat card stays available throughout Frank's lesson. */
-body.touchscreen.intro-playing #clock {
-  display: none;
-}
 .frank-helm {
   font-size: 11px;
   line-height: 1.4;
