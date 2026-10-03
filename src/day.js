@@ -11,6 +11,7 @@ import { EDGE_NAMES, EDGE_BEARINGS, crossedReturnBoundary } from './navigation.j
 import { calculateOffload } from './offload.js';
 import { updateEnvironment } from './environment.js';
 import { selectedSubArea, subAreaLabel, validSubAreaId } from './quota-areas.js';
+import { careerDayAt } from './career-calendar.js';
 
 export const GROUNDS = SECTORS.map(({ terrain, environment, ...ground }) => ({
   ...ground,
@@ -49,7 +50,7 @@ export function groundTrip(w, id) {
     previous = selectedGround(w),
     blocked = departureReady(w);
   if (!ground) return { ok: false, reason: 'UNKNOWN GROUND' };
-  const access = w.career ? areaStatus(w.career, id) : null,
+  const access = w.career ? areaStatus(w.career, id, careerDayAt(w)) : null,
     closed = access && !access.open && !(w.day.phase === 'working' && w.day.groundId === id);
   const minutes = previous
     ? ground.id === previous.id
@@ -106,6 +107,7 @@ export function chooseGround(w, id, { patchId = 'good', arrivalLane = 0, subArea
       : null;
   startCareerTrip(w);
   chargeTransit(w, trip.minutes);
+  advanceFleet(w, trip.arrival);
   Object.assign(w.day, {
     minute: trip.arrival,
     groundId: id,
@@ -114,7 +116,6 @@ export function chooseGround(w, id, { patchId = 'good', arrivalLane = 0, subArea
     warnings: [],
     returnExit: { edge, bearing: EDGE_BEARINGS[edge], label: EDGE_NAMES[edge] },
   });
-  advanceFleet(w, w.day.minute);
   enterSector(w, id, patchId, arrivalLane);
   prepareInspection(w);
   w.events.push(

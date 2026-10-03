@@ -1,5 +1,8 @@
 import { trainingPreparation } from './training-replay.js';
 import { crossedReturnBoundary } from './navigation.js';
+import { actionTarget, deploymentStatus, recoveryStatus } from './diver-recovery.js';
+import { assist, pickupTolerance } from './assists.js';
+import { patchDistance, visiblePatch } from './world.js';
 // New careers alone opt in. The loan-boat lesson has its own 240 m fishery;
 // no season stock, purchase money or medical history is spent on day zero.
 export const introActive = (w) => w.career?.intro?.status === 'active';
@@ -61,6 +64,71 @@ export const INTRO_NOTES = [
   'The shipping boat leaves at 19:00. Missing it reduces freshness and payable weight, but you decide when to stop fishing. Check the return estimate, fuel and forecast before committing to more work. Home Coast storms are weak; later coasts, especially the fifth, can be much harsher.',
 ];
 export const INTRO_SCOUT_HINT = 'The urchins are east of the patch you can see, right next to it!';
+
+// Frank's first drop uses the same port-side entry and usable-ground rules as
+// deployment and diver search. Being near the bed's centre is not sufficient:
+// the old 28 m radius included empty water beyond the narrow surveyed outline.
+export function introMarkedDrop(w) {
+  const realistic = w.career?.difficulty === 'realistic',
+    diver = actionTarget(w, 'recoverDiver', pickupTolerance(w, realistic)),
+    drop = deploymentStatus(w, diver),
+    patch = w.patches.find((p) => p.id === 'lesson-marked'),
+    overGround = !!patch && patchDistance(patch, drop.x, drop.y) === 0,
+    marked = overGround && visiblePatch(w, { ...diver, x: drop.x, y: drop.y })?.id === patch.id;
+  return { ...drop, diver, overGround, marked, neutral: Math.abs(w.boat.throttle) < 0.05 };
+}
+
+export function introLesson(w) {
+  const step = w.career.intro.step;
+  if (![4, 5].includes(step)) return INTRO_STEPS[step];
+  const away = w.divers.filter((d) => d.state !== 'ready'),
+    realistic = w.career?.difficulty === 'realistic',
+    surfaced = away.filter(
+      (d) =>
+        d.state === 'surface' &&
+        (assist(w, 'diverIndicators', realistic) || recoveryStatus(w, undefined, d).distance <= 8),
+    );
+  if (step === 4 && away.length) return INTRO_STEPS[step];
+  if (surfaced.length)
+    return [
+      'Bring the float alongside',
+      'Bring each float beside the green PORT rail — the left side facing the bow. Select Neutral and use {recoverDiver} to bring the diver aboard. Then we can try the marked shelf again; stay near any bubbles still in the water.',
+    ];
+  if (away.length)
+    return [
+      'Watch the first dive',
+      'Follow the bubbles and give the diver a moment to find urchins. If a float appears before we have catch, bring it alongside on port and use {recoverDiver} to bring the diver aboard before trying another drop.',
+    ];
+  const drop = introMarkedDrop(w),
+    retried = w.divers.some((d) => d.diveCount > 0);
+  if (step === 4 && !drop.overGround) return INTRO_STEPS[step];
+  if (drop.diver.minQuality > (w.patches.find((p) => p.id === 'lesson-marked')?.quality ?? 0))
+    return [
+      'Check the search orders',
+      'This marked shelf has 80% quality. Open Orders and lower the minimum quality to 80% or less before trying this lesson again.',
+    ];
+  if (!drop.available)
+    return [
+      'Get ready for the next drop',
+      `Deployment is unavailable: ${drop.reason.toLowerCase()}. Keep everyone aboard until they are ready, or skip this step.`,
+    ];
+  if (step === 4) return INTRO_STEPS[step];
+  if (!drop.marked)
+    return [
+      'Move closer to the marked ground',
+      `${retried ? 'That dive did not bring back the marked-ground catch. ' : ''}Move closer to the middle of the green patch northwest of our starting position. Put the port (left) rail over the marked shelf, then select Neutral before deploying.`,
+    ];
+  if (!drop.neutral)
+    return [
+      'Settle over the marked ground',
+      'Select Neutral here, then use {recoverDiver} to deploy.',
+    ];
+  return [
+    'Put a diver to work',
+    `Use {recoverDiver} to deploy ${drop.diver.name.split(' ')[0]} from the port rail here. Watch the diver enter and descend, then follow the bubbles while they collect a little catch.`,
+  ];
+}
+
 export function tickIntroHint(w, seconds, playing) {
   const intro = w.career?.intro;
   if (!introActive(w) || intro.step !== 7 || !playing) return false;
@@ -221,7 +289,11 @@ export function advanceIntro(w, actions = {}, screen = null) {
     Math.abs(w.boat.heading) > 0.08 && Math.abs(w.boat.rudder) > 0.1,
     actions.zoom < 0,
     screen === 'introchart',
-    Math.hypot(w.boat.x - 82, w.boat.y - 88) < 28 && Math.abs(w.boat.throttle) < 0.05,
+    intro.markedCatch ||
+      (() => {
+        const drop = introMarkedDrop(w);
+        return drop.available && drop.marked && drop.neutral;
+      })(),
     intro.markedCatch,
     aboard && w.catch > 0,
     intro.discovery,

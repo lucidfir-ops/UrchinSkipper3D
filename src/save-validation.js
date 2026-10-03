@@ -7,6 +7,8 @@ import { QUOTA_AREA_IDS, SUB_AREAS } from './quota-areas.js';
 import { WILDLIFE, WILDLIFE_SPECIES } from './wildlife.js';
 import { WEATHER } from './weather.js';
 import { COASTS } from './coasts.js';
+import { careerDayAt } from './career-calendar.js';
+import { SEASON } from './season.js';
 const finite = (v, min = -Infinity, max = Infinity) =>
   typeof v === 'number' && Number.isFinite(v) && v >= min && v <= max;
 const assert = (condition, message) => {
@@ -107,6 +109,48 @@ export function validateSnapshot(data) {
       finite(data.day.minute, 0),
     'day clock',
   );
+  // A completed voyage may already have advanced the fleet through its booked
+  // offload/overnight interval while preparing the next harbour world.
+  const calendarDay = Math.max(
+    careerDayAt({ career: c, day: data.day }),
+    data.day.phase === 'complete'
+      ? c.day + Math.max(1, Math.floor((data.day.result?.offloadMinute || data.day.minute) / 1440))
+      : 0,
+  );
+  if (c.fleetDay !== undefined)
+    assert(
+      Number.isInteger(c.fleetDay) && c.fleetDay >= 0 && c.fleetDay <= calendarDay,
+      'rival calendar',
+    );
+  if (c.groundRecoverySeason !== undefined)
+    assert(
+      Number.isInteger(c.groundRecoverySeason) &&
+        c.groundRecoverySeason >= 1 &&
+        c.groundRecoverySeason <= Math.max(1, Math.floor((calendarDay - 1) / SEASON.days) + 1),
+      'ground recovery calendar',
+    );
+  if (c.todayFleet !== undefined)
+    assert(
+      Array.isArray(c.todayFleet) &&
+        c.todayFleet.length <= 100 &&
+        c.todayFleet.every(
+          (r) =>
+            r &&
+            typeof r.id === 'string' &&
+            (r.day === undefined || (Number.isInteger(r.day) && r.day === c.fleetDay)) &&
+            ['gross', 'qualitySum', 'goal', 'minute', 'begin', 'end'].every((key) =>
+              finite(r[key], 0),
+            ) &&
+            r.end > r.begin,
+        ),
+      'rival daily ledger',
+    );
+  for (const actor of data.traffic?.actors || [])
+    if (actor.fleetDay !== undefined)
+      assert(
+        Number.isInteger(actor.fleetDay) && actor.fleetDay >= 0 && actor.fleetDay <= calendarDay,
+        'rival vessel calendar',
+      );
   assert(
     finite(data.time, 0) && finite(data.catch, 0) && Array.isArray(data.bags),
     'working totals',

@@ -1,5 +1,6 @@
 import { bedDepthAt, depthGradient, depthAt } from './terrain.js';
 import { roll } from './career-data.js';
+import { weatherPlanForDay } from './weather.js';
 const cache = new WeakMap();
 // Decorative streams follow existing land downhill. They do not carve terrain.
 export function coastalRivers(terrain) {
@@ -31,15 +32,23 @@ export function coastalRivers(terrain) {
   return rivers;
 }
 export function runoffActive(c, minute) {
-  const plans = [{ day: c.day, periods: c.weatherPlan || [] }, c.previousWeatherPlan].filter(
-    Boolean,
-  );
+  // The voyage clock keeps counting across midnight while career.day remains
+  // the departure date. Only today's rain and yesterday's trailing runoff can
+  // still be active: the existing plume lasts at most 18 hours after rain ends.
+  const offset = Math.floor(Math.max(0, minute) / 1440),
+    day = c.day + offset,
+    localMinute = minute - offset * 1440;
+  const plans = [{ day, periods: weatherPlanForDay(c, day) }];
+  // Do not invent weather before a new career begins. An explicit historical
+  // plan still takes precedence, including imported saves with day-zero rain.
+  if (day > 1 || c.previousWeatherPlan?.day === day - 1)
+    plans.push({ day: day - 1, periods: weatherPlanForDay(c, day - 1) });
   return plans.some((plan) =>
     plan.periods.some((p, i) => {
       if (!['rain', 'squall', 'storm'].includes(p.kind)) return false;
-      const start = (plan.day - c.day) * 1440 + p.minute + 120;
-      const end = (plan.day - c.day) * 1440 + (plan.periods[i + 1]?.minute ?? 1440) + 1080;
-      return minute >= start && minute <= end;
+      const start = (plan.day - day) * 1440 + p.minute + 120;
+      const end = (plan.day - day) * 1440 + (plan.periods[i + 1]?.minute ?? 1440) + 1080;
+      return localMinute >= start && localMinute <= end;
     }),
   );
 }

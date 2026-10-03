@@ -272,22 +272,23 @@ export function recordFishingPressure(career, areaId, subAreaId, source, pounds)
   record.current[`${source}Pressure`] += pounds * weight;
   return pounds * weight;
 }
-export function simulateDailyNpcActivity(career) {
+export function simulateDailyNpcActivity(career, day = career.day) {
   const state = normalizeQuotaAreas(career);
-  if (career.day <= state.lastNpcDay) return 0;
+  if (day <= state.lastNpcDay) return 0;
+  const calendar = day === career.day ? career : { ...career, day };
   let pressure = 0;
   for (const [areaIndex, areaId] of QUOTA_AREA_IDS.entries()) {
-    if (!areaCalendarOpen(career, areaId)) continue;
+    if (!areaCalendarOpen(calendar, areaId)) continue;
     for (const [subIndex, subArea] of SUB_AREAS.entries()) {
       const salt = 12001 + areaIndex * 101 + subIndex * 17,
         activityTuning =
           QUOTA_BALANCE.npcActivity.byArea[
             ['near', 'middle', 'far', 'far', 'far'][coastTier(areaId)]
           ];
-      if (roll(career.seed + career.day * 7919, salt) >= activityTuning.presenceChance) continue;
+      if (roll(career.seed + day * 7919, salt) >= activityTuning.presenceChance) continue;
       const activity =
         activityTuning.minimumPressure +
-        roll(career.seed + career.day * 104729, salt + 43) *
+        roll(career.seed + day * 104729, salt + 43) *
           (activityTuning.maximumPressure - activityTuning.minimumPressure);
       const record = subAreaRecord(career, areaId, subArea.id);
       record.current.npcPressure += activity;
@@ -295,14 +296,14 @@ export function simulateDailyNpcActivity(career) {
       pressure += activity;
     }
   }
-  state.lastNpcDay = career.day;
+  state.lastNpcDay = day;
   return pressure;
 }
-export function recoverQuotaAreas(career, days) {
-  const crossings =
-    Math.floor((career.day - 1) / SEASON.days) - Math.floor((career.day - days - 1) / SEASON.days);
-  if (crossings <= 0) return [];
+export function recoverQuotaAreas(career, days, day = career.day) {
   const state = normalizeQuotaAreas(career);
+  const season = Math.floor((day - 1) / SEASON.days) + 1,
+    crossings = season - state.season;
+  if (crossings <= 0) return [];
   const changed = [];
   for (let crossing = 0; crossing < crossings; crossing++) {
     for (const areaId of QUOTA_AREA_IDS)
@@ -342,6 +343,6 @@ export function recoverQuotaAreas(career, days) {
           changed.push({ areaId, subAreaId: record.id, before, health: record.health });
       }
   }
-  state.season = seasonStatus(career).season;
+  state.season = season;
   return changed;
 }

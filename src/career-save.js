@@ -6,7 +6,7 @@ import { prepareRosters } from './crew-roster.js';
 import { normalizeAssists } from './assists.js';
 import { validateSnapshot } from './save-validation.js';
 import { createRocks } from './rock-collision.js';
-import { prepareFleet, recoverGrounds } from './fleet-life.js';
+import { prepareFleet, recoverGrounds, advanceFleet } from './fleet-life.js';
 import { weatherPlan, updateWeather } from './weather.js';
 import { createWorld } from './world.js';
 import { enterSector } from './sectors.js';
@@ -15,33 +15,10 @@ import { assignCrew, rememberCrewOrders } from './crew.js';
 import { ECONOMY } from './career-data.js';
 import { normalizeQuotaAreas } from './quota-areas.js';
 import { normalizeCoastAccess } from './coasts.js';
+import { captureStock, restoreStock } from './stock-ledger.js';
+export { captureStock, restoreStock } from './stock-ledger.js';
 export const SAVE_KEY = 'urchin3d-career-v1';
 const clone = (v) => structuredClone(v);
-export function captureStock(w) {
-  for (const [id, terrain] of Object.entries(w.sectors || {}))
-    w.career.stock[id] = terrain.patches.map((p) => ({
-      id: p.id,
-      remaining: p.remaining,
-      kelpCover: p.kelpCover || 0,
-      clumps: p.clumps?.map((c) => ({
-        id: c.id,
-        remaining: c.remaining,
-        initialStock: c.initialStock,
-      })),
-    }));
-}
-export function restoreStock(w, id) {
-  for (const record of w.career?.stock[id] || []) {
-    const p = w.terrain.patches.find((p) => p.id === record.id);
-    if (!p) continue;
-    p.remaining = record.remaining;
-    p.kelpCover = record.kelpCover || 0;
-    for (const c of record.clumps || []) {
-      const live = p.clumps?.find((x) => x.id === c.id);
-      if (live) live.remaining = c.remaining;
-    }
-  }
-}
 export function careerWorld(c = createCareer()) {
   normalizeCoastAccess(c);
   prepareRosters(c);
@@ -84,10 +61,7 @@ export function careerWorld(c = createCareer()) {
 export function nextCareerDay(w, { dockWork = false } = {}) {
   if (!w.career || !['planning', 'complete'].includes(w.day.phase)) return null;
   rememberCrewOrders(w);
-  captureStock(w);
-  syncVessel(w);
-  const c = clone(w.career),
-    offload = w.day.result?.offloadMinute || w.day.minute;
+  const offload = w.day.result?.offloadMinute || w.day.minute;
   let days = Math.max(1, Math.floor(offload / 1440)),
     earliest = w.day.result && !w.day.result.onTime ? 540 : 300;
   if (earliest >= 1440) {
@@ -95,6 +69,10 @@ export function nextCareerDay(w, { dockWork = false } = {}) {
     earliest -= 1440;
   }
   earliest = Math.max(300, earliest);
+  if (w.day.phase === 'complete') advanceFleet(w, days * 1440 + earliest);
+  captureStock(w);
+  syncVessel(w);
+  const c = clone(w.career);
   if (!w.day.result) c.cash = Math.round((c.cash - c.debt * ECONOMY.interest) * 100) / 100;
   advanceCareer(c, days);
   if (c.groundVersion === 3) c.groundVersion = 4;

@@ -1,3 +1,4 @@
+import { formatClock } from './day.js';
 import { crewStatTable, medicalHistoryMarkup } from './medical-history.js';
 import { workingDayDetail } from './working-day-view.js';
 import { crewRoster, crewEmployer } from './crew-roster.js';
@@ -191,10 +192,10 @@ export function renderCareer(ui, w, bind) {
         .filter((r) => !r.hidden)
         .map((r) => {
           const result = c.lastFleet?.find((s) => s.id === r.id);
-          return `<section class="fleet-report"><h3>${r.boat} · ${r.name}</h3><p>${r.bio}<br>${result ? `Last offload: ${result.gross.toLocaleString()} lb from ${result.area}.` : 'No recent landing report.'}</p></section>`;
+          return `<section class="fleet-report"><h3>${r.boat} · ${r.name}</h3><p>${r.bio}<br>${result ? `Reported catch${result.day !== undefined ? ` · day ${result.day} · ${result.minute >= 1440 ? 'day complete' : `as of ${formatClock(result.minute)}`}` : ''}: ${result.gross.toLocaleString()} lb from ${result.area}.` : 'No recent landing report.'}</p></section>`;
         })
         .join('') +
-      '<p>The fleet works the same grounds. Reports describe yesterday; weather, tide and recent picking can change the next trip.</p>';
+      '<p>The fleet works the same grounds. Reports show the latest recorded day and time; weather, tide and recent picking can change the next trip.</p>';
   }
   if (ui.screen === 'logbook') {
     title = 'The days add up.';

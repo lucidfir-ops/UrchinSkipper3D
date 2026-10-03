@@ -114,6 +114,8 @@ test('persistent stock survives sector changes and depletion persists across ord
   chooseGround(w, 'middle');
   chooseGround(w, 'near');
   assert.equal(w.patches.find((p) => p.id === id).remaining, 30);
+  // Isolate persistence from rivals finishing their work while the player is ashore.
+  for (const rival of w.career.todayFleet) rival.goal = 0;
   w.day.phase = 'complete';
   const next = nextCareerDay(w);
   chooseGround(next, 'near');

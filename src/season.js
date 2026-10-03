@@ -21,14 +21,14 @@ export function hasAreaAccess(c, id) {
   normalizeCoastAccess(c);
   return c.coastAccess.includes(coastFor(id).id);
 }
-export function seasonStatus(c) {
-  const day = ((c.day - 1) % SEASON.days) + 1;
+export function seasonStatus(c, calendarDay = c.day) {
+  const day = ((calendarDay - 1) % SEASON.days) + 1;
   const open = AREAS.filter((id) => day >= AREA_PROGRESSION[id].openDay);
   const next = AREAS.map((id) => ({ id, ...AREA_PROGRESSION[id] })).find(
     (area) => area.openDay > day,
   );
   return {
-    season: Math.floor((c.day - 1) / SEASON.days) + 1,
+    season: Math.floor((calendarDay - 1) / SEASON.days) + 1,
     day,
     length: SEASON.days,
     daysLeft: SEASON.days - day + 1,
@@ -38,14 +38,14 @@ export function seasonStatus(c) {
       : 'All fifteen subareas seasonally open · coast permits also required',
   };
 }
-export function areaCalendarOpen(c, id) {
-  return !c || !AREAS.includes(id) || seasonStatus(c).open.includes(id);
+export function areaCalendarOpen(c, id, day = c?.day) {
+  return !c || !AREAS.includes(id) || seasonStatus(c, day).open.includes(id);
 }
-export function areaStatus(c, id) {
+export function areaStatus(c, id, day = c?.day) {
   const definition = AREA_PROGRESSION[id];
   if (!c || !definition)
     return { open: true, calendarOpen: true, access: true, definition: null, reason: '' };
-  const calendarOpen = areaCalendarOpen(c, id),
+  const calendarOpen = areaCalendarOpen(c, id, day),
     access = hasAreaAccess(c, id);
   return {
     open: calendarOpen && access,
@@ -59,7 +59,7 @@ export function areaStatus(c, id) {
         : '',
   };
 }
-export function areaOpen(c, id) {
-  return areaStatus(c, id).open;
+export function areaOpen(c, id, day = c?.day) {
+  return areaStatus(c, id, day).open;
 }
 export { COASTS };

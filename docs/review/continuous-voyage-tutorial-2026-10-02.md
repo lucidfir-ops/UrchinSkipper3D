@@ -1,0 +1,27 @@
+# Continuous voyages and tutorial recovery — October 2, 2026
+
+This revision follows the October 2 calendar/ocean release. The earlier release remains available; this is an additive improvement to the Three.js edition.
+
+## Confirmed problems and changes
+
+A voyage could continue across several nights while its weather stayed on the departure day's final period. Forecasts also continued to describe the departure date. Weather now selects the seeded plan for the actual calendar date, while preserving saved/authored departure and previous-day plans. Rain, wind strength, visibility and wind direction join through the existing twenty-minute midnight transition. The seven-day outlook starts with the actual date and retains uncertainty. Forecast queries do not advance or serialize changes to the career. Explicit test conditions remain explicit. The small plan cache is bounded and does not reroll weather after eviction.
+
+Later storms also failed to cause runoff. The existing two-hour delay and eighteen-hour trailing window now follow the actual weather date. Timber release remains capped once per ground per voyage, including reloads and subsequent rainy days. Rare sea events retain their established once-per-trip rule.
+
+Rival schedules and aggregate depletion stopped after departure day. New daily fleet plans, physical visitor allowances and regional pressure now advance with the voyage calendar. Rival actors carry the date of their work: yesterday's vessel leaves without assigning catch to today's same-named team, and a route search cannot commit an obsolete candidate after midnight. Complete deterministic catch-up processes elapsed dates; it does not leave an incomplete ledger. Aggregate work excludes the occupied sector during local play, then accounts for abstract passage time. Seasonal recovery updates saved stock and every materialized ground once, with markers preventing a second recovery after reload or harbour return. Rival reports show the latest recorded day's catch and time rather than projecting unworked hours or combining several days under a single-day label.
+
+Destination opening dates now advance offshore. A skipper already working a ground retains the existing choice to continue; opening dates and permanent coast permits still govern selection of a different destination. The departure date, voyage identity and settlement identity remain unchanged.
+
+An independent keyboard tutorial playthrough found that Frank approved Neutral at `(89.35, 111.51)`, within the old 28 m radius but outside the narrow productive marked shelf. Ada searched, surfaced empty and left lesson 6 still saying to wait for catch. Approval now checks the actual port entry point, marked patch outline, ordinary diver search visibility and deployment readiness. Lesson 6 gives state-dependent deployment, bubbles, float recovery, repositioning and search-order advice. Only actual marked-ground catch advances that lesson; there is no free catch, teleport or reset of fishing geometry.
+
+The weather browser check exposed a separate portrait layout defect: two narrow columns caused horizontal scrolling and clipped the current outlook. Below 700 px the forecast now stacks vertically. Desktop retains the two-column comparison. Independent review then found only 93 px of reading height on short landscape screens. A compact shared header and tighter spacing double the pane to about 188 px, retain full-size text and 44 px controls, and reduce the measured native-touch path to the last day from twelve swipes to three. The durable check tests internal content width, minimum landscape reading height, touch targets and native touch scrolling through the final forecast day.
+
+## Evidence and reproduction
+
+Named regressions are in `continuous-weather.test.js`, `runoff-calendar.test.js`, `sector-calendar.test.js`, `multi-night-rivals.test.js` and `tutorial-retry.test.js`. The fleet cases include natural second-day physical harvesting, daily visitor limits through reload, retired actors, multi-day depletion equivalence, season recovery followed by rescue/harbour return, malformed saves and a route search spanning midnight.
+
+`scripts/continuous-weather-review.js` explicitly stages the clock of an isolated natural-seed voyage; it does not claim to simulate an entire overnight trip. It checks live rain/wind/water turbidity, actual-date forecast labels, keyboard and native browser touch, menu close/reopen and real save/reload at desktop, portrait and landscape sizes. `scripts/tutorial-retry-review.js` records the tutorial recovery paths. Final production checks pass all eight child suites, including the new tutorial/weather checks and the full voyage. The initial launcher later reported termination code 143 after its completed passing receipt was written; its signal source was not established. A separate isolated verification startup/run/shutdown check returned 0. The release receipt preserves that distinction, the performance samples and final artifact hashes.
+
+## Limits
+
+These tests establish calendar accounting and bounded input flows, not long-career economic balance or full new-player acceptance. Very old saves that skipped many dates need synchronous catch-up; loading new geography can cause a brief pause. Physical Xbox/Steam Deck controls, actual mobile hardware, Safari and itch.io hosting remain unverified here. Browser touch and synthetic controllers do not establish physical-device support. Established presentation limits from the preceding release still apply.

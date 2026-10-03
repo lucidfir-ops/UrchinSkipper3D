@@ -26,8 +26,8 @@ export function rivalWater(w) {
 
 // Day decisions survive sector changes/reloads through the fleet's shipSeen
 // records. The same day cannot keep rolling for another close encounter.
-export function rivalDayPlan(c) {
-  const random = seededRandom(c.seed ^ Math.imul(c.day, 7393));
+export function rivalDayPlan(c, day = c.day) {
+  const random = seededRandom(c.seed ^ Math.imul(day, 7393));
   return {
     limit: random() < 0.5 ? 1 : 2,
     nearby: random() < TRAFFIC.nearbyRivalChance,

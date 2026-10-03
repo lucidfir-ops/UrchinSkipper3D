@@ -9,6 +9,7 @@ import {
   tickIntroHint,
   introActive,
   introPending,
+  introLesson,
   advanceIntro,
 } from './career-intro.js';
 import { appendChoices } from './menu-buttons.js';
@@ -110,14 +111,14 @@ export function renderIntro(ui, w) {
               'Vector chart of Frank’s cove: your boat, marked shelf northwest, uncharted eastern shore',
           })
         : '<canvas class="intro-chart" width="520" height="520" aria-label="Chart of Frank’s cove: your boat, marked shelf northwest, uncharted eastern shore"></canvas>';
-    ui.panel.innerHTML = `<div class="day-heading"><div><div class="eyebrow">DAY 0 · FRANK’S COVE</div><h2>Our little fishery</h2></div>${chartModeMarkup(ui)}</div><div class="intro-chart-workspace"><div class="intro-chart-surface">${surface}<p class="map-caption">North ↑ · 240 m across<br>Gold ring: your boat · Green: known ground · Pink ×: charted rocks<br>Unmarked rocks and floating logs are not plotted.</p></div><article class="intro-chart-brief"><div class="eyebrow">YOUR NEXT TASK</div><h3>${lesson(w)[0]}</h3><p>${lesson(w)[1]}</p><details class="skipper-note" open><summary>Frank’s note</summary><p>${INTRO_NOTES[w.career.intro.step]}</p></details><div class="choices intro-choices"></div></article></div>`;
+    ui.panel.innerHTML = `<div class="day-heading"><div><div class="eyebrow">DAY 0 · FRANK’S COVE</div><h2>Our little fishery</h2></div>${chartModeMarkup(ui)}</div><div class="intro-chart-workspace"><div class="intro-chart-surface">${surface}<p class="map-caption">North ↑ · 240 m across<br>Gold ring: your boat · Green: known ground · Pink ×: charted rocks<br>Unmarked rocks and floating logs are not plotted.</p></div><article class="intro-chart-brief"><div class="eyebrow">YOUR NEXT TASK</div><h3>${lesson(w, ui)[0]}</h3><p>${lesson(w, ui)[1]}</p><details class="skipper-note" open><summary>Frank’s note</summary><p>${INTRO_NOTES[w.career.intro.step]}</p></details><div class="choices intro-choices"></div></article></div>`;
     const canvas = ui.panel.querySelector('.intro-chart');
     if (canvas) paintSectorMap(canvas, w.terrain, { boat: w.boat, rocks: w.rocks || [] });
     bindChartModeToggle(ui.panel, ui);
     appendChoices(ui.panel.querySelector('.choices'), ui, w, introChoices(ui));
     return;
   }
-  ui.panel.innerHTML = `<div class="day-heading"><div><div class="eyebrow">DAY 0 · FRANK’S COVE</div><h2>${briefing ? 'A talking to by Frank' : ui.screen === 'introchart' ? 'Our little fishery' : 'A moment aboard'}</h2></div></div><article class="intro-copy"><img class="frank-portrait" src="./assets/harbour/frank-v1.png" alt="Frank, your investor"/><p>${briefing ? 'I’m Frank, your investor. I’ve put STARTING_FUNDS behind you. First, come aboard my loan boat for a quiet morning: we’ll steer, find urchins, and bring our divers home.' : lesson(w)[1]}</p>${briefing ? '<p>Take your time. You can skip a step or the whole lesson. Today’s catch and costs stay here; your full starting funds wait for day 1.</p>' : ''}</article>${!briefing ? `<details class="skipper-note" open><summary>Frank’s note · ${INTRO_STEPS[w.career.intro.step][0]}</summary><p>${INTRO_NOTES[w.career.intro.step]}</p></details>` : ''}<div class="choices intro-choices"></div>`;
+  ui.panel.innerHTML = `<div class="day-heading"><div><div class="eyebrow">DAY 0 · FRANK’S COVE</div><h2>${briefing ? 'A talking to by Frank' : ui.screen === 'introchart' ? 'Our little fishery' : 'A moment aboard'}</h2></div></div><article class="intro-copy"><img class="frank-portrait" src="./assets/harbour/frank-v1.png" alt="Frank, your investor"/><p>${briefing ? 'I’m Frank, your investor. I’ve put STARTING_FUNDS behind you. First, come aboard my loan boat for a quiet morning: we’ll steer, find urchins, and bring our divers home.' : lesson(w, ui)[1]}</p>${briefing ? '<p>Take your time. You can skip a step or the whole lesson. Today’s catch and costs stay here; your full starting funds wait for day 1.</p>' : ''}</article>${!briefing ? `<details class="skipper-note" open><summary>Frank’s note · ${INTRO_STEPS[w.career.intro.step][0]}</summary><p>${INTRO_NOTES[w.career.intro.step]}</p></details>` : ''}<div class="choices intro-choices"></div>`;
   ui.panel.innerHTML = ui.panel.innerHTML.replace('STARTING_FUNDS', money(ECONOMY.startCash));
   appendChoices(ui.panel.querySelector('.choices'), ui, w, introChoices(ui));
 }
@@ -150,7 +151,7 @@ export function updateIntro(ui, w, actions, dt = 0) {
   }
   if (!active) return;
   const step = w.career.intro.step;
-  const spoken = lesson(w)[1]
+  const spoken = lesson(w, ui)[1]
     .replace(
       'On touch, drag the left stick up or tap Ahead.',
       ui.input.touchEnabled
@@ -163,13 +164,13 @@ export function updateIntro(ui, w, actions, dt = 0) {
     )
     .replace(/\{(\w+)\}/g, (_, action) => ui.input.label(action));
   const hint = step === 7 && w.career.intro.scoutSeconds >= 60;
-  const signature = `${step}:${w.career.intro.prepIndex || 0}:${ui.input.lastDevice}:${!!w.emergency}:${hint}`;
+  const signature = `${step}:${w.career.intro.prepIndex || 0}:${ui.input.lastDevice}:${!!w.emergency}:${hint}:${spoken}`;
   if (panel.dataset.signature === signature) {
     updateLessonReadout(panel, w);
     return;
   }
   panel.dataset.signature = signature;
-  panel.innerHTML = `<div class="frank-line"><img src="./assets/harbour/frank-v1.png" alt="Frank aboard"/><div><strong>Frank · ${trainingPreparation(w) ? `Equipment ${w.career.intro.prepIndex + 1}/${trainingLessons(w).length}` : `${step + 1}/${INTRO_STEPS.length}`} · ${lesson(w)[0]}</strong><p>${w.emergency ? 'Let’s stop here and start fresh at harbour. You can skip the lesson without losing your starting funds.' : spoken}</p></div></div><div class="frank-buttons"><button data-intro="chart">Chart & notes</button><button data-intro="next" ${step === 9 ? 'disabled' : ''}>${step === 9 ? 'Drive through SOUTH edge' : trainingPreparation(w) ? 'Continue' : 'Skip this step'}</button><button data-intro="skip">${w.career.trainingReplay ? 'Leave training' : 'Skip tutorial'}</button></div>`;
+  panel.innerHTML = `<div class="frank-line"><img src="./assets/harbour/frank-v1.png" alt="Frank aboard"/><div><strong>Frank · ${trainingPreparation(w) ? `Equipment ${w.career.intro.prepIndex + 1}/${trainingLessons(w).length}` : `${step + 1}/${INTRO_STEPS.length}`} · ${lesson(w, ui)[0]}</strong><p>${w.emergency ? 'Let’s stop here and start fresh at harbour. You can skip the lesson without losing your starting funds.' : spoken}</p></div></div><div class="frank-buttons"><button data-intro="chart">Chart & notes</button><button data-intro="next" ${step === 9 ? 'disabled' : ''}>${step === 9 ? 'Drive through SOUTH edge' : trainingPreparation(w) ? 'Continue' : 'Skip this step'}</button><button data-intro="skip">${w.career.trainingReplay ? 'Leave training' : 'Skip tutorial'}</button></div>`;
   panel.scrollTop = 0;
   panel.querySelector('[data-intro="chart"]').onclick = () => ui.open('introchart');
   panel.querySelector('[data-intro="next"]').onclick = () => {
@@ -201,13 +202,14 @@ function updateLessonReadout(panel, w) {
   setText(readout, `Sounder · ${depthAt(w, w.boat.x, w.boat.y).toFixed(1)} m beneath us`);
 }
 
-function lesson(w) {
-  return (
+function lesson(w, ui) {
+  const current = introLesson(w);
+  const result =
     trainingPreparation(w) ||
     (w.career.trainingReplay
       ? [
-          INTRO_STEPS[w.career.intro.step][0],
-          INTRO_STEPS[w.career.intro.step][1]
+          current[0],
+          current[1]
             .replace('Ada or Milo', w.divers.map((d) => d.name).join(' or '))
             .replace(
               'In the future you can buy an upgrade that will let you mark the ground you find:',
@@ -216,8 +218,8 @@ function lesson(w) {
                 : 'You can fit an upgrade to mark the ground you find:',
             ),
         ]
-      : INTRO_STEPS[w.career.intro.step])
-  );
+      : current);
+  return [result[0], result[1].replace(/\{(\w+)\}/g, (_, action) => ui.input.label(action))];
 }
 function nextLesson(w) {
   if (trainingPreparation(w)) w.career.intro.prepIndex++;

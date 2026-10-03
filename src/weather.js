@@ -3,6 +3,7 @@ import { enabledEquipment } from './equipment-controls.js';
 import { roll, rankOf } from './career-data.js';
 import { coastTier } from './coasts.js';
 import { localWind, regionalLimits } from './regional-conditions.js';
+import { careerDayAt } from './career-calendar.js';
 export const WEATHER = {
   calm: { name: 'Light Winds', wind: 3, wave: 0.12, visibility: 500, rain: 0, lightning: 0 },
   // Precipitation is not a proxy for wind: steady coastal rain can arrive in calm air.
@@ -29,6 +30,23 @@ export function weatherPlan(c) {
     { minute: start + duration, kind: kind === 'storm' ? 'rain' : 'calm', bearing: 230 },
   ];
 }
+const dailyPlans = new WeakMap();
+export function weatherPlanForDay(c, day = c.day) {
+  // Keep authored/saved conditions for their real date. Looking ahead must not
+  // overwrite the departure-day plan or invent changes to an existing save.
+  if (day === c.day && c.weatherPlan) return c.weatherPlan;
+  if (day === c.previousWeatherPlan?.day) return c.previousWeatherPlan.periods;
+  let cache = dailyPlans.get(c);
+  if (!cache || cache.seed !== c.seed) {
+    cache = { seed: c.seed, plans: new Map() };
+    dailyPlans.set(c, cache);
+  }
+  if (!cache.plans.has(day)) {
+    cache.plans.set(day, weatherPlan({ seed: c.seed, day }));
+    if (cache.plans.size > 10) cache.plans.delete(cache.plans.keys().next().value);
+  }
+  return cache.plans.get(day);
+}
 export function conditionsAt(w, minute = w.day.minute, id = w.day.groundId) {
   const c = w.career;
   if (!c) return null;
@@ -36,22 +54,24 @@ export function conditionsAt(w, minute = w.day.minute, id = w.day.groundId) {
     c.debugConditions?.weather && c.debugConditions.weather !== 'natural'
       ? c.debugConditions
       : c.sandbox && c.testConditions;
-  const plan =
-      test && test.weather !== 'natural' && WEATHER[test.weather]
-        ? [{ minute: 0, kind: test.weather, bearing: test.bearing ?? 225 }]
-        : c.weatherPlan || weatherPlan(c),
+  const day = careerDayAt(w, minute),
+    localMinute = Math.max(0, minute - (day - c.day) * 1440),
+    forced = test && test.weather !== 'natural' && WEATHER[test.weather],
+    plan = forced
+      ? [{ minute: 0, kind: test.weather, bearing: test.bearing ?? 225 }]
+      : weatherPlanForDay(c, day),
     at = Math.max(
       0,
-      plan.findLastIndex((p) => p.minute <= minute),
+      plan.findLastIndex((p) => p.minute <= localMinute),
     ),
     segment = plan[at],
-    prev = plan[Math.max(0, at - 1)],
-    mix = Math.max(0, Math.min(1, (minute - segment.minute) / 20));
+    midnightBlend = at === 0 && !forced && day > 1,
+    prev = midnightBlend ? weatherPlanForDay(c, day - 1).at(-1) : plan[Math.max(0, at - 1)],
+    mix = Math.max(0, Math.min(1, (localMinute - segment.minute) / 20));
   const a = WEATHER[prev.kind],
     b = WEATHER[segment.kind],
     blend = (key) => a[key] + (b[key] - a[key]) * mix;
-  const localMinute = ((minute % 1440) + 1440) % 1440,
-    night = localMinute < 360 || localMinute >= 1170,
+  const night = localMinute < 360 || localMinute >= 1170,
     dusk = !night && (localMinute < 410 || localMinute > 1110),
     exposure = id === 'near' ? 0.58 : id === 'middle' ? 0.82 : 1,
     surfaceExposure = id === 'near' ? 0.18 : id === 'middle' ? 0.58 : 1,
@@ -64,7 +84,14 @@ export function conditionsAt(w, minute = w.day.minute, id = w.day.groundId) {
         tier * 0.12,
     ),
     sunArc = Math.max(0, Math.sin(((localMinute - 360) / 810) * Math.PI)),
-    sunlight = sunArc * Math.max(0.08, 1 - rain * 0.58 - (segment.kind === 'fog' ? 0.72 : 0));
+    sunlight = sunArc * Math.max(0.08, 1 - rain * 0.58 - (segment.kind === 'fog' ? 0.72 : 0)),
+    // Carry direction through midnight along with wind strength. Later-coast
+    // variation also joins yesterday's last phase instead of resetting abruptly.
+    bearing = midnightBlend
+      ? prev.bearing +
+        (((segment.bearing - prev.bearing + 540) % 360) - 180) * mix +
+        tier * 14 * (Math.sin(1440 / 19) * (1 - mix) + Math.sin(localMinute / 19) * mix)
+      : segment.bearing + tier * 14 * Math.sin(localMinute / 19);
   return {
     kind: segment.kind,
     name:
@@ -73,7 +100,7 @@ export function conditionsAt(w, minute = w.day.minute, id = w.day.groundId) {
         : b.name,
     wind: localWind(blend('wind') * windFactor, id) * (0.55 + 0.45 * exposure),
     exposure,
-    bearing: segment.bearing + tier * 14 * Math.sin(minute / 19),
+    bearing,
     wave,
     visibility: blend('visibility'),
     rain,
@@ -104,18 +131,16 @@ export function updateWeather(w) {
 }
 export function weatherOutlook(w, offset = 0, id = w.day.groundId) {
   const c = w.career,
+    day = careerDayAt(w) + offset,
     gear = enabledEquipment(w),
     confidence = Math.max(25, (gear.includes('forecast') ? 85 : 60 + rankOf(c) * 5) - offset * 6);
   const error =
-      (roll(c.seed, c.day + offset + 653) - 0.5) *
-      ((gear.includes('forecast') ? 20 : 70) + offset * 20),
+      (roll(c.seed, day + 653) - 0.5) * ((gear.includes('forecast') ? 20 : 70) + offset * 20),
     forced = c.debugConditions?.weather,
     plan =
       !offset && forced && forced !== 'natural' && WEATHER[forced]
         ? [{ minute: 0, kind: forced, bearing: c.debugConditions.bearing ?? 225 }]
-        : offset
-          ? weatherPlan({ ...c, day: c.day + offset })
-          : c.weatherPlan || weatherPlan(c);
+        : weatherPlanForDay(c, day);
   return {
     confidence,
     periods: plan.map((p, i) => ({
@@ -131,7 +156,7 @@ export function weatherOutlook(w, offset = 0, id = w.day.groundId) {
 }
 export function sevenDayForecast(w, id = w.day.groundId) {
   return Array.from({ length: 7 }, (_, offset) => ({
-    day: w.career.day + offset,
+    day: careerDayAt(w) + offset,
     ...weatherOutlook(w, offset, id),
   }));
 }

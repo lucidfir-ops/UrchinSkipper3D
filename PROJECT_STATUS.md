@@ -1,12 +1,16 @@
 # Urchin Skipper 3D — current status
 
-October 2, 2026 · multi-night calendar consequences, irregular wind crests and continuous ocean edges. Work, exports and publication belong only to this project and [lucidfir-ops/UrchinSkipper3D](https://github.com/lucidfir-ops/UrchinSkipper3D). The original 2D project and repository were used read-only.
+October 2, 2026 · continuous-voyage weather and rival fishing, tutorial retry guidance and readable phone forecasts. Work, exports and publication belong only to this project and [lucidfir-ops/UrchinSkipper3D](https://github.com/lucidfir-ops/UrchinSkipper3D). The original 2D project and repository were used read-only.
 
 ## Design authority
 
 The inherited [living Bible](bible.md) governs gameplay. Its September 26 amendments authorize this separate Three.js presentation and live coastal title; the September 27 commission authorizes substantial menu and HUD restructuring. The September 28 playtest commission extends equipment fitting, physical dive operations, the near-surface water column, training and navigation while preserving playtested behaviour. Preserve the orthographic following camera, exactly two autonomous divers, established information rules and original simulation geometry. Historical links in copied reference documents describe provenance in the 2D workspace, not additional active 3D requirements.
 
 ## Playable build
+
+The latest October 2 revision keeps weather, seven-day forecasts, storm runoff, rival fishing and destination opening dates moving during continuous multi-night voyages. Saved departure plans and voyage identities remain intact. Daily rival visitor limits, shared stock, off-map depletion and seasonal recovery advance once, including after reload and harbour return; reports show the actual day and observation time. [Implementation and regression evidence](docs/review/continuous-voyage-tutorial-2026-10-02.md), [rival accounting detail](docs/review/continuous-rivals-2026-10-02.md).
+
+A separate novice playthrough found that Frank could approve an empty-water drop and then leave an unsuccessful diver search without retry instructions. Arrival now checks the real port entry point against usable marked ground. His instructions respond to deployment readiness, bubbles, surfaced divers and failed searches; only actual catch advances the lesson. The unchanged marked shelf and simulation geometry remain authoritative. Portrait forecasts now stack vertically, avoiding the former clipped, narrow columns. The short landscape forecast has twice the reading space, with full-size text and 44 px touch actions retained.
 
 The October 2 revision fixes events during voyages that continue across multiple nights. New injuries retain their full absence from the actual incident date; carrying an injured diver on another voyage no longer restarts recovery. Dive exposure, taxi onboarding protections, chart observations and report ages, wildlife enforcement attention and patrol visits now follow the actual calendar. Departure-based voyage identities and once-only settlement remain intact. Ten regression cases include rescue/reload, dates crossing days 4 and 10, old/new chart reports and forty days of patrol scheduling. [Calendar defects and verification](docs/review/multi-night-calendar-2026-10-02.md).
 
@@ -44,6 +48,9 @@ Build with `npm ci && npm run build`; `npm start` serves http://127.0.0.1:5184/.
 
 ## Verification
 
+- Latest October 2 regression run: 586 named tests, 585 pass, zero failures and one intentional private-save skip. Production build, lint and formatting pass. Twenty added cases cover continuous weather/runoff, sector access, rival accounting and tutorial retry. The existing geography-chunk warning remains (about 3.88 MB gzip).
+- Latest production tutorial-retry, continuous-weather, operations, rival fleet, input, weather, full-voyage and performance checks all pass. The complete voyage lands 300 lb on time with an intact hull and two fit divers; the isolated 1280×800 RADV VANGOGH sample measures approximately 60 FPS. Keyboard, native browser touch and synthetic controller flows are covered; physical controllers remain untested. Two separate reviewers inspected the final [forecast and tutorial captures](docs/review/independent-continuous-voyage-2026-10-02.md). [Latest release receipt](docs/review/release-verification-2026-10-02-continuous.json).
+
 - October 2 production: ocean-edge, wind-crests, boundary, operations, input, weather, full voyage and performance suites all pass. GPU readback of the served shader confirms zero whitecaps at zero wind and correct crest travel in all four wind directions. Keyboard, native browser touch and synthetic controller recovery/return pass; the complete voyage lands 300 lb on time with an intact hull and two fit divers. The isolated 1280×800 RADV VANGOGH sample measures about 60.05 FPS. [Release receipt](docs/review/release-verification-2026-10-02.json).
 - October 2: full regression run passes 565 tests, zero failures, with one intentional private-save skip (566 total). Production build, lint, formatting and diff checks pass. New tests cover actual multi-night medical dates, chart observations, taxi outcomes, patrol schedules and decorative seabed continuity without editing the survey. The existing large geography-chunk warning remains (about 3.88 MB gzip).
 
@@ -60,9 +67,11 @@ Build with `npm ci && npm run build`; `npm start` serves http://127.0.0.1:5184/.
 - AMD RADV VANGOGH measured 240 frames in four seconds at 1280×800, approximately 59.95 FPS in the latest sample. This controlled sample is not a device-wide performance guarantee.
 - Latest [independent screenshot reviews](docs/review/independent-vegetation-feedback-2026-09-29.md) drove darker kelp, smoother stipes, denser grass and varied proportions, and confirmed readable speech/current arrows. The earlier [visual review](docs/review/independent-feedback-2026-09-29.md) drove fixes to landscape Frank placement, capture timing, whitecap shape, five-metre rock contrast, wide-view current arrow readability and source-specific fleet fittings.
 
-Reproduce the latest pass with `PLAYWRIGHT_BROWSERS_PATH=.browser-cache npm run verify -- --suite=ocean-edge,wind-crests,boundary,operations,input,weather,voyage,performance`. Local evidence is in `test-results/`; the [release receipt](docs/review/release-verification-2026-10-02.json) records verification and export hashes. Earlier validation remains documented in the previous review records.
+Reproduce the latest pass with `PLAYWRIGHT_BROWSERS_PATH=.browser-cache npm run verify -- --suite=tutorial-retry,continuous-weather,operations,traffic-fleet,input,weather,voyage,performance`. Local evidence is in `test-results/`; the [release receipt](docs/review/release-verification-2026-10-02-continuous.json) records verification and export hashes. Earlier validation remains documented in the previous review records.
 
 ## Remaining acceptance
+
+Very stale long-voyage saves may pause briefly while complete daily stock and pressure catch-up runs. Compact forecasts remain scrollable; portrait places the table after a long outlook, and the forecast footer still mentions keyboard/stick controls on touch. Broader unaided new-player tutorial acceptance remains open despite the reproduced failure and verified recovery fix.
 
 Physical USB Xbox/Steam Deck controls, mobile device performance, Safari, actual itch.io hosting and long-career upgrade balance need human playtesting in this edition. Synthetic input does not establish physical controller behaviour. Near-surface people are recognizable close up but remain physically small at the widest orthographic zoom. Career boats now have distinct source-based fittings and layouts, but remain stylized models rather than exact raster reconstructions. Close wind crests remain sharp stylized strokes, and kelp ribbons/grass blades retain some visible repetition. The finite tutorial cove retains a soft shallow-water halo at low tide and very wide zoom. Unusual traffic artwork is interpreted rather than reproduced exactly. The presentation is deliberately stylized; completed implementation and automated checks are not full device, balance or new-player acceptance.
 
@@ -70,7 +79,7 @@ Physical USB Xbox/Steam Deck controls, mobile device performance, Safari, actual
 
 Use this independent Git repository normally; never synchronize into or push the 2D repository. Selected rebuildable source, assets and essential documentation belong in Git. Dependencies, builds, private saves, browser profiles, recordings, test output and TEMP ZIPs stay outside it. New exports are additive; preserve older exports.
 
-The latest release is under `exports/2026-10-02-calendar-ocean/`; all earlier dated exports are retained:
+The latest release is under `exports/2026-10-02-continuous-voyage/`; all earlier dated exports are retained:
 
 - `UrchinSkipper3D-TEMP-ITCHIO.zip`: standalone HTML build for the separate 3D itch.io project; upload remains manual.
 - `Urchin Skipper 3D TEMP.zip` and its extracted folder: local/Wi-Fi edition with isolated port 5198 and portable launcher.

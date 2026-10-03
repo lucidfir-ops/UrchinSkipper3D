@@ -13,10 +13,13 @@ import { inspectionDue } from './inspection-schedule.js';
 import { recordFishingPressure, subAreaYield } from './quota-areas.js';
 import { fishingRoute, rivalDayPlan, rivalPatches, rivalWater, trafficHull } from './rival-plan.js';
 import { taxiSafetyStage } from './diver-safety.js';
+import { advanceFleet } from './fleet-life.js';
+import { careerDayAt } from './career-calendar.js';
 
 const pick = (values, random) => values[Math.floor(random() * values.length)];
 export function prepareTraffic(w) {
   if (!w.career || w.day.phase !== 'working') return null;
+  if ((w.career.fleetDay ?? w.career.day) < careerDayAt(w)) advanceFleet(w);
   if (w.traffic?.area === w.day.groundId) return w.traffic;
   const random = seededRandom(w.career.seed ^ (w.career.day * 6373));
   return (w.traffic = {
@@ -53,10 +56,15 @@ function* planTraffic(w, kind, { start, patchId, art, fleetId } = {}) {
   );
   const mystery = w.career.opponents.find((t) => t.hidden);
   let fleet;
-  const dayPlan = rivalDayPlan(w.career),
+  const dayPlan = rivalDayPlan(w.career, w.career.fleetDay),
+    minute = w.day.minute % 1440,
     directed = !!(patchId || fleetId || trafficSettings(w).patchId),
     seen = w.career.todayFleet.filter(
-      (r) => r.shipSeen || traffic.actors.some((a) => a.fleetId === r.id),
+      (r) =>
+        r.shipSeen ||
+        traffic.actors.some(
+          (a) => a.fleetId === r.id && (a.fleetDay ?? w.career.fleetDay) === w.career.fleetDay,
+        ),
     );
   if (kind === 'rival') {
     if (!directed && seen.length >= dayPlan.limit) return null;
@@ -65,9 +73,11 @@ function* planTraffic(w, kind, { start, patchId, art, fleetId } = {}) {
         r.area === w.day.groundId &&
         !r.shipDone &&
         (directed || (!r.shipSeen && (!r.hidden || dayPlan.mystery))) &&
-        r.begin <= w.day.minute &&
-        w.day.minute < r.end &&
-        !traffic.actors.some((a) => a.fleetId === r.id),
+        r.begin <= minute &&
+        minute < r.end &&
+        !traffic.actors.some(
+          (a) => a.fleetId === r.id && (a.fleetDay ?? w.career.fleetDay) === w.career.fleetDay,
+        ),
     );
     fleet = fleetId ? candidates.find((r) => r.id === fleetId) : pick(candidates, random);
     if (!fleet) return null;
@@ -106,6 +116,7 @@ function* planTraffic(w, kind, { start, patchId, art, fleetId } = {}) {
       born: w.time,
       checked: [],
       fleetId: fleet?.id || null,
+      ...(fleet ? { fleetDay: w.career.fleetDay } : {}),
       hidden: !!fleet?.hidden,
       habit: fleet ? rivalHabit(fleet) : null,
       name: fleet?.hidden ? 'Shy Hull Wood' : fleet?.boat || null,
@@ -204,9 +215,16 @@ function* planTraffic(w, kind, { start, patchId, art, fleetId } = {}) {
     if (
       traffic.actors.length >= TRAFFIC.maxActors ||
       (fleet &&
-        (fleet.shipDone ||
-          w.day.minute >= fleet.end ||
-          traffic.actors.some((a) => a.fleetId === fleet.id)))
+        (fleet.day !== w.career.fleetDay ||
+          actor.fleetDay !== careerDayAt(w) ||
+          !w.career.todayFleet.includes(fleet) ||
+          fleet.shipDone ||
+          w.day.minute % 1440 < fleet.begin ||
+          w.day.minute % 1440 >= fleet.end ||
+          traffic.actors.some(
+            (a) =>
+              a.fleetId === fleet.id && (a.fleetDay ?? w.career.fleetDay) === w.career.fleetDay,
+          )))
     )
       return null;
     traffic.actors.push(actor);
@@ -233,7 +251,19 @@ function setRoute(w, actor, target) {
   return true;
 }
 function fish(w, actor, dt) {
+  actor.fleetDay ??= w.career.fleetDay;
+  if (actor.fleetDay !== w.career.fleetDay) {
+    actor.divers = [];
+    if (actor.phase !== 'leaving') {
+      actor.phase = 'leaving';
+      if (!waterEntries(rivalWater(w), trafficHull(actor)).some((p) => setRoute(w, actor, p)))
+        actor.done = true;
+    }
+    if (!actor.done && moveTraffic(w, actor, dt)) actor.done = true;
+    return;
+  }
   const fleet = w.career.todayFleet.find((r) => r.id === actor.fleetId),
+    minute = w.day.minute % 1440,
     patch = w.patches.find((p) => p.id === actor.patchId);
   if (!fleet || !patch) {
     actor.done = true;
@@ -276,7 +306,7 @@ function fish(w, actor, dt) {
       actor.waypoint = 0;
     }
   }
-  if (actor.phase === 'transit' && w.day.minute >= fleet.end) {
+  if (actor.phase === 'transit' && minute >= fleet.end) {
     actor.phase = 'leaving';
     fleet.shipDone = true;
     if (!waterEntries(rivalWater(w), trafficHull(actor)).some((p) => setRoute(w, actor, p)))
@@ -300,7 +330,7 @@ function fish(w, actor, dt) {
   for (const [i, id] of crew.entries()) {
     const profile = crewProfile(w.career, id),
       record = w.career.people[id];
-    if (!profile || record?.condition !== 'fit' || record.availableDay > w.career.day) continue;
+    if (!profile || record?.condition !== 'fit' || record.availableDay > careerDayAt(w)) continue;
     const clumps = (patch.clumps || [])
         .filter((c) => c.remaining > 0)
         .sort(
@@ -332,14 +362,10 @@ function fish(w, actor, dt) {
   // Hold the checked berth while divers pick. The previous patrol repeatedly
   // steered through its own avoidance circles and could never reach a pickup.
   actor.vx = actor.vy = actor.speed = 0;
-  fleet.minute = Math.max(fleet.minute, w.day.minute);
-  if (fleet.gross >= fleet.goal - 0.01 || patch.remaining <= 0.01 || w.day.minute >= fleet.end) {
+  fleet.minute = Math.max(fleet.minute, minute);
+  if (fleet.gross >= fleet.goal - 0.01 || patch.remaining <= 0.01 || minute >= fleet.end) {
     actor.divers = [];
-    if (
-      patch.remaining <= 0.01 &&
-      fleet.gross < fleet.goal - 0.01 &&
-      w.day.minute < fleet.end - 15
-    ) {
+    if (patch.remaining <= 0.01 && fleet.gross < fleet.goal - 0.01 && minute < fleet.end - 15) {
       for (const next of rivalPatches(w).slice(0, 8)) {
         const route = fishingRoute(rivalWater(w), actor, next, actor);
         if (!route.length) continue;

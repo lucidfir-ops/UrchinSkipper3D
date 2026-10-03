@@ -32,6 +32,8 @@ async function ready() {
   }
 }
 const suites = {
+  'tutorial-retry': ['scripts/tutorial-retry-review.js'],
+  'continuous-weather': ['scripts/continuous-weather-review.js'],
   'ocean-edge': ['scripts/ocean-edge-review.js'],
   'wind-crests': ['scripts/wind-crest-review.js'],
   boundary: ['scripts/boundary-review.js'],

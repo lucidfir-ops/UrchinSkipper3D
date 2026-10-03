@@ -1,0 +1,1306 @@
+{
+  "date": "2026-10-02",
+  "edition": "Urchin Skipper 3D",
+  "unit_tests": {
+    "total": 586,
+    "pass": 585,
+    "fail": 0,
+    "skip": 1,
+    "command": "npm test",
+    "skip_reason": "Optional private career save is not included in Git.",
+    "execution": "Outside restricted sandbox; named cases confirmed."
+  },
+  "checks": {
+    "lint": true,
+    "format": true,
+    "build": true,
+    "diff_check": true
+  },
+  "production": {
+    "started": "2026-10-03T06:45:20.776Z",
+    "ended": "2026-10-03T06:47:49.594Z",
+    "passed": true,
+    "results": [
+      {
+        "label": "tutorial-retry",
+        "code": 0,
+        "seconds": 41
+      },
+      {
+        "label": "continuous-weather",
+        "code": 0,
+        "seconds": 31
+      },
+      {
+        "label": "operations",
+        "code": 0,
+        "seconds": 22
+      },
+      {
+        "label": "traffic-fleet",
+        "code": 0,
+        "seconds": 6
+      },
+      {
+        "label": "input",
+        "code": 0,
+        "seconds": 18
+      },
+      {
+        "label": "weather",
+        "code": 0,
+        "seconds": 5
+      },
+      {
+        "label": "voyage",
+        "code": 0,
+        "seconds": 15
+      },
+      {
+        "label": "performance",
+        "code": 0,
+        "seconds": 8
+      }
+    ]
+  },
+  "continuous_weather": {
+    "passed": true,
+    "failure": null,
+    "base": "http://127.0.0.1:5186/",
+    "production": true,
+    "startedAt": "2026-10-03T06:46:04.817Z",
+    "completedAt": "2026-10-03T06:46:35.296Z",
+    "fixture": "Natural seed 17; day-1 departure; clock staged into day-2 rain",
+    "records": [
+      {
+        "name": "desktop",
+        "input": "keyboard",
+        "dry": {
+          "departureDay": 1,
+          "minute": 2334.041666666666,
+          "weather": {
+            "kind": "calm",
+            "name": "Light Winds",
+            "wind": 2.4330000000000003,
+            "exposure": 0.58,
+            "bearing": 210,
+            "wave": 0.058288000000000006,
+            "visibility": 500,
+            "rain": 0,
+            "lightning": 0,
+            "sunlight": 0.8773478626707143,
+            "sunAngle": 2.071285650260305,
+            "night": false,
+            "darkness": 0
+          },
+          "forced": null,
+          "savedPlan": [
+            {
+              "minute": 0,
+              "kind": "calm",
+              "bearing": 210
+            },
+            {
+              "minute": 843,
+              "kind": "calm",
+              "bearing": 220
+            },
+            {
+              "minute": 1053,
+              "kind": "calm",
+              "bearing": 230
+            }
+          ],
+          "wind": {
+            "x": -0.6302625681612392,
+            "y": 1.0916467901641085
+          },
+          "shaderWind": [
+            -0.6302625681612392,
+            1.0916467901641085
+          ],
+          "renderedRain": false,
+          "turbidity": 1.00320584,
+          "sunlight": 0.8773478626707143
+        },
+        "wet": {
+          "departureDay": 1,
+          "minute": 2394.0499999999993,
+          "weather": {
+            "kind": "rain",
+            "name": "Coastal rain",
+            "wind": 1.622,
+            "exposure": 0.58,
+            "bearing": 204,
+            "wave": 0.058288000000000006,
+            "visibility": 180,
+            "rain": 0.65,
+            "lightning": 0,
+            "sunlight": 0.46289837617210905,
+            "sunAngle": 2.304028538104956,
+            "night": false,
+            "darkness": 0
+          },
+          "forced": null,
+          "savedPlan": [
+            {
+              "minute": 0,
+              "kind": "calm",
+              "bearing": 210
+            },
+            {
+              "minute": 843,
+              "kind": "calm",
+              "bearing": 220
+            },
+            {
+              "minute": 1053,
+              "kind": "calm",
+              "bearing": 230
+            }
+          ],
+          "wind": {
+            "x": -0.344679250413835,
+            "y": 0.7741622716312143
+          },
+          "shaderWind": [
+            -0.344679250413835,
+            0.7741622716312143
+          ],
+          "renderedRain": true,
+          "turbidity": 1.10070584,
+          "sunlight": 0.46289837617210905
+        },
+        "forecast": {
+          "minute": 2394.3666666666613,
+          "savedPlan": [
+            {
+              "minute": 0,
+              "kind": "calm",
+              "bearing": 210
+            },
+            {
+              "minute": 843,
+              "kind": "calm",
+              "bearing": 220
+            },
+            {
+              "minute": 1053,
+              "kind": "calm",
+              "bearing": 230
+            }
+          ],
+          "rows": [
+            {
+              "day": "Today",
+              "outlook": "Morning: Light Winds~15:00: Coastal rain~18:30: Light Winds"
+            },
+            {
+              "day": "Day 3",
+              "outlook": "Morning: Light Winds~16:00: Coastal rain~19:30: Light Winds"
+            },
+            {
+              "day": "Day 4",
+              "outlook": "Morning: Light Winds~15:00: Coastal rain~18:30: Light Winds"
+            },
+            {
+              "day": "Day 5",
+              "outlook": "Morning: Light Winds~15:00: Coastal rain~18:30: Light Winds"
+            },
+            {
+              "day": "Day 6",
+              "outlook": "Morning: Light Winds~15:30: Light Winds~19:00: Light Winds"
+            },
+            {
+              "day": "Day 7",
+              "outlook": "Morning: Light Winds~16:30: Passing squall~18:00: Light Winds"
+            },
+            {
+              "day": "Day 8",
+              "outlook": "Morning: Light Winds~16:00: Light Winds~19:30: Light Winds"
+            }
+          ],
+          "pageWidth": 1280,
+          "viewportWidth": 1280,
+          "viewportHeight": 800,
+          "contentHeight": 419.09375,
+          "backHeight": 40,
+          "actionHeight": 39.4375,
+          "internalWidths": [
+            {
+              "selector": ".expedition-copy",
+              "available": 1074,
+              "content": 1074,
+              "scrollLeft": 0
+            },
+            {
+              "selector": ".forecast-detail",
+              "available": 1069,
+              "content": 1069,
+              "scrollLeft": 0
+            },
+            {
+              "selector": ".forecast-detail > section",
+              "available": 527,
+              "content": 527,
+              "scrollLeft": 0
+            },
+            {
+              "selector": ".forecast-detail > section",
+              "available": 527,
+              "content": 527,
+              "scrollLeft": 0
+            }
+          ]
+        },
+        "touchScroll": null,
+        "save": {
+          "result": {
+            "ok": true
+          },
+          "storedMinute": 2394.3666666666613,
+          "storedDay": 1,
+          "unchangedPlan": true
+        },
+        "restored": {
+          "departureDay": 1,
+          "minute": 2394.424999999994,
+          "weather": {
+            "kind": "rain",
+            "name": "Coastal rain",
+            "wind": 1.622,
+            "exposure": 0.58,
+            "bearing": 204,
+            "wave": 0.058288000000000006,
+            "visibility": 180,
+            "rain": 0.65,
+            "lightning": 0,
+            "sunlight": 0.46229144574159914,
+            "sunAngle": 2.3054829791482634,
+            "night": false,
+            "darkness": 0
+          },
+          "forced": null,
+          "savedPlan": [
+            {
+              "minute": 0,
+              "kind": "calm",
+              "bearing": 210
+            },
+            {
+              "minute": 843,
+              "kind": "calm",
+              "bearing": 220
+            },
+            {
+              "minute": 1053,
+              "kind": "calm",
+              "bearing": 230
+            }
+          ],
+          "wind": {
+            "x": -0.3644491000443464,
+            "y": 0.8185660809158996
+          },
+          "shaderWind": [
+            -0.3644491000443464,
+            0.8185660809158996
+          ],
+          "renderedRain": true,
+          "turbidity": 1.10070584,
+          "sunlight": 0.46229144574159914
+        }
+      },
+      {
+        "name": "portrait",
+        "input": "native browser touch",
+        "dry": {
+          "departureDay": 1,
+          "minute": 2334.1083333333318,
+          "weather": {
+            "kind": "calm",
+            "name": "Light Winds",
+            "wind": 2.4330000000000003,
+            "exposure": 0.58,
+            "bearing": 210,
+            "wave": 0.058288000000000006,
+            "visibility": 500,
+            "rain": 0,
+            "lightning": 0,
+            "sunlight": 0.877223758558648,
+            "sunAngle": 2.071544217556893,
+            "night": false,
+            "darkness": 0
+          },
+          "forced": null,
+          "savedPlan": [
+            {
+              "minute": 0,
+              "kind": "calm",
+              "bearing": 210
+            },
+            {
+              "minute": 843,
+              "kind": "calm",
+              "bearing": 220
+            },
+            {
+              "minute": 1053,
+              "kind": "calm",
+              "bearing": 230
+            }
+          ],
+          "wind": {
+            "x": -0.6373289849142277,
+            "y": 1.1038861830077407
+          },
+          "shaderWind": [
+            -0.6373289849142277,
+            1.1038861830077407
+          ],
+          "renderedRain": false,
+          "turbidity": 1.00320584,
+          "sunlight": 0.877223758558648
+        },
+        "wet": {
+          "departureDay": 1,
+          "minute": 2394.008333333333,
+          "weather": {
+            "kind": "rain",
+            "name": "Coastal rain",
+            "wind": 1.622,
+            "exposure": 0.58,
+            "bearing": 204,
+            "wave": 0.058288000000000006,
+            "visibility": 180,
+            "rain": 0.65,
+            "lightning": 0,
+            "sunlight": 0.4629657524647347,
+            "sunAngle": 2.3038669335445885,
+            "night": false,
+            "darkness": 0
+          },
+          "forced": null,
+          "savedPlan": [
+            {
+              "minute": 0,
+              "kind": "calm",
+              "bearing": 210
+            },
+            {
+              "minute": 843,
+              "kind": "calm",
+              "bearing": 220
+            },
+            {
+              "minute": 1053,
+              "kind": "calm",
+              "bearing": 230
+            }
+          ],
+          "wind": {
+            "x": -0.3461092011321188,
+            "y": 0.7773739935293504
+          },
+          "shaderWind": [
+            -0.3461092011321188,
+            0.7773739935293504
+          ],
+          "renderedRain": true,
+          "turbidity": 1.10070584,
+          "sunlight": 0.4629657524647347
+        },
+        "forecast": {
+          "minute": 2394.283333333329,
+          "savedPlan": [
+            {
+              "minute": 0,
+              "kind": "calm",
+              "bearing": 210
+            },
+            {
+              "minute": 843,
+              "kind": "calm",
+              "bearing": 220
+            },
+            {
+              "minute": 1053,
+              "kind": "calm",
+              "bearing": 230
+            }
+          ],
+          "rows": [
+            {
+              "day": "Today",
+              "outlook": "Morning: Light Winds~15:00: Coastal rain~18:30: Light Winds"
+            },
+            {
+              "day": "Day 3",
+              "outlook": "Morning: Light Winds~16:00: Coastal rain~19:30: Light Winds"
+            },
+            {
+              "day": "Day 4",
+              "outlook": "Morning: Light Winds~15:00: Coastal rain~18:30: Light Winds"
+            },
+            {
+              "day": "Day 5",
+              "outlook": "Morning: Light Winds~15:00: Coastal rain~18:30: Light Winds"
+            },
+            {
+              "day": "Day 6",
+              "outlook": "Morning: Light Winds~15:30: Light Winds~19:00: Light Winds"
+            },
+            {
+              "day": "Day 7",
+              "outlook": "Morning: Light Winds~16:30: Passing squall~18:00: Light Winds"
+            },
+            {
+              "day": "Day 8",
+              "outlook": "Morning: Light Winds~16:00: Light Winds~19:30: Light Winds"
+            }
+          ],
+          "pageWidth": 390,
+          "viewportWidth": 390,
+          "viewportHeight": 844,
+          "contentHeight": 503.5,
+          "backHeight": 44,
+          "actionHeight": 44,
+          "internalWidths": [
+            {
+              "selector": ".expedition-copy",
+              "available": 373,
+              "content": 373,
+              "scrollLeft": 0
+            },
+            {
+              "selector": ".forecast-detail",
+              "available": 368,
+              "content": 368,
+              "scrollLeft": 0
+            },
+            {
+              "selector": ".forecast-detail > section",
+              "available": 368,
+              "content": 368,
+              "scrollLeft": 0
+            },
+            {
+              "selector": ".forecast-detail > section",
+              "available": 368,
+              "content": 368,
+              "scrollLeft": 0
+            }
+          ]
+        },
+        "touchScroll": {
+          "swipes": 2,
+          "lastDay": "Day 8",
+          "visible": true,
+          "trace": [
+            {
+              "visible": false,
+              "lastDay": "Day 8",
+              "scrollTop": 0,
+              "maxScroll": 993,
+              "paneTop": 201.546875,
+              "paneBottom": 705.046875,
+              "lastTop": 1366.265625,
+              "lastBottom": 1431.515625,
+              "x": 209.9015625,
+              "from": 685.046875,
+              "to": 221.546875
+            },
+            {
+              "visible": false,
+              "lastDay": "Day 8",
+              "scrollTop": 561.25,
+              "maxScroll": 993,
+              "paneTop": 201.546875,
+              "paneBottom": 705.046875,
+              "lastTop": 917.265625,
+              "lastBottom": 982.515625,
+              "x": 209.9015625,
+              "from": 685.046875,
+              "to": 221.546875
+            },
+            {
+              "visible": true,
+              "lastDay": "Day 8",
+              "scrollTop": 992.5,
+              "maxScroll": 993,
+              "paneTop": 201.546875,
+              "paneBottom": 705.046875,
+              "lastTop": 572.265625,
+              "lastBottom": 637.515625,
+              "x": 209.9015625,
+              "from": 685.046875,
+              "to": 221.546875
+            }
+          ]
+        },
+        "save": {
+          "result": {
+            "ok": true
+          },
+          "storedMinute": 2394.283333333329,
+          "storedDay": 1,
+          "unchangedPlan": true
+        },
+        "restored": {
+          "departureDay": 1,
+          "minute": 2394.358333333328,
+          "weather": {
+            "kind": "rain",
+            "name": "Coastal rain",
+            "wind": 1.622,
+            "exposure": 0.58,
+            "bearing": 204,
+            "wave": 0.058288000000000006,
+            "visibility": 180,
+            "rain": 0.65,
+            "lightning": 0,
+            "sunlight": 0.4623994159951115,
+            "sunAngle": 2.3052244118516754,
+            "night": false,
+            "darkness": 0
+          },
+          "forced": null,
+          "savedPlan": [
+            {
+              "minute": 0,
+              "kind": "calm",
+              "bearing": 210
+            },
+            {
+              "minute": 843,
+              "kind": "calm",
+              "bearing": 220
+            },
+            {
+              "minute": 1053,
+              "kind": "calm",
+              "bearing": 230
+            }
+          ],
+          "wind": {
+            "x": -0.3644491000443464,
+            "y": 0.8185660809158996
+          },
+          "shaderWind": [
+            -0.3644491000443464,
+            0.8185660809158996
+          ],
+          "renderedRain": true,
+          "turbidity": 1.10070584,
+          "sunlight": 0.4623994159951115
+        }
+      },
+      {
+        "name": "landscape",
+        "input": "native browser touch",
+        "dry": {
+          "departureDay": 1,
+          "minute": 2334.074999999999,
+          "weather": {
+            "kind": "calm",
+            "name": "Light Winds",
+            "wind": 2.4330000000000003,
+            "exposure": 0.58,
+            "bearing": 210,
+            "wave": 0.058288000000000006,
+            "visibility": 500,
+            "rain": 0,
+            "lightning": 0,
+            "sunlight": 0.8772858179462736,
+            "sunAngle": 2.071414933908599,
+            "night": false,
+            "darkness": 0
+          },
+          "forced": null,
+          "savedPlan": [
+            {
+              "minute": 0,
+              "kind": "calm",
+              "bearing": 210
+            },
+            {
+              "minute": 843,
+              "kind": "calm",
+              "bearing": 220
+            },
+            {
+              "minute": 1053,
+              "kind": "calm",
+              "bearing": 230
+            }
+          ],
+          "wind": {
+            "x": -0.6338047174815613,
+            "y": 1.0977819727549023
+          },
+          "shaderWind": [
+            -0.6338047174815613,
+            1.0977819727549023
+          ],
+          "renderedRain": false,
+          "turbidity": 1.00320584,
+          "sunlight": 0.8772858179462736
+        },
+        "wet": {
+          "departureDay": 1,
+          "minute": 2394.0499999999993,
+          "weather": {
+            "kind": "rain",
+            "name": "Coastal rain",
+            "wind": 1.622,
+            "exposure": 0.58,
+            "bearing": 204,
+            "wave": 0.058288000000000006,
+            "visibility": 180,
+            "rain": 0.65,
+            "lightning": 0,
+            "sunlight": 0.46289837617210905,
+            "sunAngle": 2.304028538104956,
+            "night": false,
+            "darkness": 0
+          },
+          "forced": null,
+          "savedPlan": [
+            {
+              "minute": 0,
+              "kind": "calm",
+              "bearing": 210
+            },
+            {
+              "minute": 843,
+              "kind": "calm",
+              "bearing": 220
+            },
+            {
+              "minute": 1053,
+              "kind": "calm",
+              "bearing": 230
+            }
+          ],
+          "wind": {
+            "x": -0.34658405932668757,
+            "y": 0.7784405424967418
+          },
+          "shaderWind": [
+            -0.34658405932668757,
+            0.7784405424967418
+          ],
+          "renderedRain": true,
+          "turbidity": 1.10070584,
+          "sunlight": 0.46289837617210905
+        },
+        "forecast": {
+          "minute": 2394.2999999999956,
+          "savedPlan": [
+            {
+              "minute": 0,
+              "kind": "calm",
+              "bearing": 210
+            },
+            {
+              "minute": 843,
+              "kind": "calm",
+              "bearing": 220
+            },
+            {
+              "minute": 1053,
+              "kind": "calm",
+              "bearing": 230
+            }
+          ],
+          "rows": [
+            {
+              "day": "Today",
+              "outlook": "Morning: Light Winds~15:00: Coastal rain~18:30: Light Winds"
+            },
+            {
+              "day": "Day 3",
+              "outlook": "Morning: Light Winds~16:00: Coastal rain~19:30: Light Winds"
+            },
+            {
+              "day": "Day 4",
+              "outlook": "Morning: Light Winds~15:00: Coastal rain~18:30: Light Winds"
+            },
+            {
+              "day": "Day 5",
+              "outlook": "Morning: Light Winds~15:00: Coastal rain~18:30: Light Winds"
+            },
+            {
+              "day": "Day 6",
+              "outlook": "Morning: Light Winds~15:30: Light Winds~19:00: Light Winds"
+            },
+            {
+              "day": "Day 7",
+              "outlook": "Morning: Light Winds~16:30: Passing squall~18:00: Light Winds"
+            },
+            {
+              "day": "Day 8",
+              "outlook": "Morning: Light Winds~16:00: Light Winds~19:30: Light Winds"
+            }
+          ],
+          "pageWidth": 844,
+          "viewportWidth": 844,
+          "viewportHeight": 390,
+          "contentHeight": 187.65625,
+          "backHeight": 44,
+          "actionHeight": 44,
+          "internalWidths": [
+            {
+              "selector": ".expedition-copy",
+              "available": 958,
+              "content": 958,
+              "scrollLeft": 0
+            },
+            {
+              "selector": ".forecast-detail",
+              "available": 953,
+              "content": 953,
+              "scrollLeft": 0
+            },
+            {
+              "selector": ".forecast-detail > section",
+              "available": 470,
+              "content": 470,
+              "scrollLeft": 0
+            },
+            {
+              "selector": ".forecast-detail > section",
+              "available": 470,
+              "content": 470,
+              "scrollLeft": 0
+            }
+          ]
+        },
+        "touchScroll": {
+          "swipes": 3,
+          "lastDay": "Day 8",
+          "visible": true,
+          "trace": [
+            {
+              "visible": false,
+              "lastDay": "Day 8",
+              "scrollTop": 0,
+              "maxScroll": 475,
+              "paneTop": 93.765625,
+              "paneBottom": 281.421875,
+              "lastTop": 551.65625,
+              "lastBottom": 616.90625,
+              "x": 460.32187500000003,
+              "from": 261.421875,
+              "to": 113.765625
+            },
+            {
+              "visible": false,
+              "lastDay": "Day 8",
+              "scrollTop": 166.25,
+              "maxScroll": 475,
+              "paneTop": 93.765625,
+              "paneBottom": 281.421875,
+              "lastTop": 418.65625,
+              "lastBottom": 483.90625,
+              "x": 460.32187500000003,
+              "from": 261.421875,
+              "to": 113.765625
+            },
+            {
+              "visible": false,
+              "lastDay": "Day 8",
+              "scrollTop": 331.25,
+              "maxScroll": 475,
+              "paneTop": 93.765625,
+              "paneBottom": 281.421875,
+              "lastTop": 286.65625,
+              "lastBottom": 351.90625,
+              "x": 460.32187500000003,
+              "from": 261.421875,
+              "to": 113.765625
+            },
+            {
+              "visible": true,
+              "lastDay": "Day 8",
+              "scrollTop": 475,
+              "maxScroll": 475,
+              "paneTop": 93.765625,
+              "paneBottom": 281.421875,
+              "lastTop": 171.65625,
+              "lastBottom": 236.90625,
+              "x": 460.32187500000003,
+              "from": 261.421875,
+              "to": 113.765625
+            }
+          ]
+        },
+        "save": {
+          "result": {
+            "ok": true
+          },
+          "storedMinute": 2394.2999999999956,
+          "storedDay": 1,
+          "unchangedPlan": true
+        },
+        "restored": {
+          "departureDay": 1,
+          "minute": 2394.3749999999945,
+          "weather": {
+            "kind": "rain",
+            "name": "Coastal rain",
+            "wind": 1.622,
+            "exposure": 0.58,
+            "bearing": 204,
+            "wave": 0.058288000000000006,
+            "visibility": 180,
+            "rain": 0.65,
+            "lightning": 0,
+            "sunlight": 0.4623724263297009,
+            "sunAngle": 2.305289053675822,
+            "night": false,
+            "darkness": 0
+          },
+          "forced": null,
+          "savedPlan": [
+            {
+              "minute": 0,
+              "kind": "calm",
+              "bearing": 210
+            },
+            {
+              "minute": 843,
+              "kind": "calm",
+              "bearing": 220
+            },
+            {
+              "minute": 1053,
+              "kind": "calm",
+              "bearing": 230
+            }
+          ],
+          "wind": {
+            "x": -0.36368227839404926,
+            "y": 0.8168437712903064
+          },
+          "shaderWind": [
+            -0.36368227839404926,
+            0.8168437712903064
+          ],
+          "renderedRain": true,
+          "turbidity": 1.10070584,
+          "sunlight": 0.4623724263297009
+        }
+      }
+    ],
+    "errors": []
+  },
+  "tutorial_retry": {
+    "passed": true,
+    "startedAt": "2026-10-03T06:45:23.412Z",
+    "finishedAt": "2026-10-03T06:46:03.815Z",
+    "url": "http://127.0.0.1:5186/",
+    "scope": "Isolated measured start positions; actual keyboard helm/deployment; actual simulated search/catch. No physical controller or device acceptance.",
+    "records": [
+      {
+        "name": "old-approach-rejected",
+        "step": 4,
+        "markedCatch": false,
+        "catch": 0,
+        "lesson": "Frank \u00b7 5/10 \u00b7 Find the marked ground\n\nSteer to the green patch northwest of our starting position, then select Neutral. Neutral removes engine thrust; we still drift. The sounder measures water depth directly beneath the boat.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 89.34882415424269,
+          "y": 111.5171047182025
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ]
+      },
+      {
+        "name": "keyboard-approach-accepted",
+        "step": 5,
+        "markedCatch": false,
+        "catch": 0,
+        "lesson": "Frank \u00b7 6/10 \u00b7 Put a diver to work\n\nUse 1 to deploy Ada from the port rail here. Watch the diver enter and descend, then follow the bubbles while they collect a little catch.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 77.97795341446675,
+          "y": 94.56690732559579
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ]
+      },
+      {
+        "name": "real-marked-catch",
+        "step": 6,
+        "markedCatch": true,
+        "catch": 0,
+        "lesson": "Frank \u00b7 7/10 \u00b7 Bring them alongside\n\nRecall near the bubbles, or wait for the float. Bring it beside the green PORT rail \u2014 the left side when facing the bow (front). Select Neutral, match its drift, then use Deploy / board. Keep the stern (back) away from the diver.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 76.90262988620907,
+          "y": 93.10575657240841
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "harvesting",
+            "bag": 0.3333333333333333,
+            "reason": "",
+            "patch": "lesson-marked"
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ]
+      },
+      {
+        "name": "empty-search-recovery-guidance",
+        "step": 5,
+        "markedCatch": false,
+        "catch": 0,
+        "lesson": "Frank \u00b7 6/10 \u00b7 Bring the float alongside\n\nBring each float beside the green PORT rail \u2014 the left side facing the bow. Select Neutral and use 1 to bring the diver aboard. Then we can try the marked shelf again; stay near any bubbles still in the water.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 91.7273582356456,
+          "y": 121.50397755547912
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "surface",
+            "bag": 0,
+            "reason": "Search time limit reached"
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ]
+      },
+      {
+        "name": "explicit-skip-remains-available",
+        "step": 6,
+        "markedCatch": false,
+        "catch": 0,
+        "lesson": "Frank \u00b7 7/10 \u00b7 Bring them alongside\n\nRecall near the bubbles, or wait for the float. Bring it beside the green PORT rail \u2014 the left side when facing the bow (front). Select Neutral, match its drift, then use Deploy / board. Keep the stern (back) away from the diver.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 91.76174293009909,
+          "y": 121.61952149966046
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "surface",
+            "bag": 0,
+            "reason": "Search time limit reached"
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ]
+      },
+      {
+        "name": "phone-empty-search-guidance",
+        "step": 5,
+        "markedCatch": false,
+        "catch": 0,
+        "lesson": "Frank \u00b7 6/10 \u00b7 Bring the float alongside\n\nBring each float beside the green PORT rail \u2014 the left side facing the bow. Select Neutral and use Deploy / board to bring the diver aboard. Then we can try the marked shelf again; stay near any bubbles still in the water.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 91.70121887840173,
+          "y": 121.42874554831408
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "surface",
+            "bag": 0,
+            "reason": "Search time limit reached"
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ]
+      },
+      {
+        "name": "phone-frank-layout",
+        "rect": {
+          "x": 6,
+          "y": 90,
+          "width": 378,
+          "height": 136,
+          "top": 90,
+          "right": 384,
+          "bottom": 226,
+          "left": 6
+        },
+        "horizontalOverflow": false,
+        "contentHeight": 150,
+        "visibleHeight": 134,
+        "buttons": [
+          {
+            "text": "Chart & notes",
+            "disabled": false
+          },
+          {
+            "text": "Skip this step",
+            "disabled": false
+          },
+          {
+            "text": "Skip tutorial",
+            "disabled": false
+          }
+        ]
+      },
+      {
+        "name": "phone-native-touch-chart-resume-skip",
+        "passed": true
+      },
+      {
+        "name": "landscape-empty-search-guidance",
+        "step": 5,
+        "markedCatch": false,
+        "catch": 0,
+        "lesson": "Frank \u00b7 6/10 \u00b7 Bring the float alongside\n\nBring each float beside the green PORT rail \u2014 the left side facing the bow. Select Neutral and use Deploy / board to bring the diver aboard. Then we can try the marked shelf again; stay near any bubbles still in the water.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 91.70113109836727,
+          "y": 121.42732663594832
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "surface",
+            "bag": 0,
+            "reason": "Search time limit reached"
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ]
+      },
+      {
+        "name": "landscape-frank-layout",
+        "rect": {
+          "x": 10,
+          "y": 60,
+          "width": 300,
+          "height": 126,
+          "top": 60,
+          "right": 310,
+          "bottom": 186,
+          "left": 10
+        },
+        "horizontalOverflow": false,
+        "contentHeight": 134,
+        "visibleHeight": 124,
+        "buttons": [
+          {
+            "text": "Chart & notes",
+            "disabled": false
+          },
+          {
+            "text": "Skip this step",
+            "disabled": false
+          },
+          {
+            "text": "Skip tutorial",
+            "disabled": false
+          }
+        ]
+      },
+      {
+        "name": "landscape-native-touch-chart-resume-skip",
+        "passed": true
+      }
+    ],
+    "errors": []
+  },
+  "performance": {
+    "device": {
+      "renderer": "ANGLE (AMD, Vulkan 1.4.330 (AMD Custom GPU 0405 (RADV VANGOGH) (0x0000163F)), radv)",
+      "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "pixelRatio": 1,
+      "framebuffer": [
+        1280,
+        800
+      ],
+      "screen": null,
+      "started": true
+    },
+    "results": [
+      {
+        "label": "native",
+        "elapsed": 4005.2999999970198,
+        "renderFrames": 241,
+        "rafFrames": 241,
+        "fps": 60.17027438648274,
+        "fields": {
+          "frameMs": {
+            "mean": 16.66597510373444,
+            "p95": 16.700000000000728
+          },
+          "inputMs": {
+            "mean": 0.7821576758229881,
+            "p95": 1
+          },
+          "simulationMs": {
+            "mean": 0.39087136949246354,
+            "p95": 0.6000000014901161
+          },
+          "drawMs": {
+            "mean": 6.631535269629164,
+            "p95": 17.69999999552965
+          },
+          "hudMs": {
+            "mean": 0.4302904564439014,
+            "p95": 3.2999999970197678
+          },
+          "totalCpuMs": {
+            "mean": 8.302489626086105,
+            "p95": 21.80000000447035
+          }
+        },
+        "render": {
+          "frame": 327,
+          "calls": 99,
+          "triangles": 360622,
+          "points": 0,
+          "lines": 96
+        }
+      }
+    ],
+    "errors": []
+  },
+  "export_validation": {
+    "zip_crc": true,
+    "all_build_bytes_match": true,
+    "archive_checks": "scripts/package-temp.py verified both ZIP CRCs and every packaged production file",
+    "local_server_port": 5198,
+    "production_identity_check": true,
+    "production_html_bytes_match": true,
+    "production_entry_module_bytes_match": true,
+    "entry": "./assets/index-CHG5lalE.js",
+    "entry_sha256": "55cc72c53c2c416d29181b11186a61c0e6730759b4de98d3bbf660d7a35bd1ec"
+  },
+  "exports": [
+    {
+      "path": "exports/2026-10-02-continuous-voyage/Urchin Skipper 3D TEMP.zip",
+      "bytes": 104442664,
+      "sha256": "43bfbb8f66a13bc9cc5af0b9f34e3dcd0b2e056736ac69bc873afa794085176d"
+    },
+    {
+      "path": "exports/2026-10-02-continuous-voyage/UrchinSkipper3D-TEMP-ITCHIO.zip",
+      "bytes": 104414164,
+      "sha256": "62abd9297434bfbb348357768af06bbd747fd6fc452df91d33afff05a9b3c5d2"
+    }
+  ],
+  "build_files": [
+    {
+      "path": "dist/assets/geography-DRCAA4xL.js",
+      "bytes": 8817073,
+      "sha256": "11d61e00a1b80b0ed5b9dc2f4e304adee5df52dff4fd9c5a704bd204c2953842"
+    },
+    {
+      "path": "dist/assets/index-2VKsTgU1.css",
+      "bytes": 170895,
+      "sha256": "845d670f3a86dddb590c8ed2ddecdeb3b492a7ba145c7a64ae46e358becae51a"
+    },
+    {
+      "path": "dist/assets/index-CHG5lalE.js",
+      "bytes": 948972,
+      "sha256": "55cc72c53c2c416d29181b11186a61c0e6730759b4de98d3bbf660d7a35bd1ec"
+    },
+    {
+      "path": "dist/assets/save.worker-CeKzy45w.js",
+      "bytes": 333,
+      "sha256": "dd8c2f74598cec68dcadb7b256f796d3f1601bb8168953693ebf462e6e87b0ff"
+    },
+    {
+      "path": "dist/assets/simulationSupport-BTGbtjln.js",
+      "bytes": 1387441,
+      "sha256": "a9aaf981bfd2da2a4381c5bb73dd5064897ef0781500f2e2a7cfc72f0fe7c4f0"
+    },
+    {
+      "path": "dist/assets/three-CFpc-5E9.js",
+      "bytes": 521453,
+      "sha256": "8e38bd19e01b911dfc8e9742a80f6792dcd6ebbd36f8ed7320937488c630f5e8"
+    },
+    {
+      "path": "dist/index.html",
+      "bytes": 2621,
+      "sha256": "4921da7487a178e9cf41baa82bcddf1c7307dd0df90acaaef2c7012dfe8114eb"
+    }
+  ],
+  "reviews": [
+    "docs/review/continuous-voyage-tutorial-2026-10-02.md",
+    "docs/review/continuous-rivals-2026-10-02.md",
+    "docs/review/independent-continuous-voyage-2026-10-02.md"
+  ],
+  "manual_acceptance_remaining": [
+    "Physical Xbox/Steam Deck controls",
+    "Physical phone/tablet performance and Safari",
+    "Actual itch.io upload",
+    "Long-career fishing and upgrade balance",
+    "Broader unaided new-player tutorial acceptance"
+  ],
+  "known_limits": [
+    "Geography chunk remains about3.88 MB gzip.",
+    "Complete synchronous catch-up of very stale long-voyage saves may visibly pause.",
+    "Landscape still requires scrolling, and portrait outlook precedes the seven-day table.",
+    "Established stylized wind/vegetation and wide-zoom scale limitations remain.",
+    "Clock-staged weather and measured tutorial-start fixtures do not establish an entire unaided multi-night playthrough."
+  ],
+  "runner_audit": {
+    "matrix_child_suites_passed": 8,
+    "matrix_launcher_exit_code": 143,
+    "note": "The complete eight-suite receipt was written with every child exit code0 before a later tool poll reported launcher termination143. The signal source was not established; this is not represented as a clean initial launcher exit.",
+    "clean_shutdown_recheck": {
+      "started": "2026-10-03T06:51:15.224Z",
+      "ended": "2026-10-03T06:51:25.989Z",
+      "passed": true,
+      "results": [
+        {
+          "label": "performance",
+          "code": 0,
+          "seconds": 9
+        }
+      ]
+    },
+    "recheck_launcher_exit_code": 0,
+    "performance_record": "The included performance sample is the isolated clean-shutdown recheck; the original matrix sample was59.9985FPS."
+  }
+}
