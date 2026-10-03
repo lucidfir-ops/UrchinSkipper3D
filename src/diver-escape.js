@@ -2,6 +2,7 @@ import { boatSpec } from './boats.js';
 import { recoveryStatus } from './diver-recovery.js';
 import { clearWater, waterRoute } from './water-route.js';
 import { depthAt } from './terrain.js';
+import { pickupTolerance } from './assists.js';
 
 const searches = new WeakMap();
 export function pickupWater(w, point, spec = boatSpec(w)) {
@@ -10,11 +11,18 @@ export function pickupWater(w, point, spec = boatSpec(w)) {
     radius: Math.hypot(spec.length, spec.width) / 2 + 1,
   });
 }
-export function swimToPickupWater(w, d, dt) {
+export function swimToPickupWater(
+  w,
+  d,
+  dt,
+  tolerance = pickupTolerance(w, w.career?.difficulty === 'realistic'),
+) {
+  // The simulation supplies its actual action range, including night/assist limits.
+  // A wider default here can strand a diver just outside the real pickup area.
   if (
     d.condition !== 'fit' ||
     d.hooking ||
-    recoveryStatus(w, undefined, d).available ||
+    recoveryStatus(w, tolerance, d).available ||
     pickupWater(w, d)
   ) {
     searches.delete(d);

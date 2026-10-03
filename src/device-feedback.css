@@ -409,6 +409,11 @@ body #playtest[data-screen='conditions'] .forecast-detail {
 body #playtest[data-screen='conditions'] .forecast-detail > section {
   min-width: 0;
 }
+@media (min-width: 701px) {
+  body #playtest[data-screen='conditions'] .forecast-today {
+    order: -1;
+  }
+}
 @media (max-width: 700px) {
   body #playtest[data-screen='conditions'] .forecast-detail {
     grid-template-columns: minmax(0, 1fr);

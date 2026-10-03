@@ -8,6 +8,8 @@ const env = {
 };
 const results = [],
   started = new Date().toISOString();
+const probeTimeoutMs = 750,
+  startupTimeoutMs = 10000;
 let server;
 async function run(label, command, args) {
   console.log(`\nVERIFY · ${label}`);
@@ -20,18 +22,29 @@ async function run(label, command, args) {
   results.push({ label, code, seconds: Math.round((Date.now() - begin) / 1000) });
   if (code !== 0) throw new Error(`${label} failed (${code})`);
 }
-async function ready() {
+async function ready(timeoutMs = probeTimeoutMs) {
+  let response;
   try {
-    const response = await fetch(env.URCHIN_TEST_URL);
+    // A listener can accept a connection without ever sending headers. Bound
+    // each probe separately, including the preflight port-occupancy check.
+    response = await fetch(env.URCHIN_TEST_URL, {
+      method: 'HEAD',
+      signal: AbortSignal.timeout(Math.max(1, Math.ceil(timeoutMs))),
+    });
     return (
       response.headers.get('x-urchin-build') === 'production' &&
       response.headers.get('x-urchin-edition') === 'three'
     );
   } catch {
     return false;
+  } finally {
+    // HEAD normally has no body. Release one explicitly if a fetch adapter or
+    // unusual server supplies it; readiness never needs to consume page bytes.
+    if (response?.body) await response.body.cancel().catch(() => {});
   }
 }
 const suites = {
+  'shoal-recovery': ['scripts/shoal-recovery-review.js'],
   'tutorial-retry': ['scripts/tutorial-retry-review.js'],
   'continuous-weather': ['scripts/continuous-weather-review.js'],
   'ocean-edge': ['scripts/ocean-edge-review.js'],
@@ -78,9 +91,22 @@ try {
       stdio: 'inherit',
       env: { ...env, URCHIN_PORT: '5186' },
     });
-    for (let i = 0; i < 100 && !(await ready()); i++)
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    if (!(await ready())) throw new Error('Production server not ready');
+    let serverError;
+    server.once('error', (error) => (serverError = error));
+    const deadline = performance.now() + startupTimeoutMs;
+    for (;;) {
+      if (serverError) throw new Error('Production server failed to start: ' + serverError.message);
+      if (server.exitCode !== null || server.signalCode)
+        throw new Error(
+          `Production server exited before readiness (${server.signalCode || server.exitCode}); check verification port 5186.`,
+        );
+      const remaining = deadline - performance.now();
+      if (remaining <= 0)
+        throw new Error(`Production server not ready within ${startupTimeoutMs / 1000} seconds.`);
+      if (await ready(Math.min(probeTimeoutMs, remaining))) break;
+      const delay = Math.min(100, deadline - performance.now());
+      if (delay > 0) await new Promise((resolve) => setTimeout(resolve, delay));
+    }
     const selected = process.argv
       .find((a) => a.startsWith('--suite='))
       ?.slice(8)

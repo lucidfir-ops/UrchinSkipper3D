@@ -1,0 +1,1448 @@
+{
+  "date": "2026-10-03",
+  "edition": "Urchin Skipper 3D",
+  "unit_tests": {
+    "total": 597,
+    "pass": 596,
+    "fail": 0,
+    "skip": 1,
+    "command": "npm test, via npm run verify",
+    "skip_reason": "Optional private career save is not included in Git.",
+    "execution": "Outside restricted sandbox; named cases confirmed."
+  },
+  "checks": {
+    "lint": true,
+    "format": true,
+    "build": true,
+    "diff_check": true
+  },
+  "production": {
+    "started": "2026-10-03T07:19:21.000Z",
+    "ended": "2026-10-03T07:23:34.044Z",
+    "passed": true,
+    "results": [
+      {
+        "label": "lint",
+        "code": 0,
+        "seconds": 6
+      },
+      {
+        "label": "format",
+        "code": 0,
+        "seconds": 6
+      },
+      {
+        "label": "unit regressions",
+        "code": 0,
+        "seconds": 38
+      },
+      {
+        "label": "production build",
+        "code": 0,
+        "seconds": 7
+      },
+      {
+        "label": "shoal-recovery",
+        "code": 0,
+        "seconds": 31
+      },
+      {
+        "label": "tutorial-retry",
+        "code": 0,
+        "seconds": 58
+      },
+      {
+        "label": "continuous-weather",
+        "code": 0,
+        "seconds": 31
+      },
+      {
+        "label": "operations",
+        "code": 0,
+        "seconds": 22
+      },
+      {
+        "label": "traffic-fleet",
+        "code": 0,
+        "seconds": 6
+      },
+      {
+        "label": "input",
+        "code": 0,
+        "seconds": 18
+      },
+      {
+        "label": "weather",
+        "code": 0,
+        "seconds": 5
+      },
+      {
+        "label": "voyage",
+        "code": 0,
+        "seconds": 16
+      },
+      {
+        "label": "performance",
+        "code": 0,
+        "seconds": 8
+      }
+    ]
+  },
+  "launcher_exit_code": 0,
+  "forecast": {
+    "startedAt": "2026-10-03T07:21:48.919Z",
+    "completedAt": "2026-10-03T07:22:19.037Z",
+    "fixture": "Natural seed 17; day-1 departure; clock staged into day-2 rain",
+    "records": [
+      {
+        "name": "desktop",
+        "input": "keyboard",
+        "forecast": {
+          "minute": 2394.3833333333278,
+          "savedPlan": [
+            {
+              "minute": 0,
+              "kind": "calm",
+              "bearing": 210
+            },
+            {
+              "minute": 843,
+              "kind": "calm",
+              "bearing": 220
+            },
+            {
+              "minute": 1053,
+              "kind": "calm",
+              "bearing": 230
+            }
+          ],
+          "footer": "Scroll for more\nEnter / Numpad Enter Select \u00b7 Backspace / B Back",
+          "detail": "Seven-day outlook \u00b7 Sheltered Kelp\nDay\tOutlook\tWind\tConfidence\nToday\tMorning: Light Winds\n~15:00: Coastal rain\n~18:30: Light Winds\t2\u20132 kn\t60%\nDay 3\tMorning: Light Winds\n~16:00: Coastal rain\n~19:30: Light Winds\t2\u20132 kn\t54%\nDay 4\tMorning: Light Winds\n~15:00: Coastal rain\n~18:30: Light Winds\t2\u20132 kn\t48%\nDay 5\tMorning: Light Winds\n~15:00: Coastal rain\n~18:30: Light Winds\t2\u20132 kn\t42%\nDay 6\tMorning: Light Winds\n~15:30: Light Winds\n~19:00: Light Winds\t2\u20132 kn\t36%\nDay 7\tMorning: Light Winds\n~16:30: Passing squall\n~18:00: Light Winds\t2\u20136 kn\t30%\nDay 8\tMorning: Light Winds\n~16:00: Light Winds\n~19:30: Light Winds\t2\u20132 kn\t25%\n\nFurther days are less certain. Improved forecasts increase confidence; check again before sailing. Synthetic game weather.\n\nSheltered Kelp outlook \u00b7 60% confidence\n\nMorning \u00b7 Light Winds \u00b7 ~2 kn wind\nVisibility variable\n\nAround 15:00 \u00b7 Coastal rain \u00b7 ~2 kn wind\nVisibility variable\n\nAround 18:30 \u00b7 Light Winds \u00b7 ~2 kn wind\nVisibility variable\n\nSheltered Kelp: 2 kn wind / 0.1 m sea\nSouth Reef: 2 kn wind / 0.1 m sea\nOuter Ledge: 2 kn wind / 0.2 m sea\nStormbreak Channel: 3 kn wind / 0.4 m sea\nGale Sound: 3 kn wind / 0.4 m sea\nBroken Cape: 3 kn wind / 0.4 m sea\nBlackwater Reach: 3 kn wind / 0.6 m sea\nWreck Teeth: 3 kn wind / 0.6 m sea\nLast Light Bank: 3 kn wind / 0.6 m sea\nKnifepoint Race: 4 kn wind / 0.8 m sea\nBoulder Garden: 4 kn wind / 0.8 m sea\nNeedle Sluice: 4 kn wind / 0.8 m sea\nSeventy Foot Shelf: 5 kn wind / 1.0 m sea\nDevil\u2019s Elbow: 5 kn wind / 1.0 m sea\nThe Locked Vault: 5 kn wind / 1.0 m sea\n\nFrank: \u201cHome Coast gets weak storms. Later coasts have worse conditions; check the forecast before you fish. The fifth coast can get vicious.\u201d Wind and tide are separate. Exposed water builds more sea. The timing is an estimate; watch for changes.\n\nDarkness limits sight and unlit pickup range. Work lights, radar and a known route give you more choices.",
+          "todayVisible": true,
+          "rows": [
+            {
+              "day": "Today",
+              "outlook": "Morning: Light Winds~15:00: Coastal rain~18:30: Light Winds"
+            },
+            {
+              "day": "Day 3",
+              "outlook": "Morning: Light Winds~16:00: Coastal rain~19:30: Light Winds"
+            },
+            {
+              "day": "Day 4",
+              "outlook": "Morning: Light Winds~15:00: Coastal rain~18:30: Light Winds"
+            },
+            {
+              "day": "Day 5",
+              "outlook": "Morning: Light Winds~15:00: Coastal rain~18:30: Light Winds"
+            },
+            {
+              "day": "Day 6",
+              "outlook": "Morning: Light Winds~15:30: Light Winds~19:00: Light Winds"
+            },
+            {
+              "day": "Day 7",
+              "outlook": "Morning: Light Winds~16:30: Passing squall~18:00: Light Winds"
+            },
+            {
+              "day": "Day 8",
+              "outlook": "Morning: Light Winds~16:00: Light Winds~19:30: Light Winds"
+            }
+          ],
+          "pageWidth": 1280,
+          "viewportWidth": 1280,
+          "viewportHeight": 800,
+          "contentHeight": 418.09375,
+          "backHeight": 40,
+          "actionHeight": 39.4375,
+          "internalWidths": [
+            {
+              "selector": ".expedition-copy",
+              "available": 1074,
+              "content": 1074,
+              "scrollLeft": 0
+            },
+            {
+              "selector": ".forecast-detail",
+              "available": 1069,
+              "content": 1069,
+              "scrollLeft": 0
+            },
+            {
+              "selector": ".forecast-detail > section",
+              "available": 527,
+              "content": 527,
+              "scrollLeft": 0
+            },
+            {
+              "selector": ".forecast-detail > section",
+              "available": 527,
+              "content": 527,
+              "scrollLeft": 0
+            }
+          ]
+        },
+        "touchScroll": null,
+        "controllerScroll": {
+          "top": 99,
+          "footer": "Right stick scrolls forecast\nA Select \u00b7 B Back",
+          "minute": 2394.3833333333278
+        },
+        "save": {
+          "result": {
+            "ok": true
+          },
+          "storedMinute": 2394.3833333333278,
+          "storedDay": 1,
+          "unchangedPlan": true
+        }
+      },
+      {
+        "name": "portrait",
+        "input": "native browser touch",
+        "forecast": {
+          "minute": 2394.283333333329,
+          "savedPlan": [
+            {
+              "minute": 0,
+              "kind": "calm",
+              "bearing": 210
+            },
+            {
+              "minute": 843,
+              "kind": "calm",
+              "bearing": 220
+            },
+            {
+              "minute": 1053,
+              "kind": "calm",
+              "bearing": 230
+            }
+          ],
+          "footer": "Career saved\nTap to choose \u00b7 Swipe to scroll",
+          "detail": "Seven-day outlook \u00b7 Sheltered Kelp\nDay\tOutlook\tWind\tConfidence\nToday\tMorning: Light Winds\n~15:00: Coastal rain\n~18:30: Light Winds\t2\u20132 kn\t60%\nDay 3\tMorning: Light Winds\n~16:00: Coastal rain\n~19:30: Light Winds\t2\u20132 kn\t54%\nDay 4\tMorning: Light Winds\n~15:00: Coastal rain\n~18:30: Light Winds\t2\u20132 kn\t48%\nDay 5\tMorning: Light Winds\n~15:00: Coastal rain\n~18:30: Light Winds\t2\u20132 kn\t42%\nDay 6\tMorning: Light Winds\n~15:30: Light Winds\n~19:00: Light Winds\t2\u20132 kn\t36%\nDay 7\tMorning: Light Winds\n~16:30: Passing squall\n~18:00: Light Winds\t2\u20136 kn\t30%\nDay 8\tMorning: Light Winds\n~16:00: Light Winds\n~19:30: Light Winds\t2\u20132 kn\t25%\n\nFurther days are less certain. Improved forecasts increase confidence; check again before sailing. Synthetic game weather.\n\nSheltered Kelp outlook \u00b7 60% confidence\n\nMorning \u00b7 Light Winds \u00b7 ~2 kn wind\nVisibility variable\n\nAround 15:00 \u00b7 Coastal rain \u00b7 ~2 kn wind\nVisibility variable\n\nAround 18:30 \u00b7 Light Winds \u00b7 ~2 kn wind\nVisibility variable\n\nSheltered Kelp: 2 kn wind / 0.1 m sea\nSouth Reef: 2 kn wind / 0.1 m sea\nOuter Ledge: 2 kn wind / 0.2 m sea\nStormbreak Channel: 3 kn wind / 0.4 m sea\nGale Sound: 3 kn wind / 0.4 m sea\nBroken Cape: 3 kn wind / 0.4 m sea\nBlackwater Reach: 3 kn wind / 0.6 m sea\nWreck Teeth: 3 kn wind / 0.6 m sea\nLast Light Bank: 3 kn wind / 0.6 m sea\nKnifepoint Race: 4 kn wind / 0.8 m sea\nBoulder Garden: 4 kn wind / 0.8 m sea\nNeedle Sluice: 4 kn wind / 0.8 m sea\nSeventy Foot Shelf: 5 kn wind / 1.0 m sea\nDevil\u2019s Elbow: 5 kn wind / 1.0 m sea\nThe Locked Vault: 5 kn wind / 1.0 m sea\n\nFrank: \u201cHome Coast gets weak storms. Later coasts have worse conditions; check the forecast before you fish. The fifth coast can get vicious.\u201d Wind and tide are separate. Exposed water builds more sea. The timing is an estimate; watch for changes.\n\nDarkness limits sight and unlit pickup range. Work lights, radar and a known route give you more choices.",
+          "todayVisible": true,
+          "rows": [
+            {
+              "day": "Today",
+              "outlook": "Morning: Light Winds~15:00: Coastal rain~18:30: Light Winds"
+            },
+            {
+              "day": "Day 3",
+              "outlook": "Morning: Light Winds~16:00: Coastal rain~19:30: Light Winds"
+            },
+            {
+              "day": "Day 4",
+              "outlook": "Morning: Light Winds~15:00: Coastal rain~18:30: Light Winds"
+            },
+            {
+              "day": "Day 5",
+              "outlook": "Morning: Light Winds~15:00: Coastal rain~18:30: Light Winds"
+            },
+            {
+              "day": "Day 6",
+              "outlook": "Morning: Light Winds~15:30: Light Winds~19:00: Light Winds"
+            },
+            {
+              "day": "Day 7",
+              "outlook": "Morning: Light Winds~16:30: Passing squall~18:00: Light Winds"
+            },
+            {
+              "day": "Day 8",
+              "outlook": "Morning: Light Winds~16:00: Light Winds~19:30: Light Winds"
+            }
+          ],
+          "pageWidth": 390,
+          "viewportWidth": 390,
+          "viewportHeight": 844,
+          "contentHeight": 501.90625,
+          "backHeight": 44,
+          "actionHeight": 44,
+          "internalWidths": [
+            {
+              "selector": ".expedition-copy",
+              "available": 373,
+              "content": 373,
+              "scrollLeft": 0
+            },
+            {
+              "selector": ".forecast-detail",
+              "available": 368,
+              "content": 368,
+              "scrollLeft": 0
+            },
+            {
+              "selector": ".forecast-detail > section",
+              "available": 368,
+              "content": 368,
+              "scrollLeft": 0
+            },
+            {
+              "selector": ".forecast-detail > section",
+              "available": 368,
+              "content": 368,
+              "scrollLeft": 0
+            }
+          ]
+        },
+        "touchScroll": {
+          "swipes": 1,
+          "lastDay": "Day 8",
+          "visible": true,
+          "trace": [
+            {
+              "visible": false,
+              "lastDay": "Day 8",
+              "scrollTop": 0,
+              "maxScroll": 926,
+              "paneTop": 201.546875,
+              "paneBottom": 703.453125,
+              "lastTop": 689.796875,
+              "lastBottom": 755.046875,
+              "x": 209.9015625,
+              "from": 683.453125,
+              "to": 221.546875
+            },
+            {
+              "visible": true,
+              "lastDay": "Day 8",
+              "scrollTop": 558.75,
+              "maxScroll": 926,
+              "paneTop": 201.546875,
+              "paneBottom": 703.453125,
+              "lastTop": 242.796875,
+              "lastBottom": 308.046875,
+              "x": 209.9015625,
+              "from": 683.453125,
+              "to": 221.546875
+            }
+          ]
+        },
+        "controllerScroll": null,
+        "save": {
+          "result": {
+            "ok": true
+          },
+          "storedMinute": 2394.283333333329,
+          "storedDay": 1,
+          "unchangedPlan": true
+        }
+      },
+      {
+        "name": "landscape",
+        "input": "native browser touch",
+        "forecast": {
+          "minute": 2394.2499999999964,
+          "savedPlan": [
+            {
+              "minute": 0,
+              "kind": "calm",
+              "bearing": 210
+            },
+            {
+              "minute": 843,
+              "kind": "calm",
+              "bearing": 220
+            },
+            {
+              "minute": 1053,
+              "kind": "calm",
+              "bearing": 230
+            }
+          ],
+          "footer": "Career saved\nTap to choose \u00b7 Swipe to scroll",
+          "detail": "Seven-day outlook \u00b7 Sheltered Kelp\nDay\tOutlook\tWind\tConfidence\nToday\tMorning: Light Winds\n~15:00: Coastal rain\n~18:30: Light Winds\t2\u20132 kn\t60%\nDay 3\tMorning: Light Winds\n~16:00: Coastal rain\n~19:30: Light Winds\t2\u20132 kn\t54%\nDay 4\tMorning: Light Winds\n~15:00: Coastal rain\n~18:30: Light Winds\t2\u20132 kn\t48%\nDay 5\tMorning: Light Winds\n~15:00: Coastal rain\n~18:30: Light Winds\t2\u20132 kn\t42%\nDay 6\tMorning: Light Winds\n~15:30: Light Winds\n~19:00: Light Winds\t2\u20132 kn\t36%\nDay 7\tMorning: Light Winds\n~16:30: Passing squall\n~18:00: Light Winds\t2\u20136 kn\t30%\nDay 8\tMorning: Light Winds\n~16:00: Light Winds\n~19:30: Light Winds\t2\u20132 kn\t25%\n\nFurther days are less certain. Improved forecasts increase confidence; check again before sailing. Synthetic game weather.\n\nSheltered Kelp outlook \u00b7 60% confidence\n\nMorning \u00b7 Light Winds \u00b7 ~2 kn wind\nVisibility variable\n\nAround 15:00 \u00b7 Coastal rain \u00b7 ~2 kn wind\nVisibility variable\n\nAround 18:30 \u00b7 Light Winds \u00b7 ~2 kn wind\nVisibility variable\n\nSheltered Kelp: 2 kn wind / 0.1 m sea\nSouth Reef: 2 kn wind / 0.1 m sea\nOuter Ledge: 2 kn wind / 0.2 m sea\nStormbreak Channel: 3 kn wind / 0.4 m sea\nGale Sound: 3 kn wind / 0.4 m sea\nBroken Cape: 3 kn wind / 0.4 m sea\nBlackwater Reach: 3 kn wind / 0.6 m sea\nWreck Teeth: 3 kn wind / 0.6 m sea\nLast Light Bank: 3 kn wind / 0.6 m sea\nKnifepoint Race: 4 kn wind / 0.8 m sea\nBoulder Garden: 4 kn wind / 0.8 m sea\nNeedle Sluice: 4 kn wind / 0.8 m sea\nSeventy Foot Shelf: 5 kn wind / 1.0 m sea\nDevil\u2019s Elbow: 5 kn wind / 1.0 m sea\nThe Locked Vault: 5 kn wind / 1.0 m sea\n\nFrank: \u201cHome Coast gets weak storms. Later coasts have worse conditions; check the forecast before you fish. The fifth coast can get vicious.\u201d Wind and tide are separate. Exposed water builds more sea. The timing is an estimate; watch for changes.\n\nDarkness limits sight and unlit pickup range. Work lights, radar and a known route give you more choices.",
+          "todayVisible": true,
+          "rows": [
+            {
+              "day": "Today",
+              "outlook": "Morning: Light Winds~15:00: Coastal rain~18:30: Light Winds"
+            },
+            {
+              "day": "Day 3",
+              "outlook": "Morning: Light Winds~16:00: Coastal rain~19:30: Light Winds"
+            },
+            {
+              "day": "Day 4",
+              "outlook": "Morning: Light Winds~15:00: Coastal rain~18:30: Light Winds"
+            },
+            {
+              "day": "Day 5",
+              "outlook": "Morning: Light Winds~15:00: Coastal rain~18:30: Light Winds"
+            },
+            {
+              "day": "Day 6",
+              "outlook": "Morning: Light Winds~15:30: Light Winds~19:00: Light Winds"
+            },
+            {
+              "day": "Day 7",
+              "outlook": "Morning: Light Winds~16:30: Passing squall~18:00: Light Winds"
+            },
+            {
+              "day": "Day 8",
+              "outlook": "Morning: Light Winds~16:00: Light Winds~19:30: Light Winds"
+            }
+          ],
+          "pageWidth": 844,
+          "viewportWidth": 844,
+          "viewportHeight": 390,
+          "contentHeight": 187.65625,
+          "backHeight": 44,
+          "actionHeight": 44,
+          "internalWidths": [
+            {
+              "selector": ".expedition-copy",
+              "available": 958,
+              "content": 958,
+              "scrollLeft": 0
+            },
+            {
+              "selector": ".forecast-detail",
+              "available": 953,
+              "content": 953,
+              "scrollLeft": 0
+            },
+            {
+              "selector": ".forecast-detail > section",
+              "available": 470,
+              "content": 470,
+              "scrollLeft": 0
+            },
+            {
+              "selector": ".forecast-detail > section",
+              "available": 470,
+              "content": 470,
+              "scrollLeft": 0
+            }
+          ]
+        },
+        "touchScroll": {
+          "swipes": 3,
+          "lastDay": "Day 8",
+          "visible": true,
+          "trace": [
+            {
+              "visible": false,
+              "lastDay": "Day 8",
+              "scrollTop": 0,
+              "maxScroll": 475,
+              "paneTop": 93.765625,
+              "paneBottom": 281.421875,
+              "lastTop": 551.65625,
+              "lastBottom": 616.90625,
+              "x": 460.32187500000003,
+              "from": 261.421875,
+              "to": 113.765625
+            },
+            {
+              "visible": false,
+              "lastDay": "Day 8",
+              "scrollTop": 166.25,
+              "maxScroll": 475,
+              "paneTop": 93.765625,
+              "paneBottom": 281.421875,
+              "lastTop": 418.65625,
+              "lastBottom": 483.90625,
+              "x": 460.32187500000003,
+              "from": 261.421875,
+              "to": 113.765625
+            },
+            {
+              "visible": false,
+              "lastDay": "Day 8",
+              "scrollTop": 331.25,
+              "maxScroll": 475,
+              "paneTop": 93.765625,
+              "paneBottom": 281.421875,
+              "lastTop": 286.65625,
+              "lastBottom": 351.90625,
+              "x": 460.32187500000003,
+              "from": 261.421875,
+              "to": 113.765625
+            },
+            {
+              "visible": true,
+              "lastDay": "Day 8",
+              "scrollTop": 475,
+              "maxScroll": 475,
+              "paneTop": 93.765625,
+              "paneBottom": 281.421875,
+              "lastTop": 171.65625,
+              "lastBottom": 236.90625,
+              "x": 460.32187500000003,
+              "from": 261.421875,
+              "to": 113.765625
+            }
+          ]
+        },
+        "controllerScroll": null,
+        "save": {
+          "result": {
+            "ok": true
+          },
+          "storedMinute": 2394.2499999999964,
+          "storedDay": 1,
+          "unchangedPlan": true
+        }
+      }
+    ],
+    "errors": []
+  },
+  "tutorial": {
+    "passed": true,
+    "startedAt": "2026-10-03T07:20:50.840Z",
+    "finishedAt": "2026-10-03T07:21:47.908Z",
+    "url": "http://127.0.0.1:5186/",
+    "scope": "Isolated measured start positions; actual keyboard helm/deployment; actual simulated search/catch. No physical controller or device acceptance.",
+    "records": [
+      {
+        "name": "old-approach-rejected",
+        "step": 4,
+        "markedCatch": false,
+        "catch": 0,
+        "lesson": "Frank \u00b7 5/10 \u00b7 Find the marked ground\n\nSteer to the green patch northwest of our starting position, then select Neutral. Neutral removes engine thrust; we still drift. The sounder measures water depth directly beneath the boat.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 89.34882415424269,
+          "y": 111.5171047182025
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ]
+      },
+      {
+        "name": "keyboard-approach-accepted",
+        "step": 5,
+        "markedCatch": false,
+        "catch": 0,
+        "lesson": "Frank \u00b7 6/10 \u00b7 Put a diver to work\n\nUse 1 to deploy Ada from the port rail here. Watch the diver enter and descend, then follow the bubbles while they collect a little catch.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 77.90280561721691,
+          "y": 94.58465424321783
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ]
+      },
+      {
+        "name": "real-marked-catch",
+        "step": 6,
+        "markedCatch": true,
+        "catch": 0,
+        "lesson": "Frank \u00b7 7/10 \u00b7 Bring them alongside\n\nFollow the bubbles. Use 3 near them, or wait for a float. 1 would deploy Milo now.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 76.8784435335144,
+          "y": 93.26702210670472
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "harvesting",
+            "bag": 0.3333333333333333,
+            "reason": "",
+            "patch": "lesson-marked"
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ]
+      },
+      {
+        "name": "empty-search-recovery-guidance",
+        "step": 5,
+        "markedCatch": false,
+        "catch": 0,
+        "lesson": "Frank \u00b7 6/10 \u00b7 Bring the float alongside\n\nBring each float beside the green PORT rail \u2014 the left side facing the bow. Select Neutral and use 1 to bring the diver aboard. Then we can try the marked shelf again; stay near any bubbles still in the water.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 91.72940678413252,
+          "y": 121.50996209799726
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "surface",
+            "bag": 0,
+            "reason": "Search time limit reached"
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ]
+      },
+      {
+        "name": "explicit-skip-remains-available",
+        "step": 6,
+        "markedCatch": false,
+        "catch": 0,
+        "lesson": "Frank \u00b7 7/10 \u00b7 Bring them alongside\n\nAda is too far away. Approach slowly on port (our left), keeping the stern (back) clear. 1 would deploy Milo now.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 91.76420922148998,
+          "y": 121.62889607596257
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "surface",
+            "bag": 0,
+            "reason": "Search time limit reached"
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ]
+      },
+      {
+        "name": "phone-empty-search-guidance",
+        "step": 5,
+        "markedCatch": false,
+        "catch": 0,
+        "lesson": "Frank \u00b7 6/10 \u00b7 Bring the float alongside\n\nBring each float beside the green PORT rail \u2014 the left side facing the bow. Select Neutral and use Deploy / board to bring the diver aboard. Then we can try the marked shelf again; stay near any bubbles still in the water.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 91.70004097516912,
+          "y": 121.42546580581708
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "surface",
+            "bag": 0,
+            "reason": "Search time limit reached"
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ]
+      },
+      {
+        "name": "phone-frank-layout",
+        "rect": {
+          "x": 6,
+          "y": 90,
+          "width": 378,
+          "height": 136,
+          "top": 90,
+          "right": 384,
+          "bottom": 226,
+          "left": 6
+        },
+        "horizontalOverflow": false,
+        "contentHeight": 150,
+        "visibleHeight": 134,
+        "buttons": [
+          {
+            "text": "Chart & notes",
+            "disabled": false
+          },
+          {
+            "text": "Skip this step",
+            "disabled": false
+          },
+          {
+            "text": "Skip tutorial",
+            "disabled": false
+          }
+        ]
+      },
+      {
+        "name": "phone-native-touch-chart-resume-skip",
+        "passed": true
+      },
+      {
+        "name": "landscape-empty-search-guidance",
+        "step": 5,
+        "markedCatch": false,
+        "catch": 0,
+        "lesson": "Frank \u00b7 6/10 \u00b7 Bring the float alongside\n\nBring each float beside the green PORT rail \u2014 the left side facing the bow. Select Neutral and use Deploy / board to bring the diver aboard. Then we can try the marked shelf again; stay near any bubbles still in the water.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 91.70121887840173,
+          "y": 121.42874554831408
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "surface",
+            "bag": 0,
+            "reason": "Search time limit reached"
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ]
+      },
+      {
+        "name": "landscape-frank-layout",
+        "rect": {
+          "x": 10,
+          "y": 60,
+          "width": 300,
+          "height": 126,
+          "top": 60,
+          "right": 310,
+          "bottom": 186,
+          "left": 10
+        },
+        "horizontalOverflow": false,
+        "contentHeight": 134,
+        "visibleHeight": 124,
+        "buttons": [
+          {
+            "text": "Chart & notes",
+            "disabled": false
+          },
+          {
+            "text": "Skip this step",
+            "disabled": false
+          },
+          {
+            "text": "Skip tutorial",
+            "disabled": false
+          }
+        ]
+      },
+      {
+        "name": "landscape-native-touch-chart-resume-skip",
+        "passed": true
+      },
+      {
+        "name": "desktop-staged-recovery-wrong-side",
+        "step": 6,
+        "markedCatch": true,
+        "catch": 0,
+        "lesson": "Frank \u00b7 7/10 \u00b7 Bring them alongside\n\nAda is not beside the port ladder. Keep the float on our left when facing the bow. 1 would deploy Milo now.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 120.00244573383586,
+          "y": 120.00197301205829
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "surface",
+            "bag": 70,
+            "reason": "Skipper recalled diver"
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ],
+        "fixture": "Staged boat and surfaced-diver pose; no claim of a full natural tutorial."
+      },
+      {
+        "name": "desktop-staged-recovery-too-fast",
+        "step": 6,
+        "markedCatch": true,
+        "catch": 0,
+        "lesson": "Frank \u00b7 7/10 \u00b7 Bring them alongside\n\nAda is on port, but we are moving too fast past the float. Select Neutral and match its drift. 1 would deploy Milo now.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 120.00259918447895,
+          "y": 120.77606299916995
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "surface",
+            "bag": 70,
+            "reason": "Skipper recalled diver"
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ],
+        "fixture": "Staged boat and surfaced-diver pose; no claim of a full natural tutorial."
+      },
+      {
+        "name": "desktop-staged-recovery-ready",
+        "step": 6,
+        "markedCatch": true,
+        "catch": 0,
+        "lesson": "Frank \u00b7 7/10 \u00b7 Bring them alongside\n\nAda is alongside on port. 1 brings them and their catch aboard. Hold this drift until boarding finishes.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 120.00233654862728,
+          "y": 120.00217745103416
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "surface",
+            "bag": 70,
+            "reason": "Skipper recalled diver"
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ],
+        "fixture": "Staged boat and surfaced-diver pose; no claim of a full natural tutorial."
+      },
+      {
+        "name": "desktop-boarding-from-staged-pose",
+        "step": 6,
+        "markedCatch": true,
+        "catch": 0,
+        "lesson": "Frank \u00b7 7/10 \u00b7 Bring them alongside\n\nAda is coming aboard. Hold this drift until boarding finishes; no further button press is needed.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 119.9889925728512,
+          "y": 120.09263480362341
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "surface",
+            "bag": 70,
+            "reason": "Skipper recalled diver"
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ]
+      },
+      {
+        "name": "phone-staged-recovery-wrong-side",
+        "step": 6,
+        "markedCatch": true,
+        "catch": 0,
+        "lesson": "Frank \u00b7 7/10 \u00b7 Bring them alongside\n\nAda is not beside the port ladder. Keep the float on our left when facing the bow. Deploy / board would deploy Milo now.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 120.00244716040146,
+          "y": 120.00196752783461
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "surface",
+            "bag": 70,
+            "reason": "Skipper recalled diver"
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ],
+        "fixture": "Staged boat and surfaced-diver pose; no claim of a full natural tutorial."
+      },
+      {
+        "name": "phone-staged-recovery-too-fast",
+        "step": 6,
+        "markedCatch": true,
+        "catch": 0,
+        "lesson": "Frank \u00b7 7/10 \u00b7 Bring them alongside\n\nAda is on port, but we are moving too fast past the float. Select Neutral and match its drift. Deploy / board would deploy Milo now.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 120.00262944146603,
+          "y": 120.7759826012598
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "surface",
+            "bag": 70,
+            "reason": "Skipper recalled diver"
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ],
+        "fixture": "Staged boat and surfaced-diver pose; no claim of a full natural tutorial."
+      },
+      {
+        "name": "phone-staged-recovery-ready",
+        "step": 6,
+        "markedCatch": true,
+        "catch": 0,
+        "lesson": "Frank \u00b7 7/10 \u00b7 Bring them alongside\n\nAda is alongside on port. Deploy / board brings them and their catch aboard. Hold this drift until boarding finishes.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 120.00258858296603,
+          "y": 120.00274997647021
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "surface",
+            "bag": 70,
+            "reason": "Skipper recalled diver"
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ],
+        "fixture": "Staged boat and surfaced-diver pose; no claim of a full natural tutorial."
+      },
+      {
+        "name": "phone-boarding-from-staged-pose",
+        "step": 6,
+        "markedCatch": true,
+        "catch": 0,
+        "lesson": "Frank \u00b7 7/10 \u00b7 Bring them alongside\n\nAda is coming aboard. Hold this drift until boarding finishes; no further button press is needed.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 120.00186492849026,
+          "y": 120.03089612978908
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "surface",
+            "bag": 70,
+            "reason": "Skipper recalled diver"
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ]
+      },
+      {
+        "name": "landscape-staged-recovery-wrong-side",
+        "step": 6,
+        "markedCatch": true,
+        "catch": 0,
+        "lesson": "Frank \u00b7 7/10 \u00b7 Bring them alongside\n\nAda is not beside the port ladder. Keep the float on our left when facing the bow. Deploy / board would deploy Milo now.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 120.00220733704961,
+          "y": 120.00146409529385
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "surface",
+            "bag": 70,
+            "reason": "Skipper recalled diver"
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ],
+        "fixture": "Staged boat and surfaced-diver pose; no claim of a full natural tutorial."
+      },
+      {
+        "name": "landscape-staged-recovery-too-fast",
+        "step": 6,
+        "markedCatch": true,
+        "catch": 0,
+        "lesson": "Frank \u00b7 7/10 \u00b7 Bring them alongside\n\nAda is on port, but we are moving too fast past the float. Select Neutral and match its drift. Deploy / board would deploy Milo now.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 120.00263140235803,
+          "y": 120.77597618405906
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "surface",
+            "bag": 70,
+            "reason": "Skipper recalled diver"
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ],
+        "fixture": "Staged boat and surfaced-diver pose; no claim of a full natural tutorial."
+      },
+      {
+        "name": "landscape-staged-recovery-ready",
+        "step": 6,
+        "markedCatch": true,
+        "catch": 0,
+        "lesson": "Frank \u00b7 7/10 \u00b7 Bring them alongside\n\nAda is alongside on port. Deploy / board brings them and their catch aboard. Hold this drift until boarding finishes.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 120.00259347072155,
+          "y": 120.00274098256124
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "surface",
+            "bag": 70,
+            "reason": "Skipper recalled diver"
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ],
+        "fixture": "Staged boat and surfaced-diver pose; no claim of a full natural tutorial."
+      },
+      {
+        "name": "landscape-boarding-from-staged-pose",
+        "step": 6,
+        "markedCatch": true,
+        "catch": 0,
+        "lesson": "Frank \u00b7 7/10 \u00b7 Bring them alongside\n\nAda is coming aboard. Hold this drift until boarding finishes; no further button press is needed.\n\nChart & notes\nSkip this step\nSkip tutorial",
+        "boat": {
+          "x": 119.99956481788512,
+          "y": 120.05525678832798
+        },
+        "divers": [
+          {
+            "id": 0,
+            "state": "surface",
+            "bag": 70,
+            "reason": "Skipper recalled diver"
+          },
+          {
+            "id": 1,
+            "state": "ready",
+            "bag": 0,
+            "reason": ""
+          }
+        ]
+      }
+    ],
+    "errors": []
+  },
+  "shoal_recovery": {
+    "passed": true,
+    "failure": null,
+    "base": "http://127.0.0.1:5186/",
+    "production": true,
+    "startedAt": "2026-10-03T07:20:20.011Z",
+    "completedAt": "2026-10-03T07:20:50.073Z",
+    "records": [
+      {
+        "name": "keyboard",
+        "initial": {
+          "position": {
+            "x": 118,
+            "y": 120
+          },
+          "actual": {
+            "close": false,
+            "port": true,
+            "slow": true,
+            "distance": 4,
+            "waterSpeed": 0,
+            "available": false,
+            "bagAvailable": false,
+            "reason": "OUT OF RANGE",
+            "overflow": 0
+          },
+          "former": {
+            "close": true,
+            "port": true,
+            "slow": true,
+            "distance": 4,
+            "waterSpeed": 0,
+            "available": true,
+            "bagAvailable": true,
+            "reason": "",
+            "overflow": 0
+          }
+        },
+        "alongside": {
+          "position": {
+            "x": 119.81533333333279,
+            "y": 120
+          },
+          "state": "surface",
+          "bag": 30,
+          "catch": 0,
+          "actual": {
+            "close": true,
+            "port": true,
+            "slow": true,
+            "distance": 1.9954418599594845,
+            "waterSpeed": 0.21320684222111153,
+            "available": true,
+            "bagAvailable": true,
+            "reason": "",
+            "overflow": 0
+          }
+        },
+        "result": {
+          "states": [
+            "ready",
+            "ready"
+          ],
+          "catch": 30,
+          "bags": [
+            {
+              "weight": 30,
+              "quality": 0.8
+            }
+          ],
+          "events": []
+        }
+      },
+      {
+        "name": "controller",
+        "initial": {
+          "position": {
+            "x": 118,
+            "y": 120
+          },
+          "actual": {
+            "close": false,
+            "port": true,
+            "slow": true,
+            "distance": 4,
+            "waterSpeed": 0,
+            "available": false,
+            "bagAvailable": false,
+            "reason": "OUT OF RANGE",
+            "overflow": 0
+          },
+          "former": {
+            "close": true,
+            "port": true,
+            "slow": true,
+            "distance": 4,
+            "waterSpeed": 0,
+            "available": true,
+            "bagAvailable": true,
+            "reason": "",
+            "overflow": 0
+          }
+        },
+        "alongside": {
+          "position": {
+            "x": 119.81533333333279,
+            "y": 120
+          },
+          "state": "surface",
+          "bag": 30,
+          "catch": 0,
+          "actual": {
+            "close": true,
+            "port": true,
+            "slow": true,
+            "distance": 1.995742684714409,
+            "waterSpeed": 0.21271849898038392,
+            "available": true,
+            "bagAvailable": true,
+            "reason": "",
+            "overflow": 0
+          }
+        },
+        "result": {
+          "states": [
+            "ready",
+            "ready"
+          ],
+          "catch": 30,
+          "bags": [
+            {
+              "weight": 30,
+              "quality": 0.8
+            }
+          ],
+          "events": []
+        }
+      },
+      {
+        "name": "touch",
+        "initial": {
+          "position": {
+            "x": 118,
+            "y": 120
+          },
+          "actual": {
+            "close": false,
+            "port": true,
+            "slow": true,
+            "distance": 4,
+            "waterSpeed": 0,
+            "available": false,
+            "bagAvailable": false,
+            "reason": "OUT OF RANGE",
+            "overflow": 0
+          },
+          "former": {
+            "close": true,
+            "port": true,
+            "slow": true,
+            "distance": 4,
+            "waterSpeed": 0,
+            "available": true,
+            "bagAvailable": true,
+            "reason": "",
+            "overflow": 0
+          }
+        },
+        "alongside": {
+          "position": {
+            "x": 119.81533333333279,
+            "y": 120
+          },
+          "state": "surface",
+          "bag": 30,
+          "catch": 0,
+          "actual": {
+            "close": true,
+            "port": true,
+            "slow": true,
+            "distance": 1.995742684714409,
+            "waterSpeed": 0.21271849898038392,
+            "available": true,
+            "bagAvailable": true,
+            "reason": "",
+            "overflow": 0
+          }
+        },
+        "result": {
+          "states": [
+            "ready",
+            "ready"
+          ],
+          "catch": 30,
+          "bags": [
+            {
+              "weight": 30,
+              "quality": 0.8
+            }
+          ],
+          "events": []
+        }
+      }
+    ],
+    "errors": [],
+    "limits": "Isolated wet-shoal fixture; actual runtime escape, keyboard and native browser touch, synthetic gamepad. Does not establish physical controller or phone acceptance."
+  },
+  "runner_readiness": {
+    "passed": true,
+    "methods": [
+      "HEAD",
+      "HEAD",
+      "HEAD",
+      "HEAD",
+      "HEAD"
+    ],
+    "closedConnections": 5,
+    "records": [
+      {
+        "fixture": "correct",
+        "budget": 750,
+        "actual": true,
+        "elapsedMs": 36
+      },
+      {
+        "fixture": "wrong-edition",
+        "budget": 750,
+        "actual": false,
+        "elapsedMs": 6
+      },
+      {
+        "fixture": "wrong-build",
+        "budget": 750,
+        "actual": false,
+        "elapsedMs": 4
+      },
+      {
+        "fixture": "stall",
+        "budget": 750,
+        "actual": false,
+        "elapsedMs": 752
+      },
+      {
+        "fixture": "stall",
+        "budget": 75,
+        "actual": false,
+        "elapsedMs": 76
+      },
+      {
+        "fixture": "no-listener",
+        "actual": false,
+        "elapsedMs": 3
+      }
+    ]
+  },
+  "performance": {
+    "device": {
+      "renderer": "ANGLE (AMD, Vulkan 1.4.330 (AMD Custom GPU 0405 (RADV VANGOGH) (0x0000163F)), radv)",
+      "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "pixelRatio": 1,
+      "framebuffer": [
+        1280,
+        800
+      ],
+      "screen": null,
+      "started": true
+    },
+    "results": [
+      {
+        "label": "native",
+        "elapsed": 4008,
+        "renderFrames": 241,
+        "rafFrames": 241,
+        "fps": 60.12974051896207,
+        "fields": {
+          "frameMs": {
+            "mean": 16.665975103734443,
+            "p95": 16.700000000000728
+          },
+          "inputMs": {
+            "mean": 0.778423236644367,
+            "p95": 1
+          },
+          "simulationMs": {
+            "mean": 0.37634854760654735,
+            "p95": 0.5999999940395355
+          },
+          "drawMs": {
+            "mean": 6.438589211414216,
+            "p95": 15.699999995529652
+          },
+          "hudMs": {
+            "mean": 0.4867219918125398,
+            "p95": 3.5
+          },
+          "totalCpuMs": {
+            "mean": 8.14273858923635,
+            "p95": 20.100000001490116
+          }
+        },
+        "render": {
+          "frame": 327,
+          "calls": 99,
+          "triangles": 360622,
+          "points": 0,
+          "lines": 96
+        }
+      }
+    ],
+    "errors": []
+  },
+  "export_validation": {
+    "zip_crc": true,
+    "all_build_bytes_match": true,
+    "archive_checks": "scripts/package-temp.py verified both ZIP CRCs and every packaged production file",
+    "local_server_port": 5199,
+    "production_identity_check": true,
+    "production_html_bytes_match": true,
+    "production_entry_module_bytes_match": true,
+    "entry": "./assets/index-anhRcY_3.js",
+    "entry_sha256": "f97192814de6d97f233a34d50e5e69e2fbaf33d7fb66ddea5d24da5c52fedb1b"
+  },
+  "exports": [
+    {
+      "path": "exports/2026-10-03-recovery-and-forecast/Urchin Skipper 3D TEMP.zip",
+      "bytes": 104443436,
+      "sha256": "406c33faf448a8cadd4557cec4b8e98f45fc774758d1297f6745ff0ac5758d72"
+    },
+    {
+      "path": "exports/2026-10-03-recovery-and-forecast/UrchinSkipper3D-TEMP-ITCHIO.zip",
+      "bytes": 104414932,
+      "sha256": "55c0e783a7d0352e43f19c362edb501594d3377e24c97e0e8e8864c353173674"
+    }
+  ],
+  "build_files": [
+    {
+      "path": "dist/assets/geography-DRCAA4xL.js",
+      "bytes": 8817073,
+      "sha256": "11d61e00a1b80b0ed5b9dc2f4e304adee5df52dff4fd9c5a704bd204c2953842"
+    },
+    {
+      "path": "dist/assets/index-BwX_9SOo.css",
+      "bytes": 170984,
+      "sha256": "366c2b4c0f427a8962b4d13a2f3f51712c7ed4740df54af9eff4ee783cad9307"
+    },
+    {
+      "path": "dist/assets/index-anhRcY_3.js",
+      "bytes": 951167,
+      "sha256": "f97192814de6d97f233a34d50e5e69e2fbaf33d7fb66ddea5d24da5c52fedb1b"
+    },
+    {
+      "path": "dist/assets/save.worker-CeKzy45w.js",
+      "bytes": 333,
+      "sha256": "dd8c2f74598cec68dcadb7b256f796d3f1601bb8168953693ebf462e6e87b0ff"
+    },
+    {
+      "path": "dist/assets/simulationSupport-BTGbtjln.js",
+      "bytes": 1387441,
+      "sha256": "a9aaf981bfd2da2a4381c5bb73dd5064897ef0781500f2e2a7cfc72f0fe7c4f0"
+    },
+    {
+      "path": "dist/assets/three-CFpc-5E9.js",
+      "bytes": 521453,
+      "sha256": "8e38bd19e01b911dfc8e9742a80f6792dcd6ebbd36f8ed7320937488c630f5e8"
+    },
+    {
+      "path": "dist/index.html",
+      "bytes": 2621,
+      "sha256": "7504c61b64296511cb2b590c6c1542328e0be4ed52a113163db0367c41a459a1"
+    }
+  ],
+  "reviews": [
+    "docs/review/shoal-recovery-2026-10-03.md",
+    "docs/review/forecast-reading-2026-10-03.md",
+    "docs/review/independent-forecast-reading-2026-10-03.md",
+    "docs/review/runner-readiness-2026-10-03.md",
+    "docs/review/tutorial-recovery-2026-10-03.md",
+    "docs/review/independent-tutorial-recovery-2026-10-03.md"
+  ],
+  "manual_acceptance_remaining": [
+    "Physical Xbox/Steam Deck controls",
+    "Physical phone/tablet performance and Safari",
+    "Actual itch.io upload",
+    "Long-career fishing and upgrade balance",
+    "Broader unaided new-player tutorial completion"
+  ],
+  "known_limits": [
+    "Geography chunk remains about 3.88 MB gzip.",
+    "Very stale long-voyage catch-up may briefly pause.",
+    "Keyboard forecast scrolling hint remains vague; compact screens require scrolling.",
+    "Stylized wind/vegetation and wide-zoom scale limits remain.",
+    "The novice keyboard audit stopped at first recovery. Staged fixtures do not establish an entire unaided tutorial.",
+    "The prior October 2 launcher exit 143 remains unexplained; the startup timeout fix addresses a separate reproduced hang."
+  ]
+}

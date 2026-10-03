@@ -3,6 +3,7 @@ import { crossedReturnBoundary } from './navigation.js';
 import { actionTarget, deploymentStatus, recoveryStatus } from './diver-recovery.js';
 import { assist, pickupTolerance } from './assists.js';
 import { patchDistance, visiblePatch } from './world.js';
+import { C } from './config.js';
 // New careers alone opt in. The loan-boat lesson has its own 240 m fishery;
 // no season stock, purchase money or medical history is spent on day zero.
 export const introActive = (w) => w.career?.intro?.status === 'active';
@@ -58,7 +59,7 @@ export const INTRO_NOTES = [
   'The chart is a partial survey. Unmarked rocks and floating timber are real hazards. The sounder reads only directly underneath you; it does not scan ahead.',
   'Tide changes the water depth. A falling tide can strand a boat. Reverse toward deeper water if possible, wait for the tide, or call for a paid tow from the radio.',
   'Exactly two divers work from your boat. They search and pick independently. Bubbles mark their presence; the orange float appears when they surface. Night diving requires fitted flashlights.',
-  'Deploy / board ends one diver’s operation. Bag work takes and replaces one bag so a ready diver can keep fishing. Both actions automatically choose a diver alongside; portrait selection is for deployment and orders.',
+  'Keep the stern (back) clear of divers. Deploy / board ends one diver’s operation. Bag work takes and replaces one bag so a ready diver can keep fishing. Both actions automatically choose a diver alongside; portrait selection is for deployment and orders.',
   'Urchins favour workable slopes in roughly 5–25 m, often near kelp. Shallower work is generally quicker. Orders can set a search direction, quality target and time limit.',
   'The Recording chartplotter preserves dated observations. A report tells you what the diver found at that place and time; it does not reveal every hidden bed or guarantee tomorrow’s catch.',
   'The shipping boat leaves at 19:00. Missing it reduces freshness and payable weight, but you decide when to stop fishing. Check the return estimate, fuel and forecast before committing to more work. Home Coast storms are weak; later coasts, especially the fifth, can be much harsher.',
@@ -78,8 +79,51 @@ export function introMarkedDrop(w) {
   return { ...drop, diver, overGround, marked, neutral: Math.abs(w.boat.throttle) < 0.05 };
 }
 
+function recoveryLesson(w) {
+  const realistic = w.career?.difficulty === 'realistic',
+    tolerance = pickupTolerance(w, realistic),
+    target = actionTarget(w, 'recoverDiver', tolerance),
+    targetStatus = recoveryStatus(w, tolerance, target),
+    surfaced = w.divers
+      .filter((d) => d.state === 'surface')
+      .map((d) => ({ d, status: recoveryStatus(w, tolerance, d) }))
+      .filter(
+        ({ status }) =>
+          assist(w, 'diverIndicators', realistic) || status.distance <= C.recovery.tolerance + 3,
+      )
+      .sort((a, b) => a.status.distance - b.status.distance || a.d.id - b.d.id),
+    observedTarget = surfaced.find(({ d }) => d === target),
+    nearby = observedTarget || surfaced[0],
+    name = nearby?.d.name.split(' ')[0],
+    next = deploymentStatus(w, target).available
+      ? `{recoverDiver} would deploy ${target.name.split(' ')[0]} now.`
+      : '{recoverDiver} cannot board anyone yet.';
+  if (observedTarget && targetStatus.available) {
+    if (target.hooking && target.recoveryAction === 'recoverDiver')
+      return `${name} is coming aboard. Hold this drift until boarding finishes; no further button press is needed.`;
+    return `${name} is alongside on port. {recoverDiver} brings them and their catch aboard. Hold this drift until boarding finishes.`;
+  }
+  if (!nearby)
+    return w.divers.every((d) => d.state === 'ready')
+      ? `Both divers are aboard. We still need to land a catch from ${w.career.intro.step === 8 ? 'the newly found ground' : 'the marked ground'}. ${next}`
+      : `Follow the bubbles. Use {recall} near them, or wait for a float. ${next}`;
+  const advice = {
+    'OUT OF RANGE': `${name} is too far away. Approach slowly on port (our left), keeping the stern (back) clear.`,
+    'BRING FLOAT TO PORT SIDE': `${name} is not beside the port ladder. Keep the float on our left when facing the bow.`,
+    'SLOW DOWN': `${name} is on port, but we are moving too fast past the float. Select Neutral and match its drift.`,
+    'KEEP FLOAT CLEAR OF THE HULL': `${name} is under the hull. Ease clear so the float is beside the port ladder.`,
+    'DECK BUSY — DUMPING BAG': `${name} must wait while the deck crew finish dumping the bag.`,
+  }[nearby.status.reason];
+  return `${advice || `Bring ${name}’s float alongside on port.`} ${
+    nearby.d.hooking && nearby.d.recoveryAction === 'recoverDiver'
+      ? 'Boarding will resume when the approach is ready.'
+      : next
+  }`;
+}
+
 export function introLesson(w) {
   const step = w.career.intro.step;
+  if ([6, 8].includes(step)) return [INTRO_STEPS[step][0], recoveryLesson(w)];
   if (![4, 5].includes(step)) return INTRO_STEPS[step];
   const away = w.divers.filter((d) => d.state !== 'ready'),
     realistic = w.career?.difficulty === 'realistic',

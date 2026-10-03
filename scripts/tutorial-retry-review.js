@@ -207,6 +207,88 @@ try {
     records.push({ name: `${name}-native-touch-chart-resume-skip`, passed: true });
     await touch.close();
   }
+  // These are explicitly staged recovery poses, separate from the keyboard
+  // approach/catch playthrough above. The command preview is checked against
+  // the live eligibility rules, then actual input begins the boarding action.
+  for (const [name, width, height, touch] of [
+    ['desktop', 1280, 800, false],
+    ['phone', 390, 844, true],
+    ['landscape', 844, 390, true],
+  ]) {
+    const recovery = await tutorial({ width, height }, touch);
+    for (const pose of ['wrong-side', 'too-fast', 'ready']) {
+      await recovery.evaluate((pose) => {
+        const d = urchinDebug,
+          w = d.world;
+        w.career.intro.step = 6;
+        w.career.intro.markedCatch = true;
+        Object.assign(w.boat, {
+          x: 120,
+          y: 120,
+          heading: 0,
+          throttle: 0,
+          rudder: 0,
+          turn: 0,
+          vx: 0.015,
+          vy: pose === 'too-fast' ? 3 : 0,
+        });
+        const side = d.simulation.boatSpec(w).width / 2 + 3;
+        Object.assign(w.divers[0], {
+          state: 'surface',
+          x: 120 + (pose === 'wrong-side' ? side : -side),
+          y: 120,
+          bag: 70,
+          qualitySum: 56,
+          air: 90,
+          reason: 'Skipper recalled diver',
+          bagHandled: false,
+          hooking: false,
+          hook: 0,
+          recoveryAction: null,
+          recoveryPause: '',
+          transit: null,
+        });
+        Object.assign(w.divers[1], { state: 'ready', x: 120, y: 120, bag: 0 });
+        w.selectedDiverId = 0;
+      }, pose);
+      await recovery.waitForTimeout(120);
+      const record = await read(recovery, `${name}-staged-recovery-${pose}`);
+      records.at(-1).fixture =
+        'Staged boat and surfaced-diver pose; no claim of a full natural tutorial.';
+      const reason = await recovery.evaluate(
+        () =>
+          urchinDebug.simulation.recoveryStatus(
+            urchinDebug.world,
+            undefined,
+            urchinDebug.world.divers[0],
+          ).reason,
+      );
+      if (pose === 'wrong-side') {
+        assert.equal(reason, 'BRING FLOAT TO PORT SIDE');
+        assert.match(record.lesson, /Ada is not beside the port ladder/);
+        assert.match(record.lesson, /would deploy Milo now/);
+      } else if (pose === 'too-fast') {
+        assert.equal(reason, 'SLOW DOWN');
+        assert.match(record.lesson, /Ada is on port.*moving too fast.*Neutral/);
+        assert.match(record.lesson, /would deploy Milo now/);
+        assert.match(await recovery.locator('#seaSpeech').innerText(), /Neutral.*match the float/);
+      } else {
+        assert.equal(reason, '');
+        assert.match(record.lesson, /Ada is alongside on port.*brings them and their catch aboard/);
+        assert.doesNotMatch(record.lesson, /would deploy Milo/);
+      }
+      await capture(recovery, `10-${name}-recovery-${pose}`);
+    }
+    await recovery.waitForFunction(() => !urchinDebug.input.suppressed);
+    if (touch) await recovery.locator('[data-touch="recoverDiver"]').tap();
+    else await key(recovery, '1');
+    await recovery.waitForFunction(() => urchinDebug.world.divers[0].hooking);
+    const ongoing = await read(recovery, `${name}-boarding-from-staged-pose`);
+    assert.match(ongoing.lesson, /Ada is coming aboard.*no further button press/);
+    assert.equal(ongoing.divers[1].state, 'ready');
+    await capture(recovery, `11-${name}-boarding-in-progress`);
+    await recovery.close();
+  }
   assert.deepEqual(errors, []);
   passed = true;
   console.log(

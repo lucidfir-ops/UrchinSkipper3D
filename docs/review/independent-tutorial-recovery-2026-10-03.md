@@ -1,0 +1,19 @@
+# Independent tutorial recovery review — October 3, 2026
+
+## First review — gameplay audit reviewer
+
+I did not author the tutorial guidance changes. I independently inspected the final production screenshots in `test-results/tutorial-recovery-2026-10-03/`: `10-desktop-recovery-wrong-side.png`, `10-desktop-recovery-too-fast.png`, `10-desktop-recovery-ready.png`, `11-desktop-boarding-in-progress.png`, and all corresponding `phone` and `landscape` files. These cover 1280×800 desktop, 390×844 portrait and 844×390 landscape. The accompanying receipt reports 23 records, a pass and no browser errors; this review itself is based on the images, not another browser/input run.
+
+The three approach states communicate different, useful instructions. Wrong-side guidance identifies port as left facing the bow; excessive-speed guidance says to select Neutral and match the float's drift. Both explicitly warn that Deploy / board would currently deploy Milo. Once Ada is eligible, the wording switches to bringing Ada and the catch aboard. During boarding, Frank says to hold the drift and that no further button press is needed. The brief speech agrees with the persistent lesson instead of announcing valid recovery during the excessive-speed state. Keyboard captures use `1`; touch captures name the visible Deploy / board action.
+
+Desktop text, lesson buttons and diver cards are readable, and the guidance leaves the boat, float and ladder clear. Portrait wraps the longer excessive-speed instruction into three lines without clipping the buttons or overlapping the play area. The speech remains separate above Frank. Landscape also keeps its speech, compact lesson and actions readable without overlapping one another; the actual float and port ladder remain visible in all four states.
+
+Remaining visual limits are modest but real. Landscape's body text is small and its lower control cluster covers part of the decorative recovery-area outline, making the working viewport more crowded than portrait or desktop. Floats are small at the shown orthographic zoom and rely partly on their ring for recognition. The bare keyboard token in “1 would deploy Milo” is understandable from the control context, though “Pressing 1” would read more naturally to a newcomer. I found no clipped instruction, obscured action, contradictory boarding message or blocking layout defect in these captures.
+
+Visual verdict: accepted for this iteration. The revised instructions address the premature-deploy/recovery ambiguity and clearly describe ongoing boarding. These staged states and successful browser checks do not demonstrate an unaided novice completing the entire tutorial or establish physical phone/controller acceptance.
+
+## Second review — wind and runner reviewer
+
+I did not author the tutorial changes. I inspected all 23 final PNGs, including every wrong-side, too-fast, ready and boarding-in-progress capture on desktop, portrait and landscape. No blocking text overlap, horizontal clipping or hidden action labels were visible. Recovery states are clearly differentiated: wrong-side text defines port as left facing the bow; speed text explicitly asks for Neutral and matching drift; both preview Milo as the current command target. Ready text names Ada and the catch; ongoing boarding says no further press is needed. Speech and Frank's panel agree, and compact control labels remain intact.
+
+Landscape text is small, the actual float/diver is tiny, and the green port-rail colour is not strong at this framing. The compact failed-search captures do not visibly show the distant float, so they do not prove unaided finding or recovery. The chart captures are settled and readable with Resume visible; Back and the title lie above the scrolled phone view. These are non-blocking still-image limits. I launched no browser and make no claim of physical-device acceptance or completion of the natural tutorial.

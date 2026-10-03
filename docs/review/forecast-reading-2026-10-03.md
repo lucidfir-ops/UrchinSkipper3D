@@ -1,0 +1,9 @@
+# Forecast reading — October 3, 2026
+
+The portrait seven-day forecast previously followed a long current-day outlook and fifteen coastal summaries. Its footer also named keyboard/stick controls on touch screens, and at-sea weather offered harbour departure advice.
+
+The forecast now builds separate weekly and current-day sections. Portrait places the weekly table first; wider screens retain current conditions on the left and the weekly table on the right. All coastal summaries, confidence, changing weather times and night-equipment advice remain available through scrolling. Departure and early-start advice appear only during planning, with the early-start explanation limited to departures before 07:00. The shared menu footer supplies touch or keyboard/controller controls and updates when the active device changes.
+
+`scripts/continuous-weather-review.js` checks the served production build at 1280×800, 390×844 and 844×390. Today is visible immediately at all three sizes, table columns do not overflow, and Back/almanac touch targets retain their 44 px minimum. Native touch swipes and actual polling of a synthetic controller's right stick scroll the forecast. Viewing and scrolling do not advance the paused simulation. Returning through menu history and saving/reloading preserve the voyage date and original departure weather plan. At-sea copy contains no departure instructions. The existing natural day-two rain fixture still verifies actual rain rendering, water-column turbidity and shader wind.
+
+The production check passes; captures and receipt are under `test-results/forecast-reading-2026-10-03/`. Separate visual findings are recorded in [the independent review](independent-forecast-reading-2026-10-03.md). Keyboard scrolling remains less explicitly explained than touch/controller scrolling. Browser touch and a synthetic controller do not establish physical phone or controller acceptance.

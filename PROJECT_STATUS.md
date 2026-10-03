@@ -1,12 +1,18 @@
 # Urchin Skipper 3D — current status
 
-October 2, 2026 · continuous-voyage weather and rival fishing, tutorial retry guidance and readable phone forecasts. Work, exports and publication belong only to this project and [lucidfir-ops/UrchinSkipper3D](https://github.com/lucidfir-ops/UrchinSkipper3D). The original 2D project and repository were used read-only.
+October 3, 2026 · shallow-water recovery, contextual tutorial guidance and phone forecast reading. Work, exports and publication belong only to this project and [lucidfir-ops/UrchinSkipper3D](https://github.com/lucidfir-ops/UrchinSkipper3D). The original 2D project and repository were used read-only.
 
 ## Design authority
 
 The inherited [living Bible](bible.md) governs gameplay. Its September 26 amendments authorize this separate Three.js presentation and live coastal title; the September 27 commission authorizes substantial menu and HUD restructuring. The September 28 playtest commission extends equipment fitting, physical dive operations, the near-surface water column, training and navigation while preserving playtested behaviour. Preserve the orthographic following camera, exactly two autonomous divers, established information rules and original simulation geometry. Historical links in copied reference documents describe provenance in the 2D workspace, not additional active 3D requirements.
 
 ## Playable build
+
+The October 3 revision fixes a fit surfaced diver stopping their shallow-water escape outside the actual pickup range. Escape now uses the same difficulty, night and assist tolerance as boarding, retaining slow physical movement, route checks and exact catch accounting. [Recovery evidence](docs/review/shoal-recovery-2026-10-03.md).
+
+Frank's two recovery lessons now explain the observable float's actual rejection reason and preview the real Deploy/board target. When nobody can be boarded, they explicitly name the other diver that the command would deploy; eligible and ongoing boarding get different instructions. The speed-warning speech uses the recovery reason, while hidden diver information and established command targeting remain intact. The [novice audit and implementation](docs/review/tutorial-recovery-2026-10-03.md) distinguish the incomplete natural playthrough from staged verification.
+
+Portrait forecasts now start with the seven-day table. Wider screens retain both columns, touch hints describe tapping/swiping, and controller hints describe the right stick. Harbour departure advice appears only during planning. Current conditions for all fifteen coasts, confidence and night advice remain available. [Implementation](docs/review/forecast-reading-2026-10-03.md), [two independent visual reviews](docs/review/independent-forecast-reading-2026-10-03.md). Verification startup now has bounded HTTP probes and a real elapsed-time deadline; the earlier unexplained post-suite exit signal remains documented separately in the [runner audit](docs/review/runner-readiness-2026-10-03.md).
 
 The latest October 2 revision keeps weather, seven-day forecasts, storm runoff, rival fishing and destination opening dates moving during continuous multi-night voyages. Saved departure plans and voyage identities remain intact. Daily rival visitor limits, shared stock, off-map depletion and seasonal recovery advance once, including after reload and harbour return; reports show the actual day and observation time. [Implementation and regression evidence](docs/review/continuous-voyage-tutorial-2026-10-02.md), [rival accounting detail](docs/review/continuous-rivals-2026-10-02.md).
 
@@ -48,6 +54,9 @@ Build with `npm ci && npm run build`; `npm start` serves http://127.0.0.1:5184/.
 
 ## Verification
 
+- October 3 regression run: 597 named tests, 596 pass, zero failures and one intentional private-save skip. Production build, lint and formatting pass. Eleven new cases cover authoritative shoal pickup tolerances, escape/boarding reloads, actual tutorial command targets, rejection reasons and hidden-information boundaries. The existing geography-chunk warning remains (about 3.88 MB gzip).
+- October 3 production: shoal recovery, tutorial retry/guidance, continuous weather/forecast, operations, rival fleet, input, weather, full voyage and performance suites pass. The complete verifier exits 0. Keyboard, native browser touch and synthetic controller flows are covered. The voyage lands 300 lb on time with 100% hull and two fit divers; the isolated 1280×800 RADV VANGOGH sample measures 60.13 FPS. Two separate reviewers accept the [tutorial captures](docs/review/independent-tutorial-recovery-2026-10-03.md), retaining small-float and compact-text limitations. [Release receipt](docs/review/release-verification-2026-10-03.json).
+
 - Latest October 2 regression run: 586 named tests, 585 pass, zero failures and one intentional private-save skip. Production build, lint and formatting pass. Twenty added cases cover continuous weather/runoff, sector access, rival accounting and tutorial retry. The existing geography-chunk warning remains (about 3.88 MB gzip).
 - Latest production tutorial-retry, continuous-weather, operations, rival fleet, input, weather, full-voyage and performance checks all pass. The complete voyage lands 300 lb on time with an intact hull and two fit divers; the isolated 1280×800 RADV VANGOGH sample measures approximately 60 FPS. Keyboard, native browser touch and synthetic controller flows are covered; physical controllers remain untested. Two separate reviewers inspected the final [forecast and tutorial captures](docs/review/independent-continuous-voyage-2026-10-02.md). [Latest release receipt](docs/review/release-verification-2026-10-02-continuous.json).
 
@@ -67,11 +76,11 @@ Build with `npm ci && npm run build`; `npm start` serves http://127.0.0.1:5184/.
 - AMD RADV VANGOGH measured 240 frames in four seconds at 1280×800, approximately 59.95 FPS in the latest sample. This controlled sample is not a device-wide performance guarantee.
 - Latest [independent screenshot reviews](docs/review/independent-vegetation-feedback-2026-09-29.md) drove darker kelp, smoother stipes, denser grass and varied proportions, and confirmed readable speech/current arrows. The earlier [visual review](docs/review/independent-feedback-2026-09-29.md) drove fixes to landscape Frank placement, capture timing, whitecap shape, five-metre rock contrast, wide-view current arrow readability and source-specific fleet fittings.
 
-Reproduce the latest pass with `PLAYWRIGHT_BROWSERS_PATH=.browser-cache npm run verify -- --suite=tutorial-retry,continuous-weather,operations,traffic-fleet,input,weather,voyage,performance`. Local evidence is in `test-results/`; the [release receipt](docs/review/release-verification-2026-10-02-continuous.json) records verification and export hashes. Earlier validation remains documented in the previous review records.
+Reproduce the latest pass with `PLAYWRIGHT_BROWSERS_PATH=.browser-cache URCHIN_WEATHER_OUTPUT=test-results/forecast-reading-2026-10-03 URCHIN_TUTORIAL_OUTPUT=test-results/tutorial-recovery-2026-10-03 npm run verify -- --suite=shoal-recovery,tutorial-retry,continuous-weather,operations,traffic-fleet,input,weather,voyage,performance`. Local evidence is in `test-results/`; the [release receipt](docs/review/release-verification-2026-10-03.json) records verification and export hashes. Earlier validation remains documented in the previous review records.
 
 ## Remaining acceptance
 
-Very stale long-voyage saves may pause briefly while complete daily stock and pressure catch-up runs. Compact forecasts remain scrollable; portrait places the table after a long outlook, and the forecast footer still mentions keyboard/stick controls on touch. Broader unaided new-player tutorial acceptance remains open despite the reproduced failure and verified recovery fix.
+Very stale long-voyage saves may pause briefly while complete daily stock and pressure catch-up runs. Compact forecasts still require scrolling, and the desktop keyboard scrolling hint is less explicit than the touch/controller hints. The unaided keyboard tutorial audit reached first recovery and exposed ambiguous deployment/boarding instructions; broader new-player completion remains unverified.
 
 Physical USB Xbox/Steam Deck controls, mobile device performance, Safari, actual itch.io hosting and long-career upgrade balance need human playtesting in this edition. Synthetic input does not establish physical controller behaviour. Near-surface people are recognizable close up but remain physically small at the widest orthographic zoom. Career boats now have distinct source-based fittings and layouts, but remain stylized models rather than exact raster reconstructions. Close wind crests remain sharp stylized strokes, and kelp ribbons/grass blades retain some visible repetition. The finite tutorial cove retains a soft shallow-water halo at low tide and very wide zoom. Unusual traffic artwork is interpreted rather than reproduced exactly. The presentation is deliberately stylized; completed implementation and automated checks are not full device, balance or new-player acceptance.
 
@@ -79,7 +88,7 @@ Physical USB Xbox/Steam Deck controls, mobile device performance, Safari, actual
 
 Use this independent Git repository normally; never synchronize into or push the 2D repository. Selected rebuildable source, assets and essential documentation belong in Git. Dependencies, builds, private saves, browser profiles, recordings, test output and TEMP ZIPs stay outside it. New exports are additive; preserve older exports.
 
-The latest release is under `exports/2026-10-02-continuous-voyage/`; all earlier dated exports are retained:
+The latest release is under `exports/2026-10-03-recovery-and-forecast/`; all earlier dated exports are retained:
 
 - `UrchinSkipper3D-TEMP-ITCHIO.zip`: standalone HTML build for the separate 3D itch.io project; upload remains manual.
 - `Urchin Skipper 3D TEMP.zip` and its extracted folder: local/Wi-Fi edition with isolated port 5198 and portable launcher.

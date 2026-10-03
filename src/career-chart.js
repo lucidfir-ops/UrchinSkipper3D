@@ -1,5 +1,6 @@
 import { renderAssistOptions } from './assist-view.js';
 import { appendChoices } from './menu-buttons.js';
+import { menuFooter } from './menu-shell.js';
 import { earlyStartNotice } from './early-start.js';
 import { buyerNotice } from './buyer.js';
 import { reportAge, markBearing } from './knowledge.js';
@@ -82,6 +83,7 @@ export function renderExpedition(ui, w, bind) {
     w.career.navigationMark,
     w.career.marks.length,
     chartMode(ui),
+    ui.screen === 'conditions' ? [ui.input.touchEnabled, ui.input.lastDevice] : null,
   ]);
   if (ui.signature === signature) return;
   ui.signature = signature;
@@ -109,15 +111,15 @@ export function renderExpedition(ui, w, bind) {
   } else if (ui.screen === 'conditions') {
     title = 'Weather for the next seven days.';
     const outlook = weatherOutlook(w, 0, id);
-    detail = `<h3>${def.name} outlook · ${outlook.confidence}% confidence</h3><p>${outlook.periods.map((p) => `${p.minute ? `Around ${formatClock(p.minute)}` : 'Morning'} · ${p.name} · ~${p.wind} kn wind<br>${p.visibility}`).join('</p><p>')}</p><p>${GROUNDS.map(
+    const current = `<h3>${def.name} outlook · ${outlook.confidence}% confidence</h3><p>${outlook.periods.map((p) => `${p.minute ? `Around ${formatClock(p.minute)}` : 'Morning'} · ${p.name} · ~${p.wind} kn wind<br>${p.visibility}`).join('</p><p>')}</p><p>${GROUNDS.map(
       (g) => {
         const local = conditionsAt(w, w.day.minute, g.id);
         return `${g.name}: ${local.wind.toFixed(0)} kn wind / ${local.wave.toFixed(1)} m sea`;
       },
     ).join(
       '<br>',
-    )}</p><p>Frank: “Home Coast gets weak storms. Later coasts have worse conditions; check the forecast before you fish. The fifth coast can get vicious.” Wind and tide are separate. Exposed water builds more sea. The timing is an estimate; watch for changes.</p><p>Departure ${formatClock(w.day.minute)} · Offload 19:00<br>${earlyStartNotice(w)} Waiting back to 07:00 avoids that early-start cost. Darkness limits sight and unlit pickup range. Work lights, radar and a known route give you more choices.</p>`;
-    detail += `<h3>Seven-day coastal forecast</h3><table class="week-forecast"><thead><tr><th>Day</th><th>Outlook</th><th>Wind</th><th>Confidence</th></tr></thead><tbody>${sevenDayForecast(
+    )}</p><p>Frank: “Home Coast gets weak storms. Later coasts have worse conditions; check the forecast before you fish. The fifth coast can get vicious.” Wind and tide are separate. Exposed water builds more sea. The timing is an estimate; watch for changes.</p>${w.day.phase === 'planning' ? `<p>Departure ${formatClock(w.day.minute)} · Offload 19:00${w.day.minute < 420 ? `<br>${earlyStartNotice(w)} Letting the crew sleep until 07:00 avoids the early-start cost.` : ''}</p>` : ''}<p>Darkness limits sight and unlit pickup range. Work lights, radar and a known route give you more choices.</p>`;
+    const week = `<h3>Seven-day outlook · ${def.name}</h3><table class="week-forecast"><thead><tr><th>Day</th><th>Outlook</th><th>Wind</th><th>Confidence</th></tr></thead><tbody>${sevenDayForecast(
       w,
       id,
     )
@@ -128,13 +130,10 @@ export function renderExpedition(ui, w, bind) {
       .join(
         '',
       )}</tbody></table><p>Further days are less certain. Improved forecasts increase confidence; check again before sailing. Synthetic game weather.</p>`;
+    detail = `<div class="forecast-detail"><section class="forecast-week">${week}</section><section class="forecast-today">${current}</section></div>`;
   } else {
     title = 'Choose what the skipper knows.';
     detail = `<h3>${w.career.assists.preset === 'off' ? 'ALL OFF' : w.career.assists.preset.toUpperCase()} information</h3><p>Realistic includes exact deck/diver readouts, clock/offload, helm instruments and chart ground markings. All Off disables every widget. Turn off Diver indicators and enable Portrait-only diver selector for identity and selection without telemetry.</p><p>RB cycles ${w.career.difficulty === 'realistic' ? 'Realistic → All Off' : 'Easy → Realistic → All Off'}. Custom choices are remembered separately for each information mode. R3 opens this menu. ${w.career.difficulty === 'realistic' ? 'This career excludes Easy-only environmental and underwater aids.' : 'Each widget is independently configurable.'}</p><p>Information does not change crew skill, current, prices or hidden ground stock.</p>`;
-  }
-  if (ui.screen === 'conditions') {
-    const split = detail.indexOf('<h3>Seven-day');
-    detail = `<div class="forecast-detail"><section>${detail.slice(0, split)}</section><section>${detail.slice(split)}</section></div>`;
   }
   const vector = chartMode(ui) === 'vector',
     chartPixels = 480,
@@ -147,6 +146,16 @@ export function renderExpedition(ui, w, bind) {
           })
         : `<canvas width="${chartPixels}" height="${chartPixels}" aria-label="Persistent working chart"></canvas>`;
   ui.panel.innerHTML = `<div class="day-heading"><div><div class="eyebrow">DAY ${careerDayAt(w)} · ${formatClock(w.day.minute % 1440)}</div><h2>${title}</h2></div>${map ? chartModeMarkup(ui) : ''}</div><div class="day-layout expedition-layout">${map ? `<div class="sector-picture">${chartSurface}<div class="map-caption">Pink ×: charted rocks/outcrops; numbers give clearance over tops at chart datum (add tide). Some visible rocks and drifting logs are uncharted. Red: your track · blue: depth contours · amber: past diver reports.</div></div>` : ''}<article class="career-detail"><div class="expedition-copy">${detail}</div><div class="choices expedition-choices"></div></article></div><div class="day-footer">${ui.menuNotice || `${bind('menuUp')} / ${bind('menuDown')} Navigate · ${bind('confirm')} Select · Right stick scrolls detail · ${bind('back')} Back`}</div>`;
+  if (ui.screen === 'conditions')
+    ui.panel
+      .querySelector('.day-footer')
+      .replaceWith(
+        menuFooter(
+          ui,
+          bind,
+          ui.input.lastDevice === 'gamepad' ? 'Right stick scrolls forecast' : 'Scroll for more',
+        ),
+      );
   if (map) {
     bindChartModeToggle(ui.panel, ui);
     const surface = ui.panel.querySelector('.sector-picture > :is(canvas, svg)');

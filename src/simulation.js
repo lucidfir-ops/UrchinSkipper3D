@@ -511,7 +511,7 @@ function stepDiver(w, d, a, dt, tolerance) {
     }
     applyDiveInjury(w, d);
     driftSurface(w, d, dt);
-    swimToPickupWater(w, d, dt);
+    swimToPickupWater(w, d, dt, tolerance);
     const r = recoveryStatus(w, tolerance, d);
     if (a.work && d.bagHandled) {
       const next = rediveStatus(w, d);

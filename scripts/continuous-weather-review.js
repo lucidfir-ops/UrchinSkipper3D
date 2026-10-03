@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { chromium } from '@playwright/test';
+import { gamepadScript } from './gamepad-fixture.js';
 import '../tests/matter-helper.js';
 import { createCareer } from '../src/career-state.js';
 import { careerWorld, encode, SAVE_KEY } from '../src/career-save.js';
 import { chooseGround } from '../src/day.js';
 
-const output = 'test-results/continuous-weather-2026-10-02';
+const output = process.env.URCHIN_WEATHER_OUTPUT || 'test-results/continuous-weather-2026-10-02';
 mkdirSync(output, { recursive: true });
 const fixture = careerWorld(createCareer(17));
 assert(chooseGround(fixture, 'near').ok);
@@ -73,6 +74,13 @@ async function forecastRecord(page) {
   return page.evaluate(() => ({
     minute: urchinDebug.world.day.minute,
     savedPlan: urchinDebug.world.career.weatherPlan,
+    footer: document.querySelector('.day-footer').innerText,
+    detail: document.querySelector('.expedition-copy').innerText,
+    todayVisible: (() => {
+      const pane = document.querySelector('.expedition-copy').getBoundingClientRect();
+      const row = document.querySelector('.week-forecast tbody tr').getBoundingClientRect();
+      return row.top >= pane.top && row.bottom <= pane.bottom + 1;
+    })(),
     rows: [...document.querySelectorAll('.week-forecast tbody tr')].map((row) => ({
       day: row.querySelector('th').textContent,
       outlook: row.querySelector('td').textContent,
@@ -178,6 +186,11 @@ try {
       continue;
     const context = await browser.newContext({ viewport: { width, height }, hasTouch: touch });
     const page = await context.newPage();
+    if (!touch)
+      await page.addInitScript(gamepadScript, {
+        name: 'forecastPad',
+        id: 'Forecast Synthetic Xbox',
+      });
     page.on('pageerror', (error) => errors.push(`${name}: ${error.message}`));
     page.on('console', (message) => {
       if (message.type() === 'error') errors.push(`${name}: ${message.text()}`);
@@ -233,11 +246,23 @@ try {
     await openForecast(page, touch);
     const forecast = await forecastRecord(page);
     assertForecast(forecast);
+    assert(
+      forecast.todayVisible,
+      'Today must be readable as soon as the forecast opens, including portrait',
+    );
+    assert.doesNotMatch(
+      forecast.detail,
+      /Departure|Before 07:00|Waiting back/,
+      'at-sea forecast must not offer harbour departure advice',
+    );
+    if (touch) {
+      assert.match(forecast.footer, /Tap to choose.*Swipe to scroll/);
+      assert.doesNotMatch(forecast.footer, /stick|Up \/ Down/i);
+    }
     assert.equal(forecast.minute, paused.minute, 'viewing forecasts does not advance time');
     assert.deepEqual(forecast.savedPlan, dry.savedPlan);
     await page.screenshot({ path: `${output}/${name}-forecast.png` });
-    // The seven-day table can be below the fold on compact screens. Capture its
-    // genuinely scrollable view separately without changing the page's layout.
+    // Capture the scrollable table separately without changing the page layout.
     await page.locator('.week-forecast').scrollIntoViewIfNeeded();
     assertForecast(await forecastRecord(page));
     await page.screenshot({ path: `${output}/${name}-forecast-table.png` });
@@ -247,6 +272,32 @@ try {
       touchScroll = await scrollForecastByTouch(page);
       assertForecast(await forecastRecord(page));
       await page.screenshot({ path: `${output}/${name}-forecast-final-days.png` });
+    }
+    let controllerScroll = null;
+    if (!touch) {
+      // The standard synthetic pad drives the real input polling and menu scroll.
+      const before = await page
+        .locator('.expedition-copy')
+        .evaluate((element) => element.scrollTop);
+      await page.evaluate(() => {
+        window.forecastPad.axes[3] = 0.8;
+      });
+      await page.waitForFunction(() => urchinDebug.input.lastDevice === 'gamepad');
+      await page.waitForFunction(
+        (value) => document.querySelector('.expedition-copy').scrollTop > value + 40,
+        before,
+      );
+      await page.evaluate(() => {
+        window.forecastPad.axes[3] = 0;
+      });
+      controllerScroll = await page.evaluate(() => ({
+        top: document.querySelector('.expedition-copy').scrollTop,
+        footer: document.querySelector('.day-footer').innerText,
+        minute: urchinDebug.world.day.minute,
+      }));
+      assert.match(controllerScroll.footer, /Right stick scrolls forecast/);
+      assert.equal(controllerScroll.minute, paused.minute);
+      await page.screenshot({ path: `${output}/desktop-controller-forecast.png` });
     }
     if (touch) await activate(page, 'Back to previous menu', true);
     else await page.keyboard.press('Backspace', { delay: 80 });
@@ -292,6 +343,7 @@ try {
       wet,
       forecast,
       touchScroll,
+      controllerScroll,
       save,
       restored,
     });
