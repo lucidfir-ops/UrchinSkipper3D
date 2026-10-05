@@ -28,6 +28,7 @@ const SETTINGS = [
     title: 'Picture & sound',
     note: 'Make the coast look and sound right.',
     items: [
+      ['menu-theme', null, 'Night is easier on the eyes; Day is bright chart paper.'],
       ['graphics', null, 'Select to cycle rendering quality.'],
       ['volume', 'Sound volume', 'Drag or use ← / → to adjust. 0% mutes sound.'],
     ],
@@ -92,7 +93,7 @@ function row(ui, world, action, index, title, description) {
   copy.append(name, hint);
   const arrow = document.createElement('span');
   arrow.className = 'menu-row-arrow';
-  arrow.textContent = ['graphics', 'boat-art'].includes(action.id)
+  arrow.textContent = ['graphics', 'boat-art', 'menu-theme'].includes(action.id)
     ? '↻'
     : action.id === 'download-log'
       ? '↓'

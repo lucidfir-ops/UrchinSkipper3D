@@ -407,6 +407,13 @@ function coastOverview(grounds, selected, rendition) {
     '',
   )}<text x="24" y="778" fill="#a6c5c1" font-size="12">HOME HARBOUR · Synthetic overview, not to scale · Permits apply to whole coasts</text></svg>`;
 }
-export function harbourArt() {
-  return `<svg viewBox="0 0 500 260" role="img" aria-label="Dive boat alongside the harbour dock at sunset"><defs><linearGradient id="dockSky" x2="0" y2="1"><stop stop-color="#294e60"/><stop offset="1" stop-color="#ceae77"/></linearGradient></defs><rect width="500" height="260" fill="url(#dockSky)"/><circle cx="370" cy="81" r="28" fill="#f4d591"/><path d="M0 110L30 78 58 95 95 50 150 105 189 81 244 116 286 63 326 111 393 97 433 120 500 92V170H0" fill="#304f50"/><rect y="142" width="500" height="118" fill="#164553"/><g stroke="#c7c8a0" opacity=".25"><path d="M13 167H86M204 157H260M328 166H448M80 208H151M248 223H401M23 242H79"/></g><path d="M0 159H178V170H0" fill="#927652"/><g stroke="#594f3b" stroke-width="7"><path d="M25 159V225M143 159V206"/></g><g transform="translate(174 141)"><path d="M-13 40H193L165 65H12Z" fill="#ded9b7"/><path d="M105 2H148V40H95Z" fill="#b2d1ca"/><path d="M113 8H142V26H108Z" fill="#214653"/><path d="M125 1V-46M125-40L151-32 125-23" fill="#e4e8d7" stroke="#d5dac0" stroke-width="3"/><path d="M0 36H88" stroke="#765338" stroke-width="6"/><g fill="#d99648" stroke="#f2c47e"><ellipse cx="18" cy="29" rx="12" ry="8"/><ellipse cx="44" cy="29" rx="12" ry="8"/><ellipse cx="70" cy="29" rx="12" ry="8"/></g></g><path d="M0 259H500" stroke="#e0d6ae"/></svg>`;
+// October 5: the offload scene is a crop of the painted harbour (the boat
+// alongside, crew and urchin crates) instead of the flat SVG. Late arrivals
+// darken toward night with the dock lamps lit; serious incidents are muted.
+export function harbourArt(r = {}) {
+  const minute = (((r.arrival ?? 18 * 60) % 1440) + 1440) % 1440,
+    light =
+      minute >= 20 * 60 + 30 || minute < 6 * 60 ? 'night' : minute >= 19 * 60 ? 'dusk' : 'day',
+    sombre = !!(r.safety?.fatalities || r.sunk);
+  return `<figure class="offload-art" data-light="${light}"${sombre ? ' data-sombre="true"' : ''}><img src="./assets/harbour/offload-v1.jpg" alt="${sombre ? 'The harbour dock after a hard day' : 'Your boat alongside the harbour dock with the catch in crates'}${light === 'day' ? '' : light === 'dusk' ? ' at dusk' : ' at night'}" width="860" height="447" decoding="async"/></figure>`;
 }

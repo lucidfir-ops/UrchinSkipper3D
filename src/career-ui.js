@@ -232,8 +232,9 @@ export function renderCareer(ui, w, bind) {
   ) {
     const id = previewBoat;
     detail =
-      (ui.screen === 'yourboat' ? fittingPreview(w) : vesselPreview(id, boatDefinition(id).name)) +
-      detail;
+      (ui.screen === 'yourboat'
+        ? fittingPreview(w)
+        : vesselPreview(id, boatDefinition(id).name, { rotatable: true })) + detail;
   }
   ui.panel.innerHTML = `<div class="day-heading"><div><div class="eyebrow">URCHIN SKIPPER · DAY ${c.day} · ${money(c.cash)}</div><h2>${title}</h2></div></div><div class="career-layout"><div class="career-choices choices"></div><article class="career-detail">${detail}</article></div><div class="day-footer">${ui.menuNotice || ui.saveNotice || `${bind('menuUp')} / ${bind('menuDown')} Navigate · ${bind('confirm')} Select · Right stick scrolls detail · ${bind('back')} Back`}</div>`;
   const list = ui.panel.querySelector('.choices');

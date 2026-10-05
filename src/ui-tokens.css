@@ -25,6 +25,13 @@
   --chart-ink-faint: #6d7c88;
   --chart-rule: #14263a26;
   --chart-sea: #3f7f8f;
+  --chart-paper-hi: #f6f0e2;
+  --chart-card: #f6f1e4;
+  --chart-card-hi: #fbf7ee;
+  --chart-card-low: #e6dfcd;
+  --chart-good: #2f6b3a;
+  --chart-sheen: #ffffff80;
+  --chart-sheen-soft: #ffffff2e;
   --signal: #e2562a;
   --signal-deep: #b8401b;
   --signal-ink: #fff6ea;

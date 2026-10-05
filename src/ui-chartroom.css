@@ -7,7 +7,7 @@
 html body :is(#playtest, #startup) {
   --ui-bg: var(--chart-paper);
   --ui-surface: var(--chart-paper-deep);
-  --ui-raised: #f4eedf;
+  --ui-raised: var(--chart-card);
   --ui-text: var(--chart-ink);
   --ui-muted: var(--chart-ink-soft);
   --ui-faint: var(--chart-ink-faint);
@@ -16,8 +16,16 @@ html body :is(#playtest, #startup) {
   --ui-border: var(--chart-rule);
   --ui-radius: 4px;
   --chart-grid:
-    repeating-linear-gradient(0deg, transparent 0 39px, #14263a0d 39px 40px),
-    repeating-linear-gradient(90deg, transparent 0 39px, #14263a0d 39px 40px);
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 39px,
+      color-mix(in srgb, var(--chart-ink) 5%, transparent) 39px 40px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 39px,
+      color-mix(in srgb, var(--chart-ink) 5%, transparent) 39px 40px
+    );
   color: var(--chart-ink);
   font-family: var(--font-body);
 }
@@ -29,7 +37,7 @@ html body #playtest#playtest:not(.wharf-panel) {
     var(--chart-grid),
     radial-gradient(
       120% 90% at 0% 0%,
-      #f6f0e2 0%,
+      var(--chart-paper-hi) 0%,
       var(--chart-paper) 55%,
       var(--chart-paper-deep) 100%
     );
@@ -38,7 +46,7 @@ html body #playtest#playtest:not(.wharf-panel) {
   box-shadow:
     0 0 0 1px #0b1620,
     0 30px 90px #000a12c0,
-    inset 0 0 0 6px #ffffff2e;
+    inset 0 0 0 6px var(--chart-sheen-soft);
 }
 html body #playtest#playtest :is(h2, h3, h4) {
   color: var(--chart-ink);
@@ -105,8 +113,8 @@ html body .menu-location {
    Specific choice/primary rules below outrank this (they add classes). */
 html body #playtest#playtest button:not(.layout-card) {
   color: var(--chart-ink);
-  background: #f6f1e4;
-  border: 1px solid #14263a40;
+  background: var(--chart-card);
+  border: 1px solid color-mix(in srgb, var(--chart-ink) 25%, transparent);
   border-radius: 3px;
   box-shadow: none;
 }
@@ -143,19 +151,19 @@ html
   color: var(--chart-ink-soft);
 }
 html body #playtest#playtest .assist-row {
-  background: #f6f1e4;
-  border: 1px solid #14263a2e;
+  background: var(--chart-card);
+  border: 1px solid color-mix(in srgb, var(--chart-ink) 18%, transparent);
   border-left: 4px solid var(--chart-ink);
 }
 html body #playtest#playtest .assist-row [role='switch'] {
   font-family: var(--font-readout);
   font-weight: 500;
   color: var(--chart-ink-faint);
-  background: #e3dac4;
+  background: var(--chart-card-low);
   border-radius: 0 3px 3px 0;
 }
 html body #playtest#playtest .assist-row [role='switch'][aria-checked='true'] {
-  color: #f4fbf8;
+  color: var(--signal-ink);
   background: var(--chart-sea);
 }
 html body #playtest#playtest .assist-row [role='switch'].selected {
@@ -163,13 +171,13 @@ html body #playtest#playtest .assist-row [role='switch'].selected {
   background: var(--signal);
 }
 html body #playtest#playtest .touch-option-group {
-  background: #f6f1e4;
-  border: 1px solid #14263a2e;
+  background: var(--chart-card);
+  border: 1px solid color-mix(in srgb, var(--chart-ink) 18%, transparent);
   border-top: 3px solid var(--chart-ink);
 }
 html body #playtest#playtest :is(.shop-purchase-footer, .shop-toolbar) {
-  background: #e8dfc9;
-  border: 1px solid #14263a2e;
+  background: var(--chart-card-low);
+  border: 1px solid color-mix(in srgb, var(--chart-ink) 18%, transparent);
 }
 html body #playtest#playtest .chart-mode-toggle span {
   color: var(--chart-ink-soft);
@@ -188,11 +196,11 @@ html body #playtest#playtest .assist-presets button,
 html body #playtest#playtest .assist-tools button,
 html body #playtest#playtest .touch-option-controls button {
   color: var(--chart-ink);
-  background: #f6f1e4;
-  border: 1px solid #14263a2e;
+  background: var(--chart-card);
+  border: 1px solid color-mix(in srgb, var(--chart-ink) 18%, transparent);
   border-left: 4px solid var(--chart-ink);
   border-radius: 3px;
-  box-shadow: 0 1px 0 #14263a14;
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--chart-ink) 8%, transparent);
   font-family: var(--font-body);
   font-weight: 600;
   text-align: left;
@@ -207,7 +215,7 @@ html
   :is(.choices, .career-choices, .menu-body, .pause-column)
   > button:hover,
 html body #playtest#playtest .menu-row:hover {
-  background: #fffaf0;
+  background: var(--chart-card-hi);
   border-left-color: var(--chart-ink);
 }
 /* The focused choice: signal flag orange. One highlight on screen at a time. */
@@ -242,8 +250,8 @@ html
 }
 html body #playtest#playtest button:disabled {
   color: var(--chart-ink-faint);
-  background: #e6dfcd;
-  border-left-color: #14263a40;
+  background: var(--chart-card-low);
+  border-left-color: color-mix(in srgb, var(--chart-ink) 25%, transparent);
   box-shadow: none;
 }
 html body #playtest#playtest .menu-row-copy strong {
@@ -256,7 +264,7 @@ html body #playtest#playtest .menu-row-arrow {
   color: var(--chart-ink-soft);
 }
 html body #playtest#playtest .menu-row-switch {
-  background: #14263a2a;
+  background: color-mix(in srgb, var(--chart-ink) 16%, transparent);
 }
 html body #playtest#playtest [aria-checked='true'] > .menu-row-switch {
   background: var(--chart-sea);
@@ -296,11 +304,11 @@ html body #playtest#playtest .career-detail,
 html body #playtest#playtest .assist-explanation,
 html body #playtest#playtest .touch-options-detail {
   color: var(--chart-ink-soft);
-  background: #fbf7ee;
-  border: 1px solid #14263a24;
+  background: var(--chart-card-hi);
+  border: 1px solid color-mix(in srgb, var(--chart-ink) 14%, transparent);
   border-top: 3px solid var(--chart-ink);
   border-radius: 3px;
-  box-shadow: inset 0 0 0 1px #ffffff80;
+  box-shadow: inset 0 0 0 1px var(--chart-sheen);
 }
 html body #playtest#playtest .career-detail h3 {
   color: var(--chart-ink);
@@ -328,8 +336,8 @@ html body #playtest#playtest .storage-report.warning strong {
 /* Cards in shops / crew */
 html body #playtest#playtest :is(.crew-card, .shop-card, .shop-vessel-card, .shop-equipment-card) {
   color: var(--chart-ink);
-  background: #f8f3e7;
-  border: 1px solid #14263a2e;
+  background: var(--chart-card);
+  border: 1px solid color-mix(in srgb, var(--chart-ink) 18%, transparent);
   border-radius: 3px;
 }
 html body #playtest#playtest :is(.assist-row, .touch-option-group, .assist-section) {
@@ -340,7 +348,7 @@ html body #playtest#playtest input[type='range'] {
 }
 html body #playtest#playtest select {
   color: var(--chart-ink);
-  background: #fbf7ee;
+  background: var(--chart-card-hi);
   border: 1px solid var(--chart-ink-soft);
 }
 
@@ -349,7 +357,7 @@ html body #startup#startup .title-copy {
   color: var(--chart-ink);
   background:
     var(--chart-grid),
-    linear-gradient(160deg, #f6f0e2, var(--chart-paper) 60%, var(--chart-paper-deep));
+    linear-gradient(160deg, var(--chart-paper-hi), var(--chart-paper) 60%, var(--chart-paper-deep));
   border: 1px solid var(--chart-paper-edge);
   border-left: 8px solid var(--chart-ink);
   border-radius: 3px;
@@ -378,7 +386,7 @@ html body #startup#startup small {
 }
 html body #startup#startup .title-choices button {
   color: var(--chart-ink);
-  background: #f6f1e4;
+  background: var(--chart-card);
   border: 1.5px solid var(--chart-ink);
   border-radius: 3px;
   font-family: var(--font-display);
@@ -389,7 +397,7 @@ html body #startup#startup .title-choices button {
 }
 html body #startup#startup .title-choices button:nth-child(n + 5) {
   color: var(--chart-ink-soft);
-  border-color: #14263a66;
+  border-color: color-mix(in srgb, var(--chart-ink) 40%, transparent);
   font-size: 14px;
 }
 html body #startup#startup .title-choices .title-primary {
@@ -464,7 +472,7 @@ html body #playtest#playtest.save-art-panel {
     var(--chart-grid),
     radial-gradient(
       120% 90% at 0% 0%,
-      #f6f0e2 0%,
+      var(--chart-paper-hi) 0%,
       var(--chart-paper) 55%,
       var(--chart-paper-deep) 100%
     ) !important;
@@ -474,7 +482,7 @@ html body #playtest#playtest.save-art-panel :is(.choices, .career-detail) {
   padding: 0;
 }
 html body #playtest#playtest.save-art-panel .career-detail {
-  background: #fbf7ee;
+  background: var(--chart-card-hi);
   padding: 14px 16px;
 }
 
@@ -577,12 +585,12 @@ html body #playtest#playtest :is(.menu-primary, .pause-primary).selected {
 /* Device diagrams become ink line-art keys on paper. */
 html body #playtest#playtest .keyboard-diagram .keycap {
   color: var(--chart-ink);
-  background: #f8f3e7;
-  border: 1px solid #14263a55;
-  box-shadow: 0 2px 0 #14263a33;
+  background: var(--chart-card);
+  border: 1px solid color-mix(in srgb, var(--chart-ink) 33%, transparent);
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--chart-ink) 20%, transparent);
 }
 html body #playtest#playtest .keyboard-diagram .keycap.bound {
-  background: #efe5cc;
+  background: var(--chart-card-low);
 }
 html body #playtest#playtest .keyboard-diagram .keycap.active {
   color: var(--signal-ink);
@@ -615,7 +623,7 @@ html body #playtest#playtest :is(.shop-equipment-state, .equipment-status) {
   font-weight: 500;
 }
 html body #playtest#playtest :is(.shop-equipment-state, .equipment-status).available {
-  color: #2f6b3a;
+  color: var(--chart-good);
 }
 html body #playtest#playtest :is(.shop-equipment-state, .equipment-status).owned {
   color: var(--chart-sea);

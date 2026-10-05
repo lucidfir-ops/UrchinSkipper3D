@@ -1,0 +1,287 @@
+/* October 5, 2026 — night mode (default) and remnant panels.
+   Night redefines the chart-room tokens as a dark chart table under a lamp:
+   slate paper, pale ink, the same signal-orange focus. Day keeps the October 4
+   chart paper. The remnant rules below replace the last pre-October 4 teal
+   panels with token-based chart-room surfaces, so they work in both themes.
+   Loaded after ui-chartroom.css. */
+
+html[data-menu-theme='night'] {
+  --chart-paper: #1b2731;
+  --chart-paper-deep: #151f28;
+  --chart-paper-edge: #34454f;
+  --chart-paper-hi: #213140;
+  --chart-card: #223240;
+  --chart-card-hi: #273846;
+  --chart-card-low: #1c2a35;
+  --chart-ink: #ece3cd;
+  --chart-ink-soft: #c4bca9;
+  --chart-ink-faint: #949896;
+  --chart-rule: #ece3cd29;
+  --chart-sea: #5ea6b4;
+  --chart-good: #93d08c;
+  --chart-sheen: transparent;
+  --chart-sheen-soft: #ffffff0a;
+  --signal: #d9512a;
+  --signal-deep: #f0875c;
+  --signal-ink: #fff7ec;
+  color-scheme: dark;
+}
+/* Signal-deep is a text colour on paper; as a border/shadow under the orange
+   focus it must stay a darker orange in both themes. */
+html[data-menu-theme='night']
+  body
+  #playtest#playtest
+  :is(button, .menu-row):is(.selected, :focus-visible) {
+  border-color: #a8391a;
+  box-shadow: 0 3px 0 #a8391a;
+}
+html[data-menu-theme='night'] body #startup#startup .title-copy,
+html[data-menu-theme='night'] body #playtest#playtest:not(.wharf-panel) {
+  box-shadow:
+    0 0 0 1px #05090d,
+    0 30px 90px #000000c0;
+}
+
+/* ---------- Remnant panels (both themes) ---------- */
+
+/* Shop: the row being inspected. */
+html body #playtest#playtest.shop-panel .shop-row.is-preview {
+  border-color: var(--signal);
+  background: var(--chart-card-low);
+}
+html body #playtest#playtest.shop-panel .shop-row.is-preview figcaption {
+  color: var(--chart-ink);
+}
+
+/* Chandlery / Your boat detail. */
+html body #playtest#playtest :is(.equipment-detail-title small, .equipment-comparison thead th) {
+  color: var(--chart-ink-faint);
+}
+html body #playtest#playtest .equipment-detail-title h3 {
+  color: var(--chart-ink);
+}
+html body #playtest#playtest .equipment-benefit {
+  color: var(--chart-ink);
+}
+html body #playtest#playtest .equipment-status {
+  background: var(--chart-card-low);
+}
+html body #playtest#playtest :is(.equipment-comparison th, .equipment-comparison td) {
+  border-bottom-color: var(--chart-rule);
+}
+html body #playtest#playtest .equipment-price {
+  border-top-color: var(--chart-rule);
+}
+/* The rotatable 3D preview is a lit display set into the chart table; its
+   caption is chart-room type below the display. */
+html body #playtest#playtest .fitting-preview {
+  border: 1px solid var(--chart-paper-edge);
+  border-radius: 4px;
+  background: var(--chart-card);
+}
+html body #playtest#playtest .fitting-preview canvas {
+  display: block;
+  background: #112a30;
+}
+html body #playtest#playtest .fitting-preview-caption {
+  border-top: 1px solid var(--chart-rule);
+  color: var(--chart-ink-soft);
+  font-family: var(--font-readout);
+}
+html body #playtest#playtest .fitting-preview-caption b {
+  color: var(--chart-ink);
+}
+html body #playtest#playtest .fitting-preview-caption span {
+  color: var(--chart-ink-faint);
+}
+
+/* Back at harbour: the Working day return is a receipt on the chart table. */
+html body #playtest#playtest .landing-receipt {
+  color: var(--chart-ink-soft);
+  background: var(--chart-card-hi);
+  border: 1px solid var(--chart-rule);
+  border-top: 3px solid var(--chart-ink);
+  border-radius: 3px;
+  box-shadow: none;
+}
+html body #playtest#playtest .landing-receipt .eyebrow {
+  color: var(--signal-deep);
+}
+html body #playtest#playtest .landing-receipt .earnings {
+  color: var(--chart-ink);
+  font-family: var(--font-readout);
+  font-weight: 500;
+}
+html body #playtest#playtest .landing-receipt .receipt-row {
+  color: var(--chart-ink-soft);
+  border-bottom-color: var(--chart-rule);
+}
+html body #playtest#playtest .landing-receipt .receipt-row strong {
+  color: var(--chart-ink);
+  font-family: var(--font-readout);
+}
+html body #playtest#playtest .landing-receipt .receipt-row.loss strong {
+  color: var(--signal-deep);
+}
+html body #playtest#playtest .landing-receipt .receipt-row.payable {
+  color: var(--chart-ink);
+  border-bottom-color: var(--chart-ink);
+}
+html body #playtest#playtest .landing-receipt .receipt-footnote {
+  color: var(--chart-ink-faint);
+}
+html body #playtest#playtest .result-status {
+  color: var(--chart-ink);
+  background: var(--chart-card-low);
+  border-color: var(--chart-paper-edge);
+}
+html body #playtest#playtest .result-status.delayed {
+  border-left: 4px solid var(--signal);
+}
+html body #playtest#playtest .result-status.on-time {
+  border-left: 4px solid var(--chart-good);
+}
+html body #playtest#playtest .result-status small {
+  color: var(--chart-ink-soft);
+}
+
+/* Chart captions sit on paper, not on a dark sea-green slab. */
+html body #playtest#playtest .map-caption {
+  color: var(--chart-ink-soft);
+  background: var(--chart-card);
+  border: 1px solid var(--chart-rule);
+}
+
+/* Rotatable boat-selection preview (October 5). */
+html body #playtest#playtest .vessel-rotatable canvas {
+  cursor: grab;
+  touch-action: pan-y;
+}
+html body #playtest#playtest .vessel-rotatable canvas:active {
+  cursor: grabbing;
+}
+html body #playtest#playtest .vessel-rotatable canvas:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: -3px;
+}
+html body #playtest#playtest .vessel-rotatable figcaption span {
+  display: block;
+  margin-top: 2px;
+  color: var(--chart-ink-faint);
+  font-family: var(--font-readout);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+/* The large boat preview was the last sea-green radial plate; it is now a
+   framed display on the chart table, like the Chandlery preview. */
+html body #playtest#playtest :is(.career-detail, .shop-inline-detail) > .vessel-model {
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--chart-paper-edge);
+  border-radius: 4px;
+  background: var(--chart-card);
+}
+html body #playtest#playtest :is(.career-detail, .shop-inline-detail) > .vessel-model canvas {
+  background: #112a30;
+  filter: none;
+}
+html body #playtest#playtest :is(.career-detail, .shop-inline-detail) > .vessel-model figcaption {
+  margin: 0;
+  padding: 8px 12px;
+  border-top: 1px solid var(--chart-rule);
+  color: var(--chart-ink);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-align: left;
+  text-transform: uppercase;
+}
+/* Key badges on the chart table are ink stamps. */
+html body #playtest#playtest .trigger-badge {
+  color: var(--chart-paper);
+  background: var(--chart-ink);
+  border-color: var(--chart-ink);
+}
+/* The touch-layout preview mimics the wheelhouse console over the sea, so it
+   keeps console colours rather than inheriting chart ink. */
+html body #playtest#playtest :is(.touch-preview-stick, .touch-preview-button, .touch-preview-menu) {
+  color: #e9edf0;
+  background: var(--console-body);
+  border-color: var(--console-bezel);
+}
+/* Switches that are ON read as inked stamps at night (like pressed toggles). */
+html[data-menu-theme='night']
+  body
+  #playtest#playtest
+  [role='switch'][aria-checked='true']:not(.selected) {
+  color: var(--chart-paper);
+  background: var(--chart-ink);
+}
+/* Harbour scene footer: a chart-paper strip, not a sea-green bar. */
+html body #playtest#playtest.wharf-panel .day-footer {
+  color: var(--chart-ink-soft);
+  background: var(--chart-paper);
+  border: 1px solid var(--chart-paper-edge);
+  border-radius: 3px;
+}
+
+/* Offload scene (October 5): painted harbour, lit for the arrival time. */
+html body #playtest#playtest .offload-art {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  aspect-ratio: 860 / 447;
+  max-height: 240px;
+  border: 1px solid var(--chart-paper-edge);
+  border-radius: 4px;
+  background: var(--chart-card-low);
+}
+html body #playtest#playtest .offload-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* ::before darkens toward the arrival hour; ::after relights the dock lamps. */
+html body #playtest#playtest .offload-art::before,
+html body #playtest#playtest .offload-art::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+}
+html body #playtest#playtest .offload-art::after {
+  z-index: 2;
+}
+html body #playtest#playtest .offload-art[data-light='dusk']::before {
+  background: linear-gradient(180deg, #3a4a86, #1b2550);
+  mix-blend-mode: multiply;
+  opacity: 0.45;
+}
+html body #playtest#playtest .offload-art[data-light='night']::before {
+  background: linear-gradient(180deg, #1d2c5c, #0c1430);
+  mix-blend-mode: multiply;
+  opacity: 0.82;
+}
+html body #playtest#playtest .offload-art[data-light='night']::after {
+  background:
+    radial-gradient(9% 12% at 78% 44%, #ffcf7a, transparent 70%),
+    radial-gradient(7% 9% at 40% 68%, #ffb860aa, transparent 70%),
+    radial-gradient(30% 22% at 70% 82%, #ffb86033, transparent 75%);
+  mix-blend-mode: screen;
+  opacity: 0.55;
+}
+html body #playtest#playtest .offload-art[data-light='night'] img {
+  filter: saturate(0.7) brightness(0.85);
+}
+html body #playtest#playtest .offload-art[data-sombre='true'] img {
+  filter: grayscale(0.65) brightness(0.8);
+}
+@media (max-height: 700px) {
+  html body #playtest#playtest .result-layout .offload-art {
+    max-height: 130px;
+  }
+}

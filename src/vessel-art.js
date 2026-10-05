@@ -117,8 +117,12 @@ export async function prepareVesselArt(progress = () => {}) {
     }),
   );
 }
-export function vesselPreview(id, name) {
-  return `<figure class="vessel-preview vessel-model"><canvas width="720" height="440" data-vessel="${id}" role="img" aria-label="${name}, 3D boat model"></canvas><figcaption>${name}</figcaption></figure>`;
+// October 5: the large boat-selection preview turns like the Chandlery's
+// (drag, or ← / → when focused). Card thumbnails stay still so a tap selects.
+export function vesselPreview(id, name, { rotatable = false } = {}) {
+  return rotatable
+    ? `<figure class="vessel-preview vessel-model vessel-rotatable"><canvas width="720" height="440" data-vessel="${id}" data-rotatable="true" tabindex="0" role="img" aria-label="${name}, 3D boat model. Drag or use the arrow keys to turn it."></canvas><figcaption>${name}<span>Drag to turn · ← →</span></figcaption></figure>`
+    : `<figure class="vessel-preview vessel-model"><canvas width="720" height="440" data-vessel="${id}" role="img" aria-label="${name}, 3D boat model"></canvas><figcaption>${name}</figcaption></figure>`;
 }
 export function paintVesselPreviews(panel) {
   paintFleetPreviews(panel);

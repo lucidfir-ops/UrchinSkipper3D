@@ -6,6 +6,7 @@ import { loggingEnabled, toggleLogging, downloadLog } from './troubleshooting-lo
 import { choiceButton } from './menu-buttons.js';
 import { renderSettings, menuFooter } from './menu-shell.js';
 import { setText } from './dom-view.js';
+import { cycleMenuTheme, menuThemeLabel } from './menu-theme.js';
 
 // Preferences belong to the device and are available without a career too.
 export function preferenceActions(ui) {
@@ -24,6 +25,7 @@ export function preferenceActions(ui) {
       action('deck-controls', deckControlsLabel(), cycleDeckControls),
       action('fullscreen', `⛶ ${fullscreenLabel()}`, toggleFullscreen),
       action('volume', 'Sound volume', () => ui.panel.querySelector('#soundVolume')?.focus()),
+      action('menu-theme', menuThemeLabel(), cycleMenuTheme),
       action('graphics', `3D graphics: ${ui.hooks.graphicsLabel?.() || 'High'}`, () =>
         ui.hooks.cycleGraphics?.(),
       ),

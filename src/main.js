@@ -3,6 +3,9 @@ import { worldTimeScale } from './time-speed.js';
 import { createSessionHooks } from './career-session.js';
 import { renderHud } from './hud-view.js';
 import { surfaceCall } from './diver-calls.js';
+import { applyMenuTheme } from './menu-theme.js';
+
+applyMenuTheme();
 import { releaseFittingPreview } from './three/fitting-preview.js';
 import { renderNavigationWindows } from './minimap-view.js';
 import { HudWindows } from './hud-windows.js';
@@ -38,6 +41,7 @@ import './time-advance.css';
 import './ui-tokens.css';
 import './ui-chartroom.css';
 import './ui-console.css';
+import './ui-night.css';
 import { C } from './config.js';
 import { CHART_ATLAS, installChartMaterial } from './chart-material.js';
 import { vesselCanvas, prepareVesselArt } from './vessel-art.js';

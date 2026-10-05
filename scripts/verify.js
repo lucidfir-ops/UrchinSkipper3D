@@ -59,6 +59,7 @@ const suites = {
   'wind-crests': ['scripts/wind-crest-review.js'],
   boundary: ['scripts/boundary-review.js'],
   'context-loss': ['scripts/context-loss-review.js'],
+  'menu-theme': ['scripts/menu-theme-audit.js', 'night,day', 'phone,tablet,deck', '--strict'],
   'context-loss-firefox': ['scripts/context-loss-review.js', '--firefox'],
   'surface-drift': ['scripts/surface-drift-review.js'],
   'work-lights': ['scripts/work-lights-review.js'],

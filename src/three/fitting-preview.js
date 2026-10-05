@@ -160,22 +160,61 @@ export function paintFittingPreviews(panel, w) {
 }
 
 const fleetSnapshots = new Map();
+// Rotation survives menu re-renders for each boat until the menu changes boat.
+const fleetRotation = new Map();
+const fleetWorld = (id) => ({
+  boat: { configuration: id, fuel: 0 },
+  catch: 0,
+  career: { fleet: { [id]: { equipment: [] } } },
+});
+function paintRotatable(canvas, id) {
+  const draw = () => {
+    preview ??= new FittingPreview();
+    preview.draw(canvas, fleetWorld(id), undefined, fleetRotation.get(id) || 0);
+    canvas.dataset.model = id;
+    canvas.dataset.rotation = String(fleetRotation.get(id) || 0);
+  };
+  const turn = (amount) => {
+    fleetRotation.set(id, (fleetRotation.get(id) || 0) + amount);
+    draw();
+  };
+  draw();
+  let pointer;
+  canvas.onpointerdown = (event) => {
+    pointer = { id: event.pointerId, x: event.clientX };
+    canvas.setPointerCapture(event.pointerId);
+  };
+  canvas.onpointermove = (event) => {
+    if (!pointer || pointer.id !== event.pointerId) return;
+    turn((event.clientX - pointer.x) * 0.014);
+    pointer.x = event.clientX;
+  };
+  canvas.onpointerup = canvas.onpointercancel = () => {
+    pointer = null;
+  };
+  canvas.onkeydown = (event) => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    turn(event.key === 'ArrowLeft' ? -0.22 : 0.22);
+  };
+}
 export function paintFleetPreviews(panel) {
   for (const canvas of panel.querySelectorAll('canvas[data-vessel]')) {
     const id = canvas.dataset.vessel;
     if (!FLEET[id]) continue;
     try {
+      if (canvas.dataset.rotatable) {
+        paintRotatable(canvas, id);
+        canvas.dataset.loaded = 'true';
+        continue;
+      }
       preview ??= new FittingPreview();
       if (!fleetSnapshots.has(id)) {
         const snapshot = document.createElement('canvas');
         snapshot.width = 720;
         snapshot.height = 440;
-        const world = {
-          boat: { configuration: id, fuel: 0 },
-          catch: 0,
-          career: { fleet: { [id]: { equipment: [] } } },
-        };
-        preview.draw(snapshot, world, undefined, 0);
+        preview.draw(snapshot, fleetWorld(id), undefined, 0);
         fleetSnapshots.set(id, snapshot);
       }
       canvas.getContext('2d').drawImage(fleetSnapshots.get(id), 0, 0, canvas.width, canvas.height);
