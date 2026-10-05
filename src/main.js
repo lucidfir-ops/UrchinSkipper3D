@@ -4,7 +4,7 @@ import { createSessionHooks } from './career-session.js';
 import { renderHud } from './hud-view.js';
 import { renderNavigationWindows } from './minimap-view.js';
 import { HudWindows } from './hud-windows.js';
-import { departing, departureBoat } from './departure-transition.js';
+import { departing, departureBoat, returnAvailable } from './departure-transition.js';
 import { resetSessionView } from './session-state.js';
 import { BackgroundSave } from './background-save.js';
 
@@ -206,6 +206,7 @@ class Ocean extends Phaser.Scene {
         'fullReverse',
         'neutral',
         'centerRudder',
+        'returnHarbour',
       ])
         pending[action] ||= a[action];
       accumulator +=
@@ -385,7 +386,15 @@ window.urchinDebug = {
     return 'three-procedural-' + world.boat.configuration;
   },
   navigation: { neighbour, menuGeometry, menuDirections },
-  simulation: { step, deploymentStatus, recoveryStatus, boatSpec, depthAt, currentAt },
+  simulation: {
+    step,
+    deploymentStatus,
+    recoveryStatus,
+    boatSpec,
+    depthAt,
+    currentAt,
+    returnAvailable,
+  },
   get renderSamples() {
     return scene?.metrics.samples || [];
   },

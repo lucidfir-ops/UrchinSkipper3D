@@ -50,7 +50,7 @@ import {
 } from './world.js';
 import { stepBoat } from './boat.js';
 import { advanceDay } from './day.js';
-import { departing, requestDeparture, advanceDeparture } from './departure-transition.js';
+import { departing, confirmDeparture, advanceDeparture } from './departure-transition.js';
 import { updateEnvironment } from './environment.js';
 import { recordFishingPressure, subAreaYield } from './quota-areas.js';
 import { driftUnderwater, moveOnBottom } from './diver-current.js';
@@ -567,8 +567,9 @@ function stepDiver(w, d, a, dt, tolerance) {
 }
 export function step(w, a, dt, { tolerance = C.recovery.tolerance } = {}) {
   if (!activeDay(w) || w.emergency?.mandatoryRescue) return;
-  if (w.day.returnPending) return;
   w.time += dt;
+  // The skipper's explicit choice applies to the position they saw it offered at.
+  if (a.returnHarbour) confirmDeparture(w);
   if (departing(w)) {
     advanceDeparture(w, dt);
     return;
@@ -600,7 +601,6 @@ export function step(w, a, dt, { tolerance = C.recovery.tolerance } = {}) {
     );
   }
   stepRocks(w, previous);
-  if (requestDeparture(w)) return;
   releaseRunoff(w);
   stepLogs(w, dt, previous);
   checkDiverSafety(w, previous);

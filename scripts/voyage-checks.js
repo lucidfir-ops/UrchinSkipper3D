@@ -64,7 +64,9 @@ export async function voyageChecks(browser, errors = []) {
       content:
         'const { step, deploymentStatus, recoveryStatus, boatSpec, depthAt, currentAt } = urchinDebug.simulation;\n' +
         'const answerPatrol = (w) => { const ui = urchinDebug.ui; ui.open("patrol"); ui.index = 0; ui.activate(w); };\n' +
-        'const confirmDeparture = (w) => { const ui = urchinDebug.ui; ui.open("harbour-return"); ui.index = 1; ui.activate(w); return !w.day.returnPending; };\n' +
+        'const returnAvailable = (w) => urchinDebug.simulation.returnAvailable(w);\n' +
+        // The skipper takes the explicit Pause-menu action offered beyond the harbour line.
+        'const confirmDeparture = (w) => { const ui = urchinDebug.ui; ui.open("pause"); ui.index = ui.choices(w).indexOf("Return to harbour"); if (ui.index < 0) return false; ui.activate(w); return w.day.returnFade !== undefined; };\n' +
         pilot +
         '\nwindow.careerVoyage = careerVoyage;',
     });

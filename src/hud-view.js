@@ -1,3 +1,4 @@
+import { renderReturnChip } from './return-chip.js';
 import { seaMessage, compactPickupSpeech } from './sea-messages.js';
 import { updateTutorialSpeech } from './tutorial-speech.js';
 import { recoveryStatus } from './diver-recovery.js';
@@ -70,6 +71,7 @@ export function renderHud(scene, world, input, lockReason) {
     !world.career?.debugConditions?.godmode || !scene.playtest.started;
   renderStandaloneInstruments(scene.playtest, world);
   renderKeyboardHelm(scene.playtest, world);
+  renderReturnChip(scene, world, input);
   const hud = document.querySelector('#hud'),
     message = document.querySelector('#message'),
     clock = document.querySelector('#clock');

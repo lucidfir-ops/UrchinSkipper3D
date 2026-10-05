@@ -1,3 +1,4 @@
+import { returnAvailable, confirmDeparture } from './departure-transition.js';
 import { harbourScreen } from './starter-career.js';
 import { trainingLessons, trainingPreparation, syncTrainingLight } from './training-replay.js';
 import { assist, gear } from './assists.js';
@@ -32,7 +33,9 @@ export function introChoices(ui) {
       'Resume lesson',
       'Look at the cove chart',
       w.career.intro.step === 9
-        ? 'Drive through SOUTH edge to finish'
+        ? returnAvailable(w)
+          ? 'Return to harbour'
+          : 'Drive past the SOUTH line to finish'
         : trainingPreparation(w)
           ? 'Continue to next lesson'
           : 'Skip this lesson step',
@@ -75,8 +78,10 @@ export function introActivate(ui) {
   else if (ui.index === 2) {
     const w = ui.hooks.world();
     if (w.career.intro.step === 9) {
-      ui.menuNotice = 'Recover both divers and drive through the SOUTH map edge.';
+      if (!returnAvailable(w))
+        ui.menuNotice = 'Recover both divers and drive past the amber SOUTH line.';
       ui.open(null);
+      if (returnAvailable(w)) confirmDeparture(w);
     } else {
       nextLesson(w);
       ui.hooks.save?.();

@@ -220,16 +220,19 @@ test('taxi curves past player without stop-start and completes its committed pas
     assert(deflection > 15);
   }
 });
-test('after training days taxi aims at undiscovered bubbles once at spawn, without homing afterward', () => {
+test('October 5: taxi commits to a close drive-by of the boat at spawn, clear of bubbles, without homing', () => {
   const w = sea();
   w.career.day = 10;
   Object.assign(w.boat, { x: 400, y: 450 });
   Object.assign(w.divers[0], { x: 300, y: 300, state: 'searching', patch: null });
   const a = spawnTraffic(w, 'taxi');
-  assert(a?.crossingPoint);
-  assert.deepEqual(a.crossingPoint, { x: 300, y: 300 });
+  assert(a?.driveByPoint);
+  const pass = Math.hypot(a.driveByPoint.x - 400, a.driveByPoint.y - 450);
+  assert(pass >= 14 && pass <= 32, `drive-by distance ${pass}`);
+  assert(Math.hypot(a.driveByPoint.x - 300, a.driveByPoint.y - 300) > 50, 'not aimed at the diver');
   const route = structuredClone(a.route);
   w.divers[0].x += 100;
+  w.boat.x -= 60;
   for (let n = 0; n < 20; n++) {
     w.time += 0.1;
     moveTraffic(w, a, 0.1);

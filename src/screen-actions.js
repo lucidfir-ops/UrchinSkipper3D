@@ -1,5 +1,5 @@
+import { returnAvailable, confirmDeparture } from './departure-transition.js';
 import { answerPatrol, crewAboard } from './fishery.js';
-import { RETURN_CHOICES, activateReturn } from './harbour-return.js';
 import { introChoices, introActivate } from './intro-view.js';
 import { expeditionChoices, expeditionActivate } from './career-chart.js';
 
@@ -26,7 +26,6 @@ import { touchOptionsActions } from './touch-options.js';
 import { preferenceActions } from './menu-preferences.js';
 
 export function choices(world) {
-  if (this.screen === 'harbour-return') return RETURN_CHOICES;
   const preferences = preferenceActions(this);
   if (preferences) return preferences.map((action) => action.label);
   if (this.screen === 'touch-options') return touchOptionsActions(this).map((a) => a.label);
@@ -56,6 +55,7 @@ export function choices(world) {
             'Touchscreen Options',
           ]
         : [
+            ...(returnAvailable(world) ? ['Return to harbour'] : []),
             'Resume',
             `REVEAL EVERY URCHIN: ${this.revealUrchins ? 'ON' : 'OFF'}`,
             'Debug mode',
@@ -211,10 +211,6 @@ export function activate(world) {
     touchOptionsActions(this)[this.index]?.run();
     return;
   }
-  if (this.screen === 'harbour-return') {
-    activateReturn(this, world);
-    return;
-  }
   if (introActivate(this)) return;
   const choice = this.choices(world)[this.index];
   if (choice?.startsWith('⛶')) {
@@ -289,6 +285,11 @@ export function activate(world) {
       this.hooks.reset({ practice: false });
       this.open(null);
       this.open('chart');
+    } else if (choice === 'Return to harbour') {
+      this.input.suppress();
+      this.open(null);
+      confirmDeparture(world);
+      this.hooks.save?.();
     } else if (choice === 'Resume' || choice === 'Back / Close') {
       this.input.suppress();
       this.open(null);

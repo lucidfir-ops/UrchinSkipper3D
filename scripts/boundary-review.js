@@ -8,7 +8,7 @@ import { updateEnvironment } from '../src/environment.js';
 import { updateWeather } from '../src/weather.js';
 import { gamepadScript, pressAction } from './gamepad-fixture.js';
 
-const directory = 'test-results/boundary-2026-10-01';
+const directory = 'test-results/boundary-2026-10-05';
 mkdirSync(directory, { recursive: true });
 const source = careerWorld();
 assert(chooseGround(source, 'near').ok);
@@ -54,76 +54,94 @@ async function setup(options = {}) {
   await page.waitForFunction(() => !urchinDebug.ui.screen && !urchinDebug.input.suppressed);
   return { context, page };
 }
+// October 5: crossing offers a compact Return to harbour chip; it never pauses
+// play, opens no dialog, and there is no on-water edge label.
 async function cross(page) {
   await page.evaluate(() => {
     const w = urchinDebug.world;
-    delete w.day.returnDismissed;
     Object.assign(w.boat, { y: w.terrain.size - 0.01, heading: Math.PI, vy: 3, throttle: 0.4 });
     urchinDebug.step(1 / 60);
   });
-  await page.waitForFunction(() => urchinDebug.ui.screen === 'harbour-return');
-  assert.equal(await page.evaluate(() => urchinDebug.ui.index), 0);
-  assert.equal(await page.locator('#playtest h2').textContent(), 'Return to harbour?');
-  const before = await page.evaluate(() => ({
-    time: urchinDebug.world.time,
-    minute: urchinDebug.world.day.minute,
-  }));
-  await page.waitForTimeout(200);
-  assert.deepEqual(
-    await page.evaluate(() => ({
-      time: urchinDebug.world.time,
-      minute: urchinDebug.world.day.minute,
-    })),
-    before,
-  );
-  await page.waitForFunction(() => !urchinDebug.input.suppressed);
-}
-async function cancelled(page) {
-  await page.waitForFunction(() => !urchinDebug.ui.screen);
+  await page.waitForFunction(() => !document.querySelector('#returnHarbourChip')?.hidden);
+  const before = await page.evaluate(() => urchinDebug.world.day.minute);
+  await page.waitForTimeout(300);
   const state = await page.evaluate(() => ({
-    dismissed: urchinDebug.world.day.returnDismissed,
+    screen: urchinDebug.ui.screen,
     fade: urchinDebug.world.day.returnFade,
     phase: urchinDebug.world.day.phase,
-    throttle: urchinDebug.world.boat.throttle,
+    minute: urchinDebug.world.day.minute,
+    labels: document.querySelectorAll('.sector-boundary-label').length,
   }));
-  assert.deepEqual(state, { dismissed: true, fade: undefined, phase: 'working', throttle: 0 });
-  await page.waitForTimeout(250);
-  assert.equal(await page.evaluate(() => urchinDebug.ui.screen), null);
+  assert.equal(state.screen, null, 'no dialog opens at the line');
+  assert.equal(state.fade, undefined, 'crossing alone never departs');
+  assert.equal(state.phase, 'working');
+  assert.equal(state.labels, 0, 'no on-water warning box');
+  assert(state.minute > before, 'time keeps running beyond the line');
+}
+async function inside(page) {
+  await page.evaluate(() => {
+    const w = urchinDebug.world;
+    Object.assign(w.boat, { y: w.terrain.size - 30, vy: 0, vx: 0, throttle: 0 });
+    urchinDebug.step(1 / 60);
+  });
+  await page.waitForFunction(() => document.querySelector('#returnHarbourChip')?.hidden);
+}
+async function chipBox(page, viewport) {
+  const box = await page.locator('#returnHarbourChip').boundingBox();
+  assert(
+    box && box.height >= 44 && box.x >= 0 && box.y >= 0 && box.x + box.width <= viewport.width,
+    'chip must be visible and touch-sized',
+  );
+  assert(box.y + box.height <= viewport.height);
+  assert(
+    await page.locator('#returnHarbourChip').evaluate((chip) => {
+      const r = chip.getBoundingClientRect();
+      return chip.contains(document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2));
+    }),
+    'chip must be on top and tappable',
+  );
+  return box;
 }
 try {
   {
-    const { page, context } = await setup({ viewport: { width: 1280, height: 800 } });
+    const viewport = { width: 1280, height: 800 };
+    const { page, context } = await setup({ viewport });
     await page.waitForTimeout(300);
-    await page.screenshot({ path: `${directory}/desktop-boundary.png` });
+    await page.screenshot({ path: `${directory}/desktop-near-edge.png` });
     assert(await page.evaluate(() => urchinDebug.three.navigation.boundary.group.visible));
+    assert(await page.evaluate(() => document.querySelector('#returnHarbourChip')?.hidden ?? true));
     await cross(page);
-    await page.screenshot({ path: `${directory}/desktop-confirmation.png` });
-    await page.keyboard.press('Enter');
-    await cancelled(page);
+    await chipBox(page, viewport);
+    assert.match(await page.locator('#returnHarbourChip').textContent(), /Press H/);
+    await page.screenshot({ path: `${directory}/desktop-beyond-line.png` });
+    await inside(page);
     await cross(page);
-    await page.keyboard.press('Escape');
-    await cancelled(page);
+    await page.keyboard.press('KeyH');
+    await page.waitForFunction(() => urchinDebug.world.day.phase === 'complete');
+    records.push(
+      'Desktop: no edge label near the line; crossing keeps time running with no dialog; chip shows "Press H"; returning inside withdraws it; H explicitly returns.',
+    );
+    await context.close();
+  }
+  {
+    const { page, context } = await setup({ viewport: { width: 1280, height: 800 } });
     await cross(page);
-    await page.locator('#playtest [data-choice-index="0"]').click();
-    await cancelled(page);
-    await cross(page);
-    await pressAction(page, 'boundaryPad', 'back');
-    await cancelled(page);
     await pressAction(page, 'boundaryPad', 'pause');
     await page.waitForFunction(() => urchinDebug.ui.screen === 'pause');
+    assert.equal(
+      await page.evaluate(() => urchinDebug.ui.choices(urchinDebug.world)[0]),
+      'Return to harbour',
+    );
     await pressAction(page, 'boundaryPad', 'back');
     await page.waitForFunction(() => !urchinDebug.ui.screen && !urchinDebug.input.suppressed);
-    assert.equal(await page.evaluate(() => urchinDebug.ui.forwardHistory.length), 0);
-    await cross(page);
+    assert.equal(await page.evaluate(() => urchinDebug.world.day.phase), 'working');
     await pressAction(page, 'boundaryPad', 'pause');
-    await cancelled(page);
-    await cross(page);
-    await pressAction(page, 'boundaryPad', 'menuDown');
-    assert.equal(await page.evaluate(() => urchinDebug.ui.index), 1);
+    await page.waitForFunction(() => urchinDebug.ui.screen === 'pause');
+    await page.evaluate(() => (urchinDebug.ui.index = 0));
     await pressAction(page, 'boundaryPad', 'confirm');
     await page.waitForFunction(() => urchinDebug.world.day.phase === 'complete');
     records.push(
-      'Keyboard Enter defaults to Cancel; Escape, mouse Cancel and synthetic controller Back/Menu retain the trip; ordinary controller pause/back still resumes after cancellation; controller Down + Confirm explicitly returns.',
+      'Synthetic controller: Menu lists Return to harbour first beyond the line; Back keeps fishing; Confirm returns.',
     );
     await context.close();
   }
@@ -133,32 +151,33 @@ try {
   ]) {
     const { page, context } = await setup({ viewport, hasTouch: true, isMobile: true });
     await page.evaluate(() => urchinDebug.ui.touch.setEnabled(true));
-    await page.waitForTimeout(100);
-    await page.screenshot({ path: `${directory}/${name}-boundary.png` });
+    await page.waitForTimeout(150);
+    await page.screenshot({ path: `${directory}/${name}-near-edge.png` });
     await cross(page);
-    await page.screenshot({ path: `${directory}/${name}-confirmation.png` });
-    for (const index of [0, 1]) {
-      const box = await page.locator(`#playtest [data-choice-index="${index}"]`).boundingBox();
-      assert(
-        box && box.height >= 44 && box.y >= 0 && box.y + box.height <= viewport.height,
-        `${name}: button ${index} must be visible and touch-sized`,
-      );
-      assert(
-        await page.locator(`#playtest [data-choice-index="${index}"]`).evaluate((button) => {
-          const r = button.getBoundingClientRect();
-          return button.contains(document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2));
-        }),
-        `${name}: button ${index} must not be clipped by the dialog`,
-      );
-    }
-    await page.locator('#playtest [data-choice-index="0"]').tap();
-    await cancelled(page);
-    await cross(page);
-    await page.locator('#playtest [data-choice-index="1"]').tap();
+    await page.waitForTimeout(150);
+    await page.screenshot({ path: `${directory}/${name}-beyond-line.png` });
+    const box = await chipBox(page, viewport);
+    const overlaps = await page.evaluate((box) => {
+      return [
+        ...document.querySelectorAll(
+          '#touchControls button:not(#touchBoat), #touchControls .touch-stick',
+        ),
+      ]
+        .filter((el) => el.offsetParent)
+        .map((el) => el.getBoundingClientRect())
+        .filter(
+          (r) =>
+            r.width &&
+            r.x < box.x + box.width &&
+            r.x + r.width > box.x &&
+            r.y < box.y + box.height &&
+            r.y + r.height > box.y,
+        ).length;
+    }, box);
+    assert.equal(overlaps, 0, `${name}: chip must not cover touch controls`);
+    await page.locator('#returnHarbourChip').tap();
     await page.waitForFunction(() => urchinDebug.world.day.phase === 'complete');
-    records.push(
-      `${name}: touch Cancel keeps fishing and explicit Return completes; both buttons visible at ≥44 px.`,
-    );
+    records.push(`${name}: chip ≥44 px, on screen, clear of touch controls; tap returns.`);
     await context.close();
   }
   assert.deepEqual(errors, []);

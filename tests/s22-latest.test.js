@@ -15,7 +15,7 @@ import { setPreset, toggleAssist, normalizeAssists } from '../src/assists.js';
 import { boatDefinition } from '../src/boats.js';
 import { FLEET, UPGRADES } from '../src/career-data.js';
 import { canCrossReturnBoundary } from '../src/navigation.js';
-import { requestDeparture, confirmDeparture } from '../src/departure-transition.js';
+import { returnAvailable, confirmDeparture } from '../src/departure-transition.js';
 import { WEATHER } from '../src/weather.js';
 import { freshVessel, useVessel } from '../src/career-state.js';
 import { UI_SCALES } from '../src/ui-scale.js';
@@ -114,7 +114,7 @@ test('tutorial return completes only through the configured south edge with crew
   assert.equal(advanceIntro(intro), false, 'crew must be aboard');
   intro.divers[0].state = 'ready';
   assert.equal(!!advanceIntro(intro), false, 'touching the tutorial edge does not depart');
-  assert(requestDeparture(intro));
+  assert(returnAvailable(intro));
   assert(confirmDeparture(intro));
   assert.equal(advanceIntro(intro), true);
   assert.equal(intro.career.intro.step, 9);

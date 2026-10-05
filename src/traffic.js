@@ -6,7 +6,7 @@ import { crewProfile } from './crew-roster.js';
 import { takeCatch } from './harvest-ground.js';
 import { clearWater, waterEntries, waterRoute } from './water-route.js';
 import { moveTraffic } from './traffic-motion.js';
-import { taxiRoute } from './taxi-route.js';
+import { taxiRoute, taxiDriveBy, DRIVE_BY } from './taxi-route.js';
 import { TRAFFIC, trafficSettings } from './traffic-settings.js';
 import { stepPatrol } from './patrol.js';
 import { inspectionDue } from './inspection-schedule.js';
@@ -141,13 +141,19 @@ function* planTraffic(w, kind, { start, patchId, art, fleetId } = {}) {
               (!desiredPatch || p.id === desiredPatch),
           );
   const worked = workingPatches(w).filter((p) => patches.includes(p));
-  const bubbleTargets = w.divers.filter((d) =>
-    ['deploying', 'searching', 'harvesting', 'surfacing', 'surface'].includes(d.state),
-  );
-  const crossing =
-    !desiredPatch &&
-    ((worked.length && nearby && actor.habit === 'encroaching') ||
-      (kind === 'taxi' && bubbleTargets.length && random() < TRAFFIC.taxiWorkingChance));
+  // October 5: taxis make close drive-bys of the player's boat, never runs
+  // through diver bubbles or floats. Their straight runs keep clear of divers.
+  const diverMarks = w.divers
+    .filter((d) =>
+      ['deploying', 'searching', 'harvesting', 'surfacing', 'surface'].includes(d.state),
+    )
+    .map((d) => ({ x: d.x, y: d.y }));
+  // Same trigger as the former working crossing: only while divers are working.
+  const driveBy =
+    kind === 'taxi' && !desiredPatch && diverMarks.length
+      ? random() < TRAFFIC.taxiWorkingChance
+      : false;
+  const crossing = !desiredPatch && worked.length && nearby && actor.habit === 'encroaching';
   // Randomize within each priority tier, then try every marked bed before any
   // unmarked fallback. Other traffic keeps a bounded itinerary search.
   const ordered = patches
@@ -177,19 +183,26 @@ function* planTraffic(w, kind, { start, patchId, art, fleetId } = {}) {
       yield;
       continue;
     }
-    // Taxi routes are committed across a working bed, never retargeted at a
-    // moving diver. Bubbles and floats do not trigger taxi avoidance.
-    const sample = crossing && kind === 'taxi' && attempt < 6 ? pick(bubbleTargets, random) : null;
-    const working = sample
-        ? { x: sample.x + (taxiSafetyStage(w, actor) === 'near miss' ? 10 : 0), y: sample.y }
-        : patch
-          ? { x: patch.x, y: patch.y }
-          : end,
+    // A drive-by is committed at spawn and never retargeted at the moving boat.
+    const pass =
+      driveBy && attempt < 6 && Math.hypot(entry.x - w.boat.x, entry.y - w.boat.y) > 120
+        ? taxiDriveBy(w, entry, { x: w.boat.x, y: w.boat.y }, entries, spec, {
+            distance:
+              DRIVE_BY.min +
+              random() * (DRIVE_BY.max - DRIVE_BY.min) +
+              (taxiSafetyStage(w, actor) === 'near miss' ? 6 : 0),
+            side: random() < 0.5 ? 1 : -1,
+            avoid: diverMarks,
+          })
+        : null;
+    const working = pass ? pass.point : patch ? { x: patch.x, y: patch.y } : end,
       route =
         kind === 'taxi'
-          ? sample || desiredPatch
-            ? taxiRoute(w, entry, working, entries, spec)
-            : waterRoute(w, entry, end, spec)
+          ? pass
+            ? pass.route
+            : desiredPatch
+              ? taxiRoute(w, entry, working, entries, spec)
+              : waterRoute(w, entry, end, spec)
           : kind === 'rival'
             ? fishingRoute(navigation, entry, patch, actor)
             : waterRoute(w, entry, kind === 'dfo' && !desiredPatch ? end : working, spec);
@@ -197,7 +210,7 @@ function* planTraffic(w, kind, { start, patchId, art, fleetId } = {}) {
       yield;
       continue;
     }
-    if (kind === 'taxi' && sample) actor.crossingPoint = { ...working };
+    if (kind === 'taxi' && pass) actor.driveByPoint = { ...pass.point };
     if (kind === 'tourist' || (kind === 'dfo' && desiredPatch)) {
       const exit = waterRoute(w, working, end, spec);
       if (!exit.length) {
@@ -209,7 +222,7 @@ function* planTraffic(w, kind, { start, patchId, art, fleetId } = {}) {
     Object.assign(actor, entry, {
       route,
       routeStart: { ...entry },
-      patchId: kind === 'taxi' && !crossing && !desiredPatch ? null : patch?.id,
+      patchId: kind === 'taxi' && !desiredPatch ? null : patch?.id,
       heading: Math.atan2(route[0].x - entry.x, entry.y - route[0].y),
     });
     if (

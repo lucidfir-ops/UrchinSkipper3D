@@ -4,16 +4,12 @@ import assert from 'node:assert/strict';
 import { careerWorld, encode, decode } from '../src/career-save.js';
 import { chooseGround } from '../src/day.js';
 import { step } from '../src/simulation.js';
-import {
-  cancelDeparture,
-  confirmDeparture,
-  requestDeparture,
-  RETURN_REARM_DISTANCE,
-} from '../src/departure-transition.js';
-import { open, back, previous, escapeMenu } from '../src/screen-navigation.js';
-import { updateReturnPrompt, activateReturn, RETURN_CHOICES } from '../src/harbour-return.js';
-import { advanceDebugTime } from '../src/debug-mode.js';
+import { confirmDeparture, returnAvailable } from '../src/departure-transition.js';
+import { choices } from '../src/screen-actions.js';
+import { DEFAULTS } from '../src/input.js';
 
+// October 5: crossing the harbour line offers an explicit action; it never
+// pauses play and never leaves by itself.
 function boundaryWorld(edge = 'south') {
   const w = careerWorld();
   assert(chooseGround(w, 'near').ok);
@@ -22,126 +18,73 @@ function boundaryWorld(edge = 'south') {
   Object.assign(w.boat, {
     x: edge === 'west' ? 0 : edge === 'east' ? size : size / 2,
     y: edge === 'north' ? 0 : edge === 'south' ? size : size / 2,
-    throttle: 0.6,
-    vx: 2,
-    vy: 3,
+    throttle: 0,
+    vx: 0,
+    vy: 0,
   });
   return w;
 }
-function uiFor(w) {
-  const ui = {
-    hooks: { world: () => w },
-    input: {
-      suppress() {
-        this.suppressed = true;
-      },
-      cancelNaming() {},
-    },
-    panel: { scrollTop: 0, scrollLeft: 0, style: { removeProperty() {} } },
-    canvas: { focus() {} },
-    history: [],
-    screen: null,
-    started: true,
-  };
-  ui.open = open.bind(ui);
-  return ui;
-}
 
-test('all four designated edges request a frozen decision, survive reload and need explicit confirmation', () => {
+test('beyond each designated edge the return is offered, time keeps running and nothing departs unasked', () => {
   for (const edge of ['north', 'south', 'east', 'west']) {
-    let w = boundaryWorld(edge);
-    assert(!confirmDeparture(w), 'confirmation requires a pending request');
-    assert(requestDeparture(w));
-    assert.equal(w.day.returnFade, undefined);
-    const before = encode(w);
-    for (let i = 0; i < 300; i++) step(w, { fullAhead: true, recoverDiver: true }, 1 / 60);
-    assert.equal(encode(w), before, 'no time, fuel, motion, catch or crew changes during decision');
-    w = decode(before);
-    assert.equal(w.day.returnPending, true);
-    assert(confirmDeparture(w));
+    const w = boundaryWorld(edge);
+    assert(returnAvailable(w));
+    const minute = w.day.minute;
+    for (let i = 0; i < 120; i++) step(w, {}, 1 / 60);
+    assert(w.day.minute > minute, 'play is not paused at the line');
+    assert.equal(w.day.returnFade, undefined, 'crossing alone never departs');
     assert.equal(w.day.returnPending, undefined);
-    assert.equal(w.day.returnFade, 0);
+    assert.equal(w.day.phase, 'working');
+    // Current may carry the boat back inside; the skipper chooses from beyond the line.
+    Object.assign(w.boat, boundaryWorld(edge).boat);
+    assert(returnAvailable(w));
+    step(w, { returnHarbour: true }, 1 / 60);
+    assert(w.day.returnFade > 0, 'explicit action starts the departure');
   }
 });
 
-test('cancel safely holds at the edge until the skipper returns inward and approaches again', () => {
+test('the return is withdrawn inside the sector, on the wrong edge, with crew in the water or during bag work', () => {
   const w = boundaryWorld();
-  assert(requestDeparture(w));
-  assert(cancelDeparture(w));
-  assert.equal(w.boat.throttle, 0);
-  assert.equal(w.boat.vx, 0);
-  assert.equal(w.boat.vy, 0);
-  for (let i = 0; i < 10; i++) assert(!requestDeparture(w));
-  w.boat.y = w.terrain.size - RETURN_REARM_DISTANCE + 1;
-  assert(!requestDeparture(w));
-  assert(w.day.returnDismissed);
-  w.boat.y = w.terrain.size - RETURN_REARM_DISTANCE;
-  assert(!requestDeparture(w));
-  assert.equal(w.day.returnDismissed, undefined);
-  w.boat.y = w.terrain.size;
-  assert(requestDeparture(w));
-});
-
-test('wrong edge, crew in the water, bag work and ordinary practice cannot request a harbour return', () => {
-  const w = boundaryWorld();
+  w.boat.y = w.terrain.size - 5;
+  assert(!returnAvailable(w));
+  step(w, { returnHarbour: true }, 1 / 60);
+  assert.equal(w.day.returnFade, undefined);
   w.boat.y = 0;
-  assert(!requestDeparture(w));
+  assert(!returnAvailable(w));
   w.boat.y = w.terrain.size;
   w.divers[0].state = 'surface';
-  assert(!requestDeparture(w));
+  assert(!returnAvailable(w));
+  assert(!confirmDeparture(w));
   w.divers[0].state = 'ready';
   w.day.dump = {};
-  assert(!requestDeparture(w));
+  assert(!returnAvailable(w));
   delete w.day.dump;
   w.day.phase = 'practice';
-  assert(!requestDeparture(w));
+  assert(!returnAvailable(w));
 });
 
-test('prompt starts on Cancel and Back, Menu, Escape and button cancel all resume without travel', () => {
-  for (const exit of [
-    back,
-    previous,
-    escapeMenu,
-    function () {
-      activateReturn(this, this.hooks.world());
-    },
-  ]) {
-    const w = boundaryWorld(),
-      ui = uiFor(w);
-    assert(requestDeparture(w));
-    updateReturnPrompt(ui, w, true);
-    assert.equal(ui.screen, 'harbour-return');
-    assert.equal(ui.index, 0);
-    assert.match(RETURN_CHOICES[ui.index], /Cancel/);
-    assert(ui.input.suppressed, 'held crossing inputs must be released');
-    exit.call(ui);
-    assert.equal(ui.screen, null);
-    assert.equal(w.day.returnPending, undefined);
-    assert.equal(w.day.returnFade, undefined);
-    assert(w.day.returnDismissed);
-  }
-});
-
-test('explicit return action starts fade without triggering cancellation or duplicate settlement', () => {
-  const w = boundaryWorld(),
-    ui = uiFor(w);
-  requestDeparture(w);
-  updateReturnPrompt(ui, w, true);
-  ui.index = 1;
-  activateReturn(ui, w);
-  assert.equal(ui.screen, null);
-  assert.equal(w.day.returnFade, 0);
-  assert.equal(w.day.returnDismissed, undefined);
-  assert(!confirmDeparture(w));
-});
-
-test('accelerated time stops at a harbour decision rather than reporting fictitious time progress', () => {
+test('a pre-October 5 paused crossing decision loads as ordinary play', () => {
   const w = boundaryWorld();
-  requestDeparture(w);
-  const minute = w.day.minute;
-  const result = advanceDebugTime(w, 30);
-  assert.equal(w.day.minute, minute);
-  assert.equal(w.day.returnPending, true);
-  assert.match(result.reason, /harbour boundary/);
-  assert.match(result.reason, /Advanced 0 minutes/);
+  w.day.returnPending = true;
+  w.day.returnDismissed = true;
+  const loaded = decode(encode(w));
+  assert.equal(loaded.day.returnPending, undefined);
+  assert.equal(loaded.day.returnDismissed, undefined);
+  assert(returnAvailable(loaded));
+  const minute = loaded.day.minute;
+  step(loaded, {}, 1);
+  assert(loaded.day.minute > minute);
+});
+
+test('keyboard H, the pause menu entry and confirmation settle exactly once', () => {
+  assert.deepEqual(DEFAULTS.returnHarbour, ['KeyH']);
+  const w = boundaryWorld(),
+    ui = { screen: 'pause', revealUrchins: false };
+  assert.equal(choices.call(ui, w)[0], 'Return to harbour');
+  w.boat.y = w.terrain.size / 2;
+  assert(!choices.call(ui, w).includes('Return to harbour'));
+  w.boat.y = w.terrain.size;
+  assert(confirmDeparture(w));
+  assert(!confirmDeparture(w), 'no duplicate departure');
+  assert(!returnAvailable(w));
 });

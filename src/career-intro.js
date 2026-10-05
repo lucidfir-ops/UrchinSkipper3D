@@ -47,7 +47,7 @@ export const INTRO_STEPS = [
   ],
   [
     'Return through the south edge',
-    'Recover everyone, then cross the amber line at the SOUTH edge of the map. Confirm “Return to harbour?” when you are ready, or cancel to keep fishing. I’ll cover today’s fuel. Once we get home, we’ll choose your own boat.',
+    'Recover everyone, then cross the amber line at the SOUTH edge of the map. A “Return to harbour” button appears beside the boat once you are past it; take it when you are ready, or turn back to keep fishing. I’ll cover today’s fuel. Once we get home, we’ll choose your own boat.',
   ],
 ];
 // Optional explanations remain beside the action they explain, rather than

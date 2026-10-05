@@ -183,11 +183,10 @@ test('taxi spawn offsets expire with actual onboarding days on an extended voyag
     Object.assign(w.boat, { x: 400, y: 450 });
     Object.assign(w.diver, { state: 'searching', x: 250, y: 250, patch: null });
     const taxi = spawnTraffic(w, 'taxi');
-    assert(taxi?.crossingPoint);
-    points.push(taxi.crossingPoint);
+    assert(taxi?.driveByPoint);
+    points.push(Math.hypot(taxi.driveByPoint.x - 400, taxi.driveByPoint.y - 450));
   }
-  assert.deepEqual(points, [
-    { x: 260, y: 250 },
-    { x: 250, y: 250 },
-  ]);
+  // Onboarding days 1–3 widen the drive-by; day 4 uses the ordinary 14–22 m pass.
+  assert(points[0] >= 20, `day 3 pass ${points[0]}`);
+  assert(points[1] >= 14 && points[1] <= 32, `day 4 pass ${points[1]}`);
 });

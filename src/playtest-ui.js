@@ -1,7 +1,6 @@
 import { installBackGuard } from './back-guard.js';
 import { adjustSoundVolume } from './menu-preferences.js';
 import { updatePatrolPrompt } from './patrol-view.js';
-import { updateReturnPrompt } from './harbour-return.js';
 import { uiScale, setUiScale, changeUiScale } from './ui-scale.js';
 import { updateIntro } from './intro-view.js';
 import { introActive } from './career-intro.js';
@@ -505,7 +504,6 @@ export class PlaytestUI {
       this.open(world.career ? harbourScreen(world) : 'chart');
     if (ready && this.started && !this.screen && !this.ended && world.day.phase === 'complete')
       this.open('summary');
-    updateReturnPrompt(this, world, ready);
     updatePatrolPrompt(this, world, ready);
     updateIntro(this, world, a, dt);
     world = this.hooks.world();

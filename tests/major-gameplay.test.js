@@ -163,7 +163,7 @@ test('return requires the harbour edge, blocks with divers out, and commits afte
     w.divers[1].state = 'ready';
     tick(w, 7);
     assert.equal(w.day.phase, 'working');
-    assert.equal(w.day.returnPending, true);
+    assert.equal(w.day.returnFade, undefined);
     assert.equal(w.catch, 300, 'crossing cannot offload before confirmation');
     assert(confirmDeparture(w));
     tick(w, 3);

@@ -32,8 +32,7 @@ test('physical exit visibly fades before offload; reload during travel settles e
   w.catch = 100;
   w.bags = [{ weight: 100, quality: 0.8, harvestMinute: w.day.minute }];
   step(w, {}, 1 / 60);
-  assert.equal(w.day.returnPending, true);
-  assert.equal(w.day.returnFade, undefined);
+  assert.equal(w.day.returnFade, undefined, 'crossing alone never departs');
   assert(confirmDeparture(w));
   assert.equal(w.day.returnFade, 0);
   assert.equal(w.day.phase, 'working');

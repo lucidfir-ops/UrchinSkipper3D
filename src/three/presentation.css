@@ -862,57 +862,42 @@ body #playtest .vessel-model {
   max-width: none;
 }
 
-.sector-boundary-label {
-  position: absolute;
-  transform: translate(-50%, -100%);
-  max-width: calc(100vw - 32px);
-  box-sizing: border-box;
-  padding: 7px 10px;
-  border: 1px solid #abc9d0;
-  border-radius: 4px;
-  background: #102d39ed;
-  color: #dcebef;
-  font: 650 10px/1.35 system-ui;
-  text-align: center;
-  letter-spacing: 0.035em;
-}
-.sector-boundary-label[data-exit='true'] {
-  border-color: #ffd677;
-  color: #ffe1a1;
-}
-body #playtest[data-screen='harbour-return'] {
-  inset: calc(50dvh / var(--ui-scale)) auto auto calc(50vw / var(--ui-scale));
+#returnHarbourChip {
+  position: fixed;
+  z-index: 40;
   transform: translate(-50%, -50%);
-  width: min(560px, calc((100vw - 24px) / var(--ui-scale)));
-  max-height: calc((100dvh - 24px) / var(--ui-scale));
-  min-height: 0;
-  height: auto;
-  margin: 0;
-  overflow: auto;
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  column-gap: 8px;
+  min-height: 44px;
+  padding: 7px 14px;
+  border: 1px solid #e0a64a;
+  border-radius: 22px;
+  background: #0f2430e6;
+  color: #ffe1a1;
+  font: 700 13px/1.2 system-ui;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 14px #0008;
+  cursor: pointer;
+  touch-action: manipulation;
+  white-space: nowrap;
 }
-body #playtest .return-choices button {
-  min-height: 52px;
+#returnHarbourChip[hidden] {
+  display: none;
 }
-body #playtest .return-detail {
-  font-size: 1.05em;
-  color: #f2e3bf;
+#returnHarbourChip .return-chip-arrow {
+  grid-row: span 2;
+  font-size: 17px;
 }
-@media (max-height: 500px) {
-  body #playtest[data-screen='harbour-return'] {
-    padding: 16px;
-  }
-  body #playtest[data-screen='harbour-return'] .day-heading {
-    margin: 6px 0;
-    padding-bottom: 8px;
-  }
-  body #playtest[data-screen='harbour-return'] h2 {
-    font-size: 25px;
-  }
-  body #playtest[data-screen='harbour-return'] p {
-    margin: 8px 0;
-  }
-  body #playtest[data-screen='harbour-return'] .day-footer {
-    margin-top: 10px;
-    padding-top: 8px;
-  }
+#returnHarbourChip small {
+  font: 500 10px/1.2 system-ui;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: #e8d6b0;
+}
+#returnHarbourChip:focus-visible {
+  outline: 2px solid #ffd677;
+  outline-offset: 2px;
 }

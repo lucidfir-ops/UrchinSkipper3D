@@ -1,5 +1,4 @@
 import { selectedDiver } from './world.js';
-import { cancelDeparture } from './departure-transition.js';
 
 import { CompassDraft } from './compass.js';
 import { GROUNDS } from './day.js';
@@ -26,9 +25,7 @@ const VIEW_FIELDS = [
   'equipmentCandidate',
 ];
 const transient = (screen) =>
-  ['purchase', 'coast-access', 'buyboat', 'instructions', 'exit', 'harbour-return'].includes(
-    screen,
-  );
+  ['purchase', 'coast-access', 'buyboat', 'instructions', 'exit'].includes(screen);
 const validPoint = (point, world) =>
   point &&
   (!point.world || point.world === world) &&
@@ -77,18 +74,12 @@ export function forward() {
 export function open(screen, { replace = false, navigation = false } = {}) {
   if (this.debugAdvancing) return;
   if (this.hooks.world().day.returnFade !== undefined && screen) return;
-  if (this.screen === 'harbour-return' && screen !== 'harbour-return') {
-    cancelDeparture(this.hooks.world());
-    this.input.suppress();
-    this.history = [];
-  }
   if (!navigation) this.forwardHistory = [];
   if (
     introActive(this.hooks.world()) &&
     screen &&
     ![
       'introchart',
-      'harbour-return',
       'intropause',
       'instructions',
       'exit',
@@ -160,10 +151,6 @@ export function open(screen, { replace = false, navigation = false } = {}) {
 }
 // Escape leaves the menu stack; the controller's Menu/B history stays intact.
 export function escapeMenu() {
-  if (this.screen === 'harbour-return') {
-    this.open(null, { replace: true });
-    return;
-  }
   if (this.screen === 'layout' && this.layoutEditor?.requestCancel()) return;
   if (this.input.capture || this.input.naming) {
     this.back();
@@ -186,10 +173,6 @@ export function escapeMenu() {
 }
 // Internal Cancel/transaction navigation retains the immediate parent screen.
 export function previous() {
-  if (this.screen === 'harbour-return') {
-    this.open(null, { replace: true });
-    return;
-  }
   if (this.screen === 'exit') {
     if (this.exitPending) return;
     this.ended = false;
@@ -245,10 +228,6 @@ export function previous() {
 // Back walks visited menus to the title root. Forward reopens views only;
 // transactions and gameplay are never replayed as navigation history.
 export function back() {
-  if (this.screen === 'harbour-return') {
-    this.open(null, { replace: true });
-    return;
-  }
   if (this.screen === 'layout' && this.layoutEditor?.requestCancel()) return;
   if (this.exitPending) return;
   if (this.input.capture || this.input.naming || ['exit', 'instructions'].includes(this.screen)) {

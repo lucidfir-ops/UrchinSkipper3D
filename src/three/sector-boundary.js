@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import { depthAt } from '../terrain.js';
 
 const EDGES = ['north', 'east', 'south', 'west'];
-const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 export function boundaryPoint(edge, along, size) {
   return {
     north: { x: along, y: 0 },
@@ -15,13 +14,10 @@ export function boundaryPoint(edge, along, size) {
 // Charted sector limits are navigational marks, never collision obstacles.
 // The exact simulation boundary is the centre of each dashed surface stripe.
 export class SectorBoundary {
-  constructor(scene, layer) {
+  constructor(scene) {
     this.group = new THREE.Group();
     this.group.name = 'Playable sector boundary · amber harbour exit';
     scene.add(this.group);
-    this.label = document.createElement('span');
-    this.label.className = 'sector-boundary-label';
-    layer.append(this.label);
   }
   rebuild(world) {
     this.group.traverse((o) => {
@@ -72,7 +68,9 @@ export class SectorBoundary {
     this.edge = harbour;
     this.tideBand = Math.floor(world.environment.seaLevel ?? 0);
   }
-  update(world, ui, title, project) {
+  // October 5: the lines alone mark the edges; no on-water warning box. The
+  // explicit Return to harbour chip lives in the DOM HUD (return-chip.js).
+  update(world, ui, title) {
     if (
       this.terrain !== world.terrain ||
       this.edge !== world.day.returnExit?.edge ||
@@ -80,27 +78,5 @@ export class SectorBoundary {
     )
       this.rebuild(world);
     this.group.visible = !title && ['working', 'practice'].includes(world.day.phase);
-    this.label.hidden = true;
-    if (!this.group.visible || ui.screen) return;
-    const size = world.terrain.size,
-      b = world.boat,
-      distances = { north: b.y, east: size - b.x, south: size - b.y, west: b.x },
-      nearest = EDGES.reduce((a, edge) => (distances[edge] < distances[a] ? edge : a));
-    if (distances[nearest] > 110) return;
-    const along = nearest === 'north' || nearest === 'south' ? b.x : b.y,
-      point = boundaryPoint(nearest, clamp(along, 8, size - 8), size),
-      screen = project(point.x, point.y),
-      exit = nearest === this.edge;
-    if (screen.x < 16 || screen.x > innerWidth - 16 || screen.y < 80 || screen.y > innerHeight - 50)
-      return;
-    this.label.textContent = exit
-      ? `HARBOUR BOUNDARY · ${nearest.toUpperCase()} · CONFIRM TO RETURN`
-      : `SECTOR LIMIT · HARBOUR EXIT ${this.edge?.toUpperCase() || 'UNAVAILABLE'}`;
-    this.label.dataset.exit = String(exit);
-    this.label.style.left =
-      clamp(screen.x, Math.min(180, innerWidth / 2), Math.max(innerWidth - 180, innerWidth / 2)) +
-      'px';
-    this.label.style.top = screen.y - 24 + 'px';
-    this.label.hidden = false;
   }
 }

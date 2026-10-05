@@ -1,6 +1,5 @@
 import { deckControlsLabel } from './deck-controls.js';
 import { skipperPortrait } from './patrol-view.js';
-import { renderReturn } from './harbour-return.js';
 import { canForward } from './screen-navigation.js';
 import { setText } from './dom-view.js';
 import { isRadioMessage } from './radio-history.js';
@@ -166,8 +165,7 @@ export function render(world) {
       ...EXPEDITION_SCREENS,
     ].includes(this.screen),
   );
-  if (this.screen === 'harbour-return') renderReturn(this, world, bind);
-  else if (this.screen === 'layout') layoutEditor(this).render(world);
+  if (this.screen === 'layout') layoutEditor(this).render(world);
   else if (['settings', 'ui-scale', 'gameplay-speed'].includes(this.screen))
     renderPreferences(this, world, bind);
   else if (this.screen === 'touch-options') renderTouchOptions(this, world);

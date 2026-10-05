@@ -127,12 +127,6 @@ export async function coastalProgressionChecks(browser) {
         assert(samples.every((sample) => Number.isFinite(sample.totalCpuMs)));
         if (summary.totalCpuMs.p95 >= 50)
           performanceFailures.push({ scene: 'Frontier storm', limitP95Ms: 50, ...summary });
-        // The staged storm can drift the boat across the harbour-facing edge,
-        // which correctly pauses for "Return to harbour?". Decline it first.
-        if (await page.evaluate(() => urchinDebug.ui.screen === 'harbour-return')) {
-          await page.locator('#playtest [data-choice-index="0"]').click();
-          await page.waitForFunction(() => !urchinDebug.ui.screen);
-        }
         await page
           .locator('#depthInstrumentPanel')
           .waitFor({ state: 'visible' })

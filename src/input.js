@@ -46,6 +46,7 @@ export const DEFAULTS = {
   thrustStarboard: ['KeyF', 'ArrowRight', 'a0+'],
   boatyard: ['KeyG'],
   almanac: ['KeyT'],
+  returnHarbour: ['KeyH'],
 };
 export const LABELS = {
   throttleUp: 'Increase throttle',
@@ -82,6 +83,7 @@ export const LABELS = {
   thrustStarboard: 'Bow / docking thrust starboard',
   boatyard: 'Prototype boatyard',
   almanac: 'Tide and current almanac',
+  returnHarbour: 'Return to harbour (beyond the harbour line)',
 };
 const gameplay = new Set([
   'throttleUp',
@@ -107,6 +109,7 @@ const gameplay = new Set([
   'thrustStarboard',
   'boatyard',
   'almanac',
+  'returnHarbour',
 ]);
 const menu = new Set(['confirm', 'back', 'menuUp', 'menuDown', 'menuLeft', 'menuRight']);
 const overlaps = (a, b) => !((gameplay.has(a) && menu.has(b)) || (menu.has(a) && gameplay.has(b)));
@@ -176,6 +179,8 @@ export class Input {
     this.taps = new Set();
     this.touchSources = new Map();
     this.touchTaps = new Set();
+    // On-screen controls usable with any pointer (e.g. the Return to harbour chip).
+    this.queued = new Set();
     this.previous = {};
     this.capture = null;
     this.suppressed = false;
@@ -238,6 +243,7 @@ export class Input {
           'thrustStarboard',
           'boatyard',
           'almanac',
+          'returnHarbour',
         ])
           if (!saved[action])
             this.map[action] = this.map[action].filter(
@@ -707,6 +713,7 @@ export class Input {
         ...permitted.map(value),
         ...(this.touchEnabled ? [...this.touchSources.values()].map((v) => v[action] || 0) : []),
         this.touchEnabled && this.touchTaps.has(action) ? 1 : 0,
+        this.queued.has(action) ? 1 : 0,
       );
       pressed[action] = raw[action] > 0.5 && !(this.previous[action] > 0.5);
     }
@@ -842,6 +849,7 @@ export class Input {
     const keyboardEscape = this.taps.has('Escape');
     this.taps.clear();
     this.touchTaps.clear();
+    this.queued.clear();
     this.previous = raw;
     this.raw = raw;
     const suppress = this.suppressed || this.wasCapturing;

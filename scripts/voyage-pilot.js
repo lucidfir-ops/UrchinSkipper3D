@@ -1,5 +1,5 @@
 import { answerPatrol } from '../src/fishery.js';
-import { confirmDeparture } from '../src/departure-transition.js';
+import { confirmDeparture, returnAvailable } from '../src/departure-transition.js';
 import { step, deploymentStatus, recoveryStatus } from '../src/simulation.js';
 import { boatSpec } from '../src/boats.js';
 import { depthAt } from '../src/terrain.js';
@@ -219,9 +219,9 @@ export async function careerVoyage(w, observe = async () => {}) {
   for (let i = 0; i < 400 && w.day.phase === 'working'; i++) {
     check();
     tick(w, helm(w, { x: 300, y: w.terrain.size + 25 }, 1.8));
-    if (w.day.returnPending) {
+    if (returnAvailable(w)) {
       if (!confirmDeparture(w)) throw new Error('Pilot could not confirm harbour return');
-      notes.push('Harbour boundary reached; skipper explicitly confirmed return');
+      notes.push('Harbour line crossed; skipper explicitly chose Return to harbour');
     }
   }
   if (w.day.phase !== 'complete') throw new Error('Pilot did not cross the harbour boundary');

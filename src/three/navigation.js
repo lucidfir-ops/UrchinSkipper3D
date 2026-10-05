@@ -22,7 +22,7 @@ export class NavigationOverlay {
     this.layer.style.cssText =
       'position:fixed;inset:0;pointer-events:none;z-index:2;overflow:hidden';
     document.body.append(this.layer);
-    this.boundary = new SectorBoundary(scene, this.layer);
+    this.boundary = new SectorBoundary(scene);
     this.lessonLabels = ['PORT · PICKUP', 'STERN · KEEP CLEAR'].map((text, i) => {
       const el = document.createElement('span');
       el.textContent = text;
@@ -37,7 +37,7 @@ export class NavigationOverlay {
     scene.add(this.rails);
   }
   update(world, ui, title, project) {
-    this.boundary.update(world, ui, title, project);
+    this.boundary.update(world, ui, title);
     if (this.patches !== world.patches) {
       for (const { line, label } of this.items) {
         line.geometry.dispose();

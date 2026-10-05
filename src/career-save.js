@@ -196,6 +196,9 @@ export function restore(data) {
   });
   delete w.career.catchCare;
   delete w.day.sortingSeconds;
+  // Pre-October 5 saves could hold a paused boundary decision; the return is now an explicit action.
+  delete w.day.returnPending;
+  delete w.day.returnDismissed;
   for (const d of w.divers) {
     delete d.careSeconds;
     delete d.undersize;

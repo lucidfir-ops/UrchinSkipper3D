@@ -1,5 +1,4 @@
 export const TITLES = {
-  'harbour-return': 'Return to harbour?',
   market: 'BUYER MARKET',
   'deck-catch': 'CATCH ON DECK',
   'equipment-controls': 'EQUIPMENT SWITCHES',
