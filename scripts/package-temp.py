@@ -58,7 +58,7 @@ node scripts/start-portable.js
 (package/'Play Mac.command').chmod(0o755)
 (package/'package.json').write_text(json.dumps({'name':'urchin-skipper-3d-temp','private':True,'type':'module','scripts':{'start':'node scripts/start-portable.js'}},indent=2)+'\n')
 (package/'licenses').mkdir()
-for src,name in [('node_modules/three/LICENSE','Three.txt'),('node_modules/phaser/LICENSE.md','Phaser.txt'),('node_modules/eventemitter3/LICENSE','EventEmitter3.txt'),('node_modules/phaser/src/physics/matter-js/lib/license.js','Matter.txt')]:
+for src,name in [('node_modules/three/LICENSE','Three.txt'),('node_modules/phaser/LICENSE.md','Phaser.txt'),('node_modules/eventemitter3/LICENSE','EventEmitter3.txt'),('node_modules/phaser/src/physics/matter-js/lib/license.js','Matter.txt'),('node_modules/fflate/LICENSE','fflate.txt'),('node_modules/@fontsource/barlow/LICENSE','Font-Barlow-OFL.txt'),('node_modules/@fontsource/barlow-condensed/LICENSE','Font-Barlow-Condensed-OFL.txt'),('node_modules/@fontsource/ibm-plex-mono/LICENSE','Font-IBM-Plex-Mono-OFL.txt')]:
     shutil.copy2(ROOT/src,package/'licenses'/name)
 # Preserve all bundled component banners as well as the top-level MIT notices.
 source=(ROOT/'node_modules/phaser/dist/phaser.js').read_text()

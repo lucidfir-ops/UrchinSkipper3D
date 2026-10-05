@@ -32,7 +32,8 @@ function baselineHudRect(id, width, height, touch, tutorial = false, visibleShel
       electronics: short ? r(start + 6, 184, 140, 50) : r(width - 236, 52, 144, 94),
       currentReadout: r(width - 86, 52, 80, short ? 74 : 100),
       helmPanel: r(width * 0.6, height - 48, width * 0.4 - 6, 44),
-      diverPanel: r(6, height - 64, width * 0.6 - 12, 60),
+      // Two dive slates of at most ~330 px each; wide tablets keep open water.
+      diverPanel: r(6, height - 64, Math.min(width * 0.6 - 12, 664), 60),
       frankAboard: r(
         start,
         gaugeH + 14,

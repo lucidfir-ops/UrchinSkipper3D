@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { careerWorld, encode, decode, nextCareerDay, snapshot } from '../src/career-save.js';
-import { encodeSnapshot } from '../src/save-codec.js';
+import { encodeSnapshot, openEnvelope } from '../src/save-codec.js';
 import { calculateOffload } from '../src/offload.js';
 import { changeDepartureTime } from '../src/career-state.js';
 import { SECTORS, enterSector } from '../src/sectors.js';
@@ -37,7 +37,7 @@ test('missed offload lands next 06:00, starts 09:00, blocks early rewind and pre
 });
 
 function assertLateDepartureMigration(raw) {
-  const original = JSON.parse(JSON.parse(raw).payload),
+  const original = JSON.parse(openEnvelope(raw).payload),
     w = decode(raw);
   assert.equal(w.day.minute, 540);
   assert(w.day.morningOffload);

@@ -1,7 +1,7 @@
+import { deckControlsLabel, cycleDeckControls } from './deck-controls.js';
 import { fullscreenLabel, toggleFullscreen } from './fullscreen.js';
 import { uiScale, changeUiScale, setUiScale } from './ui-scale.js';
 import { setTimeIncrease, timeIncrease } from './time-speed.js';
-import { boatArtLabel, toggleBoatArtMode } from './boat-art-mode.js';
 import { loggingEnabled, toggleLogging, downloadLog } from './troubleshooting-log.js';
 import { choiceButton } from './menu-buttons.js';
 import { renderSettings, menuFooter } from './menu-shell.js';
@@ -21,8 +21,8 @@ export function preferenceActions(ui) {
       open('ui-scale', 'UI Scale'),
       open('touch-options', 'Touchscreen Options'),
       open('gameplay-speed', 'Gameplay Speed'),
+      action('deck-controls', deckControlsLabel(), cycleDeckControls),
       action('fullscreen', `⛶ ${fullscreenLabel()}`, toggleFullscreen),
-      action('boat-art', `Catalogue artwork: ${boatArtLabel()}`, toggleBoatArtMode),
       action('volume', 'Sound volume', () => ui.panel.querySelector('#soundVolume')?.focus()),
       action('graphics', `3D graphics: ${ui.hooks.graphicsLabel?.() || 'High'}`, () =>
         ui.hooks.cycleGraphics?.(),

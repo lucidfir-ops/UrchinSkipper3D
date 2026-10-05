@@ -19,6 +19,7 @@ const SETTINGS = [
     items: [
       ['bindings', 'Controls & remapping', 'View diagrams and change bindings.'],
       ['controller', 'Controller setup', 'Identify and configure your device.'],
+      ['deck-controls', null, 'Play with the built-in Deck controls in a web browser.'],
       ['touch-options', 'Touchscreen options', 'Controls, opacity and touch layout.'],
       ['fullscreen', null, 'Use the whole screen.'],
     ],
@@ -29,7 +30,6 @@ const SETTINGS = [
     items: [
       ['graphics', null, 'Select to cycle rendering quality.'],
       ['volume', 'Sound volume', 'Drag or use ← / → to adjust. 0% mutes sound.'],
-      ['boat-art', null, 'Select to switch catalogue artwork.'],
     ],
   },
   {

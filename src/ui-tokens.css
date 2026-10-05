@@ -1,0 +1,49 @@
+/* October 4, 2026 interface redesign — shared visual language.
+   Menus are the chart room: chart-paper panels, ink-navy type, signal-orange
+   focus. The HUD is the wheelhouse console: gunmetal bezels, backlit
+   readouts. Both share these tokens and type families (bundled, OFL). */
+@import '@fontsource/barlow/latin-400.css';
+@import '@fontsource/barlow/latin-500.css';
+@import '@fontsource/barlow/latin-600.css';
+@import '@fontsource/barlow-condensed/latin-500.css';
+@import '@fontsource/barlow-condensed/latin-600.css';
+@import '@fontsource/barlow-condensed/latin-700.css';
+@import '@fontsource/ibm-plex-mono/latin-400.css';
+@import '@fontsource/ibm-plex-mono/latin-500.css';
+
+:root {
+  --font-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --font-body: 'Barlow', 'Segoe UI', system-ui, sans-serif;
+  --font-readout: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', monospace;
+
+  /* Chart room (menus) */
+  --chart-paper: #ece4d0;
+  --chart-paper-deep: #e1d6bc;
+  --chart-paper-edge: #c9b993;
+  --chart-ink: #14263a;
+  --chart-ink-soft: #3f5468;
+  --chart-ink-faint: #6d7c88;
+  --chart-rule: #14263a26;
+  --chart-sea: #3f7f8f;
+  --signal: #e2562a;
+  --signal-deep: #b8401b;
+  --signal-ink: #fff6ea;
+  --brass: #b98a3e;
+
+  /* Wheelhouse console (HUD) */
+  --console-body: #1b2226;
+  --console-body-2: #252e33;
+  --console-bezel: #39444a;
+  --console-edge: #0c1013;
+  --console-label: #93a1a6;
+  --console-glow: #ffb547;
+  --console-glow-dim: #ffb54755;
+  --console-sea-glow: #7fe0c4;
+  --console-port: #e4473b;
+  --console-stbd: #3fbf6a;
+  --console-alert: #ff6b4a;
+}
+
+body {
+  font-family: var(--font-body);
+}

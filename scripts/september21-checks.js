@@ -88,8 +88,8 @@ export async function september21Checks(browser) {
           ),
         );
         const diag = await page.evaluate(async () => {
-          const { encode } = await import('/src/career-save.js');
-          return JSON.parse(JSON.parse(encode(urchinDebug.world, true)).payload).troubleshooting;
+          const { encode, readSnapshot } = await import('/src/career-save.js');
+          return readSnapshot(encode(urchinDebug.world, true)).troubleshooting;
         });
         assert(diag.entries.some((e) => e.type === 'asset-error'));
       }

@@ -1,3 +1,4 @@
+import { deckControlsLabel } from './deck-controls.js';
 import { skipperPortrait } from './patrol-view.js';
 import { renderReturn } from './harbour-return.js';
 import { canForward } from './screen-navigation.js';
@@ -189,7 +190,7 @@ export function render(world) {
     if (this.screen === 'controller')
       info =
         `Active input: ${i.deviceLabel}. ${i.needsMapping ? 'Unrecognized raw layout: gameplay inputs must be mapped explicitly. ' : ''}` +
-        'Keep Steam running. In the shortcut’s Steam controller layout choose a Gamepad template. Launch this shortcut from Steam’s Desktop library to keep its per-game layout active. USB Xbox remains supported. Steam may expose a virtual Xbox controller or keyboard keys; desktop shortcuts and paddles are controlled by Steam/KDE, outside the browser. Verify X/Y to bind their actions; naming alone only changes labels.';
+        `${deckControlsLabel()}. Steam Deck in a browser: with Deck controls on, the left stick or D-pad steers, A centres/selects, B or ☰ opens the menu, Y is neutral, L1 deploys/boards, R1 exchanges a bag, View cycles diver, left trackpad zooms. For full gamepad controls add the browser to Steam, launch it from Steam and choose the Gamepad controller layout (Flatpak Firefox may also need: flatpak override --user --filesystem=/run/udev:ro org.mozilla.firefox). USB Xbox remains supported. Verify X/Y to bind their actions; naming alone only changes labels.`;
     if (i.naming)
       info = `${i.naming.waitRelease ? 'Release every button, then press' : 'Press'} physical ${(i.naming.recoveryOnly ? ['X', 'Y'] : ['A', 'B', 'X', 'Y'])[i.naming.index]} · ${Math.ceil(i.naming.remaining)}s · Escape cancels. ${i.naming.recoveryOnly ? 'X will handle bags / send down; Y will board.' : 'Gameplay bindings will stay unchanged.'}`;
     if (this.screen === 'help')

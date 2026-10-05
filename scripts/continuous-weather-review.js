@@ -309,8 +309,7 @@ try {
     const save = await page.evaluate((key) => {
       const before = JSON.stringify(urchinDebug.world.career.weatherPlan);
       const result = urchinDebug.ui.hooks.save();
-      const envelope = JSON.parse(localStorage.getItem(key));
-      const stored = JSON.parse(envelope.payload);
+      const stored = urchinDebug.readSave(localStorage.getItem(key));
       return {
         result,
         storedMinute: stored.day.minute,

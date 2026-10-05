@@ -44,6 +44,11 @@ async function ready(timeoutMs = probeTimeoutMs) {
   }
 }
 const suites = {
+  'vessel-replacement': ['scripts/vessel-replacement-review.js'],
+  'save-storage': ['scripts/save-storage-review.js'],
+  'save-storage-firefox': ['scripts/save-storage-review.js', '--firefox'],
+  'chart-layout': ['scripts/browser-smoke.js', '--chart-layout-only'],
+  'coastal-progression': ['scripts/browser-smoke.js', '--coastal-progression-only'],
   'training-preferences': ['scripts/training-preferences-review.js'],
   'keyboard-reading': ['scripts/keyboard-reading-review.js'],
   'keyboard-reading-firefox': ['scripts/keyboard-reading-review.js', '--firefox'],
@@ -64,6 +69,7 @@ const suites = {
   learning: ['scripts/browser-smoke.js', '--learning-interface-only'],
   operations: ['scripts/browser-smoke.js', '--diver-operations-only'],
   fleet: ['scripts/cohesion-visual-review.js'],
+  'deck-load': ['scripts/deck-load-review.js'],
   'traffic-fleet': ['scripts/traffic-fleet-review.js'],
   interface: ['scripts/interface-review.js'],
   menus: ['scripts/menu-adversarial-review.js'],
@@ -134,9 +140,11 @@ try {
 } finally {
   if (server) server.kill('SIGTERM');
   mkdirSync('test-results', { recursive: true });
-  const suffix =
+  let suffix =
     process.argv.find((a) => a.startsWith('--suite='))?.slice(8) ||
     (process.argv.includes('--unit-only') ? 'unit' : 'full');
+  // Long suite lists exceed file-name limits; the receipt lists every suite.
+  if (suffix.length > 120) suffix = `${suffix.split(',').length}-suites-${started.slice(0, 10)}`;
   writeFileSync(
     `test-results/verification-${suffix}.json`,
     JSON.stringify(

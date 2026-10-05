@@ -15,6 +15,10 @@
     "verify": "node scripts/verify.js"
   },
   "dependencies": {
+    "@fontsource/barlow": "5.2.6",
+    "@fontsource/barlow-condensed": "5.2.6",
+    "@fontsource/ibm-plex-mono": "5.2.7",
+    "fflate": "0.8.2",
     "phaser": "4.2.1",
     "three": "^0.180.0"
   },

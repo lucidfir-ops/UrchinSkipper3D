@@ -125,6 +125,7 @@ export function open(screen, { replace = false, navigation = false } = {}) {
     this.focusedChoiceKey = null;
     this.panel.style?.removeProperty('translate');
   }
+  const previousScreen = this.screen;
   this.screen = screen;
   // A transaction may restore its parent and immediately open a new destination.
   // Only restoreView may carry that parent's saved viewport into the next render.
@@ -138,7 +139,11 @@ export function open(screen, { replace = false, navigation = false } = {}) {
   this.menuNotice = '';
   this.panel.scrollTop = 0;
   this.panel.scrollLeft = 0;
-  if (screen === 'archives') this.archives = this.hooks.archives();
+  if (screen === 'archives') {
+    this.archives = this.hooks.archives();
+    // Returning from a delete confirmation keeps delete mode for the next one.
+    if (previousScreen !== 'purchase') this.archiveDeleting = false;
+  }
   if (screen === 'almanac') {
     this.almanacGroundId = this.hooks.world().day.groundId || this.chartGroundId || GROUNDS[0].id;
     this.forecastOffset = 0;

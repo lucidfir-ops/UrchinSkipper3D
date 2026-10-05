@@ -3,13 +3,17 @@ import { writeFileSync } from 'node:fs';
 import { gamepadScript, pressAction } from './gamepad-fixture.js';
 import { chooseController } from './controller-menu.js';
 import { chooseStarter } from './career-start.js';
-import { PHYSICAL_AREAS } from '../src/coasts.js';
+import { COASTS, PHYSICAL_AREAS } from '../src/coasts.js';
 import { summarizeFrames } from '../src/frame-metrics.js';
 
 export async function coastalProgressionChecks(browser) {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 }, hasTouch: true }),
     errors = [],
-    records = [];
+    records = [],
+    performanceFailures = [],
+    startedAt = new Date().toISOString();
+  let passed = false,
+    failure = null;
   const pad = (name) => pressAction(page, 'coastPad', name),
     choose = (label) => chooseController(page, pad, label);
   page.on('pageerror', (error) => errors.push(error.message));
@@ -21,35 +25,54 @@ export async function coastalProgressionChecks(browser) {
     await chooseStarter(page, choose);
     await choose('Sail');
     await page.locator('[data-ground="frontier-bank"]').waitFor();
-    assert.equal(await page.locator('[data-ground]').count(), 9);
+    assert.equal(await page.locator('[data-ground]').count(), PHYSICAL_AREAS.length);
     const text = await page.locator('.chart-choices').innerText();
     for (const area of PHYSICAL_AREAS) assert(text.includes(area.name), area.name);
-    assert.match(text, /Area not open.*12,000/s);
-    assert.match(text, /Area not open.*30,000/s);
+    for (const coast of COASTS.filter((coast) => coast.accessCost))
+      assert(text.includes(coast.accessCost.toLocaleString()), `${coast.name}: permit price`);
     await page.screenshot({ path: 'test-results/coasts-overview-deck.png' });
     await choose('Stormbreak Channel');
     await page.locator('[data-action="sail"]').waitFor();
     await page.locator('[data-action="sail"]').click();
     assert.equal(await page.evaluate(() => urchinDebug.world.day.phase), 'planning');
-    await page.evaluate(() => {
-      urchinDebug.world.career.cash = 60000;
+    // Funds and the open season day are staged to exercise every physical map;
+    // permit payment/cancellation/repeat protection use the actual menus.
+    let expectedCash = COASTS.reduce((sum, coast) => sum + coast.accessCost, 18000);
+    await page.evaluate((cash) => {
+      urchinDebug.world.career.cash = cash;
       urchinDebug.ui.open('accounts');
-    });
-    await page.locator('[data-action="area-storm"]').click();
-    await page.locator('[data-action="cancel-purchase"]').click();
-    assert.equal(await page.evaluate(() => urchinDebug.world.career.cash), 60000);
-    await page.locator('[data-action="area-storm"]').click();
-    await page.locator('[data-action="confirm-purchase"]').click();
-    assert.equal(await page.evaluate(() => urchinDebug.world.career.cash), 48000);
-    await page.locator('[data-action="area-storm"]').click();
-    assert.equal(await page.evaluate(() => urchinDebug.world.career.cash), 48000);
-    await page.locator('[data-action="area-frontier"]').click();
-    await page.locator('[data-action="confirm-purchase"]').click();
-    assert.equal(await page.evaluate(() => urchinDebug.world.career.cash), 18000);
-    await page.evaluate(() => {
-      urchinDebug.world.career.day = 5;
-      urchinDebug.ui.open('chart');
-    });
+    }, expectedCash);
+    for (const coast of COASTS.filter((coast) => coast.accessCost)) {
+      const permit = page.locator(`[data-action="area-${coast.id}"]`);
+      await permit.click();
+      await page.locator('[data-action="cancel-purchase"]').click();
+      assert.equal(await page.evaluate(() => urchinDebug.world.career.cash), expectedCash);
+      await permit.click();
+      await page.locator('[data-action="confirm-purchase"]').click();
+      await page.waitForFunction(() => urchinDebug.ui.screen === 'coast-access');
+      assert.match(await page.locator('.coast-access-notice').innerText(), /PERMANENT PERMIT/);
+      expectedCash -= coast.accessCost;
+      assert.equal(await page.evaluate(() => urchinDebug.world.career.cash), expectedCash);
+      await page.locator('.screen-back').click();
+      await page.waitForFunction(() => urchinDebug.ui.screen === 'accounts');
+      await permit.click();
+      assert.equal(await page.evaluate(() => urchinDebug.world.career.cash), expectedCash);
+      assert.equal(
+        await page.evaluate(
+          (id) => urchinDebug.world.career.coastAccess.filter((coast) => coast === id).length,
+          coast.id,
+        ),
+        1,
+      );
+      records.push({ scene: 'Permanent permit', coast: coast.id, cash: expectedCash });
+    }
+    await page.evaluate(
+      (day) => {
+        urchinDebug.world.career.day = day;
+        urchinDebug.ui.open('chart');
+      },
+      Math.max(...PHYSICAL_AREAS.map((area) => area.openDay)),
+    );
     for (const area of PHYSICAL_AREAS.filter((a) => a.tier)) {
       await page.evaluate(() => {
         urchinDebug.ui.open('chart');
@@ -58,7 +81,7 @@ export async function coastalProgressionChecks(browser) {
       await choose(area.name);
       await page.locator('#playtest h2').filter({ hasText: area.name }).waitFor();
       await page.locator('[data-chart-mode="vector"]').click();
-      await page.locator('.sector-picture > svg').waitFor();
+      await page.locator('.chart-map-frame > svg').waitFor();
       const chartBounds = await page.evaluate(() => {
         const box = (selector) => {
           const r = document.querySelector(selector).getBoundingClientRect();
@@ -67,7 +90,7 @@ export async function coastalProgressionChecks(browser) {
         return {
           caption: box('.sector-picture .map-caption'),
           footer: box('.day-footer'),
-          surface: box('.sector-picture > svg'),
+          surface: box('.chart-map-frame > svg'),
         };
       });
       assert(
@@ -102,14 +125,48 @@ export async function coastalProgressionChecks(browser) {
         const samples = await page.evaluate(() => urchinDebug.renderSamples.slice(-120));
         const summary = summarizeFrames(samples);
         assert(samples.every((sample) => Number.isFinite(sample.totalCpuMs)));
-        assert(
-          summary.totalCpuMs.p95 < 50,
-          `Vector HUD CPU regression: ${JSON.stringify(summary)}`,
-        );
-        const sounder = await page.evaluate(() => ({
-          shown: Number.parseFloat(document.querySelector('#sounderPanel output').textContent),
-          actual: urchinDebug.depthAt(urchinDebug.world.boat.x, urchinDebug.world.boat.y),
-        }));
+        if (summary.totalCpuMs.p95 >= 50)
+          performanceFailures.push({ scene: 'Frontier storm', limitP95Ms: 50, ...summary });
+        // The staged storm can drift the boat across the harbour-facing edge,
+        // which correctly pauses for "Return to harbour?". Decline it first.
+        if (await page.evaluate(() => urchinDebug.ui.screen === 'harbour-return')) {
+          await page.locator('#playtest [data-choice-index="0"]').click();
+          await page.waitForFunction(() => !urchinDebug.ui.screen);
+        }
+        await page
+          .locator('#depthInstrumentPanel')
+          .waitFor({ state: 'visible' })
+          .catch(async (error) => {
+            const state = await page.evaluate(() => ({
+              screen: urchinDebug.ui.screen,
+              started: urchinDebug.ui.started,
+              ended: urchinDebug.ui.ended,
+              phase: urchinDebug.world.day.phase,
+              depthAssist: urchinDebug.world.career.assists?.depthInstrument,
+              preset: urchinDebug.world.career.assists?.preset,
+              difficulty: urchinDebug.world.career.difficulty,
+            }));
+            throw new Error('Depth gauge hidden: ' + JSON.stringify(state), { cause: error });
+          });
+        const sounder = await page.evaluate(() => {
+          const w = urchinDebug.world,
+            { x, y } = w.boat;
+          let actual = urchinDebug.depthAt(x, y);
+          for (const rock of w.rocks) {
+            const dx = x - rock.x,
+              dy = y - rock.y,
+              side = dx * Math.cos(rock.heading) + dy * Math.sin(rock.heading),
+              fore = dx * Math.sin(rock.heading) - dy * Math.cos(rock.heading);
+            if (Math.hypot(side, Math.max(0, Math.abs(fore) - rock.length / 2)) <= rock.radius)
+              actual = Math.min(actual, rock.topDepth + w.environment.seaLevel);
+          }
+          return {
+            shown: Number.parseFloat(
+              document.querySelector('#depthInstrumentPanel output').textContent,
+            ),
+            actual: Math.max(0, actual),
+          };
+        });
         assert(
           Math.abs(sounder.shown - sounder.actual) < 0.15,
           `Vector mode sounder must stay live: ${JSON.stringify(sounder)}`,
@@ -133,6 +190,11 @@ export async function coastalProgressionChecks(browser) {
       await page.waitForFunction(
         (id) => urchinDebug.world.day.groundId === id && urchinDebug.world.terrain.id === id,
         area.id,
+      );
+      assert.deepEqual(
+        await page.evaluate(() => urchinDebug.world.career.coastAccess),
+        COASTS.map((coast) => coast.id),
+        'All paid permanent permits survive every sector reload',
       );
     }
     // Physical controller behavior remains a separate manual test. Exercise the
@@ -162,14 +224,36 @@ export async function coastalProgressionChecks(browser) {
     });
     await page.screenshot({ path: 'test-results/coasts-departure-landscape.png' });
     assert.deepEqual(errors, []);
+    assert.deepEqual(
+      performanceFailures,
+      [],
+      'Frontier storm must retain total CPU p95 below 50ms',
+    );
+    passed = true;
+    console.log(
+      `PASS: ${PHYSICAL_AREAS.length} physical destinations, blocked access, four permanent permit purchase/cancel/repeat flows, twelve later-coast maps/reloads, vector charts and phone orientation. Funds and open season day were staged.`,
+    );
+  } catch (error) {
+    failure = error.stack || error.message;
+    throw error;
+  } finally {
     writeFileSync(
       'test-results/coastal-progression-browser.json',
-      JSON.stringify(records, null, 2),
+      JSON.stringify(
+        {
+          passed,
+          failure,
+          startedAt,
+          completedAt: new Date().toISOString(),
+          fixture: 'Staged funds and open season day; real permit menus, travel and save/reload.',
+          performanceFailures,
+          records,
+          errors,
+        },
+        null,
+        2,
+      ) + '\n',
     );
-    console.log(
-      'PASS: nine physical destinations, blocked access, coast purchase/cancel/repeat, six live maps/reloads, vector charts and phone orientation.',
-    );
-  } finally {
     await page.close();
   }
 }

@@ -29,14 +29,25 @@ export async function chartLayoutChecks(browser) {
         };
       };
       const surface = document.querySelector('.sector-picture :is(canvas, svg)'),
-        picture = surface.parentElement;
+        picture = surface.closest('.sector-picture'),
+        pictureBounds = box(picture),
+        caption = picture.querySelector('.map-caption'),
+        captionBounds = box(caption),
+        physicalScale = pictureBounds.height / picture.offsetHeight,
+        captionGap = parseFloat(getComputedStyle(caption).marginTop) * physicalScale;
       return {
         panel: box(document.querySelector('#playtest')),
+        heading: box(document.querySelector('.day-heading')),
+        footer: box(document.querySelector('.day-footer')),
         canvas: box(surface),
         tag: surface.tagName,
-        picture: box(picture),
+        picture: pictureBounds,
+        availableMapSide: Math.min(
+          pictureBounds.width,
+          pictureBounds.height - captionBounds.height - captionGap,
+        ),
         background: getComputedStyle(picture).backgroundImage,
-        caption: box(picture.querySelector('.map-caption')),
+        caption: captionBounds,
         viewport: { width: innerWidth, height: innerHeight },
         back: box(document.querySelector('.screen-back')),
       };
@@ -46,7 +57,15 @@ export async function chartLayoutChecks(browser) {
       Math.abs(rects.canvas.width - rects.canvas.height) < 2,
       'map stays square for accurate chart selection',
     );
-    assert(rects.canvas.width / rects.picture.width > 0.85, 'map fills its column');
+    assert(rects.availableMapSide > 0, 'caption leaves a usable chart area');
+    assert(
+      rects.canvas.width / rects.availableMapSide > 0.85,
+      'square map fills the available width or height after its caption',
+    );
+    assert(
+      rects.canvas.width <= rects.availableMapSide + 2,
+      'map fits both available dimensions without stretching or overflowing',
+    );
     assert(rects.back.x >= 0 && rects.back.right <= rects.viewport.width, 'Back remains reachable');
     assert(rects.canvas.right <= rects.panel.right + 1);
     if (!touch) {
@@ -55,7 +74,9 @@ export async function chartLayoutChecks(browser) {
         Math.abs(rects.panel.x - (rects.viewport.width - rects.panel.width) / 2) < 2,
         'window stays centered',
       );
-      assert(rects.caption.bottom <= rects.panel.bottom - 12, 'caption fits above footer');
+      assert(rects.canvas.y >= rects.heading.bottom, 'map stays below the heading');
+      assert(rects.canvas.bottom <= rects.caption.y, 'map stays above its caption');
+      assert(rects.caption.bottom <= rects.footer.y, 'caption fits above the footer');
       if (rects.viewport.width >= 1700)
         assert(rects.canvas.width > 480, 'large-screen chart exceeds old cap');
     }

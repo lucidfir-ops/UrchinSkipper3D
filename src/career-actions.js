@@ -33,6 +33,27 @@ import {
   buyAreaAccess,
 } from './career-state.js';
 
+const archiveDate = (time) =>
+  time
+    ? new Date(time).toLocaleString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : '';
+export const archiveLabel = (a) =>
+  [
+    `Career ${(a.seed >>> 0).toString(36).slice(-4).toUpperCase()}`,
+    `Day ${a.day}`,
+    money(a.cash),
+    boatDefinition(a.boat).name,
+    a.kind === 'Start of day' ? 'start of day' : 'saved',
+    archiveDate(a.savedAt),
+  ]
+    .filter(Boolean)
+    .join(' · ');
+
 // Focus is positional; actions are identified by stable IDs, never English text or menu offsets.
 export const CAREER_SCREENS = [
   'market',
@@ -365,24 +386,54 @@ export function careerActions(ui, w) {
       ];
     case 'fleetboard':
       return [back];
-    case 'archives':
+    case 'archives': {
+      const deleting = !!ui.archiveDeleting,
+        saves = (ui.archives || []).map((a) =>
+          deleting
+            ? action(`delete-${a.key}`, `Delete · ${archiveLabel(a)}`, () =>
+                confirmAction(
+                  ui,
+                  `Delete this save permanently`,
+                  () => {
+                    const result = ui.hooks.deleteSave(a.key);
+                    ui.archives = ui.hooks.archives();
+                    return result;
+                  },
+                  `${archiveLabel(a)}<br><br>This restore point is removed from this browser. Your current career is not affected.`,
+                  'Cancel · keep this save',
+                ),
+              )
+            : action(`archive-${a.key}`, archiveLabel(a), () =>
+                resume(ui.hooks.changeCareer(a.key)),
+              ),
+        );
       return [
-        action('latest', 'Continue latest career', () => {
-          ui.hooks.resumeCareer();
-          ui.open(null);
-          if (ui.hooks.world().day.phase === 'planning') ui.open(harbourScreen(ui.hooks.world()));
-        }),
-        ...(ui.archives || []).map((a) =>
-          action(
-            `archive-${a.key}`,
-            `${a.kind || 'Saved career'} ${a.day} · ${money(a.cash)} · ${boatDefinition(a.boat).name}`,
-            () => resume(ui.hooks.changeCareer(a.key)),
-          ),
+        ...(deleting
+          ? []
+          : [
+              action('latest', 'Continue latest career', () => {
+                ui.hooks.resumeCareer();
+                ui.open(null);
+                if (ui.hooks.world().day.phase === 'planning')
+                  ui.open(harbourScreen(ui.hooks.world()));
+              }),
+            ]),
+        ...saves,
+        action(
+          'delete-mode',
+          deleting ? 'Done deleting' : 'Delete old saves…',
+          () => {
+            ui.archiveDeleting = !deleting;
+            ui.index = 0;
+          },
+          { disabled: !deleting && !saves.length },
         ),
-      ].concat(
-        action('import', 'Import career backup', () => ui.hooks.importSave()),
+        ...(deleting
+          ? []
+          : [action('import', 'Import career backup', () => ui.hooks.importSave())]),
         back,
-      );
+      ];
+    }
     case 'logbook':
       return [
         action('save', 'Save game now · keep a restore point', () => ui.hooks.savePoint()),

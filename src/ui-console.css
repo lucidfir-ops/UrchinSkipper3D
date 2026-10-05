@@ -1,0 +1,822 @@
+/* October 4, 2026 HUD redesign — the wheelhouse console.
+   Every instrument is a module of one helm console: gunmetal body, dark bezel,
+   backlit amber / sea-green readouts. Positions and sizes are unchanged and
+   remain owned by HudWindows (saved layouts first); this layer is visual only. */
+
+/* ---------- Console modules ---------- */
+html body [data-hud-window] {
+  color: #e9eef0;
+  background:
+    linear-gradient(180deg, #ffffff0a, #ffffff00 38%),
+    linear-gradient(180deg, var(--console-body-2), var(--console-body));
+  border: 1px solid var(--console-edge);
+  border-radius: 6px;
+  box-shadow:
+    inset 0 0 0 1px #ffffff0d,
+    inset 0 1px 0 #ffffff14,
+    0 2px 0 #00000055,
+    0 6px 18px #0008;
+  font-family: var(--font-body);
+  scrollbar-color: #ffb54766 transparent;
+}
+/* Instrument faces sit in a recessed, darker well. */
+html
+  body
+  :is(
+    #timepiecePanel,
+    #depthInstrumentPanel,
+    #throttlePanel,
+    #speedPanel,
+    #fuelPanel,
+    #loadPanel,
+    #compassPanel,
+    #hullPanel,
+    #currentReadout
+  )[data-hud-window] {
+  background:
+    radial-gradient(120% 90% at 50% 0%, #ffffff0c, transparent 60%),
+    linear-gradient(180deg, #20282c, #141a1d);
+}
+html body .instrument-texture {
+  display: none;
+}
+
+/* Condensed engraved labels, readouts in a mono face. */
+html body :is(.instrument-eyebrow, .gauge-label, .cmd-title) {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+html body .instrument-eyebrow {
+  color: var(--console-label);
+}
+
+/* ---------- Dials (speed, fuel) ---------- */
+html body .gauge-ring {
+  stroke: #0b0f11;
+  stroke-width: 10;
+}
+html body .gauge-arc {
+  stroke: #ffb54733;
+  stroke-width: 10;
+}
+html body .gauge-reserve {
+  stroke: var(--console-alert);
+  stroke-width: 10;
+  opacity: 0.75;
+}
+html body .gauge-tick {
+  stroke: #c9d3d6;
+  stroke-width: 1.6;
+  opacity: 0.7;
+}
+html body .gauge-needle {
+  stroke: var(--console-glow);
+  stroke-width: 3.2;
+  filter: drop-shadow(0 0 2px #ffb547aa);
+}
+html body .gauge-pin {
+  fill: #d8dee0;
+  stroke: #0b0f11;
+  stroke-width: 1.5;
+}
+html body .instrument-dial.danger .gauge-needle {
+  stroke: var(--console-alert);
+  filter: drop-shadow(0 0 3px #ff6b4acc);
+}
+html body .instrument-dial text,
+html body .instrument-compass text {
+  fill: #e9eef0;
+}
+html body .instrument-dial .gauge-label {
+  fill: var(--console-label);
+  font-size: 14px;
+}
+html body .instrument-dial .dial-value {
+  fill: var(--console-glow);
+  font-family: var(--font-readout);
+  font-weight: 500;
+  font-size: 17px;
+  paint-order: stroke;
+  stroke: #141a1d;
+  stroke-width: 4px;
+}
+html body .instrument-dial .gauge-limit {
+  fill: var(--console-label);
+  font-family: var(--font-display);
+  font-size: 14px;
+}
+
+/* ---------- HELM: throttle telegraph + rudder angle indicator ---------- */
+html body .console-command {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  gap: 1px;
+}
+html body .console-command .cmd-head {
+  color: var(--console-label);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-align: center;
+}
+html body .console-command .cmd-graphic {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+}
+html body .console-command .cmd-mark {
+  fill: #9aa7ab;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+}
+html body .console-command .cmd-mark.port {
+  fill: #ff8a7e;
+}
+html body .console-command .cmd-mark.stbd {
+  fill: #79e39b;
+}
+html body .console-command .telegraph-notches,
+html body .console-command .rudder-tick {
+  stroke: #c9d3d6;
+  stroke-width: 1.4;
+  opacity: 0.6;
+}
+html body .console-command .telegraph-slot {
+  fill: #0a0e10;
+  stroke: #3b474d;
+  stroke-width: 1;
+}
+html body .console-command .telegraph-throw {
+  stroke: var(--console-sea-glow);
+  stroke-width: 4;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 2px #7fe0c499);
+}
+html body .console-command .telegraph-throw.astern {
+  stroke: var(--console-glow);
+  filter: drop-shadow(0 0 2px #ffb54799);
+}
+html body .console-command .telegraph-handle {
+  fill: #d9c08a;
+  stroke: #4a3a1c;
+  stroke-width: 1.2;
+}
+html body .console-command .rudder-port,
+html body .console-command .rudder-stbd {
+  fill: none;
+  stroke-width: 6;
+}
+html body .console-command .rudder-port {
+  stroke: #e4473b99;
+}
+html body .console-command .rudder-stbd {
+  stroke: #3fbf6a99;
+}
+html body .console-command .rudder-needle {
+  stroke: #f1f4f5;
+  stroke-width: 3;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 2px #ffffff66);
+}
+html body .console-command .rudder-hub {
+  fill: #d8dee0;
+  stroke: #0b0f11;
+  stroke-width: 1.5;
+}
+/* Readouts: condensed word, mono number; all values in console amber. */
+html body .console-command .cmd-readouts {
+  display: flex;
+  justify-content: space-around;
+  gap: 2px 8px;
+  flex-wrap: wrap;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+html body .console-command .cmd-readouts b {
+  color: var(--console-label);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+html body .console-command .cmd-throttle:not(:has(output)) b {
+  color: var(--console-glow);
+}
+html body .console-command .cmd-readouts > span,
+html body .console-command .cmd-readouts :is(b, output) {
+  display: inline;
+}
+html body .console-command .cmd-readouts output {
+  color: var(--console-glow);
+  font-family: var(--font-readout);
+  font-weight: 500;
+  font-size: 14px;
+}
+html body .console-command .cmd-throttle.astern output {
+  color: #ffcf7a;
+}
+html body #throttlePanel[data-hud-window] .instrument-graphic {
+  display: block;
+  height: 100%;
+}
+
+/* Instrument windows size their contents to themselves (players may resize
+   them), so narrow modules drop secondary marks instead of shrinking type. */
+html
+  body
+  :is(
+    #timepiecePanel,
+    #depthInstrumentPanel,
+    #throttlePanel,
+    #speedPanel,
+    #fuelPanel,
+    #loadPanel,
+    #compassPanel,
+    #hullPanel
+  )[data-hud-window] {
+  container-type: inline-size;
+}
+html body .label-short {
+  display: none;
+}
+@container (max-width: 90px) {
+  html body .console-command .cmd-mark,
+  html body .console-command .telegraph-notches,
+  html body .console-command .rudder-tick,
+  html body .instrument-dial .gauge-limit,
+  html body .label-long {
+    display: none;
+  }
+  html body .label-short {
+    display: inline;
+  }
+  html body .console-command .cmd-head {
+    font-size: 10px;
+  }
+  /* Stack the two readouts; each fits the module width. */
+  html body .console-command .cmd-readouts {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  html body .console-command .cmd-readouts b {
+    font-size: 10px;
+    letter-spacing: 0;
+  }
+  html body .console-command .cmd-readouts output {
+    font-size: 10.5px;
+    letter-spacing: -0.03em;
+  }
+  html body :is(.digital-clock, .depth-instrument) small {
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
+  /* SVG units: a ~60 px dial is drawn at ~0.43 scale. */
+  html body .instrument-dial .gauge-label {
+    font-size: 24px;
+  }
+  html body .instrument-dial .dial-value {
+    font-size: 27px;
+  }
+}
+
+/* ---------- Clock, depth sounder, compass ---------- */
+html body .digital-clock,
+html body .depth-instrument {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+html body .digital-clock small,
+html body .depth-instrument small {
+  font-size: 11px;
+  color: var(--console-label);
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+html body .digital-clock output {
+  color: var(--console-glow);
+  font-family: var(--font-readout);
+  font-weight: 500;
+  text-shadow: 0 0 6px #ffb54788;
+}
+html body .depth-instrument output {
+  color: var(--console-sea-glow);
+  font-family: var(--font-readout);
+  font-weight: 500;
+  text-shadow: 0 0 6px #7fe0c477;
+}
+html body .depth-instrument.shallow output {
+  color: var(--console-alert);
+  text-shadow: 0 0 6px #ff6b4a99;
+}
+html body .depth-scale {
+  background: #0a0e10;
+  border-radius: 2px;
+}
+html body .depth-scale i {
+  background: var(--console-sea-glow);
+  box-shadow: 0 0 4px #7fe0c488;
+}
+html body .compass-ring {
+  stroke: #3b474d;
+  fill: #0b0f11;
+}
+html body .compass-pointer {
+  fill: var(--console-glow);
+}
+html body .compass-tail {
+  fill: #6e7b80;
+}
+html body .instrument-compass .compass-north {
+  fill: var(--console-port);
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+/* Text-mode instruments keep the console readout treatment. */
+html body .instrument-text strong {
+  color: var(--console-label);
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+html body .instrument-text output {
+  color: var(--console-glow);
+  font-family: var(--font-readout);
+}
+
+/* ---------- Ship's clock window and boat card ---------- */
+html body #clock[data-hud-window] b,
+html body .boat-heading b,
+html body .boat-speed b {
+  color: var(--console-glow);
+  font-family: var(--font-readout);
+  font-weight: 500;
+}
+html body .boat-command {
+  border-top-color: #ffffff14;
+  color: var(--console-glow);
+  font-family: var(--font-readout);
+}
+
+/* ---------- Crew: dive slates tagged like their floats ----------
+   The orange stripe(s) match each diver's surfaced float (one / two). */
+html body #diverPanel #divers button {
+  position: relative;
+  border: 1px solid var(--console-edge);
+  border-radius: 6px;
+  background:
+    linear-gradient(180deg, #ffffff0a, transparent 40%), linear-gradient(180deg, #2a3337, #1d2428);
+  box-shadow:
+    inset 0 0 0 1px #ffffff0f,
+    0 2px 0 #00000055,
+    0 6px 16px #0007;
+  color: #e9eef0;
+  padding-left: 17px !important;
+  font-family: var(--font-body);
+}
+html body #diverPanel #divers button::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 8px;
+  bottom: 8px;
+  width: 4px;
+  border-radius: 2px;
+  background: #ff7a1a;
+  box-shadow: 0 0 4px #ff7a1a66;
+}
+html body #diverPanel #divers button:nth-child(2)::before {
+  width: 2px;
+  box-shadow:
+    4px 0 0 #ff7a1a,
+    0 0 4px #ff7a1a66;
+}
+html body #diverPanel #divers button.selected {
+  border-color: #ffb54799;
+  background:
+    linear-gradient(180deg, #ffb5471a, transparent 55%), linear-gradient(180deg, #2f3a3e, #20282c);
+  box-shadow:
+    inset 0 0 0 1px #ffb54740,
+    0 0 0 1px #ffb54733,
+    0 6px 16px #0007;
+}
+html body .diver-identity b {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  font-size: 15px;
+}
+html body .diver-identity small,
+html body #diverPanel .diver-detail {
+  color: #aab6ba;
+}
+html body .diver-selection-mark {
+  color: var(--console-glow);
+}
+html body #diverPanel #divers .diver-identity :is(img, svg) {
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px #0008;
+}
+
+/* ---------- Touch helm ---------- */
+/* Push-buttons: dark keys with an indicator lamp. */
+html body.touch-playing #touchControls button {
+  position: relative;
+  border: 1px solid var(--console-edge);
+  border-radius: 7px;
+  background: linear-gradient(180deg, #333e43, #232b2f 55%, #1c2326);
+  box-shadow:
+    inset 0 1px 0 #ffffff1f,
+    inset 0 -2px 0 #0006,
+    0 2px 0 #000a,
+    0 5px 12px #0006;
+  color: #e3e8ea;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+html body.touch-playing .touch-actions button::after {
+  content: '';
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4c585d;
+  box-shadow: inset 0 1px 1px #0008;
+}
+html body.touch-playing .touch-actions button {
+  border-color: var(--console-edge) !important;
+}
+/* Lamps light only for actions currently offered (entitled action prompts). */
+html body.touch-playing .touch-actions button[data-ready='true'] {
+  color: #ffd391 !important;
+}
+html body.touch-playing .touch-actions button[data-ready='true']::after {
+  background: var(--console-glow);
+  box-shadow: 0 0 6px #ffb547;
+}
+html body.touch-playing #touchControls button.pressed,
+html body.touch-playing #touchControls button:active {
+  background: linear-gradient(180deg, #1a2124, #252e33);
+  box-shadow:
+    inset 0 2px 4px #000a,
+    0 1px 0 #ffffff14;
+  border-color: #ffb54799;
+  transform: translateY(1px);
+}
+/* Touch play never navigates by keyboard focus; a leftover menu focus ring
+   on a helm button only looked like a stuck selection. */
+html body.touch-playing #touchControls button:is(:focus, :hover) {
+  outline: none;
+}
+
+/* Telegraph-style gear selector: three joined segments. */
+html body.touch-playing #touchControls .touch-gears {
+  gap: 0;
+}
+html body.touch-playing #touchControls .touch-gears button {
+  border-radius: 0;
+  margin: 0;
+}
+html body.touch-playing #touchControls .touch-gears button:first-child {
+  border-radius: 7px 0 0 7px;
+  color: #ffcf7a;
+}
+html body.touch-playing #touchControls .touch-gears button:last-child {
+  border-radius: 0 7px 7px 0;
+  color: #9ff0d6;
+}
+html body.touch-playing #touchControls .touch-gears button + button {
+  border-left-color: #0b0f11;
+}
+html body.touch-playing .touch-steering [data-touch='centerRudder'] {
+  color: #e3e8ea;
+}
+
+/* Sticks: telegraph and wheel faces. */
+html body.touch-playing .touch-stick {
+  border: 2px solid #0b0f11;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 38%, #2c363b, #151b1e 70%);
+  box-shadow:
+    inset 0 0 0 2px #45535a,
+    inset 0 6px 14px #0009,
+    0 3px 0 #000a,
+    0 8px 18px #0007;
+}
+html body .stick-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+html body .stick-face .face-rim {
+  fill: none;
+  stroke: #ffffff10;
+  stroke-width: 1;
+}
+html body .stick-face .face-ahead {
+  fill: #7fe0c414;
+}
+html body .stick-face .face-astern {
+  fill: #ffb54714;
+}
+html body .stick-face .face-port {
+  fill: #e4473b1c;
+}
+html body .stick-face .face-stbd {
+  fill: #3fbf6a1c;
+}
+html body .stick-face .face-slot {
+  stroke: #05080a;
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+html body .stick-face .face-notch,
+html body .stick-face .face-spokes {
+  stroke: #c9d3d6;
+  stroke-width: 1.2;
+  opacity: 0.35;
+}
+html body .stick-face .face-wheel {
+  fill: none;
+  stroke: #9a7a44;
+  stroke-width: 3;
+  opacity: 0.55;
+}
+html body .stick-face .face-hub {
+  fill: #2c363b;
+  stroke: #9a7a44;
+  stroke-width: 1.5;
+}
+html body .stick-face .face-bow path {
+  fill: #c9d3d6;
+  opacity: 0.6;
+}
+html body .stick-face .face-bow text {
+  fill: #c9d3d6;
+}
+html body [data-stick='helm'][data-bow='no'] .face-bow {
+  display: none;
+}
+html body .stick-face text {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  fill: #9ff0d6;
+  opacity: 0.8;
+}
+html body .stick-face .astern {
+  fill: #ffcf7a;
+}
+html body .stick-face .face-side {
+  font-size: 15px;
+}
+html body .stick-face .face-side.port {
+  fill: #ff8a7e;
+}
+html body .stick-face .face-side.stbd {
+  fill: #79e39b;
+}
+/* The face replaces the helm caption; it stays for assistive technology. */
+html body.touch-playing [data-stick='helm'] > span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+html body.touch-playing [data-stick='rudder'] > span {
+  top: 6%;
+  color: #c9d3d6;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  font-size: 8px;
+}
+/* Commanded setting glows along the lever slot / across the wheel. */
+html body [data-stick='helm'] .command-fill {
+  left: calc(50% - 3px);
+  width: 6px;
+  border-radius: 3px;
+  background: var(--console-sea-glow);
+  box-shadow: 0 0 6px #7fe0c4;
+  opacity: 0.9;
+}
+html body [data-stick='helm'][data-direction='negative'] .command-fill {
+  background: var(--console-glow);
+  box-shadow: 0 0 6px #ffb547;
+}
+html body [data-stick='rudder'] .command-fill {
+  top: calc(50% - 3px);
+  height: 6px;
+  border-radius: 3px;
+  background: var(--console-stbd);
+  box-shadow: 0 0 6px #3fbf6a;
+  opacity: 0.9;
+}
+html body [data-stick='rudder'][data-direction='negative'] .command-fill {
+  background: var(--console-port);
+  box-shadow: 0 0 6px #e4473b;
+}
+html body.touch-playing .touch-stick > i {
+  border: 2px solid #4a3a1c;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #f0dcaa, #b98a3e 70%);
+  box-shadow:
+    0 2px 4px #000a,
+    inset 0 1px 0 #fff6;
+}
+html body.touch-playing .touch-stick .command-arrow {
+  display: none;
+}
+
+/* Small console toggles at the top edge. */
+html body.touch-playing :is(#touchMenu, #touchHudToggle, #touchLockToggle) {
+  border: 1px solid var(--console-edge);
+  border-radius: 6px;
+  background: linear-gradient(180deg, #2c363b, #1b2226);
+  box-shadow:
+    inset 0 1px 0 #ffffff1a,
+    0 2px 0 #000a;
+  color: #dfe5e7;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 12px;
+  line-height: 1.1;
+}
+html body.touch-playing #touchLockToggle[aria-pressed='true'] {
+  color: var(--console-glow);
+  border-color: #ffb54799;
+}
+html body:not(.touch-playing) #touchMenu {
+  border: 1px solid var(--console-edge);
+  background: linear-gradient(180deg, #2c363b, #1b2226);
+  color: #dfe5e7;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ---------- Frank's card and the keyboard helm keys ---------- */
+html body .frank-buttons button,
+html body #keyboardHelm button,
+html body .helm-key {
+  border: 1px solid var(--console-edge);
+  background: linear-gradient(180deg, #333e43, #232b2f 55%, #1c2326);
+  box-shadow:
+    inset 0 1px 0 #ffffff1a,
+    inset 0 -2px 0 #0006,
+    0 2px 0 #000a;
+  color: #dfe5e7;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+html body .frank-buttons button:is(:hover, :focus-visible) {
+  border-color: #ffb54799;
+  color: #fff;
+}
+html body .helm-key kbd {
+  color: var(--console-glow);
+  font-family: var(--font-readout);
+  letter-spacing: 0;
+}
+html body .helm-key.command-level {
+  background: linear-gradient(to top, #7fe0c455 var(--command-level), #232b2f var(--command-level));
+}
+html body .helm-key.pressed {
+  border-color: #ffb54799;
+  box-shadow: inset 0 2px 4px #000a;
+}
+html body #frankAboard .frank-line strong {
+  color: var(--console-glow);
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+/* ---------- Legibility floor for crew slates and Frank ---------- */
+html body .diver-identity small,
+html body #diverPanel .diver-detail,
+html body .diver-meters label > span,
+html body #diverPanel .nitrogen-info small {
+  font-size: 11px;
+}
+html body.touch-playing .diver-identity small,
+html body.touch-playing #diverPanel .diver-detail,
+html body.touch-playing #diverPanel .nitrogen-info small {
+  font-size: 10px;
+  line-height: 1.15;
+}
+html body.touch-playing #diverPanel #divers button {
+  padding-top: 3px;
+  padding-bottom: 4px;
+}
+html body.touch-playing .diver-identity b {
+  font-size: 13px;
+  line-height: 1.05;
+}
+html body.touch-playing #diverPanel #divers .diver-identity :is(img, svg) {
+  height: 30px;
+}
+html body:not(.touch-playing) #frankAboard {
+  font-size: 13px;
+}
+html body.touch-playing #frankAboard {
+  font-size: 12px;
+}
+/* Phone and tablet bottom edge: keep slates and lamps off rounded corners /
+   gesture bars. Saved positions are untouched (default position only). */
+html body.touch-playing #diverPanel[data-default-position] {
+  translate: 0 calc(-1 * env(safe-area-inset-bottom, 0px));
+}
+html body.touch-playing #touchControls .touch-actions {
+  gap: 3px;
+}
+
+/* ---------- Top console toggles: one aligned row, no wrapping ---------- */
+html body.touch-playing :is(#touchMenu, #touchHudToggle, #touchLockToggle) {
+  top: max(4px, env(safe-area-inset-top));
+  height: 44px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 4px;
+  font-size: 10.5px;
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+}
+/* ---------- Speech: a console callout ---------- */
+html body #seaSpeech {
+  /* Brief, pointer-transparent speech paints over the console toggles too. */
+  z-index: 300;
+  border: 1px solid #ffb54799;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #2c363bf2, #1b2226f2);
+  box-shadow:
+    inset 0 1px 0 #ffffff14,
+    0 0 0 1px #000a,
+    0 6px 18px #0009;
+  color: #f4ead6;
+  font: 500 13px/1.3 var(--font-display);
+  letter-spacing: 0.02em;
+}
+/* The tail never tracked the speaker; a stray pointer only aimed at sea. */
+html body #seaSpeech::after {
+  display: none;
+}
+
+/* ---------- Text windows: help, prompts, legends ---------- */
+html
+  body
+  :is(
+    #help,
+    #message,
+    #electronics,
+    #navigation,
+    #groundLegend,
+    #actionFeedback,
+    #frankAboard,
+    #almanacPanel,
+    #sounderPanel,
+    #minimapPanel
+  ):is([data-hud-window], [data-default-position]) {
+  border: 1px solid var(--console-edge);
+  border-radius: 6px;
+  background:
+    linear-gradient(180deg, #ffffff0a, #ffffff00 38%),
+    linear-gradient(180deg, var(--console-body-2), var(--console-body));
+  box-shadow:
+    inset 0 0 0 1px #ffffff0d,
+    inset 0 1px 0 #ffffff14,
+    0 2px 0 #00000055,
+    0 6px 18px #0008;
+  color: #e3e8ea;
+}
+html body #help:is([data-hud-window], [data-default-position]) {
+  font-size: 12px;
+}
+html body #help kbd,
+html body #help b {
+  color: var(--console-glow);
+  font-family: var(--font-readout);
+}

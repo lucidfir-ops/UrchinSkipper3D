@@ -28,6 +28,13 @@ import { renderHarbour } from './harbour-view.js';
 import { catchSheetSvg } from './catch-sheet.js';
 import { vesselPreview, paintVesselPreviews } from './vessel-art.js';
 import { renderPreferences } from './menu-preferences.js';
+const megabytes = (bytes) => (bytes / 1048576).toFixed(1);
+// Browsers allow roughly 5 MB per site, and itch.io games share one site.
+function storageLine(report) {
+  if (!report) return '';
+  const nearlyFull = report.total > 4 * 1048576;
+  return `<p class="storage-report${nearlyFull ? ' warning' : ''}">Storage: this game ${megabytes(report.game)} MB · all games on this site ${megabytes(report.total)} MB of about 5 MB.${nearlyFull ? ' <strong>Nearly full — delete old saves to keep saving.</strong>' : ''}</p>`;
+}
 export function renderCareer(ui, w, bind) {
   if (['settings', 'ui-scale', 'gameplay-speed'].includes(ui.screen)) {
     renderPreferences(ui, w, bind);
@@ -183,7 +190,8 @@ export function renderCareer(ui, w, bind) {
   if (ui.screen === 'archives') {
     title = 'Earlier careers.';
     detail =
-      '<h3>Saved days and careers.</h3><p>Each new day at harbour keeps its starting state. Save game now in the logbook keeps an extra restore point. Loading archives your current progress first, so you can undo the choice. Older releases cannot supply day saves retroactively. Browser storage is local; export backups for safekeeping.</p>';
+      '<h3>Saved days and careers.</h3><p>Each new day at harbour keeps its starting state. Save game now in the logbook keeps an extra restore point. Loading archives your current progress first, so you can undo the choice. Browser storage is local to this browser; export backups for safekeeping.</p>' +
+      storageLine(ui.hooks.storageReport?.());
   }
   if (ui.screen === 'fleetboard') {
     title = 'Other boats. Other days.';

@@ -174,7 +174,7 @@ test('crew and boat purchases reject at sea; available crew cannot be hired twic
   assert(!buyEquipment(w, 'lights').ok);
   assert.equal(JSON.stringify(w.career), before);
 });
-test('career archives are additive and keep independently restorable copies before a fresh start', () => {
+test('career archives keep independently restorable copies without duplicating identical states', () => {
   const values = {},
     storage = {
       get length() {
@@ -186,12 +186,14 @@ test('career archives are additive and keep independently restorable copies befo
     };
   const w = careerWorld();
   saveCareer(w, storage);
-  const first = archiveCareer(storage),
-    second = archiveCareer(storage);
-  assert.notEqual(first, second);
-  assert.equal(careerArchives(storage).length, 2);
+  const first = archiveCareer(storage);
+  // October 4: repeated archiving of an unchanged career filled browser storage.
+  assert.equal(archiveCareer(storage), first);
   w.career.cash = 42;
   saveCareer(w, storage);
+  const second = archiveCareer(storage);
+  assert.notEqual(first, second);
+  assert.equal(careerArchives(storage, true).length, 2);
   assert.equal(decode(values[first]).career.cash, ECONOMY.startCash);
   assert.equal(loadCareer(storage).world.career.cash, 42);
 });

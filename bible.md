@@ -1,6 +1,6 @@
 # Urchin Skipper — living design Bible
 
-Updated 2026-09-29. The approved full-game vision, consolidated from the definitive v2 DOCX and subsequent designer decisions. This describes intended design; it does not certify that every system is implemented or fully balanced.
+Updated 2026-10-04. The approved full-game vision, consolidated from the definitive v2 DOCX and subsequent designer decisions. This describes intended design; it does not certify that every system is implemented or fully balanced.
 
 ## 1. Purpose and authority
 
@@ -33,6 +33,8 @@ Boat progression changes handling, range, load, equipment and weather capability
 ## 3. Camera, presentation, art and audio
 
 **Separate 3D edition — September 26, 2026 designer request:** This copied Bible governs Urchin Skipper 3D. The designer explicitly authorizes a separate Three.js presentation, authored 3D boats/coast/ocean, and a live coastal title vignette while preserving the existing gameplay, content, controls and overall vision. The original 2D project is read-only. At-sea orthographic following, permanent two-diver limit, information rules and supplied harbour composition remain. This decision supersedes 2D-specific rendering requirements below for this edition only. Implementation boundary: [DEVELOPMENT_NOTES.md](DEVELOPMENT_NOTES.md#one-simulation-new-presentation).
+
+**Interface redesign — October 4, 2026 designer request:** with artistic licence, replace the generic dark-panel/green-and-gold menu look and make the HUD convey boat controls on every device (phone portrait is the hardest). Menus became a chart room (chart-paper panels, ink type, signal-orange focus, condensed marine lettering; bundled OFL fonts); the HUD became a wheelhouse console. Behaviour, navigation, information entitlements and saved layouts are unchanged. The Catalogue artwork (raster/vector) setting is removed now that menus show the 3D boats; original artwork remains as reference.
 
 **Menu and HUD overhaul — September 27, 2026 designer request:** Reconsider menu structure, grouping, hierarchy, typography, spacing, visual language, feedback and responsive presentation with substantial artistic freedom. Preserve established behavior, navigation contexts, controls, important default information and the Easy/Realistic distinction. Keep the idea of graphical boat instruments, independent information choices and saved layouts. Do not change underlying gameplay to accommodate presentation. Use independent investigations and harsh visual reviews, actual interaction and repeated refinement; this commission is not itself acceptance of a particular implementation. [Implementation and review record](docs/review/interface-redesign-2026-09-27.md).
 
@@ -154,7 +156,7 @@ Show the currently valid action and readable reasons when an operation is unavai
 
 ## 11. Deck, loading and catch handling
 
-Recovered bags visibly accumulate on the working deck and affect exact boat load. Keep visual bag placement separate from numerical weight and capacity. September 23: bags are conspicuously red, large and fixed in size. Use bounded overlapping layers inside the working deck; existing bags do not shrink or rearrange as more arrive, and later layers cover deck gaps. Loading affects hull behavior and load-sensitive travel speed.
+Recovered bags visibly accumulate on the working deck and affect exact boat load. October 4: on every hull, including the aft-cabin landing craft, sacks stack only on open deck, never inside or under a wheelhouse. Keep visual bag placement separate from numerical weight and capacity. September 23: bags are conspicuously red, large and fixed in size. Use bounded overlapping layers inside the working deck; existing bags do not shrink or rearrange as more arrive, and later layers cover deck gaps. Loading affects hull behavior and load-sensitive travel speed.
 
 Exact deck/diver readouts are permitted in Realistic by the subsequent information amendment; they can be independently hidden. Physical bags remain useful information when readouts are off. Preserve modular UI and the remaining hidden-ground/underwater-information limits in §18.
 
@@ -172,7 +174,7 @@ To leave, drive through the appropriate map edge with both divers aboard. A shor
 
 Charts are partial surveys. Record permitted known grounds, dated diver observations, charted rocks, explored depths, equipment tracks and player marks. The current-sector minimap uses the same knowledge and a conspicuous vessel-and-heading symbol, with a contrast halo and clear own-position label on the full chart (September 28 readability decision). It excludes moving logs, uncharted rocks, unknown ground and underwater divers. Tapping Chart opens a persistent larger chart. “Chart only” has no surrounding information card/text and is the default minimap style. Keep the labelled chart as an option, with a direct Chart only shortcut for older saved labelled layouts. Large chart windows retain sensible map proportions and square hit targets instead of stretching around a tiny map.
 
-New Career is offered only at Title. Logbook provides Save game now and Load saved day/career. Preserve immutable snapshots when a planning day is first reached and additive manual restore points; archive current progress before loading. Never automatically prune unique old snapshots. Stop adding snapshots and prompt export before consuming the live-save reserve. Browser-local careers can be transferred through explicit export/import, not assumed shared across devices/origins.
+New Career is offered only at Title. Logbook provides Save game now and Load saved day/career. Preserve immutable snapshots when a planning day is first reached and additive manual restore points; archive current progress before loading. Never automatically prune unique old snapshots. Stop adding snapshots and prompt export before consuming the live-save reserve. Browser-local careers can be transferred through explicit export/import, not assumed shared across devices/origins. **October 4 designer report and decision:** New Career fell back to Load Game, loading failed and autosave reverted because full uncompressed snapshots, repeated identical archives and other games sharing itch.io's browser storage exhausted the quota. Saves are compressed (lossless, older saves rewritten in place at launch), identical states are archived once, the live save may give up only its own rolling backup to fit, and Load Game offers explicit player deletion of restore points with confirmation and a storage readout. Automatic pruning of unique snapshots remains prohibited. A failed save is always announced, including at sea, and the game also saves when the page is hidden.
 
 ## 13. Career, economy and progression
 
@@ -271,6 +273,8 @@ Back/Forward follows visited menus and restores selection, view and scroll state
 September 24 keyboard follow-up: show latched throttle and rudder levels as gradient fills on the keyboard reference keys, including after key release. Keep a clickable Menu action clear of the helm keys. Expose the Tide & current almanac shortcut explicitly in Arrange UI with independent visibility; retain the chart-only default and saved layout choices. [Keyboard feedback provenance](docs/DESIGN_CONSOLIDATION.md#september-24-keyboard-follow-up).
 
 ## 19. Controls and browser access
+
+**October 4 designer request:** the Steam Deck's built-in controls must work in a web browser (itch.io). Without a Steam Gamepad template the Deck reaches the browser only as Steam's desktop keyboard/mouse layout, so a Steam Deck controls setting (Auto/On/Off; automatic on a Deck) maps that layout: left stick/D-pad throttle and rudder, A centre/select, B and ☰ menu/back, Y neutral, L1 deploy/board, R1 bag, View diver, left trackpad zoom, right trackpad and R2 click on-screen controls. The real gamepad path (browser launched from Steam with a Gamepad template) is retained and explained in Controller setup. Escape opens the menu; browser/Android Back and leaving fullscreen during play open the menu instead of leaving the game, P is an extra menu key, and the mouse wheel zooms. Physical Deck acceptance remains the designer's.
 
 Keyboard, gamepad and touch resolve to the same abstract commands. Preserve custom bindings, verified USB Xbox behavior and device-specific profiles. Never infer a raw Deck layout from an illustration or change global Steam/desktop shortcuts. Provide device diagrams, visible bindings, per-device remapping/reset and physical capture. Selecting a diagram does not change hardware mapping.
 

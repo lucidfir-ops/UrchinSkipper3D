@@ -51,14 +51,29 @@ export function loadGraphic(weight, capacity) {
 }
 export function dial(label, value, fraction, low = '0', high = 'MAX', danger = false) {
   const angle = Math.round(-120 + clamp(fraction) * 240);
-  return `<svg class="instrument-dial ${danger ? 'danger' : ''}" viewBox="0 0 140 112" role="img" aria-label="${label}: ${value}"><path class="gauge-ring" d="M29 85 A48 48 0 1 1 111 85"/><path class="gauge-arc" d="M29 85 A48 48 0 1 1 111 85"/>${label === 'FUEL' ? '<path class="gauge-reserve" d="M29 85 A48 48 0 0 1 22 61"/>' : ''}${Array.from({ length: 9 }, (_, i) => `<path class="gauge-tick" d="M70 16V${i % 2 ? 20 : 23}" transform="rotate(${-120 + i * 30} 70 61)"/>`).join('')}<path class="gauge-needle" d="M70 65V26" transform="rotate(${angle} 70 61)"/><circle class="gauge-pin" cx="70" cy="61" r="4"/><text class="gauge-label" x="70" y="42" text-anchor="middle">${label}</text><text x="70" y="89" class="dial-value" text-anchor="middle">${value}</text><text class="gauge-limit" x="21" y="108">${low}</text><text class="gauge-limit" x="119" y="108" text-anchor="end">${high}</text></svg>`;
+  return `<svg class="instrument-dial ${danger ? 'danger' : ''}" viewBox="0 0 140 112" role="img" aria-label="${label}: ${value}"><path class="gauge-ring" d="M29 85 A48 48 0 1 1 111 85"/><path class="gauge-arc" d="M29 85 A48 48 0 1 1 111 85"/>${label === 'FUEL' ? '<path class="gauge-reserve" d="M29 85 A48 48 0 0 1 22 61"/>' : ''}${Array.from({ length: 9 }, (_, i) => `<path class="gauge-tick" d="M70 16V${i % 2 ? 20 : 23}" transform="rotate(${-120 + i * 30} 70 61)"/>`).join('')}<path class="gauge-needle" d="M70 65V26" transform="rotate(${angle} 70 61)"/><circle class="gauge-pin" cx="70" cy="61" r="4"/><text class="gauge-label" x="70" y="42" text-anchor="middle">${label}</text><text x="70" y="98" class="dial-value" text-anchor="middle">${value}</text><text class="gauge-limit" x="21" y="108">${low}</text><text class="gauge-limit" x="119" y="108" text-anchor="end">${high}</text></svg>`;
 }
 export function compass(label, angle, value) {
   angle = Math.round(angle);
   return `<svg class="instrument-compass" viewBox="0 0 140 112" role="img" aria-label="${label}: ${value}"><circle class="compass-ring" cx="70" cy="55" r="39"/><path class="gauge-tick" d="M70 16V23M70 87V94M31 55H38M102 55H109"/><text class="compass-north" x="70" y="11" text-anchor="middle">N</text><g transform="rotate(${angle} 70 55)"><path class="compass-pointer" d="M70 25L62 64L70 59L78 64Z"/><path class="compass-tail" d="M70 85L64 63L70 66L76 63Z"/></g><text class="compass-reading" x="70" y="110" text-anchor="middle">${label} ${value}</text></svg>`;
 }
+// Wheelhouse console HELM module: an engine-order telegraph lever beside a
+// rudder-angle indicator (port red, starboard green scale), with word + number
+// readouts. Values remain the commanded settings.
 export function commandGauge(throttle, rudder) {
-  return `<div class="command-instrument"><div class="command-heading"><strong>THROTTLE</strong><output>${Math.round(throttle * 100)}%</output></div><div class="command-track"><i style="left:${50 + throttle * 45}%"></i></div><small><span>ASTERN</span><span>N</span><span>AHEAD</span></small><div class="command-heading"><strong>RUDDER</strong><output>${Math.round(rudder * 100)}%</output></div><div class="command-track"><i style="left:${50 + rudder * 45}%"></i></div><small><span>PORT</span><span>CENTRE</span><span>STBD</span></small></div>`;
+  const t = Math.max(-1, Math.min(1, throttle || 0)),
+    r = Math.max(-1, Math.min(1, rudder || 0)),
+    handle = 32 - t * 24,
+    percent = (v) => `${Math.round(Math.abs(v) * 100)}%`,
+    order =
+      Math.abs(t) < 0.01
+        ? '<b>STOP</b>'
+        : `<b>${t > 0 ? 'AHEAD' : 'ASTERN'}</b> <output>${percent(t)}</output>`,
+    side = Math.abs(r) < 0.01 ? 'MID' : `${r < 0 ? 'P' : 'S'}${Math.round(Math.abs(r) * 100)}`,
+    angle = (r * 60).toFixed(1),
+    tick = (a) =>
+      `<path class="rudder-tick" d="M96 8V${a % 60 ? 13 : 16}" transform="rotate(${a} 96 40)"/>`;
+  return `<div class="command-instrument console-command" role="img" aria-label="Throttle ${Math.round(t * 100)}% ${t > 0.01 ? 'ahead' : t < -0.01 ? 'astern' : 'neutral'}, rudder ${Math.round(Math.abs(r) * 100)}% ${r > 0.01 ? 'starboard' : r < -0.01 ? 'port' : 'centred'}"><div class="cmd-head">HELM</div><svg class="cmd-graphic" viewBox="0 0 132 60" aria-hidden="true"><text class="cmd-mark" x="2" y="13">AH</text><text class="cmd-mark" x="6" y="36">N</text><text class="cmd-mark" x="2" y="59">AS</text><path class="telegraph-notches" d="M38 8H45M38 20H42M38 32H46M38 44H42M38 56H45"/><rect class="telegraph-slot" x="25" y="5" width="8" height="54" rx="4"/><path class="telegraph-throw ${t < 0 ? 'astern' : 'ahead'}" d="M29 32V${handle.toFixed(1)}"/><rect class="telegraph-handle" x="15" y="${(handle - 5).toFixed(1)}" width="28" height="10" rx="3"/><path class="rudder-port" d="M68.3 24A32 32 0 0 1 96 8"/><path class="rudder-stbd" d="M96 8A32 32 0 0 1 123.7 24"/>${[-60, -30, 0, 30, 60].map(tick).join('')}<text class="cmd-mark port" x="57" y="42">P</text><text class="cmd-mark stbd" x="125" y="42">S</text><path class="rudder-needle" d="M96 43V12" transform="rotate(${angle} 96 40)"/><circle class="rudder-hub" cx="96" cy="40" r="5"/></svg><div class="cmd-readouts"><span class="cmd-throttle${t < -0.01 ? ' astern' : ''}">${order}</span><span class="cmd-rudder"><b>RUDDER</b> <output>${side}</output></span></div></div>`;
 }
 export const TIMEPIECES = [
   ['digital', 'Red digital clock'],
@@ -122,7 +137,7 @@ export function renderStandaloneInstruments(ui, w) {
       id === 'timepiecePanel'
         ? clockFace(w.day.minute, face)
         : id === 'depthInstrumentPanel'
-          ? `<div class="depth-instrument ${clearance < 0.5 ? 'shallow' : ''}">${instrumentTexture(3)}<small>DEPTH · METRES</small><output>${depth.toFixed(1)}</output><div class="depth-scale"><i style="width:${clamp(depth / 30) * 100}%"></i></div><small>${clearance <= 0 ? 'KEEL CONTACT' : `KEEL ${clearance.toFixed(1)} m`}</small></div>`
+          ? `<div class="depth-instrument ${clearance < 0.5 ? 'shallow' : ''}">${instrumentTexture(3)}<small>DEPTH<span class="label-long"> · METRES</span><span class="label-short"> m</span></small><output>${depth.toFixed(1)}</output><div class="depth-scale"><i style="width:${clamp(depth / 30) * 100}%"></i></div><small>${clearance <= 0 ? 'KEEL CONTACT' : `KEEL ${clearance.toFixed(1)} m`}</small></div>`
           : id === 'compassPanel'
             ? compass('HDG', heading, `${heading.toFixed(0)}°`)
             : id === 'hullPanel'

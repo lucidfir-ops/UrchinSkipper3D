@@ -483,6 +483,19 @@ body #playtest.shop-panel .shop-vessel-card figcaption {
   color: var(--ui-sea);
   font-size: 10px;
 }
+/* Full 3D previews need normal document flow, including their captions. */
+body #playtest .career-detail > .vessel-model,
+body #playtest.shop-panel .shop-inline-detail > .vessel-preview.vessel-model {
+  float: none;
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  max-height: none;
+  margin: 0 0 14px;
+}
+body #playtest :is(.career-detail, .shop-inline-detail) > .vessel-model canvas {
+  display: block;
+}
 body #playtest.shop-panel .shop-row.is-preview .shop-vessel-card {
   padding-right: 14px;
   padding-bottom: 55px;
@@ -495,6 +508,9 @@ body #playtest.shop-panel .shop-row:has(.shop-vessel-card) .shop-inline-buy {
   bottom: 8px;
   width: 64px;
   min-height: 36px;
+}
+body.touchscreen #playtest.shop-panel .boat-pairs .is-preview .shop-vessel-card {
+  padding-bottom: calc(44px / var(--ui-scale) + 18px);
 }
 body #playtest.shop-panel[data-screen='starter'] .career-layout {
   grid-template-columns: minmax(370px, 0.9fr) minmax(340px, 1.15fr);
@@ -1329,6 +1345,38 @@ body #playtest .intro-chart-brief .skipper-note p {
 }
 /* Native keyboard reading stays inside the focused pane. Menu controls keep
    their own arrow navigation and activation behavior. */
+body:not(.touchscreen)
+  #playtest:is([data-screen='departure'], [data-screen='knowledge'])
+  .sector-picture {
+  justify-content: flex-start;
+}
+body:not(.touchscreen) #playtest .chart-map-frame {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  container-type: size;
+  align-items: center;
+  justify-content: center;
+}
+body:not(.touchscreen) #playtest .chart-map-frame > :is(canvas, svg) {
+  display: block;
+  width: min(100cqw, 100cqh);
+  height: auto;
+  max-height: 100%;
+  flex: none;
+}
+body:not(.touchscreen)
+  #playtest:is([data-screen='departure'], [data-screen='knowledge'])
+  .map-caption {
+  flex: none;
+}
+body:not(.touchscreen)
+  #playtest:is([data-screen='departure'], [data-screen='knowledge'])
+  .expedition-choices {
+  max-height: 50%;
+  overflow: auto;
+}
 body #playtest [data-menu-reading]:focus-visible {
   outline: 2px solid #f2d28b;
   outline-offset: -3px;

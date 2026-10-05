@@ -39,6 +39,10 @@ export const TOUCH_LABELS = {
   almanac: 'Tides',
   debug: 'Information',
 };
+// Decorative helm faces: an engine-order telegraph for throttle / bow thrust
+// and a rudder wheel. They never receive input; the stick element does.
+const HELM_FACE = `<svg class="stick-face" viewBox="0 0 100 100" aria-hidden="true"><path class="face-ahead" d="M8 50A42 42 0 0 1 92 50Z"/><path class="face-astern" d="M8 50A42 42 0 0 0 92 50Z"/><circle class="face-rim" cx="50" cy="50" r="46"/><path class="face-slot" d="M50 26V74"/><text class="face-word" x="50" y="20" text-anchor="middle">AHEAD</text><text class="face-word astern" x="50" y="90" text-anchor="middle">ASTERN</text><g class="face-bow"><path d="M5 50l5-4v8z"/><text x="20" y="55" text-anchor="middle">BOW</text><path d="M95 50l-5-4v8z"/><text x="80" y="55" text-anchor="middle">BOW</text></g></svg>`;
+const RUDDER_FACE = `<svg class="stick-face" viewBox="0 0 100 100" aria-hidden="true"><path class="face-port" d="M50 4A46 46 0 0 0 50 96Z"/><path class="face-stbd" d="M50 4A46 46 0 0 1 50 96Z"/><circle class="face-rim" cx="50" cy="50" r="46"/><circle class="face-wheel" cx="50" cy="50" r="34"/><path class="face-spokes" d="M50 16V84M16 50H84M26 26L74 74M74 26L26 74"/><circle class="face-hub" cx="50" cy="50" r="7"/><text class="face-side port" x="12" y="55" text-anchor="middle">P</text><text class="face-side stbd" x="88" y="55" text-anchor="middle">S</text></svg>`;
 export class TouchControls {
   constructor(input, ui) {
     setTouchScale(touchScale());
@@ -53,7 +57,7 @@ export class TouchControls {
     this.root.hidden = true;
     const button = (id, text = TOUCH_LABELS[id]) =>
       `<button data-touch="${id}" aria-label="${text}">${text}</button>`;
-    this.root.innerHTML = `<div class="touch-helm"><div class="touch-stick" data-stick="helm" aria-label="Throttle and bow thruster touch stick"><b class="command-fill"></b><em class="command-arrow"></em><span>THROTTLE<br>↔ BOW</span><i></i></div><div class="touch-gears">${button('fullReverse')}${button('neutral')}${button('fullAhead')}</div></div><div class="touch-actions">${['recoverDiver', 'work', 'recall', 'quickOrders', 'cycleDiver', 'chart', 'zoomOut', 'zoomIn'].map((id) => button(id)).join('')}</div><div class="touch-steering"><div class="touch-stick" data-stick="rudder" aria-label="Rudder touch stick"><b class="command-fill"></b><em class="command-arrow"></em><span>RUDDER</span><i></i></div>${button('centerRudder')}</div>`;
+    this.root.innerHTML = `<div class="touch-helm"><div class="touch-stick" data-stick="helm" aria-label="Throttle and bow thruster touch stick">${HELM_FACE}<b class="command-fill"></b><em class="command-arrow"></em><span>THROTTLE<br>↔ BOW</span><i></i></div><div class="touch-gears">${button('fullReverse')}${button('neutral')}${button('fullAhead')}</div></div><div class="touch-actions">${['recoverDiver', 'work', 'recall', 'quickOrders', 'cycleDiver', 'chart', 'zoomOut', 'zoomIn'].map((id) => button(id)).join('')}</div><div class="touch-steering"><div class="touch-stick" data-stick="rudder" aria-label="Rudder touch stick">${RUDDER_FACE}<b class="command-fill"></b><em class="command-arrow"></em><span>RUDDER</span><i></i></div>${button('centerRudder')}</div>`;
     document.body.append(this.root);
     const boat = document.createElement('button');
     boat.id = 'touchBoat';
@@ -257,6 +261,10 @@ export class TouchControls {
         );
         control.title = `${stick === 'helm' ? 'Throttle' : 'Rudder'} ${Math.round(Math.abs(value) * 100)}% ${Math.abs(value) < 0.01 ? 'neutral' : stick === 'helm' ? (value > 0 ? 'ahead' : 'astern') : value > 0 ? 'starboard' : 'port'}`;
       }
+      // Bow-thrust captions only on hulls whose helm stick has a bow thruster.
+      const bow = spec.bowThrusterStrength > 0 ? 'yes' : 'no',
+        helmStick = this.root.querySelector('[data-stick="helm"]');
+      if (helmStick.dataset.bow !== bow) helmStick.dataset.bow = bow;
       const twin = boatSpec(this.ui.hooks.world()).pivotRate > 0,
         label = this.root.querySelector('[data-stick="rudder"] span'),
         text = twin ? 'RUDDER ↔ / JET PIVOT ↕' : 'RUDDER';

@@ -57,12 +57,15 @@ export function diverVisual(d) {
     aboard: d.state === 'ready',
   };
 }
-export function deckMarkers(bags, spec = C.boat) {
+// `area` optionally narrows the fore/aft span (metres along the hull, bow
+// negative) to the open working deck the 3D hull model leaves clear of its
+// wheelhouse. Without it the original aft working-deck span is used.
+export function deckMarkers(bags, spec = C.boat, area = null) {
   const radius = 0.64,
     left = -spec.width * 0.4 + radius + 0.06,
     right = -left,
-    top = spec.length * 0.055 + radius + 0.06,
-    bottom = spec.length * 0.44 - radius - 0.06,
+    top = (area ? area.fore : spec.length * 0.055) + radius + 0.06,
+    bottom = Math.max(top, (area ? area.aft : spec.length * 0.44) - radius - 0.06),
     columns = Math.max(2, Math.ceil((right - left) / (radius * 1.4)) + 1),
     rows = Math.max(2, Math.ceil((bottom - top) / (radius * 1.4)) + 1),
     layerSize = columns * rows;

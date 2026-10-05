@@ -1,0 +1,635 @@
+/* Chart room — October 4, 2026 menu redesign.
+   Menus read as a working chart table: chart-paper panels, ink type, a single
+   signal-orange highlight for the focused choice and an ink "primary" action.
+   Loaded last; the `html body` prefix outranks the earlier `body #playtest`
+   layers without !important. Layout, sizes and hit targets are inherited. */
+
+html body :is(#playtest, #startup) {
+  --ui-bg: var(--chart-paper);
+  --ui-surface: var(--chart-paper-deep);
+  --ui-raised: #f4eedf;
+  --ui-text: var(--chart-ink);
+  --ui-muted: var(--chart-ink-soft);
+  --ui-faint: var(--chart-ink-faint);
+  --ui-accent: var(--chart-ink);
+  --ui-sea: var(--chart-sea);
+  --ui-border: var(--chart-rule);
+  --ui-radius: 4px;
+  --chart-grid:
+    repeating-linear-gradient(0deg, transparent 0 39px, #14263a0d 39px 40px),
+    repeating-linear-gradient(90deg, transparent 0 39px, #14263a0d 39px 40px);
+  color: var(--chart-ink);
+  font-family: var(--font-body);
+}
+
+/* ---------- Panels ---------- */
+html body #playtest#playtest:not(.wharf-panel) {
+  color: var(--chart-ink);
+  background:
+    var(--chart-grid),
+    radial-gradient(
+      120% 90% at 0% 0%,
+      #f6f0e2 0%,
+      var(--chart-paper) 55%,
+      var(--chart-paper-deep) 100%
+    );
+  border: 1px solid var(--chart-paper-edge);
+  border-radius: 4px;
+  box-shadow:
+    0 0 0 1px #0b1620,
+    0 30px 90px #000a12c0,
+    inset 0 0 0 6px #ffffff2e;
+}
+html body #playtest#playtest :is(h2, h3, h4) {
+  color: var(--chart-ink);
+  font-family: var(--font-display);
+  letter-spacing: 0.01em;
+}
+html body #playtest#playtest:not(.wharf-panel) h2 {
+  font-weight: 700;
+  font-size: clamp(28px, 3.1vw, 42px);
+  line-height: 1;
+  text-transform: uppercase;
+}
+html body #playtest#playtest h3 {
+  font-weight: 600;
+  font-size: 1.15em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+html body #playtest#playtest .eyebrow,
+html body #startup#startup .eyebrow {
+  color: var(--signal-deep);
+  font-family: var(--font-readout);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+}
+html body #playtest#playtest :is(p, li, small, .menu-row-copy small, .menu-group-note) {
+  color: var(--chart-ink-soft);
+}
+html body #playtest#playtest strong {
+  color: var(--chart-ink);
+}
+html body #playtest#playtest a {
+  color: var(--signal-deep);
+}
+
+/* Top navigation strip: Back / location */
+html body #playtest#playtest > .screen-navigation {
+  border-bottom: 2px solid var(--chart-ink);
+}
+html body #playtest#playtest .screen-navigation button {
+  color: var(--chart-ink);
+  background: transparent;
+  border: 1.5px solid var(--chart-ink);
+  border-radius: 3px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+html body #playtest#playtest .screen-navigation button:is(:hover, :focus-visible, .selected) {
+  color: var(--signal-ink);
+  background: var(--chart-ink);
+}
+html body .menu-location {
+  color: var(--chart-ink-faint);
+  font-family: var(--font-readout);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+/* ---------- Base for every other menu button and container ----------
+   Specific choice/primary rules below outrank this (they add classes). */
+html body #playtest#playtest button:not(.layout-card) {
+  color: var(--chart-ink);
+  background: #f6f1e4;
+  border: 1px solid #14263a40;
+  border-radius: 3px;
+  box-shadow: none;
+}
+html body #playtest#playtest button:not(.layout-card):is(.selected, :focus-visible) {
+  color: var(--signal-ink);
+  background: var(--signal);
+  border-color: var(--signal-deep);
+  outline: none;
+}
+html body #playtest#playtest button:not(.layout-card):is(.selected, :focus-visible) * {
+  color: var(--signal-ink);
+}
+html
+  body
+  #playtest#playtest
+  :is(
+    .assist-row,
+    .assist-section,
+    .touch-option-group,
+    .shop-toolbar,
+    .shop-purchase-footer,
+    .binding-row,
+    .chart-mode-toggle
+  ) {
+  color: var(--chart-ink);
+  background: transparent;
+  border-color: var(--chart-rule);
+}
+html
+  body
+  #playtest#playtest
+  :is(.assist-row, .touch-option-group)
+  :is(span, label, p, strong, small) {
+  color: var(--chart-ink-soft);
+}
+html body #playtest#playtest .assist-row {
+  background: #f6f1e4;
+  border: 1px solid #14263a2e;
+  border-left: 4px solid var(--chart-ink);
+}
+html body #playtest#playtest .assist-row [role='switch'] {
+  font-family: var(--font-readout);
+  font-weight: 500;
+  color: var(--chart-ink-faint);
+  background: #e3dac4;
+  border-radius: 0 3px 3px 0;
+}
+html body #playtest#playtest .assist-row [role='switch'][aria-checked='true'] {
+  color: #f4fbf8;
+  background: var(--chart-sea);
+}
+html body #playtest#playtest .assist-row [role='switch'].selected {
+  color: var(--signal-ink);
+  background: var(--signal);
+}
+html body #playtest#playtest .touch-option-group {
+  background: #f6f1e4;
+  border: 1px solid #14263a2e;
+  border-top: 3px solid var(--chart-ink);
+}
+html body #playtest#playtest :is(.shop-purchase-footer, .shop-toolbar) {
+  background: #e8dfc9;
+  border: 1px solid #14263a2e;
+}
+html body #playtest#playtest .chart-mode-toggle span {
+  color: var(--chart-ink-soft);
+  font-family: var(--font-readout);
+}
+html body #playtest#playtest [aria-pressed='true'] {
+  color: var(--chart-paper);
+  background: var(--chart-ink);
+}
+
+/* ---------- Choices (all list and grid buttons) ---------- */
+html body #playtest#playtest :is(.choices, .career-choices, .menu-body, .pause-column) > button,
+html body #playtest#playtest .menu-row,
+html body #playtest#playtest .shop-choices > button,
+html body #playtest#playtest .assist-presets button,
+html body #playtest#playtest .assist-tools button,
+html body #playtest#playtest .touch-option-controls button {
+  color: var(--chart-ink);
+  background: #f6f1e4;
+  border: 1px solid #14263a2e;
+  border-left: 4px solid var(--chart-ink);
+  border-radius: 3px;
+  box-shadow: 0 1px 0 #14263a14;
+  font-family: var(--font-body);
+  font-weight: 600;
+  text-align: left;
+  transition:
+    background-color 120ms ease,
+    color 120ms ease,
+    border-color 120ms ease;
+}
+html
+  body
+  #playtest#playtest
+  :is(.choices, .career-choices, .menu-body, .pause-column)
+  > button:hover,
+html body #playtest#playtest .menu-row:hover {
+  background: #fffaf0;
+  border-left-color: var(--chart-ink);
+}
+/* The focused choice: signal flag orange. One highlight on screen at a time. */
+html
+  body
+  #playtest#playtest
+  :is(.choices, .career-choices, .menu-body, .pause-column)
+  > button.selected,
+html body #playtest#playtest .menu-row.selected,
+html body #playtest#playtest .shop-choices > button.selected,
+html
+  body
+  #playtest#playtest
+  :is(.choices, .career-choices, .menu-body, .pause-column)
+  > button:focus-visible,
+html body #playtest#playtest .menu-row:focus-visible {
+  color: var(--signal-ink);
+  background: var(--signal);
+  border-color: var(--signal-deep);
+  border-left-color: var(--chart-ink);
+  outline: none;
+  box-shadow: 0 3px 0 var(--signal-deep);
+}
+html body #playtest#playtest .menu-row.selected :is(strong, small, .menu-row-arrow),
+html
+  body
+  #playtest#playtest
+  :is(.choices, .career-choices, .menu-body, .pause-column)
+  > button.selected
+  * {
+  color: var(--signal-ink);
+}
+html body #playtest#playtest button:disabled {
+  color: var(--chart-ink-faint);
+  background: #e6dfcd;
+  border-left-color: #14263a40;
+  box-shadow: none;
+}
+html body #playtest#playtest .menu-row-copy strong {
+  font-family: var(--font-display);
+  font-size: 1.12em;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+html body #playtest#playtest .menu-row-arrow {
+  color: var(--chart-ink-soft);
+}
+html body #playtest#playtest .menu-row-switch {
+  background: #14263a2a;
+}
+html body #playtest#playtest [aria-checked='true'] > .menu-row-switch {
+  background: var(--chart-sea);
+}
+
+/* Primary actions (Resume, Sail, Confirm…) are solid ink. */
+html body #playtest#playtest :is(.menu-primary, .pause-primary),
+html body #playtest#playtest [data-action='confirm-purchase'],
+html body #playtest#playtest [data-action='sail'] {
+  color: var(--chart-paper);
+  background: var(--chart-ink);
+  border-color: var(--chart-ink);
+  border-left-color: var(--signal);
+}
+html body #playtest#playtest :is(.menu-primary, .pause-primary) :is(strong, small, .menu-row-arrow),
+html body #playtest#playtest [data-action='confirm-purchase'] * {
+  color: var(--chart-paper);
+}
+html body #playtest#playtest :is(.menu-primary, .pause-primary).selected,
+html body #playtest#playtest [data-action='confirm-purchase'].selected {
+  background: var(--signal);
+  border-left-color: var(--chart-ink);
+}
+
+/* Settings / pause dashboard groups */
+html body #playtest#playtest .menu-group h3 {
+  color: var(--chart-ink);
+  border-bottom: 1px solid var(--chart-ink);
+  padding-bottom: 4px;
+}
+html body #playtest#playtest .menu-group-testing h3 {
+  color: var(--signal-deep);
+}
+
+/* Reading pane */
+html body #playtest#playtest .career-detail,
+html body #playtest#playtest .assist-explanation,
+html body #playtest#playtest .touch-options-detail {
+  color: var(--chart-ink-soft);
+  background: #fbf7ee;
+  border: 1px solid #14263a24;
+  border-top: 3px solid var(--chart-ink);
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1px #ffffff80;
+}
+html body #playtest#playtest .career-detail h3 {
+  color: var(--chart-ink);
+}
+
+/* Footer status line reads like a chart's margin note. */
+html body #playtest#playtest .day-footer,
+html body #playtest#playtest .menu-footer {
+  color: var(--chart-ink-soft);
+  border-top: 1px solid var(--chart-rule);
+  font-family: var(--font-readout);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+html body #playtest#playtest .storage-report {
+  font-family: var(--font-readout);
+  font-size: 12px;
+  color: var(--chart-ink-soft);
+}
+html body #playtest#playtest .storage-report.warning,
+html body #playtest#playtest .storage-report.warning strong {
+  color: var(--signal-deep);
+}
+
+/* Cards in shops / crew */
+html body #playtest#playtest :is(.crew-card, .shop-card, .shop-vessel-card, .shop-equipment-card) {
+  color: var(--chart-ink);
+  background: #f8f3e7;
+  border: 1px solid #14263a2e;
+  border-radius: 3px;
+}
+html body #playtest#playtest :is(.assist-row, .touch-option-group, .assist-section) {
+  border-color: var(--chart-rule);
+}
+html body #playtest#playtest input[type='range'] {
+  accent-color: var(--signal);
+}
+html body #playtest#playtest select {
+  color: var(--chart-ink);
+  background: #fbf7ee;
+  border: 1px solid var(--chart-ink-soft);
+}
+
+/* ---------- Title ---------- */
+html body #startup#startup .title-copy {
+  color: var(--chart-ink);
+  background:
+    var(--chart-grid),
+    linear-gradient(160deg, #f6f0e2, var(--chart-paper) 60%, var(--chart-paper-deep));
+  border: 1px solid var(--chart-paper-edge);
+  border-left: 8px solid var(--chart-ink);
+  border-radius: 3px;
+  box-shadow:
+    0 0 0 1px #0b1620,
+    0 30px 90px #000a12c0;
+}
+html body #startup#startup h1 {
+  color: var(--chart-ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(46px, 7vw, 66px);
+  line-height: 0.88;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+}
+html body #startup#startup h1 .edition-3d {
+  color: var(--signal);
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+html body #startup#startup .title-copy p,
+html body #startup#startup #controllerStatus,
+html body #startup#startup small {
+  color: var(--chart-ink-soft);
+}
+html body #startup#startup .title-choices button {
+  color: var(--chart-ink);
+  background: #f6f1e4;
+  border: 1.5px solid var(--chart-ink);
+  border-radius: 3px;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+html body #startup#startup .title-choices button:nth-child(n + 5) {
+  color: var(--chart-ink-soft);
+  border-color: #14263a66;
+  font-size: 14px;
+}
+html body #startup#startup .title-choices .title-primary {
+  color: var(--chart-paper);
+  background: var(--chart-ink);
+  border-color: var(--chart-ink);
+  font-size: 21px;
+}
+html body #startup#startup .title-choices button:is(.selected, :focus-visible) {
+  color: var(--signal-ink);
+  background: var(--signal);
+  border-color: var(--signal-deep);
+  outline: none;
+}
+html body #startup#startup .screen-forward {
+  color: var(--chart-ink-soft);
+}
+
+/* ---------- Harbour hotspots: tags pinned to the scene ---------- */
+html body #playtest#playtest.wharf-panel .wharf-heading {
+  color: var(--chart-ink);
+  background: var(--chart-paper);
+  border: 1px solid var(--chart-paper-edge);
+  border-bottom: 3px solid var(--chart-ink);
+  border-radius: 3px;
+  box-shadow: 0 10px 30px #000a1280;
+}
+html body #playtest#playtest.wharf-panel .wharf-heading h2 {
+  color: var(--chart-ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+html body #playtest#playtest.wharf-panel .wharf-money {
+  color: var(--chart-ink);
+  font-family: var(--font-readout);
+  font-weight: 500;
+}
+html body #playtest#playtest.wharf-panel .wharf-money small {
+  color: var(--chart-ink-soft);
+}
+html body #playtest#playtest.wharf-panel .wharf-place {
+  color: var(--chart-ink);
+  background: var(--chart-paper);
+  border: 1px solid #0b1620;
+  border-left: 5px solid var(--chart-ink);
+  border-radius: 2px;
+  box-shadow: 0 6px 18px #000a12a0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+html body #playtest#playtest.wharf-panel .wharf-place:is(.selected, :hover, :focus-visible) {
+  color: var(--signal-ink);
+  background: var(--signal);
+  border-left-color: var(--chart-ink);
+  outline: none;
+}
+html body #playtest#playtest.wharf-panel .place-chart {
+  color: var(--chart-paper);
+  background: var(--chart-ink);
+  border-left-color: var(--signal);
+}
+html body #playtest#playtest.wharf-panel .day-footer {
+  color: var(--chart-paper);
+}
+
+/* Load Game used a dark photograph behind a transparent list. */
+html body #playtest#playtest.save-art-panel {
+  background:
+    var(--chart-grid),
+    radial-gradient(
+      120% 90% at 0% 0%,
+      #f6f0e2 0%,
+      var(--chart-paper) 55%,
+      var(--chart-paper-deep) 100%
+    ) !important;
+}
+html body #playtest#playtest.save-art-panel :is(.choices, .career-detail) {
+  background: transparent;
+  padding: 0;
+}
+html body #playtest#playtest.save-art-panel .career-detail {
+  background: #fbf7ee;
+  padding: 14px 16px;
+}
+
+/* Compact harbour: heading stacks so the money and season never clip; the
+   scenic pan controls match the chart-room tags. */
+@media (max-width: 700px), (max-height: 500px) {
+  html body #playtest#playtest.wharf-panel .wharf-heading {
+    flex-wrap: wrap;
+    row-gap: 2px;
+    background: var(--chart-paper);
+  }
+  html body #playtest#playtest.wharf-panel .wharf-heading > div:not(.screen-navigation) {
+    flex: 1 1 100%;
+  }
+  html body #playtest#playtest.wharf-panel .wharf-heading .eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+  html body #playtest#playtest.wharf-panel .wharf-heading h2 {
+    font-size: 17px;
+  }
+  html body #playtest#playtest.wharf-panel .wharf-money {
+    display: flex;
+    flex: 1 1 100%;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 18px;
+  }
+  html body #playtest#playtest.wharf-panel .harbour-pan-controls {
+    background: var(--chart-paper);
+    border: 1px solid #0b1620;
+    border-radius: 3px;
+    box-shadow: 0 8px 24px #000a12a0;
+  }
+  html body #playtest#playtest.wharf-panel .harbour-pan-controls button {
+    color: var(--chart-paper);
+    background: var(--chart-ink);
+    border: 0;
+    border-radius: 2px;
+  }
+  html body #playtest#playtest.wharf-panel .harbour-pan-cue {
+    color: var(--chart-ink);
+    font-family: var(--font-readout);
+  }
+}
+
+/* Small print on the chart table stays legible ink, never pale sea-green. */
+html body #playtest#playtest :is(.travel-strip > div, .offload-stamp, .map-caption, .route-note) {
+  color: var(--chart-ink-soft);
+}
+html body #playtest#playtest :is(.travel-strip strong, .offload-stamp strong) {
+  color: var(--chart-ink);
+  font-family: var(--font-readout);
+  font-weight: 500;
+}
+html body #playtest#playtest .chart-choices button small,
+html body #playtest#playtest .area-number {
+  color: inherit;
+}
+/* Words never break mid-letter on narrow screens. */
+html body #playtest#playtest button {
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: manual;
+}
+@media (max-width: 600px) {
+  html body #playtest#playtest .assist-presets button {
+    flex: 1 1 calc(50% - 8px);
+  }
+}
+
+/* Bible §3: the supplied Channelmaster image stays on save/load, here as a
+   framed plate at the head of the reading pane. */
+html body #playtest#playtest.save-art-panel .career-detail::before {
+  content: '';
+  display: block;
+  aspect-ratio: 16 / 7;
+  margin: -14px -16px 14px;
+  background: url('/assets/brand/channelmaster-title.png') center / cover no-repeat;
+  border-bottom: 3px solid var(--chart-ink);
+}
+
+/* Review fixes (October 4): legacy pale gold/teal/green text from the dark
+   theme inherits ink on paper. Explicit chart-room colours above still win
+   (they carry a class), and SVG/canvas art keeps its own palette. */
+html body #playtest#playtest :where(*:not(button, button *, svg, svg *, .eyebrow)) {
+  color: inherit;
+}
+html body #playtest#playtest :is(.shop-vessel-price, .shop-vessel-state) {
+  color: var(--chart-ink);
+  font-family: var(--font-readout);
+}
+/* Focused rows are wholly signal orange; no offset ink frame. */
+html body #playtest#playtest .menu-row.selected,
+html body #playtest#playtest :is(.menu-primary, .pause-primary).selected {
+  border-color: var(--signal-deep);
+  outline: none;
+}
+/* Device diagrams become ink line-art keys on paper. */
+html body #playtest#playtest .keyboard-diagram .keycap {
+  color: var(--chart-ink);
+  background: #f8f3e7;
+  border: 1px solid #14263a55;
+  box-shadow: 0 2px 0 #14263a33;
+}
+html body #playtest#playtest .keyboard-diagram .keycap.bound {
+  background: #efe5cc;
+}
+html body #playtest#playtest .keyboard-diagram .keycap.active {
+  color: var(--signal-ink);
+  background: var(--signal);
+}
+/* Phone tables and dense readouts never drop below 12 px. */
+@media (max-width: 600px) {
+  html body #playtest#playtest :is(table, td, th) {
+    font-size: max(12px, 1em);
+  }
+}
+/* The highlighted area's preview is a framed plate inside the heading rather
+   than hanging past the paper's edge. */
+html body #playtest#playtest .area-preview {
+  border: 2px solid var(--chart-ink);
+  border-radius: 2px;
+  overflow: hidden;
+}
+html body #playtest#playtest .area-preview canvas {
+  position: static;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+/* Equipment availability on paper: state colours dark enough to read. */
+html body #playtest#playtest :is(.shop-equipment-state, .equipment-status) {
+  font-family: var(--font-readout);
+  font-weight: 500;
+}
+html body #playtest#playtest :is(.shop-equipment-state, .equipment-status).available {
+  color: #2f6b3a;
+}
+html body #playtest#playtest :is(.shop-equipment-state, .equipment-status).owned {
+  color: var(--chart-sea);
+}
+html body #playtest#playtest :is(.shop-equipment-state, .equipment-status).unavailable {
+  color: var(--signal-deep);
+}
+html body #playtest#playtest .shop-equipment-copy small {
+  color: var(--chart-ink-soft);
+}
+html
+  body
+  #playtest#playtest
+  button.selected
+  :is(.shop-equipment-state, .shop-equipment-copy small) {
+  color: var(--signal-ink);
+}

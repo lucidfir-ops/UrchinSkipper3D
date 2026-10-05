@@ -14,6 +14,8 @@ import {
   decode,
   archiveCareer,
   careerArchives,
+  deleteRestorePoint,
+  storageReport,
 } from './career-save.js';
 import { C } from './config.js';
 
@@ -34,6 +36,16 @@ export function createSessionHooks(scene, context) {
     boatScreenPose: () => scene.view?.boatScreenPose?.(context.world),
     save: persist,
     archives: () => careerArchives(localStorage, true),
+    storageReport: () => storageReport(localStorage),
+    deleteSave: (key) => {
+      try {
+        return deleteRestorePoint(localStorage, key)
+          ? { ok: true, reason: 'Save deleted.' }
+          : { ok: false, reason: 'Only restore points can be deleted here.' };
+      } catch (error) {
+        return { ok: false, reason: 'Save could not be deleted: ' + error.message };
+      }
+    },
     savePoint: () => {
       if (context.world.career?.sandbox)
         return { ok: false, reason: 'Leave training to save your career.' };

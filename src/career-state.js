@@ -98,6 +98,11 @@ export function useVessel(w, id) {
   if (w.day.phase !== 'planning' || !v || v.lost)
     return { ok: false, reason: 'Fit a seaworthy owned boat at harbour.' };
   syncVessel(w);
+  return fitVessel(w, id);
+}
+function fitVessel(w, id) {
+  const c = w.career,
+    v = c.fleet[id];
   c.activeBoat = id;
   Object.assign(w.boat, {
     configuration: id,
@@ -151,9 +156,12 @@ export function buyVessel(w, id) {
       ok: false,
       reason: 'Insufficient cash. Financing is available from Harbour accounts.',
     };
+  // Keep the outgoing vessel before installing a replacement. Synchronizing
+  // afterward would overwrite a same-hull replacement with its wreck's state.
+  syncVessel(w);
   c.cash = cents(c.cash - def.price);
   c.fleet[id] = freshVessel(id);
-  return useVessel(w, id);
+  return fitVessel(w, id);
 }
 export function buyEquipment(w, id) {
   const c = w.career,

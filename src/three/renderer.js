@@ -15,6 +15,7 @@ import { createWorld } from '../world.js';
 import { NavigationOverlay } from './navigation.js';
 import { DiverCues } from './diver-cues.js';
 import { coastalDaylight } from './water-optics.js';
+import { SpeechFootprints } from './speech-footprints.js';
 
 // Presentation is one-way: this module never mutates simulation positions, terrain or weather.
 export class MarineRenderer {
@@ -67,6 +68,7 @@ export class MarineRenderer {
     Object.assign(this.titleWorld.boat, { x: 185, y: 155, heading: -0.5 });
     this.titleWorld.day.minute = 580;
     this.vessels = new VesselView(this.scene);
+    this.speechFootprints = new SpeechFootprints();
     this.markers = [];
     this.lessonCues = { labels: this.navigation.lessonLabels };
     this.currentArrows = new CurrentField();
@@ -267,7 +269,9 @@ export class MarineRenderer {
     this.rain.visible = (world.weather?.rain || 0) > 0.06;
     this.rain.position.set(b.x, 8 - ((world.time * 19) % 8), b.y);
     this.rain.material.opacity = Math.min(0.4, (world.weather?.rain || 0) * 0.35);
-    updateSeaMessages(ui);
+    updateSeaMessages(ui, () =>
+      this.speechFootprints.read(this.vessels, world, this.camera, this, this.diverCues),
+    );
     this.renderer.render(this.scene, this.camera);
     document.body.classList.toggle('three-title', title);
     document.body.classList.toggle('three-at-sea', ui.started && !ui.screen);

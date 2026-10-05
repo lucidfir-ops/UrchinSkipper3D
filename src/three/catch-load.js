@@ -42,8 +42,27 @@ export function catchNetTexture() {
   return texture;
 }
 
+// Clearance kept between a sack's edge and the wheelhouse walls: the rounded
+// roof overhangs the walls by 0.15 m plus its bevel.
+export const CABIN_CLEARANCE = 0.25;
+
+// Fore/aft span (metres, bow negative) of open working deck left clear of the
+// wheelhouse. Starts from the original aft working deck; a hull whose house
+// sits over that deck (the aft-cabin landing craft) loads forward of the house
+// instead, stopping short of the foredeck equipment crate and bow ramp.
+export function openDeckSpan(spec, stations) {
+  const length = spec.length;
+  if (!stations || !(stations.cabinLength > 0)) return null;
+  const front = stations.cabinZ - stations.cabinLength / 2 - CABIN_CLEARANCE,
+    rear = stations.cabinZ + stations.cabinLength / 2 + CABIN_CLEARANCE;
+  const aft = { fore: Math.max(length * 0.055, rear), aft: length * 0.44 },
+    fore = { fore: -length * 0.3, aft: Math.min(length * 0.44, front) };
+  return fore.aft - fore.fore > aft.aft - aft.fore ? fore : aft;
+}
+
 // One red net sack per original recovered bag, at the definitive deckMarkers
-// positions. A growing instance pool keeps large layered loads inexpensive.
+// positions inside the hull's open deck span. A growing instance pool keeps
+// large layered loads inexpensive.
 export class CatchLoad {
   constructor(parent, material, cordMaterial) {
     this.group = new THREE.Group();
@@ -66,6 +85,7 @@ export class CatchLoad {
     this.key = '';
     this.markers = [];
     this.transform = new THREE.Object3D();
+    this.parent = parent;
     parent.add(this.group);
     this.grow(64);
   }
@@ -89,11 +109,12 @@ export class CatchLoad {
     }
   }
   update(bags, spec) {
-    const key = `${bags.length}:${spec.width}:${spec.length}`;
+    const area = openDeckSpan(spec, this.parent.userData.stations);
+    const key = `${bags.length}:${spec.width}:${spec.length}:${area?.fore}:${area?.aft}`;
     if (this.key === key) return;
     this.key = key;
     if (bags.length > this.capacity) this.grow(2 ** Math.ceil(Math.log2(bags.length)));
-    this.markers = deckMarkers(bags, spec);
+    this.markers = deckMarkers(bags, spec, area);
     this.bodies.count = this.knots.count = this.markers.length;
     this.markers.forEach((mark, i) => {
       const x = (mark.x * spec.width) / 4,

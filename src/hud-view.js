@@ -1,5 +1,6 @@
-import { seaMessage } from './sea-messages.js';
+import { seaMessage, compactPickupSpeech } from './sea-messages.js';
 import { updateTutorialSpeech } from './tutorial-speech.js';
+import { recoveryStatus } from './diver-recovery.js';
 import { diverMotion } from './diver-motion.js';
 import { offloadWindow } from './offload.js';
 import { renderKeyboardHelm } from './keyboard-helm.js';
@@ -335,6 +336,14 @@ export function renderHud(scene, world, input, lockReason) {
     }
   }
   message.className = state.locked ? 'locked' : state.available ? 'available' : '';
+  // Console lamps on touch buttons follow the same entitled action prompts.
+  const lamps = assist(world, 'actionPrompts', ui.realistic)
+    ? new Set(state.actions?.map((a) => a.action))
+    : new Set();
+  for (const button of document.querySelectorAll('#touchControls .touch-actions [data-touch]')) {
+    const ready = lamps.has(button.dataset.touch) ? 'true' : 'false';
+    if (button.dataset.ready !== ready) button.dataset.ready = ready;
+  }
   const notice = ui.importantNotice?.until > performance.now() ? ui.importantNotice.text : '';
   updateTutorialSpeech(ui, world, state, target, notice);
   if (world.career?.intro?.status === 'active') message.hidden = true;
@@ -354,21 +363,42 @@ export function renderHud(scene, world, input, lockReason) {
     !notice;
   if (world.career?.intro?.status !== 'active' && assist(world, 'actionPrompts', ui.realistic)) {
     const actionable = activeContext && target.state !== 'ready';
+    const recoveryReason = recoveryStatus(world, tolerance, target).reason;
     const key = JSON.stringify([
       actionable,
       target.id,
       state.reason,
+      recoveryReason,
       state.operation,
       state.available,
       state.locked,
       notice,
       state.progress !== null,
     ]);
+    const firstName = target.name.split(' ')[0],
+      speechName =
+        world.divers.filter((d) => d.name.split(' ')[0] === firstName).length === 1
+          ? firstName
+          : target.name,
+      compactText =
+        !notice &&
+        actionable &&
+        state.observable &&
+        !state.locked &&
+        state.progress === null &&
+        target.condition === 'fit' &&
+        !target.hooking &&
+        !target.recoveryPause &&
+        !world.day.dump
+          ? compactPickupSpeech(speechName, recoveryReason, target.reason)
+          : '';
     seaMessage(
       ui,
       'pickup',
       key,
       notice || (actionable ? `${target.name} · ${state.status.replace(/ — [\d.]+s/, '')}` : ''),
+      2.6,
+      compactText,
     );
   }
   // The full context remains available through the controls and diver cards.

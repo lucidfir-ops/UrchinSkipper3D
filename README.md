@@ -20,7 +20,7 @@ Open **http://127.0.0.1:5184/**. For development use `npm run dev -- --port 5183
 
 Start with Frank's tutorial. Keyboard: W/S throttle, A/D rudder, Space neutral, Enter centre rudder, 1 deploy/board, 2 bag exchange, 3 nearby recall, Tab diver, O orders, M chart, +/- zoom, Escape menu. USB Xbox mappings and touch controls are retained. The boat keeps its throttle and rudder settings when controls are released.
 
-Settings → **3D graphics** cycles High, Balanced and Battery. Settings → **Catalogue artwork** changes the reference illustrations used in boat menus. Live vessels always use the new 3D models.
+Settings → **3D graphics** cycles High, Balanced and Battery. On a Steam Deck in a web browser, Settings → **Steam Deck controls** (automatic on a Deck) lets the built-in sticks and buttons play: left stick or D-pad steers, A centres/selects, B or ☰ opens the menu, Y neutral, L1 deploy/board, R1 bag, left trackpad zoom. Escape, P or the browser Back button opens the menu during play.
 
 ## What is preserved
 

@@ -1,6 +1,7 @@
 import { chromium } from '@playwright/test';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { deckMarkers } from '../src/presentation.js';
+import { openDeckSpan } from '../src/three/catch-load.js';
 mkdirSync('test-results/three', { recursive: true });
 import assert from 'node:assert/strict';
 const browser = await chromium.launch({
@@ -190,6 +191,7 @@ try {
       count: bagMesh.count,
       grownBagCount,
       spec: d.simulation.boatSpec(w),
+      stations: v.boat.userData.stations,
       instances: Array.from({ length: bagMesh.count }, (_, i) => ({
         x: matrices[i * 16 + 12],
         y: matrices[i * 16 + 13],
@@ -241,7 +243,11 @@ try {
   assert.deepEqual(result.traffic.rivalSurface, [true, false]);
   assert.equal(result.catchLoad.count, 27);
   assert.equal(result.catchLoad.grownBagCount, 97);
-  const marks = deckMarkers(Array.from({ length: 27 }), result.catchLoad.spec);
+  const marks = deckMarkers(
+    Array.from({ length: 27 }),
+    result.catchLoad.spec,
+    openDeckSpan(result.catchLoad.spec, result.catchLoad.stations),
+  );
   marks.forEach((mark, i) => {
     const instance = result.catchLoad.instances[i];
     assert.ok(

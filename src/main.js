@@ -17,7 +17,7 @@ import { pickupTolerance } from './assists.js';
 import { createCareer } from './career-state.js';
 
 import Phaser from 'phaser';
-import { careerWorld, loadCareer, saveCareer } from './career-save.js';
+import { careerWorld, compactSaves, loadCareer, readSnapshot, saveCareer } from './career-save.js';
 import './style.css';
 import './harbour.css';
 import './feedback-ui.css';
@@ -33,6 +33,9 @@ import './interface-theme.css';
 import './menu-polish.css';
 import './wheelhouse.css';
 import './time-advance.css';
+import './ui-tokens.css';
+import './ui-chartroom.css';
+import './ui-console.css';
 import { C } from './config.js';
 import { CHART_ATLAS, installChartMaterial } from './chart-material.js';
 import { vesselCanvas, prepareVesselArt } from './vessel-art.js';
@@ -58,7 +61,11 @@ const input = new Input(),
   prototype = practice || params.has('prototype');
 let saved;
 try {
-  if (!prototype) saved = loadCareer(localStorage);
+  if (!prototype) {
+    // Older releases stored saves uncompressed and could fill the shared quota.
+    compactSaves(localStorage);
+    saved = loadCareer(localStorage);
+  }
 } catch {
   /* Restricted storage must not prevent a new playable session. */
 }
@@ -72,7 +79,8 @@ let world = prototype ? createWorld({ practice }) : saved?.world || freshCareer(
   accumulator = 0,
   pending = {},
   scene,
-  lastSave = 0;
+  lastSave = 0,
+  saveWarned = -Infinity;
 function replaceWorld(next) {
   autosave.cancel();
   world = next;
@@ -99,6 +107,10 @@ function persist() {
   return result;
 }
 window.addEventListener('pagehide', persist);
+// Mobile browsers often background a tab without pagehide; save when hidden.
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) persist();
+});
 
 class Ocean extends Phaser.Scene {
   preload() {
@@ -286,6 +298,15 @@ class Ocean extends Phaser.Scene {
               }
               this.playtest.saveNotice =
                 result.reason || (result.ok ? 'Career saved' : 'Save unavailable');
+              // Never let autosave fail silently at sea.
+              if (!result.ok && performance.now() - saveWarned > 60000) {
+                saveWarned = performance.now();
+                this.playtest.notify(
+                  result.storageFull
+                    ? 'SAVE FAILED: browser storage is full. Pause → Logbook → Load saved day to delete old saves.'
+                    : 'SAVE FAILED: ' + (result.reason || 'storage unavailable'),
+                );
+              }
             })
             .catch((error) => {
               this.playtest.saveNotice = 'Save unavailable: ' + error.message;
@@ -356,6 +377,8 @@ window.urchinDebug = {
     return world;
   },
   config: C,
+  // Verified save payload for browser fixtures (handles compressed saves).
+  readSave: (raw) => readSnapshot(raw),
   vesselCanvas,
   spawnTraffic: (kind, options) => spawnTraffic(world, kind, options),
   get vesselTexture() {

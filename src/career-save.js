@@ -1,4 +1,4 @@
-import { checksum, encodeSnapshot } from './save-codec.js';
+import { encodeSnapshot, openEnvelope } from './save-codec.js';
 import { troubleshootingSnapshot } from './troubleshooting-log.js';
 import { prepareBuyer } from './buyer.js';
 import { introActive, initializeIntroWorld, rememberIntroStock } from './career-intro.js';
@@ -214,10 +214,7 @@ export function encode(w, diagnostics = false) {
   return encodeSnapshot(data);
 }
 export function readSnapshot(text) {
-  const envelope = JSON.parse(text);
-  if (envelope.version !== 1 || checksum(envelope.payload) !== envelope.checksum)
-    throw new Error('Save checksum mismatch');
-  const data = JSON.parse(envelope.payload);
+  const data = JSON.parse(openEnvelope(text).payload);
   validateSnapshot(data);
   return data;
 }
@@ -245,35 +242,53 @@ export function saveCareer(w, storage) {
     return { ok: false, reason: 'Save unavailable: ' + error.message };
   }
 }
+const QUOTA_HINT =
+  'Browser storage is full. Delete old saves in Load Game (or export a backup) to keep saving.';
+const isQuota = (error) =>
+  error?.name === 'QuotaExceededError' ||
+  error?.name === 'NS_ERROR_DOM_QUOTA_REACHED' ||
+  error?.code === 22 ||
+  error?.code === 1014;
+function storageUsed(storage) {
+  let used = 0;
+  for (let i = 0; i < (storage.length || 0); i++) {
+    const key = storage.key(i);
+    used += (key.length + (storage.getItem(key)?.length || 0)) * 2;
+  }
+  return used;
+}
 export function commitCareer(w, storage, next) {
   if (!w.career || w.career.sandbox) return { ok: true };
   try {
     const previous = storage.getItem(SAVE_KEY);
-    if (previous) {
+    if (previous && previous !== next) {
       try {
         if (verifiedSaves.get(storage) !== previous) readSnapshot(previous);
         storage.setItem(SAVE_KEY + '-backup', previous);
       } catch {
-        /* Keep the previous valid backup. */
+        /* Keep the previous valid backup (also when the backup cannot fit). */
       }
     }
-    storage.setItem(SAVE_KEY, next);
+    try {
+      storage.setItem(SAVE_KEY, next);
+    } catch (error) {
+      if (!isQuota(error)) throw error;
+      // The live save outranks its own rolling backup: drop the backup and
+      // retry once rather than silently keeping an older live save.
+      storage.removeItem(SAVE_KEY + '-backup');
+      storage.setItem(SAVE_KEY, next);
+    }
     verifiedSaves.set(storage, next);
     if (w.day.phase === 'planning' && !w.career.starterPending && w.career.day > 0) {
       const dayKey = `${SAVE_KEY}-day-${w.career.seed}-${w.career.day}`;
       if (!storage.getItem(dayKey)) {
         // Reserve room for both live saves to grow. Never prune a player's
         // unique restore points to make room for a new automatic one.
-        let used = 0;
-        for (let i = 0; i < (storage.length || 0); i++) {
-          const key = storage.key(i);
-          used += (key.length + (storage.getItem(key)?.length || 0)) * 2;
-        }
-        if (used + next.length * 4 > 4 * 1024 * 1024)
+        if (storageUsed(storage) + next.length * 4 > 4 * 1024 * 1024)
           return {
             ok: true,
             reason:
-              'Current game saved. Day-save reserve is full; export backups. Existing restore points are preserved.',
+              'Current game saved. Storage is nearly full, so no new day restore point was kept. Delete old saves in Load Game.',
           };
         try {
           storage.setItem(dayKey, next);
@@ -281,24 +296,89 @@ export function commitCareer(w, storage, next) {
           return {
             ok: true,
             reason:
-              'Current game saved. Storage is full: export backups to keep additional day starts.',
+              'Current game saved. Storage is full, so no new day restore point was kept. Delete old saves in Load Game.',
           };
         }
       }
     }
     return { ok: true };
   } catch (error) {
-    return { ok: false, reason: 'Save unavailable: ' + error.message };
+    return {
+      ok: false,
+      storageFull: isQuota(error),
+      reason: isQuota(error) ? 'Save failed. ' + QUOTA_HINT : 'Save unavailable: ' + error.message,
+    };
   }
 }
+const isRestorePoint = (key) =>
+  key?.startsWith(SAVE_KEY + '-archive-') || key?.startsWith(SAVE_KEY + '-day-');
+function envelopeChecksum(text) {
+  try {
+    return JSON.parse(text).checksum;
+  } catch {
+    return null;
+  }
+}
+// Archive the live career before it is replaced. An identical restore point
+// already in storage is reused instead of storing another full copy.
 export function archiveCareer(storage) {
   const previous = storage.getItem(SAVE_KEY);
   if (!previous) return null;
   readSnapshot(previous);
+  const sum = envelopeChecksum(previous);
+  for (let i = 0; i < storage.length; i++) {
+    const key = storage.key(i);
+    if (isRestorePoint(key) && envelopeChecksum(storage.getItem(key)) === sum) return key;
+  }
   let key = SAVE_KEY + '-archive-' + Date.now();
   while (storage.getItem(key)) key += '-copy';
-  storage.setItem(key, previous);
+  try {
+    storage.setItem(key, previous);
+  } catch (error) {
+    if (isQuota(error)) throw new Error(QUOTA_HINT, { cause: error });
+    throw error;
+  }
   return key;
+}
+// Rewrite older uncompressed (v1) saves in the compact v2 format. Each entry is
+// verified first and only replaced by a re-encoding of the identical payload.
+export function compactSaves(storage) {
+  let freed = 0;
+  const keys = [];
+  for (let i = 0; i < (storage.length || 0); i++) {
+    const key = storage.key(i);
+    if (key?.startsWith(SAVE_KEY)) keys.push(key);
+  }
+  for (const key of keys)
+    try {
+      const raw = storage.getItem(key);
+      if (!raw || JSON.parse(raw).version !== 1) continue;
+      const data = readSnapshot(raw),
+        compact = encodeSnapshot(data);
+      if (compact.length >= raw.length) continue;
+      storage.setItem(key, compact);
+      if (key === SAVE_KEY) verifiedSaves.set(storage, compact);
+      freed += (raw.length - compact.length) * 2;
+    } catch {
+      /* Leave unreadable or damaged entries untouched for manual recovery. */
+    }
+  return freed;
+}
+export function deleteRestorePoint(storage, key) {
+  if (!isRestorePoint(key)) return false;
+  storage.removeItem(key);
+  return true;
+}
+export function storageReport(storage) {
+  let game = 0,
+    total = 0;
+  for (let i = 0; i < (storage.length || 0); i++) {
+    const key = storage.key(i),
+      size = (key.length + (storage.getItem(key)?.length || 0)) * 2;
+    total += size;
+    if (key.startsWith('urchin3d')) game += size;
+  }
+  return { game, total };
 }
 export function careerArchives(storage, includeDays = false) {
   const list = [];
@@ -310,7 +390,9 @@ export function careerArchives(storage, includeDays = false) {
     )
       continue;
     try {
-      const data = readSnapshot(storage.getItem(key));
+      const raw = storage.getItem(key),
+        data = readSnapshot(raw),
+        stamp = Number(key.match(/-archive-(\d+)/)?.[1]);
       list.push({
         key,
         day: data.career.day,
@@ -318,6 +400,9 @@ export function careerArchives(storage, includeDays = false) {
         boat: data.boat.configuration,
         kind: key.startsWith(SAVE_KEY + '-day-') ? 'Start of day' : 'Saved career',
         seed: data.career.seed,
+        phase: data.day.phase,
+        savedAt: Number.isFinite(stamp) ? stamp : null,
+        size: (key.length + raw.length) * 2,
       });
     } catch {
       /* Retain unreadable archives for manual recovery. */

@@ -1,3 +1,4 @@
+import { installBackGuard } from './back-guard.js';
 import { adjustSoundVolume } from './menu-preferences.js';
 import { updatePatrolPrompt } from './patrol-view.js';
 import { updateReturnPrompt } from './harbour-return.js';
@@ -87,6 +88,7 @@ export class PlaytestUI {
       if (this.ended) this.back();
       else this.open('pause');
     };
+    installBackGuard(this);
     // Focus loss already locks simulation/input. Keep the exact menu and draft.
     window.addEventListener('blur', () => this.hooks.save?.());
   }

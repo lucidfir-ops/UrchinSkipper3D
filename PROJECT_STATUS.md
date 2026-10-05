@@ -1,6 +1,27 @@
 # Urchin Skipper 3D — current status
 
-October 3, 2026 · keyboard reading, tutorial instruments and saved training preferences. Work, exports and publication belong only to this project and [lucidfir-ops/UrchinSkipper3D](https://github.com/lucidfir-ops/UrchinSkipper3D). The original 2D project and repository were used read-only.
+October 4, 2026 · save repair, Steam Deck browser controls, deck bags and interface redesign. Claude (Claude Code) now develops this project; earlier entries below were written by Codex ("Astra"). Work, exports and publication belong only to this project and [lucidfir-ops/UrchinSkipper3D](https://github.com/lucidfir-ops/UrchinSkipper3D). The 2D edition is no longer developed.
+
+## October 4 revision
+
+The October 3 TEMP upload broke career management on the designer's itch.io install. New Career opened Load Game, loading failed, there was no delete, and autosave reverted. One cause explains all of it: full uncompressed saves, repeated identical archives and other itch.io games sharing one site's browser storage filled the quota, so every save failed silently.
+
+Saves are now compressed about 10×, and older saves are compacted in place at launch without losing any. Identical archives are stored once. Load Game shows storage use and an explicit, confirmed **Delete old saves…** mode. A failed save is announced at sea, and the game also saves when the page is hidden. [Cause, fix and evidence](docs/review/october-4-feedback-2026-10-04.md).
+
+Steam Deck built-in controls should now work in a desktop browser through a new **Steam Deck controls** setting (verified with the exact key events Steam's desktop layout sends, not yet with physical buttons) (automatic on a Deck), which maps Steam's desktop keyboard/mouse layout to throttle, rudder, deploy, bag, menu and zoom. The full gamepad route is explained in Controller setup. Escape, browser/Android Back and leaving fullscreen open the menu instead of leaving the game, P also opens it, and the mouse wheel zooms.
+
+Catch sacks stack only on open deck on every hull, including the aft-cabin landing craft. The Catalogue artwork setting is removed.
+
+The menus are redesigned as a chart room and the HUD as a wheelhouse console, with independent visual reviews and fixes. [Interface record](docs/review/interface-redesign-2026-10-04.md).
+
+The lost-vessel replacement fix and career speech-clearance work left uncommitted by the previous agent on October 3 are verified and included. Its pending coastal-progression rerun first exposed a fixture gap: the staged storm drifts across the harbour edge and correctly raises the return prompt, which the fixture now declines. The same suite then reaches its Frontier Bank storm frame-time check and fails it: total CPU p95 is about 100 ms against a 50 ms limit at the widest zoom in the staged storm. The last committed build (d6e635e), measured with the previous agent's `scripts/frontier-storm-diagnostic.js` in alternating runs on this Deck, gives the same ~103–107 ms p95, so this is an existing performance problem, not a regression. It is left open rather than relaxed.
+
+Verification:
+- 642 unit tests (641 pass, 1 intentional private-save skip, 0 fail); lint, formatting and production build pass.
+- Final browser run on the exported build: save-storage (Chromium and Firefox), vessel-replacement (5 input modes), chart-layout, deck-load, training-preferences, keyboard-reading (Chromium and Firefox), continuous-weather, learning, operations, accessibility, hud-context (4 layouts), input, weather, voyage (300 lb landed on time) and performance (59.997 FPS at 1280×800 on RADV VANGOGH) pass.
+- coastal-progression passes its permit, map, chart and depth-gauge checks, then fails only the pre-existing storm frame-time limit described above.
+
+**Not yet verified.** Physical Steam Deck buttons, the designer's Android Escape key, real-device storage, and the new look on the three physical devices.
 
 ## Design authority
 
@@ -99,7 +120,7 @@ Physical USB Xbox/Steam Deck controls, mobile device performance, Safari, actual
 
 Use this independent Git repository normally; never synchronize into or push the 2D repository. Selected rebuildable source, assets and essential documentation belong in Git. Dependencies, builds, private saves, browser profiles, recordings, test output and TEMP ZIPs stay outside it. New exports are additive; preserve older exports.
 
-The latest release is under `exports/2026-10-03-reading-and-training-r2/`; all earlier dated exports, including the superseded reading-and-training trial, are retained:
+The latest release is under `exports/2026-10-04-saves-deck-redesign/`; the October 3 vessel-replacement TEMP that broke saves on itch.io is superseded but retained. Previously the latest was `exports/2026-10-03-reading-and-training-r2/`; all earlier dated exports, including the superseded reading-and-training trial, are retained:
 
 - `UrchinSkipper3D-TEMP-ITCHIO.zip`: standalone HTML build for the separate 3D itch.io project; upload remains manual.
 - `Urchin Skipper 3D TEMP.zip` and its extracted folder: local/Wi-Fi edition with isolated port 5198 and portable launcher.

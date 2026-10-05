@@ -8,6 +8,7 @@ import {
   protectKeyboard,
   isShift,
 } from './keyboard-controls.js';
+import { deckCodes, deckControlsActive, DECK_BUTTON_KEYS } from './deck-controls.js';
 
 // Physical inputs are resolved here; gameplay and menus consume only actions.
 export const DEFAULTS = {
@@ -24,7 +25,7 @@ export const DEFAULTS = {
   work: ['Digit2', 'b3'],
   recoverDiver: ['Digit1', 'b2'],
   instructions: ['KeyB', 'b1'],
-  pause: ['Escape', 'b9'],
+  pause: ['Escape', 'KeyP', 'b9'],
   confirm: ['Enter', 'NumpadEnter', 'b0'],
   back: ['Backspace', 'KeyB', 'b1'],
   menuUp: ['ArrowUp', 'b12'],
@@ -278,6 +279,8 @@ export class Input {
       'keydown',
       (e) => {
         protectKeyboard(e);
+        // Releasing Alt alone would otherwise open Firefox's menu bar.
+        if (DECK_BUTTON_KEYS.includes(e.code) && deckControlsActive()) e.preventDefault();
         if (isShift(e.code)) {
           if (!e.repeat) {
             if (!this.shiftKeys.size)
@@ -287,6 +290,16 @@ export class Input {
           return;
         }
         if (this.shiftKeys.size) this.shiftUsed = true;
+        // Steam Deck bumpers arrive as lone Ctrl/Alt presses: buttons, not chords.
+        if (DECK_BUTTON_KEYS.includes(e.code) && deckControlsActive()) {
+          e.preventDefault();
+          if (!e.repeat && !editingKey(e)) {
+            this.lastDevice = 'keyboard';
+            this.keys.add(e.code);
+            this.taps.add(e.code);
+          }
+          return;
+        }
         if (keyboardChord(e)) {
           this.keys.clear();
           this.taps.clear();
@@ -332,6 +345,16 @@ export class Input {
       { capture: true },
     );
     window.addEventListener('keypress', protectKeyboard, { capture: true });
+    // Mouse wheel / Steam Deck left trackpad over the sea zooms the camera.
+    window.addEventListener(
+      'wheel',
+      (e) => {
+        if (!e.target?.closest?.('#game, canvas') || e.ctrlKey || !e.deltaY) return;
+        e.preventDefault();
+        this.taps.add(e.deltaY < 0 ? 'WheelUp' : 'WheelDown');
+      },
+      { passive: false },
+    );
     window.addEventListener('blur', () => {
       this.shiftKeys.clear();
       this.keys.clear();
@@ -669,7 +692,9 @@ export class Input {
     };
     const raw = {},
       pressed = {};
-    for (const [action, codes] of Object.entries(this.map)) {
+    const deck = deckControlsActive();
+    for (const [action, mapped] of Object.entries(this.map)) {
+      const codes = deckCodes(action, mapped, deck);
       const permitted = codes.filter(
         (c) =>
           !gamepadCode(c) ||
