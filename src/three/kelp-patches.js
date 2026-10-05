@@ -49,7 +49,10 @@ export function kelpPatches(terrain) {
     radius: 19,
     density: 0.24,
     limit: 40,
-  }).map((p) => ({ ...p, length: p.depth - 0.5 + p.variation * 4.5 }));
+    // October 5: stipes grow to reach the surface at ordinary high water
+    // (coastal tides run about −0.5 to +2.8 m), so high tide shows bulbs and
+    // blades and low tide leaves 2.6–6 m of stipe floating on the surface.
+  }).map((p) => ({ ...p, length: p.depth + 2.2 + p.variation * 3.5 }));
 }
 
 export function eelgrassPatches(terrain) {

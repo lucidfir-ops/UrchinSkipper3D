@@ -117,8 +117,10 @@ try {
     await page.screenshot({ path: `${output}/${habitat}-close.png` });
   }
   const exposure = records.filter((r) => r.surfaced !== undefined).slice(0, 4);
+  // October 5: stipes reach the surface at ordinary high water, so −1 m and
+  // +2 m may both surface every plant; only the extreme +5 m submerges some.
   assert(
-    exposure[0].surfaced > exposure[2].surfaced && exposure[2].surfaced > exposure[3].surfaced,
+    exposure[0].surfaced >= exposure[2].surfaced && exposure[2].surfaced > exposure[3].surfaced,
   );
   assert(exposure[0].angles.every((a) => Math.abs(Math.sin(a)) < 0.001 && Math.cos(a) > 0));
   assert(exposure[1].angles.every((a) => Math.abs(Math.sin(a)) < 0.001 && Math.cos(a) < 0));

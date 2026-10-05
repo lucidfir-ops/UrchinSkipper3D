@@ -66,6 +66,7 @@ const suites = {
   currents: ['scripts/coastal-current-review.js'],
   'lighting-kelp': ['scripts/lighting-kelp-review.js'],
   vegetation: ['scripts/vegetation-review.js'],
+  'bull-kelp': ['scripts/bull-kelp-review.js'],
   feedback: ['scripts/feedback-2026-review.js'],
   'feedback-water': ['scripts/feedback-2026-review.js', '--environment-only'],
   equipment: ['scripts/equipment-review.js'],

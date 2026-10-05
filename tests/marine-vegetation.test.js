@@ -49,10 +49,14 @@ test('each fixed habitat respects its depth band and preserves bathymetry/catch 
 
 test('falling tide exposes longer surface stems, rising tide submerges shorter canopies', () => {
   const plants = kelpPatches(flatTerrain(7));
-  const counts = [-1, 2, 5].map(
+  const counts = [-0.5, 2.8, 5].map(
     (tide) => plants.filter((p) => kelpExposure(p, tide).top >= 0).length,
   );
-  assert(counts[0] > counts[1] && counts[1] > counts[2]);
+  assert(counts[0] >= counts[1] && counts[1] > counts[2]);
+  // October 5: ordinary high water still shows bulbs and blades on most plants;
+  // ordinary low water leaves metres of stipe afloat on every plant.
+  assert(counts[1] >= plants.length * 0.8);
+  assert(plants.every((p) => kelpExposure(p, -0.5).slack >= 2.5));
   for (const p of plants) {
     const low = kelpExposure(p, -1),
       high = kelpExposure(p, 5);

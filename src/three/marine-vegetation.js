@@ -22,47 +22,21 @@ function part(geometry, kind) {
   );
   return geometry;
 }
-function ribbons({ grass = false, variant = 0 } = {}) {
+// One eelgrass blade; bull kelp blades are built by bladeGeometry below.
+function grassBlade() {
   const positions = [],
     indices = [],
     phases = [];
-  const blades = grass ? 1 : 7;
-  for (let blade = 0; blade < blades; blade++) {
-    const start = positions.length / 3;
-    const phase = blade * 2.39996 + variant * 1.7;
-    const length = grass ? 1 : 2.8 + (Math.sin(phase * 3) * 0.5 + 0.5) * 2.5;
-    for (let i = 0; i <= 14; i++) {
-      const t = i / 14;
-      const halfWidth = grass
-        ? 0.034 * Math.sin(Math.PI * t) ** 0.5 + 0.004 * (1 - t)
-        : (0.085 + blade * 0.009) * Math.sin(Math.PI * t) ** 0.65 + 0.012 * (1 - t);
-      for (const side of [-1, 0, 1]) {
-        phases.push(phase);
-        if (grass) positions.push(side * halfWidth, t, t * t * 0.25);
-        else
-          positions.push(
-            t * length,
-            Math.sin(t * 13 + phase) * t * 0.085 + (1 - Math.abs(side)) * halfWidth * 0.35,
-            Math.sin(phase) * t * 1.15 + Math.sin(t * 8 + phase) * t * 0.22 + side * halfWidth,
-          );
-      }
-      if (i < 14) {
-        const a = start + i * 3;
-        indices.push(
-          a,
-          a + 1,
-          a + 3,
-          a + 1,
-          a + 4,
-          a + 3,
-          a + 1,
-          a + 2,
-          a + 4,
-          a + 2,
-          a + 5,
-          a + 4,
-        );
-      }
+  for (let i = 0; i <= 14; i++) {
+    const t = i / 14;
+    const halfWidth = 0.034 * Math.sin(Math.PI * t) ** 0.5 + 0.004 * (1 - t);
+    for (const side of [-1, 0, 1]) {
+      phases.push(0);
+      positions.push(side * halfWidth, t, t * t * 0.25);
+    }
+    if (i < 14) {
+      const a = i * 3;
+      indices.push(a, a + 1, a + 3, a + 1, a + 4, a + 3, a + 1, a + 2, a + 4, a + 2, a + 5, a + 4);
     }
   }
   const geometry = new THREE.BufferGeometry();
@@ -72,12 +46,69 @@ function ribbons({ grass = false, variant = 0 } = {}) {
   geometry.computeVertexNormals();
   return part(geometry, 2);
 }
+// October 5 bull kelp (Nereocystis): a long whip-like stipe, one round air
+// bulb, and a few long, narrow blades streaming together downstream. The
+// stipe is a unit tube (position.y = arclength fraction, xz = cross-section)
+// that the vertex shader lays along a closed-form path from tide and current:
+// rising from the holdfast, then floating along the surface when it is longer
+// than the water is deep. No physics; one shape per variant, instanced.
+function stipeGeometry() {
+  const rings = 40,
+    sides = 5,
+    positions = [],
+    indices = [];
+  for (let i = 0; i <= rings; i++) {
+    const t = i / rings,
+      radius = 0.024 + 0.076 * t * t;
+    for (let j = 0; j < sides; j++) {
+      const a = (j / sides) * Math.PI * 2;
+      positions.push(Math.cos(a) * radius, t, Math.sin(a) * radius);
+      if (i < rings) {
+        const a0 = i * sides + j,
+          a1 = i * sides + ((j + 1) % sides);
+        indices.push(a0, a1, a0 + sides, a1, a1 + sides, a0 + sides);
+      }
+    }
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geometry.setIndex(indices);
+  geometry.computeVertexNormals();
+  return geometry;
+}
+function bladeGeometry(variant) {
+  const positions = [],
+    indices = [],
+    blades = [];
+  const count = 4 + variant;
+  for (let blade = 0; blade < count; blade++) {
+    const start = positions.length / 3,
+      spread = count > 1 ? (blade / (count - 1)) * 2 - 1 : 0,
+      length = 2.1 + (Math.sin(blade * 2.39996 + variant * 1.7) * 0.5 + 0.5) * 1.5;
+    for (let i = 0; i <= 12; i++) {
+      const t = i / 12,
+        halfWidth = 0.05 * Math.sin(Math.PI * Math.min(1, t * 1.15 + 0.08)) ** 0.7 + 0.006;
+      for (const side of [-1, 1]) {
+        positions.push(t * length, 0, side * halfWidth);
+        blades.push(spread);
+      }
+      if (i < 12) {
+        const a = start + i * 2;
+        indices.push(a, a + 1, a + 2, a + 1, a + 3, a + 2);
+      }
+    }
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geometry.setIndex(indices);
+  geometry.setAttribute('plantBlade', new THREE.Float32BufferAttribute(blades, 1));
+  geometry.computeVertexNormals();
+  return geometry;
+}
 function bullKelpGeometry(variant) {
-  const stipe = new THREE.CylinderGeometry(0.065, 0.025, 1, 5, 14);
-  stipe.translate(0, 0.5, 0);
-  const bulb = new THREE.SphereGeometry(0.19, 10, 7);
-  bulb.scale(1.25, 0.85, 1);
-  const sources = [part(stipe, 0), part(bulb, 1), ribbons({ variant })];
+  const bulb = new THREE.SphereGeometry(0.15, 10, 7);
+  bulb.scale(1.35, 0.85, 1);
+  const sources = [part(stipeGeometry(), 0), part(bulb, 1), part(bladeGeometry(variant), 2)];
   const geometry = mergeGeometries(sources);
   sources.forEach((g) => g.dispose());
   return geometry;
@@ -140,37 +171,55 @@ export class MarineVegetation {
           transformed.z += sin(uPlantTime*.8 + instanceMatrix[3].x + t*4.0)*t*t*.12;
         `
             : `
-          float wetDepth = max(0.0, plantSize.x + uPlantTide);
-          float slack = max(0.0, plantSize.y - wetDepth);
-          float reach = (.35 + slack*.85)*(.42+.58*flow.y);
-          float top = min(sqrt(max(.01, plantSize.y*plantSize.y-reach*reach)), wetDepth+.035);
+          // Water depth over the holdfast, stipe length and current extension.
+          float D = max(0.0, plantSize.x + uPlantTide);
+          float L = plantSize.y;
+          float e = clamp(flow.y, 0.0, 1.0);
+          float looseness = 1.0 - e;
           float phase = instanceMatrix[3].x*.43 + instanceMatrix[3].z*.21;
+          // Current leans the rising stipe; buoyancy keeps it near vertical.
+          float lean = .1 + .55*e;
+          float cosT = inversesqrt(1.0 + lean*lean);
+          float sinT = lean*cosT;
+          float R = D/max(cosT, .05);
+          float rise = min(L, R);
+          // Stipe longer than the water column floats along the surface,
+          // streamlined in current and loosely meandering at slack.
+          float S = max(0.0, L - R);
+          float stretch = .45 + .55*e;
+          float amp = .05 + .3*looseness;
+          float k = 1.05 - .35*e;
+          vec3 bulbAt = S > 0.0
+            ? vec3(rise*sinT + S*stretch, D - .02, amp*(sin(k*S + phase) + .45*sin(2.3*k*S + phase*1.7)))
+            : vec3(rise*sinT, rise*cosT, 0.0);
           if (plantPart < .5) {
-            float t = position.y;
-            transformed.x += reach*t*t;
-            float rise = smoothstep(0.0, min(1.0, wetDepth/plantSize.y+.18), t);
-            transformed.y = top*rise;
-            transformed.z += sin(t*5.0+phase+uPlantTime*.7)*t*.06;
+            float s = position.y*L;
+            // Rising and floating paths, each extended past the waterline, are
+            // blended over a short span so the stipe bends smoothly at the top.
+            float u = s - rise;
+            vec3 up = vec3(s*sinT, s*cosT, 0.0);
+            vec3 along = vec3(rise*sinT + u*stretch, D - .02,
+              S > 0.0 ? amp*(sin(k*u + phase) + .45*sin(2.3*k*u + phase*1.7)) : 0.0);
+            float bendSpan = min(1.4, .3*rise + .05);
+            float w = S > 0.0 ? smoothstep(-bendSpan, bendSpan, u) : 0.0;
+            vec3 p = mix(up, along, w);
+            p.y = min(p.y, D - .02);
+            p.z += sin(uPlantTime*.6 + phase + s*.35)*.05*position.y;
+            transformed = p + vec3(position.x, 0.0, position.z);
           } else if (plantPart < 1.5) {
-            transformed.x += reach;
-            transformed.y += top;
+            transformed = bulbAt + position;
           } else {
-            float t = position.x / 5.3;
-            float looseness = 1.0-flow.y;
-            // Ribbons keep their length: slack gathers in broad folds instead
-            // of a rigid half-turn. The tips follow later than the bulb.
-            float curl = looseness*(3.1+sin(phase+plantBlade)*1.1);
-            float handed = sin(phase+plantBlade*.7) < 0.0 ? -1.0 : 1.0;
-            float bend = (flow.z-flow.x)*t + handed*curl*t;
-            // Integrate a curved blade, retaining its arclength instead of
-            // squeezing a sine wave into an accordion at slack water.
-            float sinc = abs(bend)<.001 ? 1.0 : sin(bend)/bend;
-            float arc = abs(bend)<.001 ? 0.0 : (1.0-cos(bend))/bend;
-            transformed.x = reach + position.x*sinc;
-            transformed.z = position.z + position.x*arc;
-            transformed.y += top - t*t*(.12 + max(0.0, 1.5-slack)*.32)
-              - sin(t*3.0+phase+plantBlade)*t*looseness*.10;
-            transformed.z += sin(position.x*2.6+phase+uPlantTime*.9)*t*.16;
+            // A few narrow blades leave the bulb together and trail downstream,
+            // fanning slightly only when the current slackens.
+            float t = position.x/3.6;
+            float ang = plantBlade*(.04 + .14*looseness)
+              + sin(uPlantTime*.5 + phase + plantBlade*2.0)*.03*(.3 + looseness);
+            float len = position.x*(.72 + .28*e);
+            vec3 p = bulbAt + vec3(cos(ang)*len, 0.0, sin(ang)*len + position.z);
+            float surface = S > 0.0 ? D - .035 : min(D - .06, bulbAt.y + len*.22);
+            p.y = surface - t*t*.14*looseness;
+            p.z += sin(position.x*2.4 + phase + uPlantTime*.9)*t*.07*(.35 + looseness);
+            transformed = p;
           }
         `) +
           `
@@ -179,8 +228,8 @@ export class MarineVegetation {
         `,
       );
     };
-    material.customProgramCacheKey = () => (grass ? 'eelgrass-flow-v2' : 'bull-kelp-flow-v2');
-    const shapes = grass ? [ribbons({ grass: true })] : [0, 1, 2].map(bullKelpGeometry);
+    material.customProgramCacheKey = () => (grass ? 'eelgrass-flow-v2' : 'bull-kelp-flow-v3');
+    const shapes = grass ? [grassBlade()] : [0, 1, 2].map(bullKelpGeometry);
     const cells = new Map();
     for (const p of plants) {
       const variant = grass ? 0 : Math.min(2, Math.floor(p.tint * 3));
@@ -215,11 +264,13 @@ export class MarineVegetation {
       cell.forEach((p, i) => {
         pose.position.set(p.x, p.y, p.z);
         pose.rotation.y = 0;
-        pose.scale.set(0.7 + p.variation * 0.6, 1, 0.7 + p.tint * 0.6);
+        // Kelp keeps true stipe/blade lengths; grass varies its footprint.
+        if (grass) pose.scale.set(0.7 + p.variation * 0.6, 1, 0.7 + p.tint * 0.6);
+        else pose.scale.set(1, 1, 1);
         pose.updateMatrix();
         mesh.setMatrixAt(i, pose.matrix);
-        color.set(grass ? '#436c25' : '#61480e');
-        color.lerp(new THREE.Color(grass ? '#779f3d' : '#90832a'), p.tint);
+        color.set(grass ? '#436c25' : '#4a3a10');
+        color.lerp(new THREE.Color(grass ? '#779f3d' : '#6f6022'), p.tint);
         mesh.setColorAt(i, color);
       });
       mesh.computeBoundingSphere();
