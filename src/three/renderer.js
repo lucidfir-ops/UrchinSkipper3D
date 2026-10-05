@@ -91,21 +91,69 @@ export class MarineRenderer {
     this.applyQuality();
     this.canvas.addEventListener('webglcontextlost', (e) => {
       e.preventDefault();
-      this.contextLost = true;
-      let message = document.getElementById('rendererNotice');
-      if (!message) {
-        message = document.createElement('div');
-        message.id = 'rendererNotice';
-        message.setAttribute('role', 'alert');
-        document.body.append(message);
-      }
-      message.textContent =
-        'The graphics device was interrupted. Your game is paused while it reconnects.';
+      this.setContextLost(true);
     });
-    this.canvas.addEventListener('webglcontextrestored', () => {
-      this.contextLost = false;
+    this.canvas.addEventListener('webglcontextrestored', () => this.setContextLost(false));
+  }
+  // October 5: Firefox Android can leave the canvas without a usable context
+  // and no lost event (blank sea behind a live HUD after an itch.io reload).
+  // draw() also polls the context, pauses play the same way and, if it does
+  // not recover, offers a reload from the current save.
+  setContextLost(lost) {
+    if (lost === !!this.contextLost) return;
+    this.contextLost = lost;
+    if (!lost) {
+      this.lostAt = null;
       document.getElementById('rendererNotice')?.remove();
-    });
+      try {
+        this.prepareEnvironment();
+      } catch {
+        /* Lighting falls back to direct lights; the scene still draws. */
+      }
+      this.renderer.shadowMap.needsUpdate = true;
+      return;
+    }
+    this.lostAt = performance.now();
+    let message = document.getElementById('rendererNotice');
+    if (!message) {
+      message = document.createElement('div');
+      message.id = 'rendererNotice';
+      message.setAttribute('role', 'alert');
+      document.body.append(message);
+    }
+    message.innerHTML =
+      '<p>The graphics device was interrupted. Your game is paused while it reconnects.</p>';
+  }
+  watchContext() {
+    let lost;
+    try {
+      lost = this.renderer.getContext().isContextLost();
+    } catch {
+      lost = true;
+    }
+    if (lost) this.setContextLost(true);
+    if (!this.contextLost || performance.now() - this.lostAt < 3000) return;
+    const message = document.getElementById('rendererNotice');
+    if (!message || message.querySelector('button')) return;
+    const reload = document.createElement('button');
+    reload.type = 'button';
+    reload.textContent = 'Reload graphics';
+    reload.onclick = () => {
+      reload.disabled = true;
+      this.onReload?.();
+      location.reload();
+    };
+    message.append(reload);
+  }
+  // Release GPU contexts promptly on a real unload: itch.io hosts every game on
+  // one origin, and Firefox discards the oldest contexts beyond its limit.
+  release() {
+    try {
+      this.renderer.dispose();
+      this.renderer.forceContextLoss();
+    } catch {
+      /* The page is unloading. */
+    }
   }
   get graphicsLabel() {
     return this.quality;
@@ -207,6 +255,7 @@ export class MarineRenderer {
     this.vessels.effect?.(event, world);
   }
   draw(world, ui, dt) {
+    this.watchContext();
     if (this.contextLost) return;
     const title = !ui.started;
     if (title) world = this.titleWorld;

@@ -187,3 +187,14 @@ export function paintFleetPreviews(panel) {
     }
   }
 }
+
+export function releaseFittingPreview() {
+  if (!preview) return;
+  try {
+    preview.renderer.dispose();
+    preview.renderer.forceContextLoss();
+  } catch {
+    /* The page is unloading. */
+  }
+  preview = null;
+}

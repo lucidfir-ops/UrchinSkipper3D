@@ -58,6 +58,8 @@ const suites = {
   'ocean-edge': ['scripts/ocean-edge-review.js'],
   'wind-crests': ['scripts/wind-crest-review.js'],
   boundary: ['scripts/boundary-review.js'],
+  'context-loss': ['scripts/context-loss-review.js'],
+  'context-loss-firefox': ['scripts/context-loss-review.js', '--firefox'],
   'surface-drift': ['scripts/surface-drift-review.js'],
   'work-lights': ['scripts/work-lights-review.js'],
   currents: ['scripts/coastal-current-review.js'],

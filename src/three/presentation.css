@@ -631,6 +631,19 @@ body #groundLegend .ground-legend > span {
   line-height: 1.65;
   text-align: center;
 }
+#rendererNotice p {
+  margin: 0;
+}
+#rendererNotice button {
+  margin-top: 16px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid #dabe86;
+  border-radius: 6px;
+  background: #e2582c;
+  color: #fff8ea;
+  font: 700 15px/1 system-ui;
+}
 
 @media (max-height: 559px) {
   body:not(.touch-playing) .helm-graphic {

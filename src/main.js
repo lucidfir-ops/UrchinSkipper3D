@@ -2,6 +2,7 @@ import { FrameMetrics } from './frame-metrics.js';
 import { worldTimeScale } from './time-speed.js';
 import { createSessionHooks } from './career-session.js';
 import { renderHud } from './hud-view.js';
+import { releaseFittingPreview } from './three/fitting-preview.js';
 import { renderNavigationWindows } from './minimap-view.js';
 import { HudWindows } from './hud-windows.js';
 import { departing, departureBoat, returnAvailable } from './departure-transition.js';
@@ -107,6 +108,12 @@ function persist() {
   return result;
 }
 window.addEventListener('pagehide', persist);
+// After saving, free GPU contexts on a real unload so a reload starts clean.
+window.addEventListener('pagehide', (event) => {
+  if (event.persisted) return;
+  scene?.view?.release?.();
+  releaseFittingPreview();
+});
 // Mobile browsers often background a tab without pagehide; save when hidden.
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) persist();
@@ -136,6 +143,7 @@ class Ocean extends Phaser.Scene {
     this.game.events.on('postrender', () => this.metrics.finish());
     try {
       this.view = new MarineRenderer(this);
+      this.view.onReload = persist;
     } catch (error) {
       document.querySelector('#startup').innerHTML =
         '<div class="title-copy"><h1>URCHIN<br>SKIPPER 3D</h1><p>3D graphics could not start. Use a browser with WebGL 2 and enable hardware acceleration, then reload.</p><button id="retryGraphics">Reload game</button></div>';
