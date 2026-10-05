@@ -642,7 +642,9 @@ body #groundLegend .ground-legend > span {
   border-radius: 6px;
   background: #e2582c;
   color: #fff8ea;
-  font: 700 15px/1 system-ui;
+  font: 600 16px/1 var(--font-display, system-ui);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 @media (max-height: 559px) {

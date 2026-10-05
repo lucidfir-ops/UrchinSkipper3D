@@ -391,21 +391,21 @@ export function regionalChart(grounds, selected, rendition = 'raster') {
     <text x="146" y="438" fill="#f6dfb0" font-size="16">HOME HARBOUR</text><text x="28" y="35" fill="#f1dfb6" font-size="17">N ↑</text><text x="295" y="467" fill="#8baea6" font-size="11">SYNTHETIC COAST · NOT TO SCALE</text></svg>`;
 }
 function coastOverview(grounds, selected, rendition) {
-  return `<svg viewBox="0 0 660 790" role="img" aria-label="Five coasts with three distinct playable subareas each"><rect width="660" height="790" rx="12" fill="#123e50"/>${rendition === 'raster' ? `<svg width="660" height="790" viewBox="550 0 550 480" preserveAspectRatio="none" opacity=".12"><image href="${CHART_ATLAS}" width="1650" height="480" preserveAspectRatio="none"/></svg>` : ''}<text x="24" y="30" fill="#f4dfac" font-size="16">N ↑ · FIVE COASTS / FIFTEEN SUBAREAS</text>${COASTS.map(
+  return `<svg viewBox="0 0 660 790" role="img" aria-label="Five coasts with three distinct playable subareas each"><rect width="660" height="790" rx="12" style="fill:var(--ov-sea,#123e50)"/>${rendition === 'raster' ? `<svg width="660" height="790" viewBox="550 0 550 480" preserveAspectRatio="none" opacity=".12"><image href="${CHART_ATLAS}" width="1650" height="480" preserveAspectRatio="none"/></svg>` : ''}<text x="24" y="30" style="fill:var(--ov-title,#f4dfac)" font-size="16">N ↑ · FIVE COASTS / FIFTEEN SUBAREAS</text>${COASTS.map(
     (coast, row) => {
       const y = 60 + row * 140;
-      return `<g><path d="M16 ${y + 25}L36 ${y + 5} 48 ${y + 40} 31 ${y + 70} 52 ${y + 106}H16Z" fill="#577963" stroke="#a2bc94"/><text x="65" y="${y}" fill="#ead4a6" font-size="16">${row + 1}. ${coast.name} · ${coast.difficulty}</text>${coast.sectors
+      return `<g><path d="M16 ${y + 25}L36 ${y + 5} 48 ${y + 40} 31 ${y + 70} 52 ${y + 106}H16Z" style="fill:var(--ov-land,#577963);stroke:var(--ov-land-edge,#a2bc94)"/><text x="65" y="${y}" style="fill:var(--ov-title,#ead4a6)" font-size="16">${row + 1}. ${coast.name} · ${coast.difficulty}</text>${coast.sectors
         .map((id, col) => {
           const index = grounds.findIndex((g) => g.id === id),
             g = grounds[index],
             x = 145 + col * 200;
-          return `<g data-ground="${id}" class="chart-route ${index === selected ? 'active' : ''}"><path d="M65 ${y + 70}H${x}" stroke="#83b0ae" stroke-dasharray="5 5"/><circle cx="${x}" cy="${y + 45}" r="${index === selected ? 16 : 12}" fill="#15313a" stroke="${index === selected ? '#ffd383' : '#92b9b4'}" stroke-width="3"/><text x="${x}" y="${y + 49}" text-anchor="middle" fill="#ffdf9c" font-size="12">${row + 1}.${col + 1}</text><text x="${x}" y="${y + 87}" text-anchor="middle" fill="#f1eed7" font-size="14">${g.name}</text><text x="${x}" y="${y + 107}" text-anchor="middle" fill="#aed0cb" font-size="12">Day ${[1, 3, 5][col]} · ${Math.round(g.travelMinutes)} min home</text></g>`;
+          return `<g data-ground="${id}" class="chart-route ${index === selected ? 'active' : ''}"><path d="M65 ${y + 70}H${x}" style="stroke:var(--ov-route,#83b0ae)" stroke-dasharray="5 5"/><circle cx="${x}" cy="${y + 45}" r="${index === selected ? 16 : 12}" style="fill:var(--ov-mark,#15313a);stroke:${index === selected ? 'var(--ov-active,#ffd383)' : 'var(--ov-route,#92b9b4)'}" stroke-width="3"/><text x="${x}" y="${y + 49}" text-anchor="middle" style="fill:var(--ov-mark-text,#ffdf9c)" font-size="12">${row + 1}.${col + 1}</text><text x="${x}" y="${y + 87}" text-anchor="middle" style="fill:var(--ov-text,#f1eed7)" font-size="14">${g.name}</text><text x="${x}" y="${y + 107}" text-anchor="middle" style="fill:var(--ov-soft,#aed0cb)" font-size="12">Day ${[1, 3, 5][col]} · ${Math.round(g.travelMinutes)} min home</text></g>`;
         })
         .join('')}</g>`;
     },
   ).join(
     '',
-  )}<text x="24" y="778" fill="#a6c5c1" font-size="12">HOME HARBOUR · Synthetic overview, not to scale · Permits apply to whole coasts</text></svg>`;
+  )}<text x="24" y="778" style="fill:var(--ov-soft,#a6c5c1)" font-size="12">HOME HARBOUR · Synthetic overview, not to scale · Permits apply to whole coasts</text></svg>`;
 }
 // October 5: the offload scene is a crop of the painted harbour (the boat
 // alongside, crew and urchin crates) instead of the flat SVG. Late arrivals

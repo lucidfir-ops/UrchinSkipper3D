@@ -268,7 +268,13 @@ try {
         ['night', 22 * 60 + 15],
       ]) {
         const light = await page.evaluate((arrival) => {
-          urchinDebug.world.day.result.arrival = arrival;
+          // Present a late arrival consistently: missed 19:00, ships at 06:00.
+          Object.assign(urchinDebug.world.day.result, {
+            arrival,
+            onTime: false,
+            offloadMinute: 1440 + 360,
+            delayHours: (1440 + 360 - arrival) / 60,
+          });
           urchinDebug.ui.signature = null;
           urchinDebug.ui.open('summary', { replace: true });
           return new Promise((done) =>

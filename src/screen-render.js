@@ -346,7 +346,11 @@ export function render(world) {
       b.classList.toggle('selected', selected);
       b.setAttribute('aria-current', String(selected));
       if (selected && this.focusedChoiceKey !== `${this.screen}:${this.index}`) {
-        b.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        // The trip summary opens at its top (offload scene, outcome, receipt);
+        // later focus moves still scroll their choice into view.
+        const opening = !this.focusedChoiceKey?.startsWith(`${this.screen}:`);
+        if (!(opening && this.screen === 'summary'))
+          b.scrollIntoView({ block: 'nearest', inline: 'nearest' });
         this.focusedChoiceKey = `${this.screen}:${this.index}`;
       }
     }

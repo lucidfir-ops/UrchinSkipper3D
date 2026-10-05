@@ -230,6 +230,7 @@ html body #playtest#playtest.wharf-panel .day-footer {
 /* Offload scene (October 5): painted harbour, lit for the arrival time. */
 html body #playtest#playtest .offload-art {
   position: relative;
+  flex-shrink: 0;
   margin: 0;
   overflow: hidden;
   aspect-ratio: 860 / 447;
@@ -257,9 +258,9 @@ html body #playtest#playtest .offload-art::after {
   z-index: 2;
 }
 html body #playtest#playtest .offload-art[data-light='dusk']::before {
-  background: linear-gradient(180deg, #3a4a86, #1b2550);
+  background: linear-gradient(180deg, #4a4f8e, #1b2550);
   mix-blend-mode: multiply;
-  opacity: 0.45;
+  opacity: 0.62;
 }
 html body #playtest#playtest .offload-art[data-light='night']::before {
   background: linear-gradient(180deg, #1d2c5c, #0c1430);
@@ -284,4 +285,75 @@ html body #playtest#playtest .offload-art[data-sombre='true'] img {
   html body #playtest#playtest .result-layout .offload-art {
     max-height: 130px;
   }
+}
+
+/* Coast overview chart: a paper chart by day, a slate chart at night. */
+html body #playtest#playtest {
+  --ov-sea: #cfdcd8;
+  --ov-land: #d8c99a;
+  --ov-land-edge: #8f7f55;
+  --ov-title: var(--chart-ink);
+  --ov-text: var(--chart-ink);
+  --ov-soft: var(--chart-ink-soft);
+  --ov-route: #4f7f86;
+  --ov-mark: var(--chart-card-hi);
+  --ov-mark-text: var(--chart-ink);
+  --ov-active: var(--signal);
+}
+html[data-menu-theme='night'] body #playtest#playtest {
+  --ov-sea: #1a2c38;
+  --ov-land: #3b4636;
+  --ov-land-edge: #76806a;
+  --ov-route: #6f98a0;
+  --ov-mark: #22323e;
+}
+/* Touch layout preview sea: the game's dark water, not a teal stripe. */
+html body #playtest#playtest .touch-preview {
+  background: repeating-linear-gradient(150deg, #1d3036 0 20px, #192a30 20px 40px);
+  border: 1px solid var(--chart-paper-edge);
+}
+/* Search-orders compass: an ink dial on the chart table in both themes. */
+html body #playtest#playtest .compass text {
+  fill: var(--chart-ink-soft);
+  font-family: var(--font-readout);
+}
+html body #playtest#playtest .compass text.chosen {
+  fill: var(--signal-deep);
+}
+html body #playtest#playtest .compass-rim {
+  fill: var(--chart-card-low);
+  stroke: var(--chart-ink-soft);
+}
+html body #playtest#playtest .compass-grid {
+  stroke: var(--chart-rule);
+}
+html body #playtest#playtest :is(.compass-needle, .compass-neutral) {
+  fill: var(--signal);
+  stroke: var(--signal-ink);
+}
+html body #playtest#playtest .compass-tail {
+  stroke: var(--chart-ink-faint);
+}
+html body #playtest#playtest .compass-centre {
+  fill: var(--chart-ink);
+}
+/* The rotatable preview stays a comfortable size beside the cards, and shop
+   details leave room to scroll their last lines above the sticky purchase bar. */
+html body #playtest#playtest .vessel-rotatable canvas {
+  max-height: 260px;
+  object-fit: contain;
+}
+html body #playtest#playtest.shop-panel :is(.career-detail, .shop-inline-detail) {
+  padding-bottom: 84px;
+}
+/* On touch, keyboard focus on a boat card is an outline; only the card chosen
+   for review is solid orange. */
+html body.touchscreen #playtest#playtest .shop-inspect.selected:not([aria-pressed='true']) {
+  color: var(--chart-ink);
+  background: var(--chart-card);
+  border-color: var(--signal);
+  box-shadow: inset 0 0 0 2px var(--signal);
+}
+html body.touchscreen #playtest#playtest .shop-inspect.selected:not([aria-pressed='true']) * {
+  color: inherit;
 }

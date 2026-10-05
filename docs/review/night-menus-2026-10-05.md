@@ -33,3 +33,17 @@ Both fail identically on the October 4 commit 46719bf, built and run in a separa
 ## Limits
 
 The contrast check composites background colours and the last solid gradient stop; it cannot judge text over photographs. Visual acceptance comes from the independent screenshot review, not from this audit. Night offload lamp placement is approximate.
+
+## Response to the independent review (same day)
+
+The [independent review](independent-october-5-2026-10-05.md) ranked these issues; each was handled as follows:
+
+1. **Deck summary hid the painting.** Two causes: opening the summary scrolled straight to the focused button, and the new figure could collapse inside the summary's flex column. Opening now leaves the summary at its top (later focus moves still scroll), and the figure no longer shrinks. Re-captured on Deck in both themes.
+2. **Context-loss captures show an overlapping HUD at 412 px without touch mode.** This is the existing keyboard HUD at a size no target device uses, and it was not changed. The Reload graphics button now uses the game's display font.
+3. **The chip sat ahead of the bow.** It now prefers either side of the boat, then the outward side, then inward, always avoiding controls and windows. The boundary suite passes again in all four input modes.
+4. **Teal leftovers.** The departure coast overview now draws from theme variables: a pale paper chart by day, a slate chart at night. The touch-layout preview uses the game's dark water.
+5. **Focus looked like a selection on touch.** Boat cards with keyboard focus now get an orange outline on touch screens; only the card chosen for review is solid orange. The general first-row focus highlight of the October 4 menus is unchanged.
+6. **Sticky purchase bar covered content.** Shop details now have bottom room so the last lines can scroll clear of the bar, and the rotatable preview is capped at 260 px tall.
+7. **Unreadable Day compass.** The Search-orders compass now uses ink-on-paper tokens in both themes.
+8. **Contradictory summary captures.** This came from the fixture: it changed the arrival time without the matching shipping outcome. It now presents a consistent late arrival.
+9. **Minor.** The dusk tint is stronger. The other minor items (testing tools in the pause menu, a crew-name wrap, small key captions, the mislabelled `yourboat-detail` capture) were not changed in this pass.

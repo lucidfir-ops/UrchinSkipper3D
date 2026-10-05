@@ -3,8 +3,8 @@ import { bindingName } from './input.js';
 import { WINDOWS } from './hud-windows.js';
 
 // October 5: beyond the harbour line with both divers aboard, a compact action
-// sits on the outward (off-sector) side of the boat. It never pauses play and
-// never covers the working water; steering back inside withdraws it.
+// sits beside the boat. It never pauses play and never covers the working
+// water or controls; steering back inside withdraws it.
 const OUTWARD = { north: [0, -1], south: [0, 1], east: [1, 0], west: [-1, 0] };
 const OFFSET = 64;
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
@@ -53,13 +53,13 @@ export function renderReturnChip(scene, world, input) {
     },
     halfW = el.offsetWidth / 2 || 90,
     halfH = el.offsetHeight / 2 || 24;
-  // Prefer the off-sector side, then either side of the boat, then inward;
-  // take the first spot that covers no control or information window.
+  // Prefer beside the boat (clear of the bow and the working water), then the
+  // off-sector side, then inward; the first spot covering no control wins.
   const blockers = obstacles(),
     candidates = [
-      [dx, dy],
       [-dy, dx],
       [dy, -dx],
+      [dx, dy],
       [-dx, -dy],
     ].map(([cx, cy]) => ({
       x: clamp(centre.x + cx * (OFFSET + halfW * Math.abs(cx)), halfW + 8, innerWidth - halfW - 8),
