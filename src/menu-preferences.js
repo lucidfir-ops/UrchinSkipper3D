@@ -1,5 +1,10 @@
 import { deckControlsLabel, cycleDeckControls } from './deck-controls.js';
-import { fullscreenLabel, toggleFullscreen } from './fullscreen.js';
+import {
+  fullscreenLabel,
+  toggleFullscreen,
+  autoFullscreenLabel,
+  toggleAutoFullscreen,
+} from './fullscreen.js';
 import { uiScale, changeUiScale, setUiScale } from './ui-scale.js';
 import { setTimeIncrease, timeIncrease } from './time-speed.js';
 import { loggingEnabled, toggleLogging, downloadLog } from './troubleshooting-log.js';
@@ -24,6 +29,7 @@ export function preferenceActions(ui) {
       open('gameplay-speed', 'Gameplay Speed'),
       action('deck-controls', deckControlsLabel(), cycleDeckControls),
       action('fullscreen', `⛶ ${fullscreenLabel()}`, toggleFullscreen),
+      action('auto-fullscreen', autoFullscreenLabel(), toggleAutoFullscreen),
       action('volume', 'Sound volume', () => ui.panel.querySelector('#soundVolume')?.focus()),
       action('menu-theme', menuThemeLabel(), cycleMenuTheme),
       action('graphics', `3D graphics: ${ui.hooks.graphicsLabel?.() || 'High'}`, () =>

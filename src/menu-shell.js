@@ -22,6 +22,11 @@ const SETTINGS = [
       ['deck-controls', null, 'Play with the built-in Deck controls in a web browser.'],
       ['touch-options', 'Touchscreen options', 'Controls, opacity and touch layout.'],
       ['fullscreen', null, 'Use the whole screen.'],
+      [
+        'auto-fullscreen',
+        null,
+        'On touch screens, starting play goes fullscreen so the game turns with your device.',
+      ],
     ],
   },
   {
@@ -97,10 +102,10 @@ function row(ui, world, action, index, title, description) {
     ? '↻'
     : action.id === 'download-log'
       ? '↓'
-      : action.id === 'logging'
+      : ['logging', 'auto-fullscreen'].includes(action.id)
         ? ''
         : '›';
-  if (action.id === 'logging') {
+  if (['logging', 'auto-fullscreen'].includes(action.id)) {
     const checked = /: ON$/.test(action.label);
     button.setAttribute('role', 'switch');
     button.setAttribute('aria-checked', String(checked));

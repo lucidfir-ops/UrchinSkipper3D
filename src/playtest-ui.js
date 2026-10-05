@@ -28,7 +28,7 @@ import { exitSession } from './session.js';
 import { TITLES } from './screen-titles.js';
 import { TouchControls } from './touch-controls.js';
 import { isRadioMessage } from './radio-history.js';
-import { fullscreenLabel, toggleFullscreen } from './fullscreen.js';
+import { fullscreenLabel, toggleFullscreen, autoFullscreen } from './fullscreen.js';
 import { applyScreenFit } from './screen-fit.js';
 import { loggingEnabled, toggleLogging, downloadLog, sampleLog } from './troubleshooting-log.js';
 const TITLE_ACTIONS = ['continue', 'load', 'new', 'test', 'settings', 'touch', 'fullscreen'];
@@ -158,6 +158,7 @@ export class PlaytestUI {
     this.input.suppress();
   }
   titleAction(action, keyboard = false) {
+    if (['continue', 'load', 'new', 'test'].includes(action)) autoFullscreen(this.input);
     if (action === 'fullscreen') {
       toggleFullscreen();
       return;

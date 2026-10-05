@@ -8,6 +8,54 @@ export const fullscreenLabel = () =>
   globalThis.document?.fullscreenElement || globalThis.document?.webkitFullscreenElement
     ? 'Exit fullscreen'
     : 'Fullscreen & Rotate screen';
+// October 5: browsers cannot rotate an ordinary page against Android's own
+// rotation setting; inside fullscreen the game asks for every orientation, so
+// rotation then follows the device. On touch screens, starting play enters
+// fullscreen automatically (once per visit; never again after the player
+// leaves fullscreen deliberately). Saved per device, default on.
+const AUTO_KEY = 'urchin3d-auto-fullscreen-v1';
+let rotationControl = null,
+  leftDeliberately = false;
+// An explicit choice always wins. Unset, it is on for players; automated
+// browser fixtures (navigator.webdriver) resize windows freely, so their unset
+// default is off and auto-fullscreen-review.js opts in explicitly.
+export function autoFullscreenEnabled() {
+  try {
+    const saved = localStorage.getItem(AUTO_KEY);
+    if (saved === 'on' || saved === 'off') return saved === 'on';
+  } catch {
+    /* Fall through to the default. */
+  }
+  return !globalThis.navigator?.webdriver;
+}
+export function toggleAutoFullscreen() {
+  try {
+    localStorage.setItem(AUTO_KEY, autoFullscreenEnabled() ? 'off' : 'on');
+  } catch {
+    /* Without storage the default applies. */
+  }
+}
+export const autoFullscreenLabel = () =>
+  `Auto fullscreen & rotate on touch: ${autoFullscreenEnabled() ? 'ON' : 'OFF'}`;
+// Must run inside the tap's event handler (a user gesture).
+export function autoFullscreen(input) {
+  if (
+    !input?.touchEnabled ||
+    !autoFullscreenEnabled() ||
+    leftDeliberately ||
+    activeFullscreen() ||
+    !(
+      document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen
+    )
+  )
+    return false;
+  void enterFullscreen()
+    .then(() => rotationControl?.refresh())
+    .catch((error) =>
+      logEvent('orientation', { operation: 'auto-fullscreen', result: error.name }),
+    );
+  return true;
+}
 export function toggleFullscreen() {
   document.querySelector('#touchFullscreen')?.click();
 }
@@ -51,7 +99,10 @@ export function installRotationRecovery(input) {
   const contextChanged = (event) => {
     const nowOwned = !!activeFullscreen();
     // Do not re-enter after the player deliberately leaves fullscreen.
-    if (owned && !nowOwned) attempted = true;
+    if (owned && !nowOwned && !document.hidden) {
+      attempted = true;
+      leftDeliberately = true;
+    }
     if (!display.matches && !nowOwned) attempted = false;
     owned = nowOwned;
     policy.invalidate();
@@ -106,6 +157,7 @@ export function installRotationRecovery(input) {
 }
 export function installFullscreen(input) {
   const rotation = installRotationRecovery(input);
+  rotationControl = rotation;
   const button = document.createElement('button'),
     notice = document.createElement('div');
   button.id = 'touchFullscreen';
