@@ -2,6 +2,7 @@ import { FrameMetrics } from './frame-metrics.js';
 import { worldTimeScale } from './time-speed.js';
 import { createSessionHooks } from './career-session.js';
 import { renderHud } from './hud-view.js';
+import { surfaceCall } from './diver-calls.js';
 import { releaseFittingPreview } from './three/fitting-preview.js';
 import { renderNavigationWindows } from './minimap-view.js';
 import { HudWindows } from './hud-windows.js';
@@ -282,7 +283,17 @@ class Ocean extends Phaser.Scene {
         'drive-hit': 'ground',
         radio: 'radio',
       }[event.type];
-      if (sound) {
+      if (event.type === 'surface') {
+        const diver = world.divers.find((d) => d.id === event.diverId),
+          call = surfaceCall(
+            diver,
+            distance,
+            C.visibility.soundRange,
+            this.lastCall?.[event.diverId],
+          );
+        if (call?.clip) (this.lastCall ||= {})[event.diverId] = call.clip;
+        this.audio.call(call);
+      } else if (sound) {
         const gain = ['splash', 'surface', 'warning'].includes(event.type)
           ? Math.max(0, 1 - distance / C.visibility.soundRange)
           : 1;

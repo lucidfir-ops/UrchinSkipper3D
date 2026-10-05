@@ -208,6 +208,7 @@ for (const [id] of VESSEL_FAMILIES) {
 export const CREW = [
   {
     id: 'ada',
+    voice: 'female',
     name: 'Ada Chen',
     portraitSrc: './assets/crew/ada.png',
     rank: 0,
@@ -223,6 +224,7 @@ export const CREW = [
   },
   {
     id: 'milo',
+    voice: 'male',
     name: 'Milo Ward',
     portraitSrc: './assets/crew/milo.png',
     rank: 0,
@@ -238,6 +240,7 @@ export const CREW = [
   },
   {
     id: 'nell',
+    voice: 'female',
     name: 'Nell Fraser',
     portraitSrc: './assets/crew/nell.png',
     rank: 0,
@@ -253,6 +256,7 @@ export const CREW = [
   },
   {
     id: 'roy',
+    voice: 'male',
     name: 'Roy Bell',
     portraitSrc: './assets/crew/roy.png',
     rank: 0,
@@ -268,6 +272,7 @@ export const CREW = [
   },
   {
     id: 'inez',
+    voice: 'female',
     name: 'Inez Brooks',
     portraitSrc: './assets/crew/inez.png',
     rank: 1,
@@ -283,6 +288,7 @@ export const CREW = [
   },
   {
     id: 'robinson',
+    voice: 'any',
     name: 'R. Robinson',
     portraitSrc: './assets/crew/robinson.png',
     rank: 1,
@@ -298,6 +304,7 @@ export const CREW = [
   },
   {
     id: 'murphy',
+    voice: 'any',
     name: 'Pat Murphy',
     portraitSrc: './assets/crew/murphy.png',
     rank: 2,
@@ -313,6 +320,7 @@ export const CREW = [
   },
   {
     id: 'dave',
+    voice: 'male',
     name: 'Dave Kaimana',
     portraitSrc: './assets/crew/dave.png',
     rank: 2,
