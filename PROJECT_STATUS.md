@@ -1,6 +1,46 @@
 # Urchin Skipper 3D — current status
 
-October 5, 2026 · night menus, harbour-line action, diver voices, bull kelp, render recovery, taxi drive-bys and touch auto-rotate. Claude (Claude Code) develops this project; entries from October 3 and earlier were written by Codex ("Astra"). Work, exports and publication belong only to this project and [lucidfir-ops/UrchinSkipper3D](https://github.com/lucidfir-ops/UrchinSkipper3D). The 2D edition is no longer developed.
+October 5, 2026 (second notes) · deck load, fuel and hull read from the boat, bubbles from the designer's reference with a filled ascent boil, whistle only, and phone text overflow. Earlier the same day: night menus, harbour-line action, bull kelp, render recovery, taxi drive-bys and touch auto-rotate. Claude (Claude Code) develops this project; entries from October 3 and earlier were written by Codex ("Astra"). Work, exports and publication belong only to this project and [lucidfir-ops/UrchinSkipper3D](https://github.com/lucidfir-ops/UrchinSkipper3D). The 2D edition is no longer developed.
+
+## October 5 revision, second notes
+
+Source: designer notes, photos and videos in `feedback/10-5/` and the designer's answers of October 5. The designer tested only on the S22 this round. Approved decisions are recorded in the Bible (§3, §10, §11).
+
+- **Deck load on the boat.**
+  - A faint ghost outline marks where the rest of a full load will sit and flashes when a sack lands.
+  - A small amber lamp on the wheelhouse roof lights when the deck is full.
+  - The drawn hull settles, trims by the stern, bobs more heavily and pushes a wider wake as weight builds.
+  - The boat card no longer prints a deck weight line. The Deck load gauge remains an optional card, off by default.
+  - Also, as the designer asked for several cues this round (both are the agent's choices, not yet reviewed by the designer): the engine misfires on low fuel, and a badly damaged hull settles and lists.
+  - [Record](docs/review/in-world-load-cues-2026-10-05.md).
+- **Bubbles.**
+  - Working divers now show a milky green upwelling with flattened boil patches edged by fizz, and scattered specks, modelled on the designer's photo and videos. Visibility is unchanged.
+  - The ascent warning is a filled, churning white boil that grows over the diver, replacing the particle ring.
+  - [Record](docs/review/diver-bubbles-2026-10-05.md).
+- **Whistle only.** The recorded voice hails added earlier on October 5 are removed; surfaced divers whistle, quieter with distance. [Record](docs/review/whistle-only-2026-10-05.md).
+- **Phone text overflow.**
+  - Boat cards stack their preview above the text when narrow, so names and prices fit.
+  - The Conditions "Wait 30 minutes" button no longer hides in an off-screen column.
+  - Phone key labels fit their keys.
+  - The menu audit now detects overflow and is clean on every screen: Chromium phone and tablet in both themes, and Firefox phone.
+  - [Record](docs/review/phone-text-overflow-2026-10-05.md).
+
+Independent screenshot review: [in-world cues, bubbles and menus](docs/review/independent-in-world-cues-2026-10-05.md).
+
+Verification:
+- 646 unit tests: 645 pass, 1 intentional private-save skip, 0 fail. Lint, formatting and the production build pass.
+- Browser suites on the production build (Chromium with the Deck GPU; Firefox where named) all pass:
+  - in-world-cues;
+  - menu-theme (night and day themes on phone, tablet and Deck, strict, now including overflow);
+  - menu-theme-firefox (phone);
+  - deck-load, hud-context (4 layouts), operations (keyboard, synthetic controller, touch), voyage (complete career day), input, learning;
+  - performance: 59.997 FPS at 1280×800 on RADV VANGOGH. After the review fixes, in-world-cues, deck-load, operations and performance were rerun and pass (59.93 FPS).
+
+**Not yet verified.**
+- The S22, Doogee tablet and Steam Deck in person: the designer's S22 test predates these changes.
+- The misfire by ear.
+- Whether the hull sitting lower can be seen at all. A probe at twice the settling showed no change from the game camera until water reached the deck. The trim, heavier bob and wider wake carry the cue, in motion only. The designer may prefer a stronger, non-physical cue.
+- Firefox for Android itself: Playwright's desktop Firefox stood in for it.
 
 ## October 5 revision
 
@@ -8,7 +48,7 @@ Source: designer notes and screenshots in `feedback/10-4 v2/` and the designer's
 
 - **Night menus by default.** Menus are now a dark chart table; Settings → Picture & sound → Menu colours switches back to the Day chart paper. The last pre-redesign sea-green panels were rebuilt from theme tokens. They had left text unreadable, down to 1.05:1 contrast: Working day return, the Chandlery and boatyard detail, preview captions, map captions, the harbour footer, the coast overview chart and the touch preview. An automated audit of 37 screens in both themes on phone, tablet and Deck now finds no text below 3:1 and no teal panels. Boats in boat selection turn by drag or ← →. The offload picture is a crop of the harbour painting, lit for the arrival hour. [Record](docs/review/night-menus-2026-10-05.md).
 - **Harbour line.** The on-water edge label is gone, and crossing the harbour line no longer pauses. Beyond the line with both divers aboard, a **Return to harbour** chip appears beside the boat, clear of the controls. H or Pause → Return to harbour also work. [Record](docs/review/border-return-2026-10-05.md).
-- **Diver calls.** A surfaced diver within 35 m hails the boat with a recorded CC0 human voice (11 clips, sources in `public/assets/voices/SOURCES.md`); further away they whistle. Both fade with distance. Nobody has listened to the clips yet. [Record](docs/review/diver-calls-2026-10-05.md).
+- **Diver calls** (superseded the same day by whistle only, above). A surfaced diver within 35 m hailed the boat with a recorded CC0 human voice; further away they whistled. [Record](docs/review/diver-calls-2026-10-05.md).
 - **Bull kelp.** Each plant is now a long stipe, an air bulb and four to six narrow blades streaming downstream, posed in closed form from tide and current in the vertex shader. Low water leaves 2.6–6 m of stipe floating; ordinary high water shows mainly bulbs and blades. Draw calls are unchanged and triangles fell slightly. [Record](docs/review/bull-kelp-2026-10-05.md).
 - **Blank sea after reloading on itch.io.** The likely cause is a WebGL context lost without an event, which left the HUD and simulation running over a transparent canvas. The renderer now checks for this every frame, pauses play, and offers **Reload graphics** (save and reload). Contexts are released on unload. This was reproduced synthetically in Firefox, not on the S22. [Record](docs/review/context-loss-2026-10-05.md).
 - **Water taxis** keep their speed, cadence and straight committed runs, but aim for 14–22 m drive-bys of the player's boat, clear of divers. Before, they aimed through the bubbles. [Record](docs/review/taxi-drive-by-2026-10-05.md).
@@ -21,7 +61,7 @@ Independent screenshot reviews: [first](docs/review/independent-october-5-2026-1
 - `mobile-career`: landscape harbour pan cannot reveal the Harbour office;
 - `coastal-progression`: storm frame-time limit.
 
-**Not yet verified.** The S22, Doogee tablet and Steam Deck in person; the voice clips by ear; real rotation; and whether the reload fix addresses the designer's actual trigger.
+**Not yet verified.** The S22, Doogee tablet and Steam Deck in person; real rotation; and whether the reload fix addresses the designer's actual trigger.
 
 ## October 4 revision
 

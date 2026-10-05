@@ -62,6 +62,8 @@ const suites = {
   'auto-fullscreen': ['scripts/auto-fullscreen-review.js'],
   'menu-theme': ['scripts/menu-theme-audit.js', 'night,day', 'phone,tablet,deck', '--strict'],
   'context-loss-firefox': ['scripts/context-loss-review.js', '--firefox'],
+  'menu-theme-firefox': ['scripts/menu-theme-audit.js', 'night', 'phone', '--strict', '--firefox'],
+  'in-world-cues': ['scripts/in-world-cues-review.js'],
   'surface-drift': ['scripts/surface-drift-review.js'],
   'work-lights': ['scripts/work-lights-review.js'],
   currents: ['scripts/coastal-current-review.js'],

@@ -60,7 +60,10 @@ export function boatCardFallbacks(world, realistic) {
     speed: !enabled('speedGauge'),
     depth: !enabled('depthInstrument') && !enabled('sounder'),
     fuel: !enabled('fuelGauge'),
-    load: enabled('exactLoad') && !enabled('loadGauge'),
+    // October 5 (feedback/10-5): deck load is read from the boat itself (ghost
+    // outline, deck-full lamp, freeboard). The weight reading is the optional
+    // Deck load gauge, off by default, not a boat-card fallback.
+    load: false,
     condition: !enabled('hullGauge'),
     commands: !enabled('throttleGauge'),
   };

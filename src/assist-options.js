@@ -14,7 +14,10 @@ export const UI_OPTIONS = {
   ],
   compassGauge: ['Compass', 'A separate heading compass.'],
   hullGauge: ['Hull condition gauge', 'A separate hull condition dial.'],
-  loadGauge: ['Deck load gauge', 'A separate load dial. Requires Exact deck / diver readouts.'],
+  loadGauge: [
+    'Deck load gauge',
+    'A deck weight card. Without it, read the load from the boat: sacks and the faint outline of a full deck, the roof lamp when full, and the hull sitting lower. Requires Exact deck / diver readouts.',
+  ],
   minimap: [
     'Chart minimap',
     'The current area’s chart with your boat position, known ground and pink crosses for charted rocks. Open the larger chart for rock clearance labels. Moving logs and uncharted rocks are not plotted: keep watching the water.',

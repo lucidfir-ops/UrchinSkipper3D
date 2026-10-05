@@ -164,7 +164,7 @@ test('boat card keeps readings available when a skipper hides independent instru
     speed: false,
     depth: false,
     fuel: false,
-    load: true,
+    load: false,
     condition: true,
     commands: false,
   });
@@ -175,7 +175,8 @@ test('boat card keeps readings available when a skipper hides independent instru
   assert(boatCardFallbacks(world, false).speed);
   assert(boatCardFallbacks(world, false).fuel);
   assert(boatCardFallbacks(world, false).depth);
-  assert(boatCardFallbacks(world, false).load);
+  // October 5: deck load is shown on the boat; the gauge is its only readout.
+  assert.equal(boatCardFallbacks(world, false).load, false);
   world.career.assists.sounder = true;
   world.career.assists.exactLoad = false;
   assert.equal(boatCardFallbacks(world, false).depth, false);

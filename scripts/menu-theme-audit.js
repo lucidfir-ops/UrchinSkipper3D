@@ -1,16 +1,17 @@
 // October 5: crawl every reachable menu screen in each menu theme, save a
 // screenshot, and flag (a) text whose contrast against its effective background
-// is below 3:1 and (b) remnant green/teal panels from the pre-October 4 look.
+// is below 3:1, (b) remnant green/teal panels from the pre-October 4 look and
+// (c, October 5 feedback/10-5) text spilling out of its own box or its card.
 // Usage: URCHIN_TEST_URL=… PLAYWRIGHT_BROWSERS_PATH=.browser-cache \
 //   node scripts/menu-theme-audit.js [night,day] [phone,tablet]
-import { chromium } from '@playwright/test';
+import { chromium, firefox } from '@playwright/test';
 import assert from 'node:assert/strict';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { chooseStarter } from './career-start.js';
 import { DEVICES } from './ui-gallery-devices.js';
 
 const base = process.env.URCHIN_TEST_URL || 'http://127.0.0.1:5184/',
-  output = 'test-results/menu-theme-2026-10-05',
+  output = process.env.MENU_AUDIT_OUT || 'test-results/menu-theme-2026-10-05',
   themes = (process.argv[2] || 'night,day').split(','),
   devices = (process.argv[3] || 'phone,tablet').split(',');
 mkdirSync(output, { recursive: true });
@@ -107,7 +108,7 @@ function audit() {
       .map((c) => '.' + c)
       .join('');
   const root = document.querySelector('#playtest');
-  const findings = { contrast: [], teal: [] };
+  const findings = { contrast: [], teal: [], overflow: [] };
   if (!root || root.hidden) return findings;
   for (const el of root.querySelectorAll('*')) {
     const rect = el.getBoundingClientRect();
@@ -122,6 +123,32 @@ function audit() {
     }
     const text = [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim());
     if (!text) continue;
+    // Spill: a word wider than its own box, or text past its card's edge.
+    // Scrolling panes and deliberate ellipses are not spills.
+    const card = el.parentElement?.closest(
+      'button, .shop-card, .crew-card, .career-detail, .equipment-detail, article, li',
+    );
+    const cardRect = card?.getBoundingClientRect();
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const textRect = range.getBoundingClientRect();
+    const clipped =
+      style.textOverflow !== 'ellipsis' &&
+      !['auto', 'scroll'].includes(style.overflowX) &&
+      el.scrollWidth > el.clientWidth + 2 &&
+      el.clientWidth > 0;
+    const spill =
+      cardRect &&
+      (textRect.right > cardRect.right + 1 || textRect.left < cardRect.left - 1) &&
+      !['auto', 'scroll'].includes(getComputedStyle(card).overflowX);
+    if (clipped || spill)
+      findings.overflow.push({
+        el: name(el),
+        text: el.textContent.trim().slice(0, 40),
+        by: Math.round(
+          Math.max(el.scrollWidth - el.clientWidth, cardRect ? textRect.right - cardRect.right : 0),
+        ),
+      });
     const fg = parse(style.color);
     if (!fg) continue;
     const ratio = contrast(fg, backgroundOf(el));
@@ -135,10 +162,14 @@ function audit() {
   return findings;
 }
 
-const browser = await chromium.launch({
-  headless: true,
-  args: ['--no-sandbox', '--enable-gpu', '--use-angle=vulkan'],
-});
+// --firefox (or URCHIN_BROWSER=firefox) approximates the designer's Firefox for Android.
+const browser =
+  process.env.URCHIN_BROWSER === 'firefox' || process.argv.includes('--firefox')
+    ? await firefox.launch({ headless: true })
+    : await chromium.launch({
+        headless: true,
+        args: ['--no-sandbox', '--enable-gpu', '--use-angle=vulkan'],
+      });
 const report = [];
 try {
   for (const theme of themes)
@@ -293,13 +324,16 @@ try {
   await browser.close();
   writeFileSync(`${output}/audit.json`, JSON.stringify(report, null, 2));
 }
-const problems = report.filter((r) => r.contrast?.length || r.teal?.length || r.errors?.length);
+const problems = report.filter(
+  (r) => r.contrast?.length || r.teal?.length || r.overflow?.length || r.errors?.length,
+);
 for (const p of problems)
   console.log(
     `${p.theme}/${p.device}/${p.screen || 'errors'}: ` +
       [
         ...(p.teal || []).map((t) => `TEAL ${t.el} ${t.colour}`),
         ...(p.contrast || []).slice(0, 6).map((c) => `LOW ${c.ratio} ${c.el} “${c.text}”`),
+        ...(p.overflow || []).slice(0, 6).map((o) => `SPILL ${o.by}px ${o.el} “${o.text}”`),
         ...(p.errors || []),
       ].join(' | '),
   );

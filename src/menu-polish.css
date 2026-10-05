@@ -483,6 +483,37 @@ body #playtest.shop-panel .shop-vessel-card figcaption {
   color: var(--ui-sea);
   font-size: 10px;
 }
+/* October 5 (feedback/10-5, S22): paired boat cards on a phone are ~140 px
+   wide, too narrow for a preview beside the name and price. Narrow cards stack
+   the preview above the text at any UI scale, and long words wrap. */
+body #playtest.shop-panel .shop-row:has(> .shop-vessel-card) {
+  container-type: inline-size;
+}
+.shop-vessel-copy :is(strong, small, .shop-vessel-price, .shop-vessel-state) {
+  overflow-wrap: anywhere;
+}
+@container (max-width: 230px) {
+  body #playtest.shop-panel .shop-vessel-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 10px;
+  }
+  body #playtest.shop-panel .shop-vessel-card .vessel-preview {
+    flex: 0 0 72px;
+    width: 100%;
+    height: 72px;
+  }
+  .shop-vessel-copy {
+    gap: 4px;
+  }
+  .shop-vessel-copy strong {
+    font-size: 15px;
+  }
+  .shop-vessel-price {
+    font-size: 16px;
+  }
+}
 /* Full 3D previews need normal document flow, including their captions. */
 body #playtest .career-detail > .vessel-model,
 body #playtest.shop-panel .shop-inline-detail > .vessel-preview.vessel-model {

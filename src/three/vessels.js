@@ -12,6 +12,8 @@ import { departureBoat } from '../departure-transition.js';
 import { trafficPose } from '../traffic-view.js';
 import { alongsidePoint } from '../patrol.js';
 import { CatchLoad, catchNetTexture } from './catch-load.js';
+import { DeckLoadCues } from './deck-load-cues.js';
+import { DiverBoil, BOIL_RADIUS } from './diver-boil.js';
 import { fleetProfile } from './fleet-profiles.js';
 import { trafficProfile } from './traffic-profiles.js';
 import { waterColumnMaterials, waterTurbidity, submergedContrast } from './water-optics.js';
@@ -1925,7 +1927,8 @@ class WakeField {
       spin: this.index * 2.39996,
     });
   }
-  boat(actor, width, length, dt) {
+  // Displacement: a laden hull (load > 1) pushes a wider wake and wash.
+  boat(actor, width, length, dt, load = 1) {
     const speed = Math.abs(actor.speed ?? Math.hypot(actor.vx || 0, actor.vy || 0));
     if (speed < 0.3) return;
     const forwardX = Math.sin(actor.heading),
@@ -1940,7 +1943,7 @@ class WakeField {
       this.emit(
         sternX + lateralX * lane,
         sternZ + lateralZ * lane,
-        width * (0.5 + energy * 0.25),
+        width * (0.5 + energy * 0.25) * load,
         lateralX * side * 0.19 - forwardX * 0.1,
         lateralZ * side * 0.19 - forwardZ * 0.1,
         5.5,
@@ -1950,7 +1953,7 @@ class WakeField {
       this.emit(
         actor.x + forwardX * length * 0.22 + lateralX * side * width * 0.44,
         actor.y + forwardZ * length * 0.22 + lateralZ * side * width * 0.44,
-        width * 0.21,
+        width * 0.21 * load,
         lateralX * side * 0.36 - forwardX * 0.22,
         lateralZ * side * 0.36 - forwardZ * 0.22,
         2.0,
@@ -2249,6 +2252,8 @@ export class VesselView {
     this.traffic = new Map();
     this.divers = [];
     this.diverTorches = [new DiverTorch(scene), new DiverTorch(scene)];
+    this.boils = [new DiverBoil(scene, 0), new DiverBoil(scene, 1)];
+    this.speckIndex = 0;
     this.elapsed = 0;
     this.wakeAccumulator = 0;
     this.wakes = new WakeField(scene);
@@ -2286,16 +2291,23 @@ export class VesselView {
     const installed = world.career?.fleet[boat.configuration]?.equipment || [];
     const identity = `${boat.configuration}:${spec.length}:${spec.width}:${installed.join(',')}`;
     if (!this.boat || this.identity !== identity) {
-      if (this.boat) disposeGroup(this.boat);
+      if (this.boat) {
+        this.loadCues?.dispose();
+        disposeGroup(this.boat);
+      }
       this.boat = makeVessel(spec, boatDefinition(boat.configuration), this.materials);
       addFittings(this.boat, spec, this.materials, installed);
       prepareDepartureFade(this.boat);
+      // After the fade clones: the cues drive their own opacity and fade.
+      this.loadCues = new DeckLoadCues(this.boat, this.boat.userData.catchLoad.geometry);
       this.scene.add(this.boat);
       this.identity = identity;
     }
     const surfaceY = this.surfaceY || 0;
     const wave = Math.min(1, world.environment?.waveHeight ?? world.environment?.waves ?? 0.3);
     this.position(this.boat, boat, surfaceY, wave);
+    this.loadState = this.loadCues.update(world, spec, dt, boat.alpha);
+    this.loadCues.apply(this.boat, surfaceY);
     setDepartureAlpha(this.boat, boat.alpha);
     this.boat.userData.radar.rotation.y = this.elapsed * 1.1;
     animateDrives(this.boat, boat.rudder, boat.throttle, dt);
@@ -2490,31 +2502,35 @@ export class VesselView {
     this.wakeAccumulator += dt;
     if (this.wakeAccumulator > 0.12) {
       if (boat.alpha > 0.01) {
-        this.wakes.boat(boat, spec.width, spec.length, this.wakeAccumulator);
+        this.wakes.boat(boat, spec.width, spec.length, this.wakeAccumulator, this.loadState?.wake);
         this.wakes.poweredWash(boat, spec);
       }
       for (const actor of world.traffic?.actors || [])
         this.wakes.boat(actor, actor.width || 3, actor.length || 9, this.wakeAccumulator);
       for (let i = 0; i < world.divers.length; i++) {
-        const d = world.divers[i];
+        const d = world.divers[i],
+          motion = diverMotion(world, d);
         if (
-          ['descending', 'searching', 'working', 'ascending'].includes(
-            diverMotion(world, d).phase,
-          ) &&
+          ['descending', 'searching', 'working', 'ascending'].includes(motion.phase) &&
           bubbleOpacity(world, Math.hypot(d.x - boat.x, d.y - boat.y)) > 0
         ) {
-          const surfacing = d.state === 'surfacing',
-            radius = surfacing ? 2.4 : 0.5;
-          for (let j = 0; j < (surfacing ? 5 : 2); j++) {
-            const angle = this.elapsed * 7 + i * 3 + j * 2.4;
+          // Scattered foam specks drift off with the current; during the
+          // ascent warning they fill the boil instead of tracing a ring.
+          const ascending = motion.phase === 'ascending',
+            reach = ascending ? BOIL_RADIUS * (0.2 + 0.38 * motion.progress) : 1.6;
+          for (let j = 0; j < (ascending ? 4 : 3); j++) {
+            const n = this.speckIndex++,
+              angle = n * 2.39996 + i * 1.7,
+              r = reach * Math.sqrt(((n * 0.618034) % 1) * 0.95 + 0.05),
+              size = ascending ? 0.22 + ((n * 0.37) % 1) * 0.3 : 0.22 + ((n * 0.53) % 1) * 0.28;
             this.wakes.emit(
-              d.x + Math.cos(angle) * radius,
-              d.y + Math.sin(angle) * radius,
-              0.7,
-              Math.cos(angle) * 0.06,
-              Math.sin(angle) * 0.06,
-              1.8,
-              0.16,
+              d.x + Math.cos(angle) * r,
+              d.y + Math.sin(angle) * r,
+              size,
+              Math.cos(angle) * (ascending ? 0.12 : 0.02),
+              Math.sin(angle) * (ascending ? 0.12 : 0.02),
+              ascending ? 1.6 : 3.2,
+              ascending ? 0.2 : 0.03,
               true,
               !!world.weather?.night && enabledEquipment(world).includes('torch'),
             );
@@ -2540,6 +2556,24 @@ export class VesselView {
       this.wakeAccumulator = 0;
     }
     this.wakes.update(dt, surfaceY, world);
+    const torchGlow = !!world.weather?.night && enabledEquipment(world).includes('torch');
+    this.boils.forEach((boil, i) => {
+      const d = world.divers[i];
+      if (!d) return boil.reset();
+      const motion = diverMotion(world, d);
+      boil.update({
+        x: d.x,
+        z: d.y,
+        surfaceY,
+        phase: motion.phase,
+        progress: motion.progress ?? 0,
+        opacity: bubbleOpacity(world, Math.hypot(d.x - boat.x, d.y - boat.y)),
+        light: world.weather?.night ? 0.4 : Math.max(0.4, world.weather?.sunlight ?? 1),
+        glow: torchGlow,
+        time: this.elapsed,
+        dt,
+      });
+    });
     this.surfaceCues.update(world, spec, surfaceY);
     const lights = workLightsOn(world) && boat.alpha > 0.01;
     this.lightRig.position.copy(this.boat.position);
@@ -2592,6 +2626,8 @@ export class VesselView {
   }
   reset() {
     if (this.boat) {
+      this.loadCues?.dispose();
+      this.loadCues = null;
       disposeGroup(this.boat);
       this.boat = null;
     }
@@ -2600,6 +2636,7 @@ export class VesselView {
     for (const marker of this.rivalDivers.values()) disposeGroup(marker.group);
     this.rivalDivers.clear();
     this.wakes.reset();
+    this.boils.forEach((boil) => boil.reset());
     this.surfaceCues.reset();
     this.identity = '';
     for (const d of this.divers) d.group.visible = false;
@@ -2608,6 +2645,7 @@ export class VesselView {
   dispose() {
     this.reset();
     this.wakes.dispose();
+    this.boils.forEach((boil) => boil.dispose());
     this.surfaceCues.dispose();
     disposeGroup(this.lightRig);
     for (const light of this.workSpots) light.dispose();

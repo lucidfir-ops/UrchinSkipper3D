@@ -258,13 +258,17 @@
 .keycap strong {
   display: block;
   font-size: 11px;
+  overflow-wrap: break-word;
 }
+/* A word too long for its key breaks rather than spilling across the key
+   edge (October 5, feedback/10-5). */
 .keycap span {
   display: block;
   font-size: 9px;
   line-height: 1.15;
   margin-top: 4px;
-  overflow-wrap: normal;
+  hyphens: auto;
+  overflow-wrap: break-word;
 }
 .keycap.bound {
   background: #28474e;

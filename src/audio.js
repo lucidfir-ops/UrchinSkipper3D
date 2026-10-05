@@ -1,11 +1,11 @@
 import { boatSpec } from './boats.js';
 import { engineState } from './operating-state.js';
 import { lightningState } from './weather-effects.js';
-import { VOICE_CLIPS } from './diver-calls.js';
+import { fuelStatus } from './preparation.js';
+import { fuelStutter } from './fuel-cues.js';
 
-// Procedural sounds plus CC0 diver hail recordings (October 5; sources in
-// public/assets/voices/SOURCES.md). Playback, mixing, rate and lifecycle use
-// Phaser's existing Sound Manager.
+// Original procedural placeholder sounds; no external recordings or licenses.
+// Playback, mixing, rate and lifecycle use Phaser's existing Sound Manager.
 const lengths = {
   engine: 2,
   neutral: 2,
@@ -121,43 +121,6 @@ export class BoatAudio {
   unlock() {
     const context = this.manager.context;
     if (context?.state === 'suspended') context.resume().catch(() => {});
-    this.loadVoices();
-  }
-  // Fetched after the first gesture so startup is not delayed. Opus first,
-  // MP3 where the browser cannot decode Ogg Opus (older Safari).
-  loadVoices() {
-    const context = this.manager.context;
-    if (!context || this.voicesRequested) return;
-    this.voicesRequested = true;
-    const decode = async (clip) => {
-      for (const ext of ['ogg', 'mp3'])
-        try {
-          const response = await fetch(`./assets/voices/${clip}.${ext}`);
-          if (!response.ok) continue;
-          const buffer = await context.decodeAudioData(await response.arrayBuffer());
-          this.scene.cache.audio.add('urchin-voice-' + clip, buffer);
-          return;
-        } catch {
-          /* Try the next format; a missing clip falls back to the whistle. */
-        }
-    };
-    Object.values(VOICE_CLIPS)
-      .flat()
-      .forEach((clip) => decode(clip));
-  }
-  call(call) {
-    if (!call) return;
-    const key = 'urchin-voice-' + call.clip;
-    if (call.kind !== 'voice' || !this.scene.cache.audio.exists(key)) {
-      this.play('whistle', call.gain);
-      return;
-    }
-    if (!this.engine || this.manager.context.state !== 'running' || this.volume === 0) return;
-    this.manager.play(key, {
-      volume: Math.min(1, call.gain * this.volume * 0.75),
-      rate: call.rate || 1,
-    });
-    this.played++;
   }
   setVolume(value) {
     this.volume = Math.max(0, Math.min(1, value));
@@ -192,8 +155,17 @@ export class BoatAudio {
         Math.abs(w.boat.thruster || 0) * (boatSpec(w).bowThrusterStrength ? 0.55 : 0),
         Math.abs(w.boat.pivot || 0) * 0.7,
       );
+    // The fuel plan walks the route home, so refresh its level once a second.
+    if (!active) this.fuelLevel = 'normal';
+    else if (!(Math.abs(w.time - (this.fuelCheckedAt ?? -Infinity)) < 1)) {
+      this.fuelCheckedAt = w.time;
+      this.fuelLevel = w.career && w.day?.phase === 'working' ? fuelStatus(w).level : 'normal';
+    }
+    const stutter = fuelStutter(this.fuelLevel, w.time);
     const engine =
-        active && engineState(w).powered ? this.volume * (0.055 + 0.62 * power ** 0.8) : 0,
+        active && engineState(w).powered
+          ? this.volume * (0.055 + 0.62 * power ** 0.8) * stutter
+          : 0,
       water = active
         ? this.volume *
           (0.055 +
@@ -204,7 +176,7 @@ export class BoatAudio {
     const gear = w.boat.throttle < -0.02 ? 'reverse' : power > 0.02 ? 'forward' : 'neutral';
     this.engine = this.engines[gear];
     const now = this.manager.context.currentTime,
-      rate = Math.round((0.8 + power * 1.2 + speed * 0.15) * 100) / 100,
+      rate = Math.round((0.8 + power * 1.2 + speed * 0.15) * (0.85 + 0.15 * stutter) * 100) / 100,
       updateRate = now >= (this.nextRateUpdate || 0);
     if (updateRate) this.nextRateUpdate = now + 0.05;
     for (const [kind, sound] of Object.entries(this.engines)) {

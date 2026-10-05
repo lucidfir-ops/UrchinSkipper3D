@@ -453,6 +453,9 @@ body #playtest[data-screen='conditions'] .expedition-copy {
 body #playtest[data-screen='conditions'] .expedition-choices {
   flex: none;
   display: flex;
+  /* Row direction: wrapped buttons stack downward. As a column, a second
+     button wrapped into an off-screen column on phones (October 5). */
+  flex-direction: row;
   flex-wrap: wrap;
   overflow: auto;
   max-height: 100px;

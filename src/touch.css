@@ -834,8 +834,9 @@ body.touchscreen #playtest .controller-diagrams {
   overscroll-behavior-x: contain;
   touch-action: pan-x pan-y;
 }
+/* Wide enough for whole action words on every key; phones swipe sideways. */
 body.touchscreen #playtest .keyboard-diagram {
-  min-width: 510px;
+  min-width: 720px;
 }
 body.touch-playing #hud {
   font-size: calc(11px * var(--ui-scale));
