@@ -34,7 +34,7 @@ export function frankAdvice(w, bind) {
     spec = boatSpec(w);
   return `Meet the boat: ${boat.name}.
 ${HANDLING[family]}${family === 'basic' && spec.bowThrusterStrength ? ' Your fitted bow thruster adds low-speed sideways bow control; hold left stick left or right.' : ''}
-${boat.controls}
+${boat.controls.replace(/\{(\w+)\}/g, (_, action) => bind(action))}
 ${Math.round(spec.maxSpeed * C.knotsPerMps)} knots at this load · ${spec.capacity.toLocaleString()} lb deck · ${spec.travelBurn} L/h passage. Keep fuel for the return and a reserve.
 
 Drop on promising bottom. The sounder shows depth; kelp and the chart help you find a reef edge. ${bind('recoverDiver')} deploys the selected diver. ${bind('cycleDiver')} selects the other berth. ${bind('instructions')} / ${bind('quickOrders')} changes the search direction, minimum quality and maximum bag time. ${bind('recall')} recalls bubbles within 5 m; listen for the clang and allow 2–5 seconds for a response.

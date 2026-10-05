@@ -35,6 +35,8 @@ function storageLine(report) {
   const nearlyFull = report.total > 4 * 1048576;
   return `<p class="storage-report${nearlyFull ? ' warning' : ''}">Storage: this game ${megabytes(report.game)} MB · all games on this site ${megabytes(report.total)} MB of about 5 MB.${nearlyFull ? ' <strong>Nearly full — delete old saves to keep saving.</strong>' : ''}</p>`;
 }
+// Boat control notes name actions as {action}; show the player's bindings.
+const controlsText = (text, bind) => text.replace(/\{(\w+)\}/g, (_, action) => bind(action));
 export function renderCareer(ui, w, bind) {
   if (['settings', 'ui-scale', 'gameplay-speed'].includes(ui.screen)) {
     renderPreferences(ui, w, bind);
@@ -128,7 +130,7 @@ export function renderCareer(ui, w, bind) {
     title = 'Your first working boat.';
     const id = previewBoat,
       v = FLEET[id];
-    detail = `<h3>A ${money(ECONOMY.startCash)} start from the harbour.</h3><p>Choose the boat that suits your fishing. Your starting funds buy one boat; keep the balance for the first working day. Both come fuelled, with Ada and Milo ready to crew.</p><h3>${boatDefinition(id).name}</h3><div class="career-numbers"><span>Deck<strong>${v.capacity.toLocaleString()} lb</strong></span><span>Cash after purchase<strong>${money(c.cash - v.price)}</strong></span></div><p>${id === 'outboard' ? '25 knots unloaded, 15 knots fully loaded, and easy thrust steering. The smaller deck and exposed outboard need care around rocks and timber.' : '10 knots unloaded with a 7,500 lb deck. Cheap passage running and a protected shaft, with a persistent rudder and wider turns. No bow thruster unless you fit one.'}</p><p>${v.travelBurn} L/h passage · ${v.fuelCapacity} L tank<br>${boatDefinition(id).controls}</p>`;
+    detail = `<h3>A ${money(ECONOMY.startCash)} start from the harbour.</h3><p>Choose the boat that suits your fishing. Your starting funds buy one boat; keep the balance for the first working day. Both come fuelled, with Ada and Milo ready to crew.</p><h3>${boatDefinition(id).name}</h3><div class="career-numbers"><span>Deck<strong>${v.capacity.toLocaleString()} lb</strong></span><span>Cash after purchase<strong>${money(c.cash - v.price)}</strong></span></div><p>${id === 'outboard' ? '25 knots unloaded, 15 knots fully loaded, and easy thrust steering. The smaller deck and exposed outboard need care around rocks and timber.' : '10 knots unloaded with a 7,500 lb deck. Cheap passage running and a protected shaft, with a persistent rudder and wider turns. No bow thruster unless you fit one.'}</p><p>${v.travelBurn} L/h passage · ${v.fuelCapacity} L tank<br>${controlsText(boatDefinition(id).controls, bind)}</p>`;
   }
   if (ui.screen === 'crew') {
     title = 'People make the boat.';
@@ -152,7 +154,7 @@ export function renderCareer(ui, w, bind) {
     const id = previewBoat,
       v = FLEET[id],
       def = boatDefinition(id);
-    detail = `<h3>${def.name}</h3><p>${def.description}</p><div class="career-numbers"><span>Purchase<strong>${money(v.price)}</strong></span><span>Deck<strong>${v.capacity.toLocaleString()} lb</strong></span></div><p>${v.length} × ${v.width} m · ${v.fuelCapacity} L tank · ${v.travelBurn} L/h passage · ${(v.maxSpeed * 1.943844).toFixed(0)} kn unloaded<br>${(v.draft ?? def.spec.draft ?? 2).toFixed(1)} m contact depth · ${def.drive}</p><p>${def.controls}</p><p>Requires ${RANKS[v.rank].name}. Resale: 50% of condition-adjusted hull and fittings, plus half-price remaining fuel. Fit another owned boat to make its sale available. Boats retain their own damage, fuel and equipment. Lost vessels must be replaced.</p>`;
+    detail = `<h3>${def.name}</h3><p>${def.description}</p><div class="career-numbers"><span>Purchase<strong>${money(v.price)}</strong></span><span>Deck<strong>${v.capacity.toLocaleString()} lb</strong></span></div><p>${v.length} × ${v.width} m · ${v.fuelCapacity} L tank · ${v.travelBurn} L/h passage · ${(v.maxSpeed * 1.943844).toFixed(0)} kn unloaded<br>${(v.draft ?? def.spec.draft ?? 2).toFixed(1)} m contact depth · ${def.drive}</p><p>${controlsText(def.controls, bind)}</p><p>Requires ${RANKS[v.rank].name}. Resale: 50% of condition-adjusted hull and fittings, plus half-price remaining fuel. Fit another owned boat to make its sale available. Boats retain their own damage, fuel and equipment. Lost vessels must be replaced.</p>`;
   }
   if (ui.screen === 'yourboat') {
     const spec = boatSpec(w);

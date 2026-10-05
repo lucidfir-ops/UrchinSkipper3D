@@ -2,6 +2,17 @@
 
 Run the separate 3D project at http://127.0.0.1:5184/. Start with Frank, then check a complete working day. The inherited cases below still apply.
 
+## October 5 checks
+
+1. **Night menus.** Menus open dark. Open Working day return, the Chandlery detail, the boatyard and the departure chart: is everything readable, and is no green panel left? Try Settings → Menu colours: Day and back.
+2. **Boat selection.** Drag the large boat picture under the cards; it should turn. On the Deck, focus it and use ← →.
+3. **Harbour line.** Fish close to an edge: no warning box should appear. Drive past the amber harbour line with both divers aboard: play continues and a Return to harbour chip appears beside the boat. Tap it (or press H, or use Pause → Return to harbour). Drive back in: the chip disappears.
+4. **Diver calls.** Let a diver surface close to the boat (voice) and far away (whistle). Say which voices to keep or drop.
+5. **Kelp.** At low tide, long stalks should float on the surface with a bulb and a few trailing leaves. At high tide, mostly bulbs and leaves. Leaves should stream with the current, not splay.
+6. **Reload on itch.io.** Reload mid-day several times. If the sea is ever blank, a notice should pause play and offer Reload graphics. If it recurs, turn on Troubleshooting log and send the file.
+7. **Taxis.** They should pass close to your boat, not through your divers.
+8. **Rotation (touch).** Tap Continue: the game should go fullscreen and turn with the device. Leaving fullscreen keeps it inline; Settings → Auto fullscreen & rotate on touch turns this off.
+
 - Compare High/Balanced/Battery graphics, including reload persistence. Check a wooded coast at near and far zoom, changing tide, rain/fog and night. Watch physical rock crowns and drifting logs.
 - Watch people prepare at the rail, enter and descend. In ordinary coastal water their bodies remain visible near the surface, lose contrast below about 2 m and disappear by about 5 m; deeper divers leave bubbles. Surfaced orange floats retain one/two identification stripes. Match drift on the port side; collect a bag, redeploy and board both divers.
 - Follow the moving port/stern tutorial guides; open charts, individual orders, pause, the boatyard, crew and logbook. Check keyboard, synthetic controller and touch separately. Physical USB Xbox/Steam Deck must be checked on the actual device.

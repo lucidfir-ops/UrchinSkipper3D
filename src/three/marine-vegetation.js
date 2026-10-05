@@ -106,8 +106,8 @@ function bladeGeometry(variant) {
   return geometry;
 }
 function bullKelpGeometry(variant) {
-  const bulb = new THREE.SphereGeometry(0.15, 10, 7);
-  bulb.scale(1.35, 0.85, 1);
+  const bulb = new THREE.SphereGeometry(0.24, 12, 8);
+  bulb.scale(1.3, 0.8, 1);
   const sources = [part(stipeGeometry(), 0), part(bulb, 1), part(bladeGeometry(variant), 2)];
   const geometry = mergeGeometries(sources);
   sources.forEach((g) => g.dispose());
@@ -189,23 +189,34 @@ export class MarineVegetation {
           float stretch = .45 + .55*e;
           float amp = .05 + .3*looseness;
           float k = 1.05 - .35*e;
+          // Lateral meander of the floating stipe, zero where it surfaces.
+          #define KELP_MEANDER(u) (amp*(sin(k*(u) + phase) - sin(phase) + .45*(sin(2.3*k*(u) + phase*1.7) - sin(phase*1.7))))
           vec3 bulbAt = S > 0.0
-            ? vec3(rise*sinT + S*stretch, D - .02, amp*(sin(k*S + phase) + .45*sin(2.3*k*S + phase*1.7)))
+            ? vec3(rise*sinT + S*stretch, D - .02, KELP_MEANDER(S))
             : vec3(rise*sinT, rise*cosT, 0.0);
           if (plantPart < .5) {
             float s = position.y*L;
             // Rising and floating paths, each extended past the waterline, are
             // blended over a short span so the stipe bends smoothly at the top.
             float u = s - rise;
-            vec3 up = vec3(s*sinT, s*cosT, 0.0);
-            vec3 along = vec3(rise*sinT + u*stretch, D - .02,
-              S > 0.0 ? amp*(sin(k*u + phase) + .45*sin(2.3*k*u + phase*1.7)) : 0.0);
-            float bendSpan = min(1.4, .3*rise + .05);
-            float w = S > 0.0 ? smoothstep(-bendSpan, bendSpan, u) : 0.0;
-            vec3 p = mix(up, along, w);
+            // Where the stipe surfaces it follows a quadratic curve from the
+            // rising line, through the waterline corner, onto the surface.
+            float span = S > 0.0 ? min(min(2.2, .45*rise + .3), S) : 0.0;
+            vec3 p;
+            if (S <= 0.0 || u <= -span) p = vec3(s*sinT, s*cosT, 0.0);
+            else if (u >= span) p = vec3(rise*sinT + u*stretch, D - .02, KELP_MEANDER(u));
+            else {
+              float q = (u + span)/(2.0*span);
+              vec3 a = vec3((rise - span)*sinT, (rise - span)*cosT, 0.0);
+              vec3 corner = vec3(rise*sinT, D - .02, 0.0);
+              vec3 b = vec3(rise*sinT + span*stretch, D - .02, KELP_MEANDER(span));
+              p = mix(mix(a, corner, q), mix(corner, b, q), q);
+            }
             p.y = min(p.y, D - .02);
             p.z += sin(uPlantTime*.6 + phase + s*.35)*.05*position.y;
-            transformed = p + vec3(position.x, 0.0, position.z);
+            // The submerged stipe is slimmer; the floating part reads from above.
+            float girth = mix(.5, 1.0, S > 0.0 ? smoothstep(-span - .01, span + .01, u) : 0.0);
+            transformed = p + vec3(position.x, 0.0, position.z)*girth;
           } else if (plantPart < 1.5) {
             transformed = bulbAt + position;
           } else {
@@ -223,12 +234,14 @@ export class MarineVegetation {
           }
         `) +
           `
-          float c = cos(flow.x), s = sin(flow.x);
+          ${grass ? '' : '// Plants settle in their own directions as the current slackens.'}
+          float heading = flow.x${grass ? '' : ' + sin(phase*3.7)*.9*(1.0 - clamp(flow.y, 0.0, 1.0))'};
+          float c = cos(heading), s = sin(heading);
           transformed.xz = mat2(c,-s,s,c) * transformed.xz;
         `,
       );
     };
-    material.customProgramCacheKey = () => (grass ? 'eelgrass-flow-v2' : 'bull-kelp-flow-v3');
+    material.customProgramCacheKey = () => (grass ? 'eelgrass-flow-v2' : 'bull-kelp-flow-v4');
     const shapes = grass ? [grassBlade()] : [0, 1, 2].map(bullKelpGeometry);
     const cells = new Map();
     for (const p of plants) {

@@ -114,6 +114,8 @@ UrchinSkipper3D-TEMP-ITCHIO.zip
 The game's Fullscreen & Rotate screen option is on Title, Settings and Pause
 for every input mode. Browser restrictions can still require a tap/click or
 itch.io's own fullscreen launch. Portrait and landscape are both supported.
+On touch screens, starting play enters fullscreen automatically so the game
+turns with the device (Settings → Auto fullscreen & rotate on touch).
 Touchscreen Options is on the title, in Settings and in Pause. Set controls
 scale (50–150%) and opacity (0–100%); Tiny Touch Controls selects 70%.
 Adjust UI defaults OFF. UI Scale remains separate. The desktop layout remains.

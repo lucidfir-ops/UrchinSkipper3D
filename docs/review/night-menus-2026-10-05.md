@@ -47,3 +47,5 @@ The [independent review](independent-october-5-2026-10-05.md) ranked these issue
 7. **Unreadable Day compass.** The Search-orders compass now uses ink-on-paper tokens in both themes.
 8. **Contradictory summary captures.** This came from the fixture: it changed the arrival time without the matching shipping outcome. It now presents a consistent late arrival.
 9. **Minor.** The dusk tint is stronger. The other minor items (testing tools in the pause menu, a crew-name wrap, small key captions, the mislabelled `yourboat-detail` capture) were not changed in this pass.
+
+**Second review follow-up.** The boat shop's control notes and Frank's boat briefing showed raw `{thrustPort} / {thrustStarboard}` placeholders. They now show the player's actual bindings, as the boatyard already did. Still open: on the phone the sticky purchase bar can cover the lower part of the boat preview until the player scrolls; the Deck summary's receipt is cut off at the bottom of its scroll area; chart overview captions are small.

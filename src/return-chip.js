@@ -1,6 +1,7 @@
 import { returnAvailable } from './departure-transition.js';
 import { bindingName } from './input.js';
 import { WINDOWS } from './hud-windows.js';
+import { boatSpec } from './boats.js';
 
 // October 5: beyond the harbour line with both divers aboard, a compact action
 // sits beside the boat. It never pauses play and never covers the working
@@ -55,15 +56,21 @@ export function renderReturnChip(scene, world, input) {
     halfH = el.offsetHeight / 2 || 24;
   // Prefer beside the boat (clear of the bow and the working water), then the
   // off-sector side, then inward; the first spot covering no control wins.
-  const blockers = obstacles(),
+  const hull = hullRect(scene, world, centre),
+    clearance = Math.max(OFFSET, hull.half + 10),
+    blockers = [...obstacles(), hull],
     candidates = [
       [-dy, dx],
       [dy, -dx],
       [dx, dy],
       [-dx, -dy],
     ].map(([cx, cy]) => ({
-      x: clamp(centre.x + cx * (OFFSET + halfW * Math.abs(cx)), halfW + 8, innerWidth - halfW - 8),
-      y: clamp(centre.y + cy * (OFFSET + halfH), halfH + 8, innerHeight - halfH - 8),
+      x: clamp(
+        centre.x + cx * (clearance + halfW * Math.abs(cx)),
+        halfW + 8,
+        innerWidth - halfW - 8,
+      ),
+      y: clamp(centre.y + cy * (clearance + halfH), halfH + 8, innerHeight - halfH - 8),
     })),
     clear = (p) =>
       !blockers.some(
@@ -90,4 +97,18 @@ function obstacles() {
     .filter((node) => node.offsetParent && !node.hidden)
     .map((node) => node.getBoundingClientRect())
     .filter((r) => r.width && r.height);
+}
+
+// The boat's own screen footprint (a square around its length, any heading).
+function hullRect(scene, world, centre) {
+  const step = scene.view?.project?.(world.boat.x + 1, world.boat.y, 0),
+    perMetre = step ? Math.hypot(step.x - centre.x, step.y - centre.y) : 20,
+    half = (boatSpec(world).length / 2) * perMetre + 6;
+  return {
+    half,
+    left: centre.x - half,
+    right: centre.x + half,
+    top: centre.y - half,
+    bottom: centre.y + half,
+  };
 }

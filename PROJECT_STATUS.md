@@ -1,6 +1,27 @@
 # Urchin Skipper 3D — current status
 
-October 4, 2026 · save repair, Steam Deck browser controls, deck bags and interface redesign. Claude (Claude Code) now develops this project; earlier entries below were written by Codex ("Astra"). Work, exports and publication belong only to this project and [lucidfir-ops/UrchinSkipper3D](https://github.com/lucidfir-ops/UrchinSkipper3D). The 2D edition is no longer developed.
+October 5, 2026 · night menus, harbour-line action, diver voices, bull kelp, render recovery, taxi drive-bys and touch auto-rotate. Claude (Claude Code) develops this project; entries from October 3 and earlier were written by Codex ("Astra"). Work, exports and publication belong only to this project and [lucidfir-ops/UrchinSkipper3D](https://github.com/lucidfir-ops/UrchinSkipper3D). The 2D edition is no longer developed.
+
+## October 5 revision
+
+Source: designer notes and screenshots in `feedback/10-4 v2/` and the designer's answers of October 5. Approved decisions are recorded in the Bible.
+
+- **Night menus by default.** Menus are now a dark chart table; Settings → Picture & sound → Menu colours switches back to the Day chart paper. The last pre-redesign sea-green panels were rebuilt from theme tokens. They had left text unreadable, down to 1.05:1 contrast: Working day return, the Chandlery and boatyard detail, preview captions, map captions, the harbour footer, the coast overview chart and the touch preview. An automated audit of 37 screens in both themes on phone, tablet and Deck now finds no text below 3:1 and no teal panels. Boats in boat selection turn by drag or ← →. The offload picture is a crop of the harbour painting, lit for the arrival hour. [Record](docs/review/night-menus-2026-10-05.md).
+- **Harbour line.** The on-water edge label is gone, and crossing the harbour line no longer pauses. Beyond the line with both divers aboard, a **Return to harbour** chip appears beside the boat, clear of the controls. H or Pause → Return to harbour also work. [Record](docs/review/border-return-2026-10-05.md).
+- **Diver calls.** A surfaced diver within 35 m hails the boat with a recorded CC0 human voice (11 clips, sources in `public/assets/voices/SOURCES.md`); further away they whistle. Both fade with distance. Nobody has listened to the clips yet. [Record](docs/review/diver-calls-2026-10-05.md).
+- **Bull kelp.** Each plant is now a long stipe, an air bulb and four to six narrow blades streaming downstream, posed in closed form from tide and current in the vertex shader. Low water leaves 2.6–6 m of stipe floating; ordinary high water shows mainly bulbs and blades. Draw calls are unchanged and triangles fell slightly. [Record](docs/review/bull-kelp-2026-10-05.md).
+- **Blank sea after reloading on itch.io.** The likely cause is a WebGL context lost without an event, which left the HUD and simulation running over a transparent canvas. The renderer now checks for this every frame, pauses play, and offers **Reload graphics** (save and reload). Contexts are released on unload. This was reproduced synthetically in Firefox, not on the S22. [Record](docs/review/context-loss-2026-10-05.md).
+- **Water taxis** keep their speed, cadence and straight committed runs, but aim for 14–22 m drive-bys of the player's boat, clear of divers. Before, they aimed through the bubbles. [Record](docs/review/taxi-drive-by-2026-10-05.md).
+- **Phone rotation.** A page cannot rotate itself outside fullscreen. On touch screens, starting play now enters fullscreen automatically, where the game allows every orientation, with a Settings switch to turn it off. [Record](docs/review/auto-rotate-2026-10-05.md).
+
+Independent screenshot reviews: [first](docs/review/independent-october-5-2026-10-05.md) (its should-fix items were addressed the same day; see the night-menus record) and [second, kelp and fixes](docs/review/independent-kelp-and-fixes-2026-10-05.md).
+
+**Still failing, not caused by this revision.** These failed identically on the October 4 commit, rebuilt in a separate worktree:
+- browser suite `fleet`: Three.js "Could not pack varying vMapUv/vNormal" shader validation errors;
+- `mobile-career`: landscape harbour pan cannot reveal the Harbour office;
+- `coastal-progression`: storm frame-time limit.
+
+**Not yet verified.** The S22, Doogee tablet and Steam Deck in person; the voice clips by ear; real rotation; and whether the reload fix addresses the designer's actual trigger.
 
 ## October 4 revision
 

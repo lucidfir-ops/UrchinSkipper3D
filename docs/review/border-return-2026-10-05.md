@@ -27,3 +27,5 @@ Two things blocked play near the harbour-facing edge:
 ## Limits
 
 Synthetic controller and touch only; not yet tried on the S22, the Doogee tablet or physical Deck buttons. Current can carry a boat that is idling at the line back inside, so the chip can come and go; the boat is held at the line while driven outward.
+
+**Second review follow-up (same day).** In portrait the chip could clamp onto the hull, because both side positions hit the screen edge. The boat's projected footprint is now a blocker, and the chip's distance from the boat scales with the hull's on-screen size. The boundary fixture asserts that the chip never covers the boat; it passes in all four modes.

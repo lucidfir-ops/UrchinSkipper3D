@@ -175,6 +175,15 @@ try {
         ).length;
     }, box);
     assert.equal(overlaps, 0, `${name}: chip must not cover touch controls`);
+    const hull = await page.evaluate(() => {
+      const r = urchinDebug.three,
+        b = urchinDebug.world.boat;
+      return r.project(b.x, b.y, 0);
+    });
+    assert(
+      hull.x < box.x || hull.x > box.x + box.width || hull.y < box.y || hull.y > box.y + box.height,
+      `${name}: chip must not sit over the boat`,
+    );
     await page.locator('#returnHarbourChip').tap();
     await page.waitForFunction(() => urchinDebug.world.day.phase === 'complete');
     records.push(`${name}: chip ≥44 px, on screen, clear of touch controls; tap returns.`);
