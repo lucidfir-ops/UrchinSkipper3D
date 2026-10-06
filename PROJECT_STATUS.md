@@ -82,7 +82,9 @@ Verification:
 - Final browser run on the exported build: save-storage (Chromium and Firefox), vessel-replacement (5 input modes), chart-layout, deck-load, training-preferences, keyboard-reading (Chromium and Firefox), continuous-weather, learning, operations, accessibility, hud-context (4 layouts), input, weather, voyage (300 lb landed on time) and performance (59.997 FPS at 1280×800 on RADV VANGOGH) pass.
 - coastal-progression passes its permit, map, chart and depth-gauge checks, then fails only the pre-existing storm frame-time limit described above.
 
-**Not yet verified.** Physical Steam Deck buttons, the designer's Android Escape key, real-device storage, and the new look on the three physical devices.
+**October 5 update:** the designer confirmed on the physical Deck that every button works as expected in Steam's gamepad mode, with the right trackpad still acting as the mouse. Deck controls are accepted through gamepad mode; the desktop-layout key mapping was not separately accepted.
+
+**Not yet verified.** The desktop-layout Deck key mapping on physical buttons, the designer's Android Escape key, real-device storage, and the new look on the three physical devices.
 
 ## Design authority
 
