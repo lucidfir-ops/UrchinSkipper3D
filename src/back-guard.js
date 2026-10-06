@@ -39,5 +39,12 @@ export function installBackGuard(ui, win = globalThis.window, doc = globalThis.d
   };
   doc.addEventListener('fullscreenchange', fullscreenChanged);
   doc.addEventListener('webkitfullscreenchange', fullscreenChanged);
+  // The game has no right-click actions. A right click (a mouse, a trackpad
+  // two-finger tap, the Steam Deck left trackpad in gamepad mode) or a touch
+  // long-press would otherwise open the browser menu over the sea.
+  win.addEventListener('contextmenu', (event) => {
+    if (!event.target?.matches?.('textarea,[contenteditable="true"],input:not([type="range"])'))
+      event.preventDefault();
+  });
   return () => armed;
 }

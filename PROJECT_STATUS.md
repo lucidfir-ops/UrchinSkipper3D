@@ -28,6 +28,7 @@ Source: designer notes, photos and videos in `feedback/10-5/` and the designer's
 Independent screenshot review: [in-world cues, bubbles and menus](docs/review/independent-in-world-cues-2026-10-05.md).
 
 Verification:
+
 - 646 unit tests: 645 pass, 1 intentional private-save skip, 0 fail. Lint, formatting and the production build pass.
 - Browser suites on the production build (Chromium with the Deck GPU; Firefox where named) all pass:
   - in-world-cues;
@@ -37,6 +38,7 @@ Verification:
   - performance: 59.997 FPS at 1280×800 on RADV VANGOGH. After the review fixes, in-world-cues, deck-load, operations and performance were rerun and pass (59.93 FPS).
 
 **Not yet verified.**
+
 - The S22, Doogee tablet and Steam Deck in person: the designer's S22 test predates these changes.
 - The misfire by ear.
 - Whether the hull sitting lower can be seen at all. A probe at twice the settling showed no change from the game camera until water reached the deck. The trim, heavier bob and wider wake carry the cue, in motion only. The designer may prefer a stronger, non-physical cue.
@@ -57,6 +59,7 @@ Source: designer notes and screenshots in `feedback/10-4 v2/` and the designer's
 Independent screenshot reviews: [first](docs/review/independent-october-5-2026-10-05.md) (its should-fix items were addressed the same day; see the night-menus record) and [second, kelp and fixes](docs/review/independent-kelp-and-fixes-2026-10-05.md).
 
 **Still failing, not caused by this revision.** These failed identically on the October 4 commit, rebuilt in a separate worktree:
+
 - browser suite `fleet`: Three.js "Could not pack varying vMapUv/vNormal" shader validation errors;
 - `mobile-career`: landscape harbour pan cannot reveal the Harbour office;
 - `coastal-progression`: storm frame-time limit.
@@ -78,11 +81,14 @@ The menus are redesigned as a chart room and the HUD as a wheelhouse console, wi
 The lost-vessel replacement fix and career speech-clearance work left uncommitted by the previous agent on October 3 are verified and included. Its pending coastal-progression rerun first exposed a fixture gap: the staged storm drifts across the harbour edge and correctly raises the return prompt, which the fixture now declines. The same suite then reaches its Frontier Bank storm frame-time check and fails it: total CPU p95 is about 100 ms against a 50 ms limit at the widest zoom in the staged storm. The last committed build (d6e635e), measured with the previous agent's `scripts/frontier-storm-diagnostic.js` in alternating runs on this Deck, gives the same ~103–107 ms p95, so this is an existing performance problem, not a regression. It is left open rather than relaxed.
 
 Verification:
+
 - 642 unit tests (641 pass, 1 intentional private-save skip, 0 fail); lint, formatting and production build pass.
 - Final browser run on the exported build: save-storage (Chromium and Firefox), vessel-replacement (5 input modes), chart-layout, deck-load, training-preferences, keyboard-reading (Chromium and Firefox), continuous-weather, learning, operations, accessibility, hud-context (4 layouts), input, weather, voyage (300 lb landed on time) and performance (59.997 FPS at 1280×800 on RADV VANGOGH) pass.
 - coastal-progression passes its permit, map, chart and depth-gauge checks, then fails only the pre-existing storm frame-time limit described above.
 
 **October 5 update:** the designer confirmed on the physical Deck that every button works as expected in Steam's gamepad mode, with the right trackpad still acting as the mouse. Deck controls are accepted through gamepad mode; the desktop-layout key mapping was not separately accepted.
+
+The browser right-click menu no longer opens over the game (mouse right click, a trackpad tap, the Deck's left trackpad click in gamepad mode, a touch long-press); text entry keeps it. Controller setup guidance moves to the itch.io front page by designer decision. [Record](docs/review/context-menu-2026-10-05.md).
 
 **Not yet verified.** The desktop-layout Deck key mapping on physical buttons, the designer's Android Escape key, real-device storage, and the new look on the three physical devices.
 
@@ -122,9 +128,7 @@ Harvesting divers no longer have unlimited immunity to current: holding ability,
 
 Current approximation limits: submerged shelves deflect and resist flow, while explicit separated wakes come from drying obstacles. Closely overlapping wakes use a dominant contribution and 6 m sampling; this is a game approximation. Foam is easier to read in motion than still screenshots. Long-career lamp affordability and extreme-coast fishing balance need human playtesting.
 
-
 The September 30 revision follows all four recordings in `feedback/9-30/`. Debug time advances now paint a running clock, destination and real progress, yield between simulation batches, and support stopping at the current time. Neutral forward/port work lamps replace the flat yellow ovals; actual fixture pose drives both geometry lighting and water reflection/scattering. Diver torches have attenuated underwater beams and subtly brighter visible bubbles. Kelp gathers into soft curls at slack, swings with lagging tips and re-extends into current; tide changes canopy exposure through the existing water column. The former maximum world pace becomes the new default 0%, adjustable ±100%, with existing saved physical pace preserved. Fog extinction is smoother. [Implementation and evidence](docs/review/lighting-kelp-feedback-2026-09-30.md), [independent review](docs/review/independent-lighting-kelp-2026-09-30.md).
-
 
 The September 29 follow-up uses the six photographs in `feedback/9-29`: broad meadows of individually rooted eelgrass occupy 2–6 m chart-datum depths; procedural bull kelp with long stems, floats and trailing olive-brown ribbons occupies 4–10 m. Lower tide exposes more canopy, higher tide submerges shorter plants, and local current sets downstream orientation. The former upright kelp fans are removed. Water arrows are more translucent (22% opacity). Brief speech paints over Frank’s card, including top-edge overlap. Outboards, sterndrives and jet nozzles now steer with the correct stern-thrust direction. [Implementation record](docs/review/vegetation-feedback-2026-09-29.md), [independent screenshot reviews](docs/review/independent-vegetation-feedback-2026-09-29.md).
 

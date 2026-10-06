@@ -78,3 +78,23 @@ test('browser Back opens the pause menu once, then closes menus, then can leave'
   fire('fullscreenchange');
   assert.deepEqual(opened, ['pause', 'back', 'pause'], 'leaving fullscreen pauses');
 });
+
+test('right clicks and long-presses never open the browser menu over the game', () => {
+  const { win, doc, fire } = fakeWindow();
+  installBackGuard({ started: false }, win, doc);
+  const menu = (matches) => {
+    const event = {
+      target: { matches },
+      prevented: false,
+      preventDefault: () => (event.prevented = true),
+    };
+    fire('contextmenu', event);
+    return event.prevented;
+  };
+  assert(
+    menu(() => false),
+    'sea, canvas and menus, even before a voyage starts',
+  );
+  assert(menu(undefined), 'targets such as the document itself');
+  assert(!menu((selector) => selector.includes('textarea')), 'text entry keeps copy and paste');
+});

@@ -282,6 +282,8 @@ September 24 keyboard follow-up: show latched throttle and rudder levels as grad
 
 **October 5 designer report (physical Deck):** in Steam's gamepad mode every Deck button worked as expected in the browser, and the right trackpad still moves and clicks the mouse. Gamepad mode is the accepted Deck route; no further Deck mapping changes are requested. Steam reported the Deck as a standard-mapping virtual pad (`28de-11ff`, 17 buttons, 4 axes); in that mode the left trackpad click arrives as a right mouse click and the back grips are not exposed to the browser. The desktop-layout Deck controls setting remains as a fallback.
 
+**October 5 designer decision:** do not change the game to assume every player uses a Steam Deck; players use many setups (touch phones and tablets, keyboard and mouse, USB and Bluetooth gamepads, the Deck). Controller setup guidance belongs on the itch.io front page, written by the designer, rather than in more in-game text; any rewording must cover that range of setups. The game blocks the browser right-click menu everywhere except text entry, because it has no right-click actions and a mouse right click, trackpad tap or touch long-press would otherwise open the menu over the sea. [Record](docs/review/context-menu-2026-10-05.md).
+
 Keyboard, gamepad and touch resolve to the same abstract commands. Preserve custom bindings, verified USB Xbox behavior and device-specific profiles. Never infer a raw Deck layout from an illustration or change global Steam/desktop shortcuts. Provide device diagrams, visible bindings, per-device remapping/reset and physical capture. Selecting a diagram does not change hardware mapping.
 
 | Controller default | Action |
