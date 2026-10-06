@@ -3,11 +3,13 @@ import { C } from '../config.js';
 import { deckMarkers } from '../presentation.js';
 import { openDeckSpan } from './catch-load.js';
 
-// October 5 (feedback/10-5): deck load read from the boat itself. A faint
-// ghost outline marks where the rest of a full load would sit and pulses when
-// a sack lands, a small roof lamp lights when the deck is full, and the hull
-// settles lower as weight builds. Presentation only: nothing here writes the
-// simulation, and the deck load card remains an optional instrument.
+// October 5 (feedback/10-5): deck load read from the boat itself. A roof lamp
+// lights when the deck is full and the hull settles lower as weight builds.
+// October 5 v2 (feedback/10-5 v2/): when a sack lands, a translucent 3D ghost
+// of the rest of a full load flashes on deck, second layer included, so one
+// glance shows how far the deck is from full. Between landings it is hidden:
+// a resting ghost was invisible on bare deck and hazed the real sacks. Presentation only: nothing here writes
+// the simulation, and the deck load card remains an optional instrument.
 export const LOAD_CUES = {
   fullSquat: 0.45, // metres lower at full capacity
   fullTrim: 0.022, // radians stern-down at full capacity (sacks stow aft)
@@ -16,7 +18,9 @@ export const LOAD_CUES = {
   damageSquat: 0.22, // extra settling at zero hull condition
   damageList: 0.12, // radians of list at zero hull condition
   damageThreshold: 0.65, // matches the oil sheen cue
-  pulseSeconds: 1.4,
+  pulseSeconds: 1.8,
+  restOpacity: 0, // ghost between landings
+  flashOpacity: 0.62, // whole ghost load at the peak of a landing flash
   settleRate: 1.6, // per second, eased toward the target freeboard
 };
 
@@ -51,7 +55,7 @@ export class DeckLoadCues {
     this.group.name = 'Deck load cues';
     this.group.userData.dynamic = true;
     vessel.add(this.group);
-    this.ghostMaterial = ghostOutlineMaterial();
+    this.ghostMaterial = ghostSackMaterial();
     this.sackGeometry = sackGeometry;
     this.capacity = 0;
     this.grow(32);
@@ -101,19 +105,6 @@ export class DeckLoadCues {
       cabinZ + cabinLength / 2 - 0.22,
     );
     this.group.add(this.lamp);
-    this.flash = new THREE.Mesh(
-      sackGeometry,
-      new THREE.MeshBasicMaterial({
-        color: '#ffe27a',
-        transparent: true,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-      }),
-    );
-    this.flash.name = 'Landed sack flash';
-    this.flash.renderOrder = 4;
-    this.flash.visible = false;
-    this.group.add(this.flash);
   }
   grow(capacity) {
     this.ghosts?.removeFromParent();
@@ -137,21 +128,19 @@ export class DeckLoadCues {
     if (key === this.key) return;
     this.key = key;
     if (state.slots > this.capacity) this.grow(2 ** Math.ceil(Math.log2(state.slots)));
-    // The same marker layout as the real sacks, so each ghost is exactly where
-    // a future sack will land.
+    // The same marker layout, pose and size as the real sacks, so real and
+    // ghost sacks together are the picture of a full deck, layers and all.
     const markers = deckMarkers(Array.from({ length: state.slots }), spec, area).slice(state.bags);
     this.ghosts.count = markers.length;
-    // The layer being filled reads first; later layers recede.
-    const firstLayer = markers[0]?.layer ?? 0;
     markers.forEach((mark, i) => {
-      this.fades.setX(i, [1, 0.22, 0.07][Math.min(2, mark.layer - firstLayer)]);
+      // 1 = bottom layer; 0 = a layer stacked above, drawn paler and outlined.
+      this.fades.setX(i, mark.layer ? 0 : 1);
       const x = (mark.x * spec.width) / 4,
         z = (mark.y * spec.length) / 10,
         y = 0.88 + mark.radius * 0.64 + mark.layer * 0.67;
       this.transform.position.set(x, y, z);
       this.transform.rotation.set(0, ((state.bags + i) * 2.399) % (Math.PI * 2), 0);
-      // Smaller than a sack so neighbouring rings stay separate and legible.
-      this.transform.scale.set(mark.radius * 0.66, mark.radius * 0.42, mark.radius * 0.66);
+      this.transform.scale.set(mark.radius, mark.radius * 0.64, mark.radius);
       this.transform.updateMatrix();
       this.ghosts.setMatrixAt(i, this.transform.matrix);
     });
@@ -166,23 +155,15 @@ export class DeckLoadCues {
     this.layout(state, spec);
     const light = world.weather?.sunlight ?? 1,
       flash = this.pulse * this.pulse;
-    // Dimmer at night so the outline never reads as a light source.
-    const ghost = this.ghostMaterial.uniforms;
-    ghost.uOpacity.value = (0.35 + 0.25 * light) * (1 + flash * 1.6) * alpha;
-    ghost.uFill.value = 0.04 + flash * 0.06;
-    // Cool white, distinct from the beige coiled rope on deck.
-    ghost.uColor.value.set(flash > 0.02 ? '#fff6c4' : '#d6f3f6');
-    // Only the sack that just landed flashes.
-    const newest = this.vessel.userData.catchLoad?.markers?.at(-1);
-    this.flash.visible = flash > 0.01 && !!newest;
-    if (this.flash.visible) {
-      const x = (newest.x * spec.width) / 4,
-        z = (newest.y * spec.length) / 10,
-        y = 0.88 + newest.radius * 0.64 + newest.layer * 0.67;
-      this.flash.position.set(x, y, z);
-      this.flash.scale.set(newest.radius * 1.08, newest.radius * 0.72, newest.radius * 1.08);
-      this.flash.material.opacity = 0.7 * flash * alpha;
-    }
+    // The whole ghost load flashes when a sack lands, then
+    // fades away. Dimmer at night so it never reads as a light source.
+    const ghost = this.ghostMaterial.uniforms,
+      night = 0.55 + 0.45 * Math.min(1, light);
+    ghost.uOpacity.value =
+      (LOAD_CUES.restOpacity + (LOAD_CUES.flashOpacity - LOAD_CUES.restOpacity) * flash) *
+      night *
+      alpha;
+    this.ghosts.visible = ghost.uOpacity.value > 0.003;
     this.lens.material = state.full ? this.lampOn : this.lampOff;
     this.halo.visible = state.full;
     if (state.full) {
@@ -218,7 +199,6 @@ export class DeckLoadCues {
       this.lampOff,
       this.halo.material,
       this.lamp.children[0].material,
-      this.flash.material,
     ])
       material.dispose();
   }
@@ -227,42 +207,50 @@ export class DeckLoadCues {
 const BEAM = new THREE.Vector3(1, 0, 0),
   trimQuaternion = new THREE.Quaternion();
 
-// Edge-weighted: each future sack reads as a pale ring, so ghosts over
-// sacks already aboard outline the next layer without washing out the red.
-function ghostOutlineMaterial() {
+// A translucent, softly lit sack: the top catches light and the silhouette
+// is brighter, so ghosts read as 3D volumes, not flat rings. The bottom layer
+// is warm yellow; layers stacked above are a pale cool white with a firmer
+// outline and thinner body, so the two layers stay countable and the upper
+// ghosts do not tint the red sacks beneath them salmon.
+function ghostSackMaterial() {
   return new THREE.ShaderMaterial({
     transparent: true,
     depthWrite: false,
-    side: THREE.DoubleSide, // back faces close each rim into a full ring
     uniforms: {
-      uColor: { value: new THREE.Color('#d6f3f6') },
-      uOpacity: { value: 0.6 },
-      uFill: { value: 0.05 },
+      uLower: { value: new THREE.Color('#ffe9a0') },
+      uUpper: { value: new THREE.Color('#eefaff') },
+      uOpacity: { value: 0 },
     },
     vertexShader: `
       attribute float aFade;
+      varying vec3 vWorldNormal;
       varying float vRim;
       varying float vFade;
       void main() {
         vFade = aFade;
-        vec4 local = vec4(position, 1.0);
         mat4 model = modelMatrix;
         #ifdef USE_INSTANCING
           model = modelMatrix * instanceMatrix;
         #endif
-        vec3 n = normalize(mat3(viewMatrix) * mat3(model) * normal);
-        vRim = 1.0 - abs(n.z);
-        gl_Position = projectionMatrix * viewMatrix * model * local;
+        vWorldNormal = normalize(mat3(model) * normal);
+        vRim = 1.0 - abs(normalize(mat3(viewMatrix) * vWorldNormal).z);
+        gl_Position = projectionMatrix * viewMatrix * model * vec4(position, 1.0);
       }`,
     fragmentShader: `
-      uniform vec3 uColor;
+      uniform vec3 uLower;
+      uniform vec3 uUpper;
       uniform float uOpacity;
-      uniform float uFill;
+      varying vec3 vWorldNormal;
       varying float vRim;
       varying float vFade;
       void main() {
-        float edge = smoothstep(0.84, 0.98, vRim);
-        gl_FragColor = vec4(uColor, uOpacity * vFade * (uFill + edge * 0.9));
+        vec3 n = normalize(vWorldNormal);
+        float shade = 0.5 + 0.5 * max(dot(n, normalize(vec3(-0.35, 1.0, 0.45))), 0.0);
+        float edge = smoothstep(0.55, 0.95, vRim);
+        float lower = vFade;
+        vec3 colour = mix(uUpper, uLower, lower) * (shade + edge * 0.25);
+        float body = mix(0.35, 0.7, lower), outline = mix(1.1, 0.5, lower);
+        gl_FragColor = vec4(colour, uOpacity * (body + outline * edge));
       }`,
   });
 }

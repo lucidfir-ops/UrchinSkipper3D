@@ -1,6 +1,43 @@
 # Urchin Skipper 3D — current status
 
-October 5, 2026 (second notes) · deck load, fuel and hull read from the boat, bubbles from the designer's reference with a filled ascent boil, whistle only, and phone text overflow. Earlier the same day: night menus, harbour-line action, bull kelp, render recovery, taxi drive-bys and touch auto-rotate. Claude (Claude Code) develops this project; entries from October 3 and earlier were written by Codex ("Astra"). Work, exports and publication belong only to this project and [lucidfir-ops/UrchinSkipper3D](https://github.com/lucidfir-ops/UrchinSkipper3D). The 2D edition is no longer developed.
+October 5, 2026 (v2 notes) · the deck-load ghost becomes a flashing 3D picture of a full deck, diver bubbles are half as opaque and a quarter smaller, and night-menu Settings switches keep their text when ON. Earlier the same day: deck load, fuel and hull read from the boat, the bubble redesign, whistle only, phone text overflow, night menus, harbour-line action, bull kelp, render recovery, taxi drive-bys and touch auto-rotate. Claude (Claude Code) develops this project; entries from October 3 and earlier were written by Codex ("Astra"). Work, exports and publication belong only to this project and [lucidfir-ops/UrchinSkipper3D](https://github.com/lucidfir-ops/UrchinSkipper3D). The 2D edition is no longer developed.
+
+## October 5 revision, v2 notes
+
+Source: designer notes and a Firefox screen recording from the S22 in `feedback/10-5 v2/`. Decisions are recorded in the Bible (§10 deck load, §11 bubbles).
+
+- **Deck load ghost.**
+  - When a sack lands, a translucent 3D ghost of every sack still to come flashes on deck for about 1.8 s. The ghosts are at real sack size and in the real stacking layers.
+  - The bottom layer flashes yellow. Layers stacked above flash pale white with an outline, so the second layer can be read over the red sacks.
+  - Between landings the ghost is hidden. This replaces the resting outline rings and the flash on only the newest sack.
+  - [Record](docs/review/deck-ghost-3d-2026-10-05.md).
+- **Bubbles.**
+  - Working upwelling, ascent boil and foam specks are at 50% opacity and 75% area.
+  - Measured against the previous commit: area −22% (ascent) and −28% (working); summed brightness −57% to −61%.
+  - [Record](docs/review/bubbles-lighter-2026-10-05.md).
+- **Night menu switches.**
+  - Troubleshooting log and Auto fullscreen turned into a blank cream panel when ON and not selected. A night "ink stamp" rule hid their own text (1:1 contrast). Settings rows are now excluded from it.
+  - The menu audit now also checks both switches ON, and it fails on the old CSS.
+  - [Record](docs/review/night-switch-rows-2026-10-05.md).
+
+Independent screenshot review, two passes: [ghost, bubbles and menus](docs/review/independent-ghost-bubbles-menus-2026-10-05.md). The first pass's should-fix items, a resting haze and merged layers, led to the flash-only, two-tint ghost.
+
+Verification:
+
+- 650 unit tests: 649 pass, 1 intentional private-save skip, 0 fail. Lint, formatting and the production build pass.
+- Browser suites on the production build (Chromium with the Deck GPU) all pass:
+  - menu-theme (night and day on phone, tablet and Deck, strict) and menu-theme-firefox (phone);
+  - in-world-cues, deck-load and operations (keyboard, synthetic controller, touch);
+  - performance: 59.997 FPS at 1280×800 on RADV VANGOGH.
+- After the review fixes, in-world-cues and deck-load were rerun and pass.
+
+**Open question for the designer.** At night the ascent boil, already faint before, is about 70% dimmer. It is still visible within the 16 m unlit night range. Keep the uniform change, or exempt the ascent warning or night?
+
+**Not yet verified.**
+
+- The S22, tablet and Deck in person.
+- A phone-size frame of the flash: at wide zoom it reads as "room left aft", but individual sacks can't be told apart.
+- Whether the white upper-layer ghosts could be mistaken for bubbles in play.
 
 ## October 5 revision, second notes
 

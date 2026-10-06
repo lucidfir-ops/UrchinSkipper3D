@@ -232,6 +232,17 @@ try {
           urchinDebug.ui.open(s);
         }, screen);
         await capture(screen);
+        if (screen === 'settings') {
+          // October 5 v2: a switch that is ON but not selected lost its text at
+          // night. Turn each on, move the selection away, and audit it.
+          const row = (id) => page.locator(`#playtest [data-action="${id}"]`);
+          await row('logging').click();
+          await row('auto-fullscreen').click();
+          await capture('settings-logging-on');
+          await row('logging').click();
+          await capture('settings-auto-fullscreen-on');
+          await row('auto-fullscreen').click();
+        }
         if (['outfit', 'fleet', 'yourboat'].includes(screen)) {
           // Focus a later row so its detail panel (and 3D preview) opens.
           const row = page.locator('#playtest .career-choices button').nth(2);

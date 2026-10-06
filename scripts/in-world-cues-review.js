@@ -8,7 +8,7 @@ import { chromium } from '@playwright/test';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
 
-const output = process.env.CUES_OUT || 'test-results/in-world-cues-2026-10-05';
+const output = process.env.CUES_OUT || 'test-results/in-world-cues-2026-10-05-v2';
 mkdirSync(output, { recursive: true });
 const browser = await chromium.launch({
   headless: true,
@@ -117,11 +117,47 @@ try {
       'bubbles-close',
       { divers: ['working', 'ascending'], load: 0, hull: 1, zoom: 3.2, seconds: 4 },
     ],
+    [
+      // Close zoom puts the divers about 9 m off, inside the 16 m night range
+      // without work lights; at 1.6 they sit 18 m off and are correctly hidden.
+      'bubbles-ascent-night',
+      { divers: ['working', 'ascending'], load: 0, hull: 1, zoom: 3.2, seconds: 4, night: true },
+    ],
+    [
+      'load-pulse-wide',
+      { divers: ['ready', 'ready'], load: 0.3, hull: 1, zoom: 1, seconds: 3, pulse: true },
+    ],
     ['load-empty', { divers: ['ready', 'ready'], load: 0, hull: 1, zoom: 2.2, seconds: 2 }],
     ['load-half', { divers: ['ready', 'ready'], load: 0.5, hull: 1, zoom: 2.2, seconds: 3 }],
     [
       'load-pulse',
       { divers: ['ready', 'ready'], load: 0.5, hull: 1, zoom: 2.2, seconds: 3, pulse: true },
+    ],
+    // October 5 v2: the whole remaining load flashes as 3D sacks, including
+    // the second layer stacked over sacks already aboard.
+    [
+      'load-light-pulse',
+      { divers: ['ready', 'ready'], load: 0.12, hull: 1, zoom: 2.2, seconds: 3, pulse: true },
+    ],
+    [
+      'load-second-layer',
+      { divers: ['ready', 'ready'], load: 0.72, hull: 1, zoom: 2.2, seconds: 3 },
+    ],
+    [
+      'load-second-layer-pulse',
+      { divers: ['ready', 'ready'], load: 0.72, hull: 1, zoom: 2.2, seconds: 3, pulse: true },
+    ],
+    [
+      'load-pulse-night',
+      {
+        divers: ['ready', 'ready'],
+        load: 0.3,
+        hull: 1,
+        zoom: 2.2,
+        seconds: 3,
+        pulse: true,
+        night: true,
+      },
     ],
     ['load-full', { divers: ['ready', 'ready'], load: 1, hull: 1, zoom: 2.2, seconds: 4 }],
     [

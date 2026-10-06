@@ -211,11 +211,13 @@ html body #playtest#playtest :is(.touch-preview-stick, .touch-preview-button, .t
   background: var(--console-body);
   border-color: var(--console-bezel);
 }
-/* Switches that are ON read as inked stamps at night (like pressed toggles). */
+/* Switches that are ON read as inked stamps at night (like pressed toggles).
+   Settings rows are excluded: their title and hint carry their own ink colour,
+   which vanished on the stamp (October 5 v2 video); their knob shows the state. */
 html[data-menu-theme='night']
   body
   #playtest#playtest
-  [role='switch'][aria-checked='true']:not(.selected) {
+  [role='switch'][aria-checked='true']:not(.selected, .menu-row) {
   color: var(--chart-paper);
   background: var(--chart-ink);
 }

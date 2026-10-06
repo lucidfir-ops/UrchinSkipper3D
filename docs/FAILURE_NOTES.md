@@ -19,6 +19,9 @@
 - Weather data exposes `kind === 'fog'` and `visibility`, not a numeric `fog` property. Reading the nonexistent field silently left clear air. Ordinary distance fog also uses the camera's 240 m altitude, which would blind the skipper if given maritime sight distances. A horizontal radial mist layer now reconstructs sea-level positions and uses the original weather/night visibility helper; rocks, logs and wildlife independently retain their source visibility limits.
 - Adding UV-dependent generated terrain materials briefly exposed an undeclared per-tile UV array in a local construction probe. The focused CPU probe caught it before handoff; the array is now allocated per spatial tile, and lint plus world construction/disposal checks pass.
 
+- October 5 v2: a menu audit that only ever sees default settings misses states the player creates. Both Settings switches are OFF by default, so the night-theme inversion that blanked them when ON passed every audit until the designer turned one on. Audit toggled states too.
+- October 5 v2: rerunning `scripts/in-world-cues-review.js` wrote into the earlier review's date-named folder and overwrote its screenshots, so a first before/after comparison silently compared the new build with itself (identical pixel counts gave it away). Render a true baseline from the previous commit in a separate worktree, and give each round's fixture output its own folder.
+
 The following notes were copied as read-only historical reference from the 2D source at the start of the separate project. They do not describe tests newly performed on the 3D renderer.
 
 ---

@@ -13,7 +13,7 @@ import { trafficPose } from '../traffic-view.js';
 import { alongsidePoint } from '../patrol.js';
 import { CatchLoad, catchNetTexture } from './catch-load.js';
 import { DeckLoadCues } from './deck-load-cues.js';
-import { DiverBoil, BOIL_RADIUS } from './diver-boil.js';
+import { DiverBoil, BOIL_RADIUS, BUBBLE_LOOK } from './diver-boil.js';
 import { fleetProfile } from './fleet-profiles.js';
 import { trafficProfile } from './traffic-profiles.js';
 import { waterColumnMaterials, waterTurbidity, submergedContrast } from './water-optics.js';
@@ -2029,7 +2029,11 @@ class WakeField {
       p.life -= dt;
       const distance = world ? Math.hypot(p.x - world.boat.x, p.z - world.boat.y) : 0;
       const visibility =
-        world && p.bubble ? bubbleOpacity(world, distance) : distance < range ? 1 : 0;
+        world && p.bubble
+          ? bubbleOpacity(world, distance) * BUBBLE_LOOK.opacity
+          : distance < range
+            ? 1
+            : 0;
       this.opacities.setX(i, p.life > 0 ? visibility * Math.min(1, p.life / 1.2) : 0);
       if (p.life <= 0) {
         scratchObject.scale.setScalar(0);
@@ -2517,12 +2521,15 @@ export class VesselView {
           // Scattered foam specks drift off with the current; during the
           // ascent warning they fill the boil instead of tracing a ring.
           const ascending = motion.phase === 'ascending',
-            reach = ascending ? BOIL_RADIUS * (0.2 + 0.38 * motion.progress) : 1.6;
+            reach =
+              (ascending ? BOIL_RADIUS * (0.2 + 0.38 * motion.progress) : 1.6) * BUBBLE_LOOK.scale;
           for (let j = 0; j < (ascending ? 4 : 3); j++) {
             const n = this.speckIndex++,
               angle = n * 2.39996 + i * 1.7,
               r = reach * Math.sqrt(((n * 0.618034) % 1) * 0.95 + 0.05),
-              size = ascending ? 0.22 + ((n * 0.37) % 1) * 0.3 : 0.22 + ((n * 0.53) % 1) * 0.28;
+              size =
+                (ascending ? 0.22 + ((n * 0.37) % 1) * 0.3 : 0.22 + ((n * 0.53) % 1) * 0.28) *
+                BUBBLE_LOOK.scale;
             this.wakes.emit(
               d.x + Math.cos(angle) * r,
               d.y + Math.sin(angle) * r,

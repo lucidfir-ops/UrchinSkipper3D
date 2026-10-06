@@ -28,7 +28,7 @@ globalThis.document ??= {
 };
 const { makeVessel, makeMaterials } = await import('../src/three/vessels.js');
 const { DeckLoadCues, deckLoadState, LOAD_CUES } = await import('../src/three/deck-load-cues.js');
-const { DiverBoil } = await import('../src/three/diver-boil.js');
+const { DiverBoil, BUBBLE_LOOK } = await import('../src/three/diver-boil.js');
 
 const id = Object.keys(FLEET)[0],
   spec = { ...FLEET[id], ...boatDefinition(id).spec, capacity: 1500 };
@@ -150,4 +150,71 @@ test('October 5 second notes: divers only whistle; no recorded voices ship', () 
   assert.equal(existsSync('public/assets/voices'), false);
   assert.equal(existsSync('src/diver-calls.js'), false);
   assert.match(readFileSync('src/main.js', 'utf8'), /surface: 'whistle'/);
+});
+
+test('October 5 v2: the ghost is the rest of a full deck in 3D sacks, second layer included, and all of it flashes', () => {
+  const big = { ...spec, capacity: 7500 },
+    vessel = makeVessel(big, boatDefinition(id), makeMaterials()),
+    cues = new DeckLoadCues(vessel, vessel.userData.catchLoad.geometry),
+    load = (bags) => ({ ...world(bags), catch: bags * 300 });
+  cues.update(load(3), big, 1 / 60);
+  assert.equal(cues.ghosts.count, 22, '25 sacks make a full 7,500 lb deck');
+  const heights = new Set(),
+    m = new THREE.Matrix4(),
+    p = new THREE.Vector3(),
+    q = new THREE.Quaternion(),
+    k = new THREE.Vector3();
+  for (let i = 0; i < cues.ghosts.count; i++) {
+    cues.ghosts.getMatrixAt(i, m);
+    m.decompose(p, q, k);
+    heights.add(p.y.toFixed(2));
+    assert.equal(k.x.toFixed(3), '0.640', 'ghosts are real sack size, not shrunken rings');
+    assert.equal(
+      cues.fades.getX(i),
+      p.y > 1.5 ? 0 : 1,
+      'upper layers are marked for their own tint',
+    );
+  }
+  assert.equal(heights.size, 2, 'a second layer stacks above the first');
+  assert.equal(cues.ghosts.visible, false, 'hidden between landings');
+  const rest = cues.ghostMaterial.uniforms.uOpacity.value;
+  cues.update(load(4), big, 1 / 60);
+  const peak = cues.ghostMaterial.uniforms.uOpacity.value;
+  assert(
+    peak > 0.5 && cues.ghosts.visible,
+    `the whole ghost flashes on a landed sack (${rest} → ${peak})`,
+  );
+  assert.equal(cues.ghosts.count, 21);
+  assert.equal(vessel.getObjectByName('Landed sack flash'), undefined, 'no single-sack highlight');
+  for (let i = 0; i < 200; i++) cues.update(load(4), big, 1 / 60);
+  assert.equal(cues.ghostMaterial.uniforms.uOpacity.value, 0);
+  assert.equal(cues.ghosts.visible, false, 'and fades away again');
+  assert.match(cues.ghostMaterial.fragmentShader, /shade/, 'lit as a volume');
+  cues.dispose();
+});
+
+test('October 5 v2: diver bubbles are half as opaque and a quarter smaller in area', () => {
+  assert.equal(BUBBLE_LOOK.opacity, 0.5);
+  assert.equal((BUBBLE_LOOK.scale ** 2).toFixed(2), '0.75');
+  const boil = new DiverBoil({ add() {} }, 0);
+  boil.update({
+    x: 0,
+    z: 0,
+    surfaceY: 0,
+    phase: 'working',
+    progress: 0,
+    opacity: 1,
+    light: 1,
+    glow: false,
+    time: 0,
+    dt: 1 / 60,
+  });
+  assert.equal(boil.material.uniforms.uOpacity.value, 0.5);
+  assert.equal(boil.mesh.scale.x, BUBBLE_LOOK.scale);
+  boil.dispose();
+});
+
+test('October 5 v2: a Settings switch that is ON keeps its text at night', () => {
+  const css = readFileSync('src/ui-night.css', 'utf8');
+  assert.match(css, /\[role='switch'\]\[aria-checked='true'\]:not\(\.selected, \.menu-row\)/);
 });

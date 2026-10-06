@@ -6,6 +6,10 @@ import * as THREE from 'three';
 // that grows over the diver. Never a hollow ring. Drawn per diver on the sea
 // surface; visibility comes from the same bubbleOpacity rule as the specks.
 export const BOIL_RADIUS = 4; // metres; the shader's unit disc
+// October 5 v2 (feedback/10-5 v2/): the designer kept the look but asked for
+// 50% transparency and about 25% less area. Applies to the working upwelling,
+// the ascent boil and the foam specks alike, so the ascent still reads denser.
+export const BUBBLE_LOOK = { opacity: 0.5, scale: Math.sqrt(0.75) };
 
 const vertexShader = `
   varying vec2 vUv;
@@ -151,6 +155,7 @@ export class DiverBoil {
       this.material,
     );
     this.mesh.rotation.x = -Math.PI / 2;
+    this.mesh.scale.set(BUBBLE_LOOK.scale, BUBBLE_LOOK.scale, 1);
     this.mesh.renderOrder = 2;
     this.mesh.frustumCulled = false;
     this.mesh.visible = false;
@@ -172,7 +177,7 @@ export class DiverBoil {
     u.uTime.value = time;
     u.uWork.value = this.work;
     u.uBoil.value = this.boil;
-    u.uOpacity.value = opacity;
+    u.uOpacity.value = opacity * BUBBLE_LOOK.opacity;
     u.uLight.value = light;
     u.uGlowAmount.value = glow ? 1 : 0;
     this.mesh.visible = opacity > 0 && (this.work > 0.01 || this.boil > 0.01);
