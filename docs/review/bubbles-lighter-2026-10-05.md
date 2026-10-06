@@ -21,7 +21,7 @@ Unit test: `tests/in-world-cues.test.js`.
 
 ## Night
 
-The independent reviewer's second pass found the first night frame empty. The fixture placed the divers 18 m off, beyond the 16 m night range without work lights (`workLightRange`), so the existing night rule hid them correctly. At close zoom (9 m) the night ascent boil renders. Compared with the previous commit, it was already faint at night (peak grey 33 on a background of 15) and is now fainter (27 on 12, about 70% less summed brightness). It remains visible, but at night it is a weak warning. A night or ascent-only exception would depart from the designer's uniform request, so it is left as a question for the designer.
+The independent reviewer's second pass found the first night frame empty. The fixture placed the divers 18 m off, beyond the 16 m night range without work lights (`workLightRange`), so the existing night rule hid them correctly. At close zoom (9 m) the night ascent boil renders. Compared with the previous commit, it was already faint at night (peak grey 33 on a background of 15) and is now fainter (27 on 12, about 70% less summed brightness). It remains visible, but at night it is a weak warning. This went to the designer as a question. Their answer (divers at night always carry flashlights, and a lit ascent is very easy to see) is implemented in the [night torch record](night-torch-bubbles-2026-10-05.md): with flashlights, the ascent boil is now torch-lit at full strength, and lit bubbles are seen out to the weather's visibility.
 
 ## Limits
 

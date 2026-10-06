@@ -39,8 +39,12 @@ test('diver torches respect equipment, darkness, water absorption and sight dist
   const pose = { x: 3, y: 0, depth: 1, underwater: true };
   const near = diverTorchStrength(world, pose);
   assert(near > 0.7);
-  assert(diverTorchStrength(world, { ...pose, depth: 4 }) < near * 0.25);
-  assert.equal(diverTorchStrength(world, { ...pose, depth: 5 }), 0);
+  // October 5: a faint glow shows from a diver swimming down to about 10 m.
+  const deep = diverTorchStrength(world, { ...pose, depth: 8 });
+  assert(deep > 0.05 && deep < near * 0.3, `faint at 8 m (${deep})`);
+  assert.equal(diverTorchStrength(world, { ...pose, depth: 10 }), 0);
+  // The torch is its own light: seen past the boat's unlit 16 m, out to weather visibility.
+  assert(diverTorchStrength(world, { ...pose, x: 100 }) > 0.7);
   assert.equal(diverTorchStrength(world, { ...pose, x: 1000 }), 0);
   assert.equal(diverTorchStrength(world, { ...pose, underwater: false }), 0);
   world.career.fleet.test.disabledEquipment = ['torch'];

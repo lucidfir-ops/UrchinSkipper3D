@@ -9,7 +9,13 @@ export const BOIL_RADIUS = 4; // metres; the shader's unit disc
 // October 5 v2 (feedback/10-5 v2/): the designer kept the look but asked for
 // 50% transparency and about 25% less area. Applies to the working upwelling,
 // the ascent boil and the foam specks alike, so the ascent still reads denser.
-export const BUBBLE_LOOK = { opacity: 0.5, scale: Math.sqrt(0.75) };
+// At night a diver's torch lights the ascent boil from below: it is drawn at
+// full strength and full light, while working bubbles stay a faint glow.
+export const BUBBLE_LOOK = { opacity: 0.5, scale: Math.sqrt(0.75), litAscentOpacity: 1 };
+// Torch-lit bubbles are their own light source: they draw after the night sea
+// mist (coastal-mist.js, renderOrder 100000), which darkens everything beyond
+// the boat's light range, so they show as far as weather visibility allows.
+export const LIT_RENDER_ORDER = 100001;
 
 const vertexShader = `
   varying vec2 vUv;
@@ -23,6 +29,8 @@ const fragmentShader = `
   uniform float uWork;
   uniform float uBoil;
   uniform float uOpacity;
+  uniform float uWorkOpacity;
+  uniform float uBoilOpacity;
   uniform float uLight;
   uniform float uSeed;
   uniform vec3 uGlow;
@@ -109,6 +117,9 @@ const fragmentShader = `
     colour += vec3(0.95) * uWork * scatter * 0.55;
     alpha += uWork * scatter * 0.55;
 
+    colour *= uWorkOpacity;
+    alpha *= uWorkOpacity;
+
     // Ascent boil: a filled white disc growing with the warning, churning.
     float extent = mix(0.24, 0.65, uBoil); // about 2 to 5 m across
     float edgeNoise = fbm(vUv * 3.5 + vec2(t * 0.6, t * 0.45)) - 0.5;
@@ -121,7 +132,8 @@ const fragmentShader = `
     float churn = cells(vUv * 4.2 + vec2(t * 0.1, t * 0.18), t * 2.8);
     float fine = cells(vUv * 11.0 - vec2(t * 0.2, 0.0), t * 4.0);
     float foam = 0.6 + 0.28 * smoothstep(0.6, 0.1, churn) + 0.12 * smoothstep(0.5, 0.15, fine);
-    float boilAlpha = step(0.001, uBoil) * disc * (0.62 + 0.36 * smoothstep(0.0, 0.5, uBoil)) * foam;
+    float boilAlpha = step(0.001, uBoil) * disc * (0.62 + 0.36 * smoothstep(0.0, 0.5, uBoil)) * foam
+      * uBoilOpacity;
     vec3 white = mix(vec3(0.74, 0.84, 0.82), vec3(1.0), smoothstep(0.6, 0.95, foam));
     colour = colour * (1.0 - boilAlpha) + white * boilAlpha;
     alpha = alpha * (1.0 - boilAlpha) + boilAlpha;
@@ -142,6 +154,8 @@ export class DiverBoil {
         uWork: { value: 0 },
         uBoil: { value: 0 },
         uOpacity: { value: 0 },
+        uWorkOpacity: { value: BUBBLE_LOOK.opacity },
+        uBoilOpacity: { value: BUBBLE_LOOK.opacity },
         uLight: { value: 1 },
         uSeed: { value: seed * 0.37 },
         uGlow: { value: new THREE.Color('#c4ffe3') },
@@ -177,10 +191,14 @@ export class DiverBoil {
     u.uTime.value = time;
     u.uWork.value = this.work;
     u.uBoil.value = this.boil;
-    u.uOpacity.value = opacity * BUBBLE_LOOK.opacity;
-    u.uLight.value = light;
+    u.uOpacity.value = opacity;
+    u.uWorkOpacity.value = BUBBLE_LOOK.opacity;
+    u.uBoilOpacity.value = glow ? BUBBLE_LOOK.litAscentOpacity : BUBBLE_LOOK.opacity;
+    // The torch lights the ascent boil; working bubbles keep the night level.
+    u.uLight.value = glow ? light + (1 - light) * this.boil : light;
     u.uGlowAmount.value = glow ? 1 : 0;
     this.mesh.visible = opacity > 0 && (this.work > 0.01 || this.boil > 0.01);
+    this.mesh.renderOrder = glow ? LIT_RENDER_ORDER : 2;
     this.mesh.position.set(x, surfaceY + 0.06, z);
   }
   reset() {

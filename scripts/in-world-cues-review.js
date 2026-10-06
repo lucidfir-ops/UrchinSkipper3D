@@ -24,7 +24,7 @@ page.on('console', (m) => {
 
 // Advance presentation (not the simulation) so particles and boils build up.
 const stage = (state) =>
-  page.evaluate(({ divers, load, hull, zoom, seconds, night, pulse }) => {
+  page.evaluate(({ divers, load, hull, zoom, seconds, night, pulse, torch }) => {
     const d = urchinDebug,
       r = d.three,
       w = d.world,
@@ -39,6 +39,13 @@ const stage = (state) =>
     };
     w.day.minute = night ? 21 * 60 : 600;
     b.hullHealth = hull;
+    // Diver flashlights fitted (and enabled) only where a stage asks for them.
+    const fitted = w.career?.fleet?.[b.configuration];
+    if (fitted) {
+      fitted.equipment = (fitted.equipment || []).filter((id) => id !== 'torch');
+      if (torch) fitted.equipment.push('torch');
+      fitted.disabledEquipment = (fitted.disabledEquipment || []).filter((id) => id !== 'torch');
+    }
     const spec = d.simulation.boatSpec(w);
     const count = Math.round((load * spec.capacity) / 300);
     w.bags = Array.from({ length: count }, (_, n) => ({ id: `cue-${n}`, weight: 300 }));
@@ -80,6 +87,13 @@ const stage = (state) =>
       state: v.loadState,
       hullY: v.boat.position.y,
       roll: v.boat.rotation.z,
+      torch: !!w.career?.fleet?.[b.configuration]?.equipment?.includes('torch'),
+      boils: v.boils.map((boil) => ({
+        visible: boil.mesh.visible,
+        opacity: +boil.material.uniforms.uOpacity.value.toFixed(3),
+        boil: +boil.boil.toFixed(3),
+        light: +boil.material.uniforms.uLight.value.toFixed(3),
+      })),
     };
   }, state);
 
@@ -122,6 +136,31 @@ try {
       // without work lights; at 1.6 they sit 18 m off and are correctly hidden.
       'bubbles-ascent-night',
       { divers: ['working', 'ascending'], load: 0, hull: 1, zoom: 3.2, seconds: 4, night: true },
+    ],
+    // October 5: torch-lit divers 18 m off, past the 16 m unlit night range.
+    [
+      'bubbles-night-torch',
+      {
+        divers: ['working', 'ascending'],
+        load: 0,
+        hull: 1,
+        zoom: 1.6,
+        seconds: 4,
+        night: true,
+        torch: true,
+      },
+    ],
+    [
+      'bubbles-night-torch-wide',
+      {
+        divers: ['working', 'ascending'],
+        load: 0,
+        hull: 1,
+        zoom: 0.8,
+        seconds: 4,
+        night: true,
+        torch: true,
+      },
     ],
     [
       'load-pulse-wide',

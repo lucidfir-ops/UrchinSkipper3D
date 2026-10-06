@@ -1,14 +1,23 @@
 import * as THREE from 'three';
 import { enabledEquipment } from '../equipment-controls.js';
-import { submergedContrast, waterTurbidity } from './water-optics.js';
+import { waterTurbidity } from './water-optics.js';
 import { bubbleOpacity } from '../bubble-visibility.js';
+import { LIT_RENDER_ORDER } from './diver-boil.js';
+
+// October 5 (designer): a torch shows as a faint glow from a diver swimming
+// down to about 10 m, deeper than a body can be seen (5 m); murk shortens it.
+export function torchDepthGlow(depth, turbidity = 1) {
+  const d = Math.max(0, depth) * turbidity,
+    t = Math.min(1, Math.max(0, (d - 4) / 6));
+  return Math.exp(-d * 0.12) * (1 - t * t * (3 - 2 * t));
+}
 
 export function diverTorchStrength(world, pose) {
   if (!world.weather?.night || !enabledEquipment(world).includes('torch') || !pose.underwater)
     return 0;
   return (
-    submergedContrast(pose.depth, waterTurbidity(world)) *
-    bubbleOpacity(world, Math.hypot(pose.x - world.boat.x, pose.y - world.boat.y))
+    torchDepthGlow(pose.depth, waterTurbidity(world)) *
+    bubbleOpacity(world, Math.hypot(pose.x - world.boat.x, pose.y - world.boat.y), true)
   );
 }
 
@@ -41,7 +50,8 @@ export class DiverTorch {
     this.geometry.translate(0, -1.3, 0);
     this.geometry.rotateX(Math.PI / 2);
     const beam = new THREE.Mesh(this.geometry, this.material);
-    beam.renderOrder = 3;
+    // Only ever visible at night with torches, as its own light past the mist.
+    beam.renderOrder = LIT_RENDER_ORDER;
     this.group.add(beam);
     this.light = new THREE.SpotLight('#d4ffe6', 0, 5, 0.35, 0.85, 2);
     this.light.target.position.set(0, -0.5, -2.6);

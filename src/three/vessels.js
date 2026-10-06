@@ -5,7 +5,7 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { boatDefinition, boatSpec } from '../boats.js';
 import { workLightsOn, workLightStrength, enabledEquipment } from '../equipment-controls.js';
 import { surfaceBlood } from '../sea-cues.js';
-import { bubbleOpacity } from '../bubble-visibility.js';
+import { bubbleOpacity, diverLightsOn } from '../bubble-visibility.js';
 import { currentAt } from '../environment.js';
 import { visibilityRange } from '../assists.js';
 import { departureBoat } from '../departure-transition.js';
@@ -13,7 +13,7 @@ import { trafficPose } from '../traffic-view.js';
 import { alongsidePoint } from '../patrol.js';
 import { CatchLoad, catchNetTexture } from './catch-load.js';
 import { DeckLoadCues } from './deck-load-cues.js';
-import { DiverBoil, BOIL_RADIUS, BUBBLE_LOOK } from './diver-boil.js';
+import { DiverBoil, BOIL_RADIUS, BUBBLE_LOOK, LIT_RENDER_ORDER } from './diver-boil.js';
 import { fleetProfile } from './fleet-profiles.js';
 import { trafficProfile } from './traffic-profiles.js';
 import { waterColumnMaterials, waterTurbidity, submergedContrast } from './water-optics.js';
@@ -1910,7 +1910,7 @@ class WakeField {
     this.mesh.renderOrder = 3;
     scene.add(this.mesh);
   }
-  emit(x, z, size, vx, vz, life, spread = 0, bubble = false, torch = false) {
+  emit(x, z, size, vx, vz, life, spread = 0, bubble = false, torch = false, bright = false) {
     const p = this.particles[this.index++ % this.size];
     Object.assign(p, {
       x,
@@ -1923,6 +1923,7 @@ class WakeField {
       spread,
       bubble,
       torch,
+      bright,
       flowTime: 0,
       spin: this.index * 2.39996,
     });
@@ -2030,7 +2031,8 @@ class WakeField {
       const distance = world ? Math.hypot(p.x - world.boat.x, p.z - world.boat.y) : 0;
       const visibility =
         world && p.bubble
-          ? bubbleOpacity(world, distance) * BUBBLE_LOOK.opacity
+          ? bubbleOpacity(world, distance, p.torch) *
+            (p.bright ? BUBBLE_LOOK.litAscentOpacity : BUBBLE_LOOK.opacity)
           : distance < range
             ? 1
             : 0;
@@ -2064,6 +2066,9 @@ class WakeField {
       this.particleColor.multiplyScalar(world?.weather?.night ? (glowing ? 1.3 : 0.4) : 1);
       this.mesh.setColorAt(i, this.particleColor);
     }
+    // Torch-lit bubble specks show past the night mist. Unlit foam has zero
+    // opacity beyond the boat's light range, so it is not revealed by this.
+    this.mesh.renderOrder = world && diverLightsOn(world) ? LIT_RENDER_ORDER : 3;
     this.mesh.instanceMatrix.needsUpdate = true;
     this.opacities.needsUpdate = true;
     this.mesh.instanceColor.needsUpdate = true;
@@ -2516,7 +2521,7 @@ export class VesselView {
           motion = diverMotion(world, d);
         if (
           ['descending', 'searching', 'working', 'ascending'].includes(motion.phase) &&
-          bubbleOpacity(world, Math.hypot(d.x - boat.x, d.y - boat.y)) > 0
+          bubbleOpacity(world, Math.hypot(d.x - boat.x, d.y - boat.y), true) > 0
         ) {
           // Scattered foam specks drift off with the current; during the
           // ascent warning they fill the boil instead of tracing a ring.
@@ -2539,7 +2544,8 @@ export class VesselView {
               ascending ? 1.6 : 3.2,
               ascending ? 0.2 : 0.03,
               true,
-              !!world.weather?.night && enabledEquipment(world).includes('torch'),
+              diverLightsOn(world),
+              ascending && diverLightsOn(world),
             );
           }
         }
@@ -2563,7 +2569,7 @@ export class VesselView {
       this.wakeAccumulator = 0;
     }
     this.wakes.update(dt, surfaceY, world);
-    const torchGlow = !!world.weather?.night && enabledEquipment(world).includes('torch');
+    const torchGlow = diverLightsOn(world);
     this.boils.forEach((boil, i) => {
       const d = world.divers[i];
       if (!d) return boil.reset();
@@ -2574,7 +2580,7 @@ export class VesselView {
         surfaceY,
         phase: motion.phase,
         progress: motion.progress ?? 0,
-        opacity: bubbleOpacity(world, Math.hypot(d.x - boat.x, d.y - boat.y)),
+        opacity: bubbleOpacity(world, Math.hypot(d.x - boat.x, d.y - boat.y), true),
         light: world.weather?.night ? 0.4 : Math.max(0.4, world.weather?.sunlight ?? 1),
         glow: torchGlow,
         time: this.elapsed,

@@ -1,6 +1,6 @@
 # Urchin Skipper 3D — current status
 
-October 5, 2026 (v2 notes) · the deck-load ghost becomes a flashing 3D picture of a full deck, diver bubbles are half as opaque and a quarter smaller, and night-menu Settings switches keep their text when ON. Earlier the same day: deck load, fuel and hull read from the boat, the bubble redesign, whistle only, phone text overflow, night menus, harbour-line action, bull kelp, render recovery, taxi drive-bys and touch auto-rotate. Claude (Claude Code) develops this project; entries from October 3 and earlier were written by Codex ("Astra"). Work, exports and publication belong only to this project and [lucidfir-ops/UrchinSkipper3D](https://github.com/lucidfir-ops/UrchinSkipper3D). The 2D edition is no longer developed.
+October 5, 2026 (v2 notes) · torch-lit bubbles show at night as by day, the deck-load ghost becomes a flashing 3D picture of a full deck, diver bubbles are half as opaque and a quarter smaller, and night-menu Settings switches keep their text when ON. Earlier the same day: deck load, fuel and hull read from the boat, the bubble redesign, whistle only, phone text overflow, night menus, harbour-line action, bull kelp, render recovery, taxi drive-bys and touch auto-rotate. Claude (Claude Code) develops this project; entries from October 3 and earlier were written by Codex ("Astra"). Work, exports and publication belong only to this project and [lucidfir-ops/UrchinSkipper3D](https://github.com/lucidfir-ops/UrchinSkipper3D). The 2D edition is no longer developed.
 
 ## October 5 revision, v2 notes
 
@@ -31,13 +31,21 @@ Verification:
   - performance: 59.997 FPS at 1280×800 on RADV VANGOGH.
 - After the review fixes, in-world-cues and deck-load were rerun and pass.
 
-**Open question for the designer.** At night the ascent boil, already faint before, is about 70% dimmer. It is still visible within the 16 m unlit night range. Keep the uniform change, or exempt the ascent warning or night?
+**Night flashlights (designer's answer, same day).**
+- At night, divers work with flashlights or don't dive. Torch-lit bubbles and glow are now seen out to the weather's visibility, as by day, and draw above the night mist.
+- The lit ascent boil is at full strength and torch-lit; working bubbles stay a faint glow. The torch's underwater glow now reaches about 10 m deep, where it used to stop at 5 m.
+- Reefs and divers without flashlights keep the night limit.
+- A third independent pass found no must-fix.
+- `continuous-weather` sometimes times out reopening Pause after a reload: 3 of 10 runs here, and 1 of 10 on the commit before today, at the same line. It is an existing flaky step.
+- [Record](docs/review/night-torch-bubbles-2026-10-05.md).
 
 **Not yet verified.**
 
 - The S22, tablet and Deck in person.
 - A phone-size frame of the flash: at wide zoom it reads as "room left aft", but individual sacks can't be told apart.
 - Whether the white upper-layer ghosts could be mistaken for bubbles in play.
+- How the night glow looks in motion, and on a phone at wide zoom (the working glow is about 35 px across).
+- Night bubbles are torch-green while daytime bubbles are white-grey (the torch tint is from September 30).
 
 ## October 5 revision, second notes
 

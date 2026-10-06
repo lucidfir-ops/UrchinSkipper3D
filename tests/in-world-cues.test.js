@@ -209,8 +209,51 @@ test('October 5 v2: diver bubbles are half as opaque and a quarter smaller in ar
     time: 0,
     dt: 1 / 60,
   });
-  assert.equal(boil.material.uniforms.uOpacity.value, 0.5);
+  const u = boil.material.uniforms;
+  assert.equal(u.uWorkOpacity.value * u.uOpacity.value, 0.5);
+  assert.equal(u.uBoilOpacity.value, 0.5);
   assert.equal(boil.mesh.scale.x, BUBBLE_LOOK.scale);
+  boil.dispose();
+});
+
+test('October 5: at night a torch-lit ascent boil is bright and seen as far as by day; reefs and unlit divers keep the night limit', async () => {
+  const { bubbleOpacity } = await import('../src/bubble-visibility.js');
+  const { reefRange } = await import('../src/assists.js');
+  const night = (equipment) => ({
+    boat: { configuration: 'test', x: 0, y: 0 },
+    environment: { waves: 0 },
+    weather: { night: true, visibility: 300, rain: 0, wave: 0 },
+    career: { fleet: { test: { equipment, disabledEquipment: [], lightMode: 'off' } } },
+  });
+  const lit = night(['torch']),
+    dark = night([]);
+  assert.equal(bubbleOpacity(lit, 100, true), 1, 'torch-lit bubbles at 100 m');
+  assert.equal(bubbleOpacity(lit, 350, true), 0, 'still bounded by weather visibility');
+  assert.equal(bubbleOpacity(dark, 100, true), 0, 'no torch: the boat light limit holds');
+  assert.equal(bubbleOpacity(lit, 100), 0, 'unlit sources keep the limit');
+  assert(reefRange(lit) === reefRange(dark) && reefRange(lit) < 8, 'torches do not reveal reefs');
+  const boil = new DiverBoil({ add() {} }, 0),
+    frame = (phase, glow) =>
+      boil.update({
+        x: 0,
+        z: 0,
+        surfaceY: 0,
+        phase,
+        progress: 1,
+        opacity: 1,
+        light: 0.4,
+        glow,
+        time: 0,
+        dt: 1 / 60,
+      });
+  for (let i = 0; i < 240; i++) frame('ascending', true);
+  const u = boil.material.uniforms;
+  assert.equal(u.uBoilOpacity.value, 1, 'lit ascent at full strength');
+  assert(u.uLight.value > 0.9, 'and lit by the torch');
+  assert.equal(u.uWorkOpacity.value, 0.5, 'working bubbles stay faint');
+  for (let i = 0; i < 240; i++) frame('ascending', false);
+  assert.equal(u.uBoilOpacity.value, 0.5);
+  assert.equal(u.uLight.value, 0.4, 'an unlit ascent at night stays dark');
   boil.dispose();
 });
 
