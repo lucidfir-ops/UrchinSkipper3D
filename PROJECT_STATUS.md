@@ -2,6 +2,23 @@
 
 October 5, 2026 (v2 notes) · torch-lit bubbles show at night as by day, the deck-load ghost becomes a flashing 3D picture of a full deck, diver bubbles are half as opaque and a quarter smaller, and night-menu Settings switches keep their text when ON. Earlier the same day: deck load, fuel and hull read from the boat, the bubble redesign, whistle only, phone text overflow, night menus, harbour-line action, bull kelp, render recovery, taxi drive-bys and touch auto-rotate. Claude (Claude Code) develops this project; entries from October 3 and earlier were written by Codex ("Astra"). Work, exports and publication belong only to this project and [lucidfir-ops/UrchinSkipper3D](https://github.com/lucidfir-ops/UrchinSkipper3D). The 2D edition is no longer developed.
 
+## October 6–7 overnight balance pass (branch `overnight-balance`, not merged)
+
+Source: the designer's overnight request of October 6 to play-test the career with a bot and tune its balance. Nothing here is designer-approved yet; the Bible is unchanged. [Record and findings](docs/review/career-balance-2026-10-06.md); [morning summary](MORNING_SUMMARY.md).
+
+- **Career bot.** `scripts/career-bot.js` plays whole careers through the real simulation: harbour actions through the career functions, and every day sailed at 60 Hz with the real helm, physics, diver AI and recovery gates. It has three styles (cautious, average, greedy), uses only player-visible information, and logs per-day CSVs; `scripts/career-bot-report.js` summarises them. It is a weaker boat handler than a person and uses a counted docking fallback, so its catches are a lower bound.
+- **Tuning (two commits).**
+  - Rival daily catch goals ×0.6/1.6 (`FLEET_LIFE.goalScale`). Rivals were emptying every map's marked beds within days and the inner Home Coast maps by day 36, even with no player fishing. This reduces pressure below the September 25 level and needs designer review.
+  - Quota sustainable pressure ×4, so one full-time player no longer cuts their own picking speed by a third, then nearly half.
+- **Bug fix.** Saves were rejected as damaged while a nine-bird goose flock was on the map; validation now allows the largest group any species spawns. Regression test added.
+- **Not changed, recommended:**
+  - rival bed choice, so marked beds survive the first week;
+  - taxi routes, which kill surfaced divers far too often from season 2;
+  - hull repair scaled to boat price;
+  - starter-boat parity: the starter outboard is the fastest boat in the game.
+
+Verification: `npm run verify -- --unit-only` passes (652 tests, 1 intentional skip). The bot runs were headless node simulation, not browsers or devices, and no visual change was made.
+
 ## October 5 revision, v2 notes
 
 Source: designer notes and a Firefox screen recording from the S22 in `feedback/10-5 v2/`. Decisions are recorded in the Bible (§10 deck load, §11 bubbles).
