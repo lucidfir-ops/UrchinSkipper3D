@@ -124,8 +124,14 @@ export const AREA_SUB_AREAS = Object.freeze({
 // the physical patch ledger so old terrain saves remain compatible.
 export const QUOTA_BALANCE = Object.freeze({
   pressure: Object.freeze({
-    sustainablePerSubArea: 5500,
-    sustainableByArea: Object.freeze({ near: 5500, middle: 8000, far: 11000 }),
+    // Pressure index per nine-day season that a sub-area absorbs without losing
+    // health. October 6 balance pass: x4, so one competent player working a map
+    // every day (~2,000 lb a day, all booked to one sub-area) sits near the
+    // sustainable line instead of at 3x it; 5,500 cut picking speed a third
+    // after the first season and nearly half after the second.
+    sustainablePerSubArea: 22000,
+    sustainableByArea: Object.freeze({ near: 22000, middle: 32000, far: 44000 }),
+    sustainableByTier: Object.freeze([22000, 32000, 44000, 52000, 60000]),
     playerCatchWeight: 1,
     playerWeightByArea: Object.freeze({ near: 1, middle: 0.8, far: 0.6 }),
     npcCatchWeight: 0.3,
@@ -314,7 +320,7 @@ export function recoverQuotaAreas(career, days, day = career.day) {
         const ratio =
           total /
           (QUOTA_BALANCE.pressure.sustainableByArea[areaId] ||
-            [5500, 8000, 11000, 13000, 15000][coastTier(areaId)]);
+            QUOTA_BALANCE.pressure.sustainableByTier[coastTier(areaId)]);
         if (ratio > 1)
           record.health = Math.max(
             QUOTA_BALANCE.depletion.minimumHealth,
