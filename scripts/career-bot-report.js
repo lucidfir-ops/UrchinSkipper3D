@@ -132,3 +132,16 @@ for (const [k, v] of Object.entries(reasons)
   .sort((a, b) => b[1] - a[1])
   .slice(0, 15))
   console.log(`- ${k}: ${v}`);
+
+console.log('\n## Incidents (all runs)\n');
+const incidents = {};
+for (const r of runs)
+  for (const x of r.rows)
+    for (const m of String(x.note || '').matchAll(
+      /(near miss|injury|fatality|rescued|SUNK|stranded):?([a-zA-Z ]*?)(?= near miss| injury| fatality| rescued| SUNK| stranded| error|$)/g,
+    )) {
+      const key = `${m[1]}${m[2] ? ': ' + m[2] : ''}`;
+      incidents[key] = (incidents[key] || 0) + 1;
+    }
+for (const [k, v] of Object.entries(incidents).sort((a, b) => b[1] - a[1]))
+  console.log(`- ${k}: ${v}`);
