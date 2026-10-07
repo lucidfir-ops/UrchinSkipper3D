@@ -125,7 +125,7 @@ Late offloads were common: about a third of fishing days for the average style a
 | cautious, outboard, seed 7 | 43 / 4 / 13 | −$33 | 19,835 | 461 | $418 | 7 | 2 |
 | greedy, Workhorse, seed 1234 | 28 / 0 / 30 | $10,639 | 28,955 | 1,034 | $1,056 | 28 | 1 |
 | greedy, Workhorse, seed 90210 | 9 / 0 / 50 | $30,883 | 13,801 | 1,533 | $2,770 | 9 | 0 |
-| greedy, outboard, seed 7 | 57 / 0 / 0 (57 days) | $5,373 | 53,717 | 942 | $982 | 48 | — |
+| greedy, outboard, seed 7 | 60 / 0 / 0 | $2,912 (debt $5,000) | 53,788 | 896 | $894 | 50 | 5 |
 
 The greedy/Workhorse/seed 90210 run sank on day 9, collected insurance and then docked for the rest of the run because the bot does not buy a replacement boat (a bot gap; ignore that run after day 9). No baseline career bought a boat. Only the greedy style bought a coast permit before day 27.
 
