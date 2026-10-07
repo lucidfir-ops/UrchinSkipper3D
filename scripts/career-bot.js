@@ -127,6 +127,7 @@ const CSV_FIELDS = [
   'cash',
   'debt',
   'cashChange',
+  'harbourSpend',
   'catchLb',
   'bags',
   'quality',
@@ -161,6 +162,7 @@ const CSV_FIELDS = [
   'bedsTried',
   'bedsDry',
   'recoveryFailures',
+  'dockAssists',
   'diverSurfaceReasons',
   'purchases',
   'rank',
@@ -277,15 +279,25 @@ function chooseArea(w, style, mem) {
 
 let ticks = 0;
 const trace = process.env.BOT_TRACE;
+// A skipper never backs the stern toward a person in the water.
+function diverAstern(w) {
+  const b = w.boat;
+  return w.divers.some((d) => {
+    if (!['surface', 'surfacing', 'deploying'].includes(d.state)) return false;
+    const dx = d.x - b.x,
+      dy = d.y - b.y,
+      fore = dx * Math.sin(b.heading) - dy * Math.cos(b.heading);
+    return fore < 2 && Math.hypot(dx, dy) < 16;
+  });
+}
 export function safeTick(w, controls, seconds = 0.3) {
   const tolerance = pickupTolerance(w);
-  for (let i = 0; i < Math.round(seconds * 60); i++)
-    step(
-      w,
-      i ? { throttle: controls.throttle || 0, steer: controls.steer || 0 } : controls,
-      1 / 60,
-      { tolerance },
-    );
+  for (let i = 0; i < Math.round(seconds * 60); i++) {
+    let c = i ? { throttle: controls.throttle || 0, steer: controls.steer || 0 } : controls;
+    if (i % 6 === 0 && (w.boat.throttle < 0 || c.fullReverse || c.throttle < 0) && diverAstern(w))
+      c = { neutral: true, steer: c.steer || 0 };
+    step(w, c, 1 / 60, { tolerance });
+  }
   if (trace && ++ticks % 500 === 0)
     console.log(
       `t=${w.time.toFixed(0)} min=${w.day.minute.toFixed(0)} boat=${w.boat.x.toFixed(0)},${w.boat.y.toFixed(0)} g=${w.boat.grounded} catch=${Math.round(w.catch)} divers=${w.divers.map((d) => d.state + ':' + Math.round(d.bag)).join(',')} ${(new Error().stack.split('\n')[3] || '').trim()}`,
@@ -505,6 +517,43 @@ export function helm(w, goal, speed = 2, boost = 1.9) {
     throttle: clamp((throttle - b.throttle) * 4, -1, 1),
   };
 }
+// Bot-only fallback (counted and reported): put the boat stopped alongside the
+// float with the float to port, on water clear of shoal and rock, drifting with
+// the local current. Everything else stays the real simulation.
+function assistAlongside(w, d) {
+  const spec = boatSpec(w),
+    half = spec.width / 2 + 1.5,
+    rocks = hazards(w);
+  for (let k = 0; k < 24; k++) {
+    const h = w.boat.heading + (k / 24) * Math.PI * 2,
+      x = d.x + Math.cos(h) * half,
+      y = d.y + Math.sin(h) * half;
+    if (!wet(w, x, y, -1.2, rocks, spec.length / 2 + 0.5)) continue;
+    const c = currentAt(w, x, y);
+    Object.assign(w.boat, { x, y, heading: h, vx: c.x, vy: c.y, turn: 0, throttle: 0, rudder: 0 });
+    safeTick(w, neutral, 0.2);
+    return true;
+  }
+  return false;
+}
+// Move to the nearest open water (clear of shoal and rock) within ~45 m.
+function escape(w, deadline) {
+  const rocks = hazards(w),
+    pad = boatSpec(w).length / 2 + 2;
+  if (wet(w, w.boat.x, w.boat.y, 0.3, rocks, pad)) return true;
+  safeTick(w, { fullReverse: true, centerRudder: true }, 0.2);
+  safeTick(w, {}, 3);
+  safeTick(w, neutral, 0.5);
+  for (let r = 12; r <= 45; r += 11)
+    for (let a = 0; a < 16; a++) {
+      const p = {
+        x: w.boat.x + Math.sin((a / 16) * Math.PI * 2) * r,
+        y: w.boat.y - Math.cos((a / 16) * Math.PI * 2) * r,
+      };
+      if (wet(w, p.x, p.y, 0.5, rocks, pad)) return sail(w, p, 1.6, deadline);
+    }
+  return false;
+}
 // Before turning under power, back away from shoal water close under the bow.
 export function clearBow(w) {
   const b = w.boat,
@@ -583,7 +632,8 @@ export function workFloat(w, d, want, deadline, stats) {
   let attempt = 0,
     phase = 'setup',
     brg = 0,
-    timer = 0;
+    timer = 0,
+    lastPos = { x: w.boat.x, y: w.boat.y };
   const retry = (back = true) => {
     if (back) {
       safeTick(w, { fullReverse: true, centerRudder: true }, 1.2);
@@ -593,7 +643,21 @@ export function workFloat(w, d, want, deadline, stats) {
     phase = 'setup';
     timer = 0;
   };
-  for (let i = 0; i < 3000 && attempt < 10; i++) {
+  const giveUp = w.time + 420;
+  let assistAt = w.time + 150;
+  for (let i = 0; i < 3000 && w.time < giveUp; i++) {
+    if (w.time > assistAt || attempt >= 6) {
+      // Skilled-skipper assist: the bot's own docking failed; place the boat
+      // alongside as a competent skipper would have managed by now.
+      assistAt = Infinity;
+      attempt = 0;
+      if (assistAlongside(w, d)) {
+        stats.assisted = (stats.assisted || 0) + 1;
+        phase = 'hold';
+        timer = 0;
+        brg = w.boat.heading;
+      }
+    }
     if (w.day.phase !== 'working' || w.time > deadline) return false;
     if (d.state !== 'surface') return true;
     if (want === 'bag' && d.bagHandled) return true;
@@ -621,6 +685,13 @@ export function workFloat(w, d, want, deadline, stats) {
     timer++;
     if (phase === 'setup') {
       const rocks = hazards(w);
+      if (!wet(w, w.boat.x, w.boat.y, -1, rocks, spec.length / 2 + 1)) {
+        // Boxed in by shoal or rock: back out to open water before lining up.
+        stats.reasons['boat boxed in'] = (stats.reasons['boat boxed in'] || 0) + 1;
+        escape(w, deadline);
+        if (++timer > 6) retry(false);
+        continue;
+      }
       let choice = null;
       for (let k = 0; k < 16; k++) {
         const b = (k / 16) * Math.PI * 2 + attempt * 0.37,
@@ -650,7 +721,10 @@ export function workFloat(w, d, want, deadline, stats) {
         if (!choice || score < choice.score) choice = { start, b, score, onLine };
       }
       if (!choice) {
+        // Float lies in confined water: stand off in open water and let it drift
+        // or swim clear (fit divers move toward water with room for the boat).
         stats.reasons['no clear approach'] = (stats.reasons['no clear approach'] || 0) + 1;
+        escape(w, deadline);
         safeTick(w, neutral, 8);
         if (timer > 20) retry(false);
         continue;
@@ -690,6 +764,14 @@ export function workFloat(w, d, want, deadline, stats) {
           carrot = { x: abeam.x + dir.x * lead, y: abeam.y + dir.y * lead };
         safeTick(w, helm(w, carrot, 1, 1.7));
       } else safeTick(w, creep(w, abeam, 0.4));
+      if (timer % 30 === 0) {
+        // Not moving under power: pinned on something. Back out to open water.
+        if (hyp(lastPos, w.boat) < 1 && timer > 0) {
+          escape(w, deadline);
+          retry(false);
+        }
+        lastPos = { x: w.boat.x, y: w.boat.y };
+      }
       if (Math.abs(lat) > 7 || along > 6 || timer > 220) retry();
     } else {
       // Coast to a stop alongside; touch astern if still carrying way.
@@ -813,6 +895,7 @@ async function fishDay(w, style, mem, stats) {
     return null;
   };
   while (workable()) {
+    if (trace) console.log(`TARGET min=${w.day.minute.toFixed(0)} left=${timeLeft().toFixed(0)}`);
     dealWithPatrol(w);
     const target = candidates()[0] || scoutSpot();
     if (!target) break;
@@ -846,7 +929,8 @@ async function fishDay(w, style, mem, stats) {
       const up = w.divers.find((d) => d.state === 'surface');
       if (up) {
         const had = w.bags.length;
-        handleSurface(w, up, workable(), hardStop, stats, remember);
+        // A dive cycle (descent, search, bag, pickup) is about 90 game minutes.
+        handleSurface(w, up, workable() && timeLeft() > 90, hardStop, stats, remember);
         bagsHere += w.bags.length - had;
         continue;
       }
@@ -867,6 +951,10 @@ async function fishDay(w, style, mem, stats) {
   }
 }
 function goHome(w, stats) {
+  if (trace)
+    console.log(
+      `HOME start min=${w.day.minute.toFixed(0)} latest=${latestDeparture(w).toFixed(0)} divers=${w.divers.map((d) => d.state).join(',')}`,
+    );
   const deadline = w.time + 1440 / C.day.minutesPerSecond;
   // Bring anyone still out aboard first.
   for (
@@ -884,6 +972,7 @@ function goHome(w, stats) {
     }
   }
   if (w.day.phase !== 'working') return;
+  if (trace) console.log(`HOME aboard min=${w.day.minute.toFixed(0)}`);
   if (!w.divers.every((d) => d.state === 'ready')) return rescue(w, stats, 'crew not aboard');
   const size = w.terrain.size,
     edge = w.day.returnExit.edge;
@@ -984,6 +1073,7 @@ export async function playCareer({
     // Pay down debt when comfortable.
     while (c.debt > 0 && c.cash > style.reserve + 15000 && credit(w, true).ok);
     serviceBoat(w, 'fuel');
+    const harbourSpend = +(before - c.cash).toFixed(2);
     const blocked = departureReady(w),
       tired = w.divers
         .filter((d) => d.condition === 'fit')
@@ -1007,6 +1097,7 @@ export async function playCareer({
         cash: c.cash,
         debt: c.debt,
         cashChange: c.cash - before,
+        harbourSpend,
         fuelPct: +(w.boat.fuel / boatSpec(w).fuelCapacity).toFixed(3),
         hull: +w.boat.hullHealth.toFixed(3),
         drive: +w.boat.driveHealth.toFixed(3),
@@ -1078,6 +1169,7 @@ export async function playCareer({
       cash: w.career.cash,
       debt: w.career.debt,
       cashChange: +(w.career.cash - before).toFixed(2),
+      harbourSpend,
       catchLb: Math.round(r.gross),
       bags: r.gross ? Math.round(r.gross / 30) / 10 : 0,
       quality: +r.quality.toFixed(3),
@@ -1111,13 +1203,19 @@ export async function playCareer({
       bedsTried: stats.bedsTried,
       bedsDry: stats.bedsDry,
       recoveryFailures: stats.recoveryFailures,
+      dockAssists: stats.assisted || 0,
       diverSurfaceReasons: Object.entries(stats.reasons)
         .map(([k, v]) => `${k}=${v}`)
         .join(' | '),
       purchases: purchases.join(' '),
       rank: rankOf(w.career),
       xp: w.career.xp,
-      note: [r.rescue ? 'rescued:' + r.rescue.reason : '', r.sunk ? 'SUNK' : '', ...stats.note]
+      note: [
+        r.rescue ? 'rescued:' + r.rescue.reason : '',
+        r.sunk ? 'SUNK' : '',
+        ...(w.safety?.incidents || []).map((e) => `${e.outcome}:${e.cause}`),
+        ...stats.note,
+      ]
         .filter(Boolean)
         .join(' '),
     });
