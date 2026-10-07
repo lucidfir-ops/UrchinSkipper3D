@@ -8,7 +8,7 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const angle = (v) => Math.atan2(Math.sin(v), Math.cos(v));
 // Test pilot: movement only through the real helm and physics. No teleporting,
 // manufactured bags, restored air, changed weather, or bypassed harbour exit.
-function route(w, goal) {
+export function route(w, goal) {
   const spacing = 10,
     n = Math.floor(w.terrain.size / spacing),
     spec = boatSpec(w),
@@ -70,7 +70,7 @@ function route(w, goal) {
   for (let k = found; k !== start; k = from.get(k)) points.unshift(point(k));
   return points;
 }
-function helm(w, goal, speed = 2) {
+export function helm(w, goal, speed = 2) {
   const b = w.boat,
     dx = goal.x - b.x,
     dy = goal.y - b.y,
@@ -97,7 +97,7 @@ function helm(w, goal, speed = 2) {
     throttle: clamp((throttle - b.throttle) * 4, -1, 1),
   };
 }
-function tick(w, controls, seconds = 0.3) {
+export function tick(w, controls, seconds = 0.3) {
   for (let i = 0; i < Math.round(seconds * 60); i++)
     step(
       w,
