@@ -897,7 +897,8 @@ async function fishDay(w, style, mem, stats) {
   // Arrived before dawn without night work: wait on the ground for daylight.
   for (let i = 0; i < 400 && w.weather?.night && w.day.minute % 1440 < 480; i++)
     safeTick(w, neutral, 5);
-  while (workable()) {
+  // Start a new drop only if a whole dive cycle and the run home still fit.
+  while (workable() && timeLeft() > 100) {
     if (trace) console.log(`TARGET min=${w.day.minute.toFixed(0)} left=${timeLeft().toFixed(0)}`);
     dealWithPatrol(w);
     const target = candidates()[0] || scoutSpot();
