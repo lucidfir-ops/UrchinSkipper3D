@@ -58,4 +58,5 @@ Over 60 days on the Workhorse, net income still rose, but final cash did not. Ca
 
 - Bot runs write CSVs to `test-results/career-bot/` (gitignored). Regenerate tables with `node scripts/career-bot-report.js <dir>`.
 - `npm run verify -- --unit-only` passes on the branch head (652 tests, 1 intentional skip).
-- A dated TEMP export of the branch build is in `exports/` (see the record for its folder name).
+- TEMP export of the branch build: `exports/2026-10-07-overnight-balance/` (upload `UrchinSkipper3D-TEMP-ITCHIO.zip`; SHA-256 sidecars included). It contains the two tuning changes and the save fix, so only upload it if you want to play-test them before merging.
+- Scratch git worktrees used to pin code for the bot runs live in the session scratch directory; `git worktree prune` clears their records once that directory is gone.
