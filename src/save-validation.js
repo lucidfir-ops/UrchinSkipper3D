@@ -5,6 +5,9 @@ import { VESSEL_ART } from './vessel-catalog.js';
 import { DEPARTURE_SECONDS } from './departure-transition.js';
 import { QUOTA_AREA_IDS, SUB_AREAS } from './quota-areas.js';
 import { WILDLIFE, WILDLIFE_SPECIES } from './wildlife.js';
+const MAX_WILDLIFE_GROUP = Math.max(
+  ...Object.values(WILDLIFE_SPECIES).map((spec) => spec.members[1]),
+);
 import { WEATHER } from './weather.js';
 import { COASTS } from './coasts.js';
 import { careerDayAt } from './career-calendar.js';
@@ -287,7 +290,8 @@ export function validateSnapshot(data) {
           encounter.expires >= encounter.born &&
           Array.isArray(encounter.members) &&
           encounter.members.length >= 1 &&
-          encounter.members.length <= 8 &&
+          // Largest group any species spawns (goose flocks reach nine).
+          encounter.members.length <= MAX_WILDLIFE_GROUP &&
           encounter.members.every(
             (member) =>
               finite(member.offsetX, -100, 100) &&

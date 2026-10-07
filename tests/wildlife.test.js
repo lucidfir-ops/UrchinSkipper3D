@@ -246,3 +246,14 @@ test('wildlife encounters and timers survive a validated save round trip', () =>
   const restored = decode(encode(w));
   assert.deepEqual(restored.wildlife, w.wildlife);
 });
+
+test('a full nine-bird goose flock survives the save round trip', () => {
+  // Found by the career bot, October 6: goose flocks spawn with up to nine birds
+  // but save validation rejected any group above eight as a damaged save.
+  const w = areaWorld(),
+    flock = spawnWildlife(w, 'goose', { force: true, count: 9 });
+  assert(flock);
+  assert.equal(flock.members.length, 9);
+  assert.doesNotThrow(() => validateSnapshot(snapshot(w)));
+  assert.equal(decode(encode(w)).wildlife.encounters[0].members.length, 9);
+});
