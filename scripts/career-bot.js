@@ -291,6 +291,12 @@ function diverAstern(w) {
   });
 }
 export function safeTick(w, controls, seconds = 0.3) {
+  // A fatal collision or sinking stops the clock until the skipper radios for
+  // rescue; do what the game asks instead of waiting forever.
+  if (w.emergency?.mandatoryRescue && ['working', 'practice'].includes(w.day.phase)) {
+    requestRescue(w);
+    return;
+  }
   const tolerance = pickupTolerance(w);
   for (let i = 0; i < Math.round(seconds * 60); i++) {
     let c = i ? { throttle: controls.throttle || 0, steer: controls.steer || 0 } : controls;
