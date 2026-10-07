@@ -1047,6 +1047,7 @@ export async function playCareer({
     if (file) appendFileSync(file, CSV_FIELDS.map((k) => csv(row[k])).join(',') + '\n');
   };
   let workedStreak = 0;
+  const saveFailures = [];
   while (w.career.day <= days) {
     const c = w.career,
       purchases = [],
@@ -1164,7 +1165,7 @@ export async function playCareer({
     seen.net += r.netValue;
     seen.lb += r.gross;
     seen.days++;
-    emit({
+    const fishRow = {
       ...base,
       action: 'fish',
       area,
@@ -1222,10 +1223,20 @@ export async function playCareer({
       ]
         .filter(Boolean)
         .join(' '),
-    });
+    };
     workedStreak++;
     // Save/reload every trip, as the game does, so persistence is exercised too.
-    w = decode(encode(w));
+    try {
+      w = decode(encode(w));
+    } catch (error) {
+      // A save the game itself would reject. Keep the evidence and play on with
+      // the unsaved world so one bad record does not end the career run.
+      saveFailures.push({ day: dayNo, error: error.message, wildlife: w.wildlife });
+      if (file)
+        writeFileSync(`${out}/${run}-save-failures.json`, JSON.stringify(saveFailures, null, 1));
+      fishRow.note = `${fishRow.note} SAVE-ROUNDTRIP-FAILED: ${error.message}`.trim();
+    }
+    emit(fishRow);
     w = nextCareerDay(w) || w;
   }
   return { run, rows, cash: w.career.cash, debt: w.career.debt };
