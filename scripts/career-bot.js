@@ -894,6 +894,9 @@ async function fishDay(w, style, mem, stats) {
     }
     return null;
   };
+  // Arrived before dawn without night work: wait on the ground for daylight.
+  for (let i = 0; i < 400 && w.weather?.night && w.day.minute % 1440 < 480; i++)
+    safeTick(w, neutral, 5);
   while (workable()) {
     if (trace) console.log(`TARGET min=${w.day.minute.toFixed(0)} left=${timeLeft().toFixed(0)}`);
     dealWithPatrol(w);
