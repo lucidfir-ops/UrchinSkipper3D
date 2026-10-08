@@ -23,6 +23,7 @@ const lengths = {
   radio: 0.24,
   clang: 1.1,
   thunder: 3.2,
+  traffic: 2,
 };
 export function synthesize(kind, rate = 22050) {
   const samples = new Float32Array(Math.floor((lengths[kind] || 0.2) * rate));
@@ -71,9 +72,45 @@ export function synthesize(kind, rate = 22050) {
         Math.sin(Math.min(1, p * 9) * Math.PI * 0.5) *
         Math.exp(-p * 2.6);
     else if (kind === 'ground') value = noise * 2.5 * (1 - p);
+    else if (kind === 'traffic')
+      // A small, high-revving outboard buzz: distinct from the ownship drone.
+      value =
+        0.32 * Math.sin(t * Math.PI * 2 * 110) +
+        0.2 * Math.sin(t * Math.PI * 2 * 220 + Math.sin(t * Math.PI * 2 * 55) * 0.6) +
+        0.09 * Math.sin(t * Math.PI * 2 * 330) +
+        0.22 * noise;
     samples[i] = Math.max(-0.9, Math.min(0.9, value * edge));
   }
   return samples;
+}
+
+export const TRAFFIC_SOUND = { range: 160, maxGain: 0.3, doppler: 0.35 };
+// Loudness and pitch of the loudest moving vessel, heard from the ownship.
+export function trafficSound(w) {
+  let best = { gain: 0, rate: 1 };
+  for (const a of w.traffic?.actors || []) {
+    const speed = Math.hypot(a.vx || 0, a.vy || 0);
+    if (speed < 0.5) continue;
+    const dx = a.x - w.boat.x,
+      dy = a.y - w.boat.y,
+      d = Math.hypot(dx, dy);
+    if (d >= TRAFFIC_SOUND.range) continue;
+    const near = (1 - d / TRAFFIC_SOUND.range) ** 2,
+      gain =
+        TRAFFIC_SOUND.maxGain *
+        near *
+        Math.min(1, 0.35 + speed / 15) *
+        (a.kind === 'taxi' ? 1 : 0.55);
+    if (gain <= best.gain) continue;
+    const closing = -(dx * (a.vx || 0) + dy * (a.vy || 0)) / Math.max(1, d);
+    best = {
+      gain,
+      rate:
+        (0.8 + Math.min(1, speed / 15) * 0.5) *
+        (1 + TRAFFIC_SOUND.doppler * Math.max(-1, Math.min(1, closing / 15))),
+    };
+  }
+  return best;
 }
 
 export class BoatAudio {
@@ -108,6 +145,7 @@ export class BoatAudio {
     );
     this.engine = this.engines.neutral;
     this.water = this.manager.add('urchin-water', { loop: true, volume: 0 });
+    this.traffic = this.manager.add('urchin-traffic', { loop: true, volume: 0 });
     this.gesture = () => this.unlock();
     window.addEventListener('pointerdown', this.gesture);
     window.addEventListener('keydown', this.gesture);
@@ -116,6 +154,7 @@ export class BoatAudio {
       window.removeEventListener('keydown', this.gesture);
       Object.values(this.engines).forEach((sound) => sound.destroy());
       this.water?.destroy();
+      this.traffic?.destroy();
     });
   }
   unlock() {
@@ -143,6 +182,7 @@ export class BoatAudio {
     if (this.manager.context.state === 'running') {
       for (const sound of Object.values(this.engines)) if (!sound.isPlaying) sound.play();
       if (!this.water.isPlaying) this.water.play();
+      if (!this.traffic.isPlaying) this.traffic.play();
     }
     const lightning = lightningState(w.weather, w.time);
     if (active && lightning.thunder && lightning.strikeId !== this.lastThunder) {
@@ -191,6 +231,20 @@ export class BoatAudio {
       if (updateRate && (target > 0 || sound.volume > 0.001) && sound.rate !== rate)
         sound.setRate(rate);
     }
+    // October 8: other boats were silent, so a 30-knot taxi arrived unheard.
+    // The loudest nearby vessel drives one shared loop, with a Doppler shift.
+    const passing = active ? trafficSound(w) : { gain: 0, rate: 1 },
+      trafficTarget = Math.fround(this.volume * passing.gain),
+      trafficDifference = trafficTarget - this.traffic.volume;
+    if (trafficDifference !== 0)
+      this.traffic.setVolume(
+        Math.abs(trafficDifference) < 0.0001
+          ? trafficTarget
+          : this.traffic.volume + trafficDifference * ease,
+      );
+    const trafficRate = Math.round(passing.rate * 50) / 50;
+    if (updateRate && this.traffic.volume > 0.001 && this.traffic.rate !== trafficRate)
+      this.traffic.setRate(trafficRate);
     const waterTarget = Math.fround(water),
       waterDifference = waterTarget - this.water.volume;
     if (waterDifference !== 0)
