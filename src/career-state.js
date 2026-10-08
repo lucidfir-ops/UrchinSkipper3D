@@ -469,6 +469,8 @@ export function advanceCareer(c, days = 1) {
     }
   }
   advanceCrewMarket(c);
+  const talk = dockTalk(c);
+  if (talk) c.news.push(talk);
   c.news.push(...harbourFleetNews(c));
   if (!c.news.length)
     c.news.push(
@@ -478,6 +480,21 @@ export function advanceCareer(c, days = 1) {
     );
   if (c.licenceThrough < c.day)
     c.news.unshift('Your area licence has expired. Renew before fishing.');
+}
+
+// October 8: bot careers that stayed home saw catches fall by days 21-30 with
+// nothing pointing onward. When the last three trips were thin and a further
+// coast is still unpermitted, the wharf mentions it, at most once a season.
+// It is talk, never a requirement; Frank's upgrade warning still applies.
+export const DOCK_TALK = { trips: 3, thinPounds: 900, everyDays: 9 };
+export function dockTalk(c) {
+  const next = COASTS.find((coast) => !c.coastAccess?.includes(coast.id)),
+    recent = (c.history || []).slice(0, DOCK_TALK.trips);
+  if (!next || recent.length < DOCK_TALK.trips) return null;
+  if (c.day - (c.dockTalkDay ?? -Infinity) < DOCK_TALK.everyDays) return null;
+  if (recent.some((trip) => trip.sunk || trip.gross >= DOCK_TALK.thinPounds)) return null;
+  c.dockTalkDay = c.day;
+  return `Dock talk: crews say the beds you've been working are picked thin. ${next.name} pays better but its weather is harder; the permit is $${next.accessCost.toLocaleString('en-US')} in Accounts. Look at your boat before you go.`;
 }
 
 export function changeDepartureTime(w, early = false) {

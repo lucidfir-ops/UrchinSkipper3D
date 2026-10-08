@@ -239,3 +239,22 @@ test('an empty trip pays no landing fee; a landed catch still does', () => {
   full.bags = [{ weight: 300, quality: 0.8, harvestMinute: 850 }];
   assert.equal(finish(full).career.landingFee, ECONOMY.landingFee);
 });
+test('wharf talk points to the next coast after three thin trips, once a season, and saves', async () => {
+  const { dockTalk, DOCK_TALK, createCareer } = await import('../src/career-state.js');
+  const w = careerWorld(createCareer(5)),
+    c = w.career;
+  c.coastAccess = ['home'];
+  c.history = [{ gross: 400 }, { gross: 300 }, { gross: 2000 }];
+  assert.equal(dockTalk(c), null, 'one good trip in the last three: no talk');
+  c.history.unshift({ gross: 500 });
+  const line = dockTalk(c);
+  assert.match(line, /Stormbreak Coast/);
+  assert.match(line, /\$12,000/);
+  assert.equal(dockTalk(c), null, 'not again the same season');
+  c.day += DOCK_TALK.everyDays;
+  assert(dockTalk(c));
+  c.coastAccess = ['home', 'storm'];
+  c.day += DOCK_TALK.everyDays;
+  assert.match(dockTalk(c), /Frontier Coast/);
+  assert.equal(decode(encode(w)).career.dockTalkDay, c.dockTalkDay);
+});
