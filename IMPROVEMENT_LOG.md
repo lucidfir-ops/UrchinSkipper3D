@@ -19,7 +19,6 @@ Hard limits kept throughout: exactly two divers, rigid orthographic following ca
 13. **Feel — rival boats at work make no sound when stopped**; a quiet idle/compressor cue for working rival boats could help locate them in fog.
 14. **UX — the 'Auto · Balanced' downgrade notice** should be checked on a real phone for wording and timing.
 
-15. **Balance — Home Coast catch still falls by days 21–30** for a bot that stays home (516 lb/day). Check whether the player gets a clear nudge toward the Stormbreak permit (Frank/news) once the home grounds thin.
 
 ## In progress
 
@@ -43,3 +42,4 @@ Hard limits kept throughout: exactly two divers, rigid orthographic following ca
 - **October 8 — Voyage actions paired on wide screens** (`55f90c7`). At 1280×800 two of seven actions were hidden below a scroll; now all show. Strict menu-theme audit passes.
 - **October 8 — TEMP export** `exports/2026-10-08-autonomous-improvements/` (build at `6c5653e`; upload `UrchinSkipper3D-TEMP-ITCHIO.zip`, SHA-256 sidecars included).
 - **October 8 — Bot check of the combined changes** (code at `f589dd5`, before the stern watch). Cautious Workhorse seed 90210, 30 days: final cash $17,313 (this morning's code: $4,382), lb per fished day in days 21–30 753 (was 374), no diver deaths (was one taxi death). Average Workhorse seed 1234: $6,640, 1,248 lb per fished day, catch still falls to 516 lb/day by days 21–30 on the Home Coast, and two own-stern reversal deaths (bot handling; prompted the stern watch). One seed each: indicative only.
+- **October 8 — Dock talk toward the next coast** (`6507d5d`). After three trips under 900 lb with a further coast unpermitted, the morning news names that coast and its permit price, with a caution to check the boat; once per nine days, never a requirement.
