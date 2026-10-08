@@ -1,4 +1,3 @@
-import { seededRandom } from './math.js';
 import { rivalHabit, workingPatches } from './rival-habits.js';
 import { boatDefinition } from './boats.js';
 import { TAXI_ART, DFO_ART, NINE_ART } from './vessel-catalog.js';
@@ -15,6 +14,10 @@ import { fishingRoute, rivalDayPlan, rivalPatches, rivalWater, trafficHull } fro
 import { taxiSafetyStage } from './diver-safety.js';
 import { advanceFleet } from './fleet-life.js';
 import { careerDayAt } from './career-calendar.js';
+import { DIRECTIONS } from './config.js';
+import { bearing, seededRandom } from './math.js';
+
+export const TAXI_HEADS_UP = { minSeconds: 1.5, maxSeconds: 7, passMetres: 16 };
 
 const pick = (values, random) => values[Math.floor(random() * values.length)];
 export function prepareTraffic(w) {
@@ -444,6 +447,35 @@ export function stepTraffic(w, dt) {
           `RADIO · ${actor.name || 'Working boat'}: ${actor.hidden ? 'Shy Hull Wood passing through. No further details on the set.' : actor.habit === 'encroaching' ? 'We’re putting down on this drift too. There’s room for another pick.' : 'Working our usual ground. See you at the landing.'}`,
         );
         w.effects.push({ type: 'radio' });
+      }
+      // October 8: an earlier heads-up while the skipper can still act. Project
+      // the taxi's present course and warn once if it will pass a surfaced diver
+      // closely within a few seconds; the 24 m call below stays as the last word.
+      if (!actor.headsUpCalled && actor.kind === 'taxi' && actor.speed > 3) {
+        const vx = Math.sin(actor.heading) * actor.speed,
+          vy = -Math.cos(actor.heading) * actor.speed;
+        const threatened = w.divers.find((d) => {
+          if (d.state !== 'surface') return false;
+          const rx = d.x - actor.x,
+            ry = d.y - actor.y,
+            t = (rx * vx + ry * vy) / (actor.speed * actor.speed);
+          return (
+            t >= TAXI_HEADS_UP.minSeconds &&
+            t <= TAXI_HEADS_UP.maxSeconds &&
+            Math.hypot(rx - vx * t, ry - vy * t) < TAXI_HEADS_UP.passMetres
+          );
+        });
+        if (threatened) {
+          actor.headsUpCalled = true;
+          const from =
+            DIRECTIONS[
+              (Math.round(bearing(actor.x - threatened.x, actor.y - threatened.y) / 45) % 8) + 1
+            ];
+          w.events.push(
+            `RADIO · Water taxi from the ${from}, coming fast past ${threatened.name || 'your diver'}!`,
+          );
+          w.effects.push({ type: 'warning' });
+        }
       }
       if (
         !actor.nearMissCalled &&

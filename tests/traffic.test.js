@@ -246,3 +246,31 @@ test('a taxi lookout swerves around a surfaced diver seen in time, but fog still
   const fog = run({ visibility: 12, night: false, wave: 0.3, rain: 0 });
   assert.notEqual(fog.w.diver.condition, 'fit', 'a diver hidden in fog is still at risk');
 });
+test('radio warns early, once, when a taxi on its present course will pass a surfaced diver', () => {
+  const w = world(),
+    a = actor();
+  w.career.day = 10;
+  w.traffic.actors = [a];
+  Object.assign(a, { x: 150, y: 250, speed: 15, heading: Math.PI / 2, born: w.time });
+  Object.assign(w.diver, { state: 'surface', x: 230, y: 255 });
+  w.events = [];
+  for (let i = 0; i < 4; i++) {
+    w.time += 0.1;
+    stepTraffic(w, 0.1);
+  }
+  const calls = w.events.filter((e) => /coming fast past/.test(e));
+  assert.equal(calls.length, 1);
+  assert.match(calls[0], /from the W/);
+  const away = world(),
+    b = actor();
+  away.career.day = 10;
+  away.traffic.actors = [b];
+  Object.assign(b, { x: 150, y: 250, speed: 15, heading: -Math.PI / 2, born: away.time });
+  Object.assign(away.diver, { state: 'surface', x: 230, y: 255 });
+  away.events = [];
+  for (let i = 0; i < 4; i++) {
+    away.time += 0.1;
+    stepTraffic(away, 0.1);
+  }
+  assert(!away.events.some((e) => /coming fast past/.test(e)), 'a taxi heading away is not called');
+});
