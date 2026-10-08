@@ -9,13 +9,15 @@ Hard limits kept throughout: exactly two divers, rigid orthographic following ca
 1. **Remaining acceptance — compact forecasts/almanac and short landscape lessons require scrolling.** Tighten layouts on phone landscape.
 2. **Remaining acceptance — compact keyboard career speech can cover the boat's bow.** Keep speech clear of the full hull.
 3. **Play pass — run career-bot careers on later coasts and other hulls** (Stormbreak, Frontier) and note what's broken or dull there; feed the backlog.
-4. **Audio — check the mix in a busy scene** (rain + taxi + engine + whistle) for anything overwhelming or missing.
-6. **Code health — survey the largest modules (`vessels.js`, `main.js`) for dead code and duplicated helpers** found while working.
-7. **UX — taxi near-miss radio fires only within 24 m; give an earlier heads-up** when a taxi's committed run will pass near a surfaced diver the skipper can still protect.
+4. **Audio — the mix has not been listened to by a person**; rain + traffic + engine + whistle balance needs an ear (designer).
 8. **Balance — starter outboard (25 kn) outruns every upgrade hull** (bot finding 7). Designer decision on hull speeds; consider only recording options.
 9. **Balance — Home Coast unmarked beds still drain under rival pressure** (stock model: near all-bed stock 44% by day 60 even with the leave-thin rule). Consider letting off-map rivals spread across coasts more, or the same leave rule weighting unmarked ground.
 10. **UX — Deck voyage-plan detail pane is short (~240 px)**: the Buyer paragraph is cut and needs scrolling at 1280×800 (independent review note).
 11. **Tooling — the stock model ignores player catch except a fixed daily take**; give it the bot's per-day catch CSV as input for faster balance sizing.
+
+12. **Code health — tests that only exercise retired 2D view modules** (coastal-art, hazard-view, water-surface, weather-view, wildlife-view, coast-detail-cache): decide whether to move what they protect to the 3D path or retire them.
+13. **Feel — rival boats at work make no sound when stopped**; a quiet idle/compressor cue for working rival boats could help locate them in fog.
+14. **UX — the 'Auto · Balanced' downgrade notice** should be checked on a real phone for wording and timing.
 
 ## In progress
 
@@ -32,3 +34,6 @@ Hard limits kept throughout: exactly two divers, rigid orthographic following ca
 - **October 8 — Input pressed after suppression no longer dropped** (`56d979a`). A key pressed after `suppress()` but before the next frame (Escape right after Continue on a slow reload) was lost; root cause of continuous-weather's flaky Pause step. Also fixed a fixture race reading the forecast before it painted. continuous-weather 6/6 after both fixes; input and operations suites pass. Real keyboards benefit too: an early Escape now always opens the menu.
 - **October 8 — Distant logs drift in cohorts** (`051909d`). Logs over 90 m from the boat advance every fourth step by the accumulated time; near logs (collisions) every step. New `scripts/stress-performance.js`. Phone at 4x CPU throttle, night+fog+720 logs: simulation 17.7 -> 9.6 ms/frame. Deck unchanged at 60 fps.
 - **October 8 — Auto graphics quality** (`70dca2d`). New default for players who never chose a level: starts High, steps down to Balanced then Battery on sustained >30 ms frames while working, with a notice; never steps up in the same visit; explicit choices untouched. Throttled phone 17 -> 23 fps calm; tablet/Deck stay High at 60. Real phone GPUs not measured.
+- **October 8 — Early taxi heads-up radio** (`d66af09`). Projects each fast taxi's course; one call 1.5–7 s out if it will pass within 16 m of a surfaced diver ("Water taxi from the W, coming fast past Ada Chen!"), with the warning sound. Phone screenshot: fits one line under the instruments.
+- **October 8 — Dead 2D modules removed** (`d5c14e4`). Nine modules (~1,300 lines) imported by nothing.
+- **October 8 — Other boats are audible** (`e5935fe`). One procedural outboard loop follows the loudest moving vessel within 160 m with distance gain and Doppler pitch; capped at 0.3 of volume. Unit-tested model; traffic-fleet and voyage suites pass. Not checked by ear.
