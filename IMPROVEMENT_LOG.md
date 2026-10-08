@@ -6,19 +6,18 @@ Hard limits kept throughout: exactly two divers, rigid orthographic following ca
 
 ## Backlog (ranked: player impact for size)
 
-1. **Remaining acceptance — compact forecasts/almanac and short landscape lessons require scrolling.** Tighten layouts on phone landscape.
-2. **Remaining acceptance — compact keyboard career speech can cover the boat's bow.** Keep speech clear of the full hull.
-3. **Play pass — run career-bot careers on later coasts and other hulls** (Stormbreak, Frontier) and note what's broken or dull there; feed the backlog.
-4. **Audio — the mix has not been listened to by a person**; rain + traffic + engine + whistle balance needs an ear (designer).
-8. **Balance — starter outboard (25 kn) outruns every upgrade hull** (bot finding 7). Designer decision on hull speeds; consider only recording options.
-9. **Balance — Home Coast unmarked beds still drain under rival pressure** (stock model: near all-bed stock 44% by day 60 even with the leave-thin rule). Consider letting off-map rivals spread across coasts more, or the same leave rule weighting unmarked ground.
-10. **UX — Deck voyage-plan detail pane is short (~240 px)**: the Buyer paragraph is cut and needs scrolling at 1280×800 (independent review note).
-11. **Tooling — the stock model ignores player catch except a fixed daily take**; give it the bot's per-day catch CSV as input for faster balance sizing.
-
-12. **Code health — tests that only exercise retired 2D view modules** (coastal-art, hazard-view, water-surface, weather-view, wildlife-view, coast-detail-cache): decide whether to move what they protect to the 3D path or retire them.
-13. **Feel — rival boats at work make no sound when stopped**; a quiet idle/compressor cue for working rival boats could help locate them in fog.
-14. **UX — the 'Auto · Balanced' downgrade notice** should be checked on a real phone for wording and timing.
-
+1. **Regression sweep — run every browser suite once on the branch** and fix anything today's changes broke.
+2. **Play pass — bot careers on later coasts and other hulls** (Stormbreak, Frontier; outboard and bigger boats) to find what's broken or dull there.
+3. **Balance — Home Coast unmarked beds still drain under rival pressure** (stock model: near all-bed stock 44% by day 60). Consider spreading off-map rivals more across coasts.
+4. **Remaining acceptance — compact forecasts/almanac and short landscape lessons require scrolling** on phone landscape.
+5. **Remaining acceptance — compact keyboard career speech can cover the boat's bow.** Reproduce first; the footprint code may already cover it.
+6. **Feel — rival boats at work are silent when stopped**; a quiet idle/compressor cue could help find them in fog.
+7. **Tooling — feed the stock model the bot's per-day catch CSV** for faster balance sizing.
+8. **Code health — tests that only exercise retired 2D view modules** (coastal-art, hazard-view, water-surface, weather-view, wildlife-view, coast-detail-cache): move what they protect to the 3D path or retire them.
+9. **UX — check the stern-watch shout, taxi heads-up and Auto-graphics notices together on a phone** for crowding of the HUD message line.
+10. **Balance — starter outboard (25 kn) outruns every upgrade hull** (bot finding 7). Designer decision; only record options.
+11. **Audio — nobody has listened to the mix** (rain + traffic + engine + whistle). Needs the designer's ear.
+12. **UX — the voyage plan's detail text is still short on 1280×800** (Buyer paragraph scrolls); consider a smaller chart column on wide-but-short screens.
 
 ## In progress
 
