@@ -2,6 +2,7 @@ import { seededRandom } from './math.js';
 import { clearWater, waterRoute } from './water-route.js';
 import { workingPatches } from './rival-habits.js';
 import { TRAFFIC } from './traffic-settings.js';
+import { rivalPatchStock } from './harvest-ground.js';
 
 export const trafficHull = (actor) => ({
   draft: actor.draft,
@@ -41,7 +42,7 @@ export function rivalPatches(w, nearby = false) {
     positions = [w.boat, ...worked, ...w.divers.filter((d) => d.state !== 'ready')],
     available = w.patches.filter(
       (p) =>
-        p.remaining > 1 &&
+        rivalPatchStock(p) > 1 &&
         p.quality >= 0.6 &&
         !occupied.has(p.id) &&
         (nearby || positions.every((q) => Math.hypot(p.x - q.x, p.y - q.y) >= 140)),

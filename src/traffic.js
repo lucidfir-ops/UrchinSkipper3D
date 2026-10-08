@@ -3,7 +3,7 @@ import { rivalHabit, workingPatches } from './rival-habits.js';
 import { boatDefinition } from './boats.js';
 import { TAXI_ART, DFO_ART, NINE_ART } from './vessel-catalog.js';
 import { crewProfile } from './crew-roster.js';
-import { takeCatch } from './harvest-ground.js';
+import { rivalPatchStock, rivalPickable, takeRivalCatch } from './harvest-ground.js';
 import { clearWater, waterEntries, waterRoute } from './water-route.js';
 import { moveTraffic } from './traffic-motion.js';
 import { taxiRoute, taxiDriveBy, DRIVE_BY } from './taxi-route.js';
@@ -345,7 +345,7 @@ function fish(w, actor, dt) {
       record = w.career.people[id];
     if (!profile || record?.condition !== 'fit' || record.availableDay > careerDayAt(w)) continue;
     const clumps = (patch.clumps || [])
-        .filter((c) => c.remaining > 0)
+        .filter((c) => rivalPickable(c) > 0.01)
         .sort(
           (a, b) =>
             Math.hypot(a.x - actor.x, a.y - actor.y) - Math.hypot(b.x - actor.x, b.y - actor.y),
@@ -366,7 +366,7 @@ function fish(w, actor, dt) {
           subAreaYield(w.career, fleet.area, fleet.subAreaId) *
           dt,
       ),
-      amount = takeCatch(patch, clump, Math.max(0, requested));
+      amount = takeRivalCatch(patch, clump, Math.max(0, requested));
     fleet.gross += amount;
     fleet.qualitySum += amount * (clump.quality ?? patch.quality);
     recordFishingPressure(w.career, fleet.area, fleet.subAreaId, 'npc', amount);
@@ -376,9 +376,10 @@ function fish(w, actor, dt) {
   // steered through its own avoidance circles and could never reach a pickup.
   actor.vx = actor.vy = actor.speed = 0;
   fleet.minute = Math.max(fleet.minute, minute);
-  if (fleet.gross >= fleet.goal - 0.01 || patch.remaining <= 0.01 || minute >= fleet.end) {
+  const thin = rivalPatchStock(patch) <= 0.01;
+  if (fleet.gross >= fleet.goal - 0.01 || thin || minute >= fleet.end) {
     actor.divers = [];
-    if (patch.remaining <= 0.01 && fleet.gross < fleet.goal - 0.01 && minute < fleet.end - 15) {
+    if (thin && fleet.gross < fleet.goal - 0.01 && minute < fleet.end - 15) {
       for (const next of rivalPatches(w).slice(0, 8)) {
         const route = fishingRoute(rivalWater(w), actor, next, actor);
         if (!route.length) continue;

@@ -22,6 +22,19 @@ export function takeCatch(p, c, requested) {
   if (c) c.remaining = Math.max(0, c.remaining - amount);
   return amount;
 }
+// October 8: commercial rival crews move on once a clump is picked thin instead
+// of stripping it, so marked beds stay worth a look past the first week and
+// season regrowth has something to work on. The player's divers are unaffected.
+export const RIVAL_PICKING = { leaveFraction: 0.3 };
+export const rivalPickable = (c) =>
+  Number.isFinite(c?.initialStock)
+    ? Math.max(0, c.remaining - c.initialStock * RIVAL_PICKING.leaveFraction)
+    : (c?.remaining ?? 0);
+export const rivalPatchStock = (p) =>
+  p.clumps?.length ? p.clumps.reduce((n, c) => n + rivalPickable(c), 0) : p.remaining;
+export function takeRivalCatch(p, c, requested) {
+  return takeCatch(p, c, Math.min(requested, rivalPickable(c)));
+}
 
 // Claim the next clump once. Partners favor opposite routes around the ground;
 // explicit compass instructions still take priority over that default bias.

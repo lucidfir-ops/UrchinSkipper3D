@@ -2,7 +2,7 @@ import { prepareRosters, crewProfile } from './crew-roster.js';
 import { SEASON, areaCalendarOpen } from './season.js';
 import { roll } from './career-data.js';
 import { materializeSector, sectorDefinition } from './sectors.js';
-import { takeCatch } from './harvest-ground.js';
+import { takeRivalCatch } from './harvest-ground.js';
 import { COASTS, coastTier } from './coasts.js';
 import { rivalDayPlan } from './rival-plan.js';
 import { careerDayAt } from './career-calendar.js';
@@ -155,7 +155,7 @@ function advanceFleetDay(w, minute) {
       if (requested <= 0.001) break;
       if (p.quality < 0.6) continue;
       for (const clump of p.clumps || []) {
-        const amount = takeCatch(p, clump, requested);
+        const amount = takeRivalCatch(p, clump, requested);
         requested -= amount;
         r.gross += amount;
         r.qualitySum += amount * p.quality;
