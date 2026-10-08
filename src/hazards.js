@@ -97,15 +97,32 @@ export function addWeatherLogs(w) {
   }
 }
 export const addNightLogs = addWeatherLogs;
+// October 8: timber far from the boat drifts in four staggered cohorts, each
+// advanced every fourth step by the accumulated time. Night plus fog brings 720
+// logs, and on a slow phone several simulation steps run per painted frame, so
+// stepping every distant log every step cost most of the simulation budget.
+// Logs near the boat, which can touch it, still advance every step.
+export const LOG_COHORTS = { count: 4, nearRange: 90 };
+const logTicks = new WeakMap();
 export function stepLogs(w, dt, previous = w.boat) {
   addWeatherLogs(w);
   const b = w.boat,
     spec = boatSpec(w),
-    poses = sweptPoses(previous, b, spec);
-  for (const log of w.logs || []) {
+    poses = sweptPoses(previous, b, spec),
+    tick = (logTicks.get(w) ?? -1) + 1,
+    near = LOG_COHORTS.nearRange + Math.hypot(b.x - previous.x, b.y - previous.y);
+  logTicks.set(w, tick);
+  for (const [index, log] of (w.logs || []).entries()) {
+    const far = Math.abs(log.x - b.x) > near || Math.abs(log.y - b.y) > near;
+    if (far && (index + tick) % LOG_COHORTS.count) {
+      log.lag = (log.lag || 0) + dt;
+      continue;
+    }
+    const step = dt + (log.lag || 0);
+    log.lag = 0;
     const flow = currentAt(w, log.x, log.y),
-      nx = log.x + (flow.x + (log.vx || 0)) * dt,
-      ny = log.y + (flow.y + (log.vy || 0)) * dt;
+      nx = log.x + (flow.x + (log.vx || 0)) * step,
+      ny = log.y + (flow.y + (log.vy || 0)) * step;
     if (
       nx >= 0 &&
       ny >= 0 &&
@@ -116,8 +133,8 @@ export function stepLogs(w, dt, previous = w.boat) {
       log.x = nx;
       log.y = ny;
     }
-    log.vx = (log.vx || 0) * Math.exp(-dt * 1.2);
-    log.vy = (log.vy || 0) * Math.exp(-dt * 1.2);
+    log.vx = (log.vx || 0) * Math.exp(-step * 1.2);
+    log.vy = (log.vy || 0) * Math.exp(-step * 1.2);
     if (
       Math.hypot(log.x - b.x, log.y - b.y) >
       spec.length + log.length + Math.hypot(b.x - previous.x, b.y - previous.y)
