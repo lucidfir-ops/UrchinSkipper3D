@@ -223,3 +223,26 @@ test('traffic save resumes positions, routes and timers without spawning a dupli
   stepTraffic(restored, 0.1);
   assert.equal(restored.traffic.actors.length, 1);
 });
+test('a taxi lookout swerves around a surfaced diver seen in time, but fog still hides one', () => {
+  const run = (weather) => {
+    const w = world(),
+      a = actor();
+    w.career.day = 10;
+    w.weather = { ...w.weather, ...weather };
+    w.traffic.actors = [a];
+    Object.assign(w.diver, { state: 'surface', x: 250, y: 250 });
+    let closest = Infinity;
+    for (let i = 0; i < 400 && !w.emergency; i++) {
+      w.time += 0.1;
+      moveTraffic(w, a, 0.1);
+      closest = Math.min(closest, Math.hypot(a.x - 250, a.y - 250));
+    }
+    return { w, a, closest };
+  };
+  const clear = run({ visibility: 1000, night: false, wave: 0.3, rain: 0 });
+  assert.equal(clear.w.diver.condition, 'fit');
+  assert(clear.closest > 8, `clear-day taxi passes wide (${clear.closest.toFixed(1)} m)`);
+  assert(clear.a.x > 400, 'the swerve keeps the committed run going');
+  const fog = run({ visibility: 12, night: false, wave: 0.3, rain: 0 });
+  assert.notEqual(fog.w.diver.condition, 'fit', 'a diver hidden in fog is still at risk');
+});

@@ -8,6 +8,7 @@ import { checkDiverSafety, taxiSafetyStage } from './diver-safety.js';
 import { hullDistance, fromHull } from './collision-geometry.js';
 import { surfacedWildlifePoints } from './wildlife.js';
 import { taxiSteering } from './taxi-steering.js';
+import { spottedDivers } from './taxi-lookout.js';
 
 export function moveTraffic(w, actor, dt) {
   actor.speed ??= actor.knots / C.knotsPerMps;
@@ -77,7 +78,11 @@ export function moveTraffic(w, actor, dt) {
         ['deploying', 'searching', 'harvesting', 'surfacing', 'surface'].includes(d.state)
       )
         avoid.push({ ...d, radius: 17 });
-  if (actor.kind === 'taxi') ({ dx, dy } = taxiSteering(actor, avoid, dx, dy));
+  if (actor.kind === 'taxi') {
+    // Spotted surfaced divers bend the run; they are not hard stops.
+    const lookout = taxiSafetyStage(w, actor) === 'near miss' ? [] : spottedDivers(w, actor);
+    ({ dx, dy } = taxiSteering(actor, [...avoid, ...lookout], dx, dy));
+  }
   for (const obstacle of actor.kind === 'taxi' ? [] : avoid) {
     const x = actor.x - obstacle.x,
       y = actor.y - obstacle.y,

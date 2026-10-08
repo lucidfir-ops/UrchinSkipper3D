@@ -1,5 +1,5 @@
 // Look well ahead of a fast passage and bend around hulls on a stable side.
-// Divers are deliberately absent from the obstacle list supplied by traffic.
+// Surfaced divers appear only once the taxi's lookout has spotted them.
 export function taxiSteering(actor, obstacles, dx, dy) {
   const look = Math.max(65, actor.speed * 5);
   let threat = null;
