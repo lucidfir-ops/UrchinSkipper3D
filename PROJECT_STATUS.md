@@ -4,7 +4,7 @@ October 5, 2026 (v2 notes) · torch-lit bubbles show at night as by day, the dec
 
 ## October 8 autonomous improvement pass (branch `autonomous-improvements`, not merged)
 
-Source: the designer's October 8 request to improve the game autonomously on a branch (never `main`), logging each change. Built on `overnight-balance`. Nothing here is designer-approved; the Bible is unchanged. Running list with reasons and commits: [IMPROVEMENT_LOG.md](IMPROVEMENT_LOG.md).
+Source: the designer's October 8 request to improve the game autonomously on a branch (never `main`), logging each change. Built on `overnight-balance`. Nothing here is designer-approved; the Bible is unchanged. Running list with reasons and commits: [IMPROVEMENT_LOG.md](IMPROVEMENT_LOG.md); record: [docs/review/autonomous-pass-2026-10-08.md](docs/review/autonomous-pass-2026-10-08.md).
 
 - **Safety.** Taxis keep a weather-limited lookout and swerve around surfaced divers they can see (fog, night, rough water and a close surfacing stay dangerous). An earlier radio call warns 1.5–7 s before a taxi passes close to a surfaced diver. A diver aboard shouts when the boat goes astern toward a surfaced diver.
 - **Balance.** Rival crews leave clumps at 30% of starting stock instead of stripping them, so marked beds outlast the first week. Hull repair costs at most half the boat's price. No landing fee on an empty trip.
