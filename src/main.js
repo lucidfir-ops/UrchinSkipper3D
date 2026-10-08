@@ -200,6 +200,14 @@ class Ocean extends Phaser.Scene {
       lockReason = this.playtest.lockReason;
     this.metrics.mark('inputMs');
     const stopped = consumed || !!lockReason || preparing() || this.view.contextLost;
+    const lowered = this.view.observeFrame?.(
+      this.game.loop.rawDelta,
+      !stopped && ['working', 'practice'].includes(world.day.phase),
+    );
+    if (lowered)
+      this.playtest.notify(
+        `3D graphics eased to ${lowered} for smoother play · Settings to change`,
+      );
     if (stopped) {
       pending = {};
       accumulator = 0;

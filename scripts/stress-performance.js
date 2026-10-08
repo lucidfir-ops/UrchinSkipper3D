@@ -96,6 +96,7 @@ try {
         return {
           fps: +((1000 * frames) / elapsed).toFixed(1),
           logs: w.logs.length,
+          quality: d.three.graphicsLabel,
           calls: d.three.renderer.info.render.calls,
           triangles: d.three.renderer.info.render.triangles,
           stats,

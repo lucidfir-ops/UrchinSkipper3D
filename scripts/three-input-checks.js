@@ -83,6 +83,8 @@ try {
   assert(await page.evaluate(() => /chart/.test(urchinDebug.ui.screen)));
   await page.keyboard.press('Escape');
   await page.waitForFunction(() => !urchinDebug.ui.screen);
+  assert.match(await page.evaluate(() => urchinDebug.ui.hooks.graphicsLabel()), /^Auto · /);
+  assert.equal(await page.evaluate(() => urchinDebug.ui.hooks.cycleGraphics()), 'High');
   const quality = await page.evaluate(() => urchinDebug.ui.hooks.cycleGraphics());
   assert.equal(quality, 'Balanced');
   await page.reload();

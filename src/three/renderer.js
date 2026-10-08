@@ -18,6 +18,9 @@ import { coastalDaylight } from './water-optics.js';
 import { SpeechFootprints } from './speech-footprints.js';
 
 // Presentation is one-way: this module never mutates simulation positions, terrain or weather.
+const QUALITY_MODES = ['Auto', 'High', 'Balanced', 'Battery'];
+// Median frame interval over about three seconds of working play at 30 fps.
+export const AUTO_QUALITY = { frames: 90, slowMs: 30 };
 export class MarineRenderer {
   constructor(host) {
     this.host = host;
@@ -84,10 +87,12 @@ export class MarineRenderer {
     window.addEventListener('resize', this.resize);
     this.resize();
     try {
-      this.quality = localStorage.getItem('urchin3d-graphics-v1') || 'High';
+      this.qualityChoice = localStorage.getItem('urchin3d-graphics-v1') || 'Auto';
     } catch {
-      this.quality = 'High';
+      this.qualityChoice = 'Auto';
     }
+    if (!QUALITY_MODES.includes(this.qualityChoice)) this.qualityChoice = 'Auto';
+    this.quality = this.qualityChoice === 'Auto' ? 'High' : this.qualityChoice;
     this.applyQuality();
     this.canvas.addEventListener('webglcontextlost', (e) => {
       e.preventDefault();
@@ -156,16 +161,39 @@ export class MarineRenderer {
     }
   }
   get graphicsLabel() {
-    return this.quality;
+    return this.qualityChoice === 'Auto' ? `Auto · ${this.quality}` : this.quality;
   }
   cycleGraphics() {
-    const modes = ['High', 'Balanced', 'Battery'];
-    this.quality = modes[(modes.indexOf(this.quality) + 1) % modes.length];
+    this.qualityChoice =
+      QUALITY_MODES[(QUALITY_MODES.indexOf(this.qualityChoice) + 1) % QUALITY_MODES.length];
+    this.quality = this.qualityChoice === 'Auto' ? 'High' : this.qualityChoice;
+    this.autoFrames = [];
     try {
-      localStorage.setItem('urchin3d-graphics-v1', this.quality);
+      localStorage.setItem('urchin3d-graphics-v1', this.qualityChoice);
     } catch {
       /* Live quality remains usable without storage. */
     }
+    this.applyQuality();
+    return this.qualityChoice;
+  }
+  // October 8: Auto (the default until the player picks a level) starts at High
+  // and steps down one level when the working view stays slow, so weak phones
+  // and tablets do not keep High's 1.6x resolution and 2048 shadows. It never
+  // steps back up in the same visit, which avoids oscillating; explicit choices
+  // are never changed.
+  observeFrame(frameMs, active) {
+    if (this.qualityChoice !== 'Auto' || this.quality === 'Battery') return null;
+    if (!active || document.visibilityState === 'hidden' || !(frameMs > 0) || frameMs > 1000) {
+      this.autoFrames = [];
+      return null;
+    }
+    (this.autoFrames ??= []).push(frameMs);
+    if (this.autoFrames.length < AUTO_QUALITY.frames) return null;
+    const sorted = [...this.autoFrames].sort((a, b) => a - b),
+      median = sorted[Math.floor(sorted.length / 2)];
+    this.autoFrames = [];
+    if (median <= AUTO_QUALITY.slowMs) return null;
+    this.quality = this.quality === 'High' ? 'Balanced' : 'Battery';
     this.applyQuality();
     return this.quality;
   }

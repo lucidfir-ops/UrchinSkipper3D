@@ -28,7 +28,7 @@ Enter centre rudder, 1 deploy/board, 2 bag exchange, 3 nearby recall, Tab diver,
 O orders, M chart, +/- zoom, Escape menu. Throttle and rudder stay set when released.
 USB Xbox mappings and touch controls are retained from the original game.
 Recover both divers and cross the harbour boundary before the chart's Leave by time.
-Settings -> 3D graphics cycles High, Balanced and Battery without changing gameplay.
+Settings -> 3D graphics cycles Auto, High, Balanced and Battery without changing gameplay. Auto starts at High and eases down on a slow device.
 
 SAVES AND SHARING
 No careers, recordings or profiles are shipped. Saves belong to the browser/origin.
