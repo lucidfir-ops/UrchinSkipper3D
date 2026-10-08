@@ -36,6 +36,7 @@ import { gear } from './assists.js';
 import { boatSpec } from './boats.js';
 import { diverSpec, workCrew, rememberCrewOrders } from './crew.js';
 import { checkDiverSafety } from './diver-safety.js';
+import { sternWatch } from './stern-watch.js';
 import { chooseHarvestClump, clumpDistance, takeCatch } from './harvest-ground.js';
 import { stepLogs } from './hazards.js';
 import { stepRocks } from './rock-collision.js';
@@ -603,6 +604,7 @@ export function step(w, a, dt, { tolerance = C.recovery.tolerance } = {}) {
   stepRocks(w, previous);
   releaseRunoff(w);
   stepLogs(w, dt, previous);
+  sternWatch(w);
   checkDiverSafety(w, previous);
   stepWildlife(w, dt);
   stepTraffic(w, dt);
