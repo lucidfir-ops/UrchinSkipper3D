@@ -1458,3 +1458,20 @@ body #playtest.orders-panel:has([data-menu-reading]:focus-visible) .orders-readi
     margin-top: 20px;
   }
 }
+/* October 8: on wide screens the voyage plan's five actions took ~220 px of a
+   short detail pane, cutting the plan text. Keep Begin working day full width
+   and pair the rest, so the plan reads with less scrolling. */
+@media (min-width: 1000px) {
+  body #playtest[data-screen='departure'] .expedition-choices {
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: 6px;
+  }
+  body #playtest[data-screen='departure'] .expedition-choices button {
+    flex: 1 1 40%;
+    min-width: 0;
+  }
+  body #playtest[data-screen='departure'] .expedition-choices button:first-child {
+    flex-basis: 100%;
+  }
+}
