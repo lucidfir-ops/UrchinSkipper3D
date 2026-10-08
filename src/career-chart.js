@@ -5,7 +5,7 @@ import { earlyStartNotice } from './early-start.js';
 import { buyerNotice } from './buyer.js';
 import { reportAge, markBearing } from './knowledge.js';
 import { seasonStatus, areaStatus } from './season.js';
-import { selectedSubArea, subAreaDefinition } from './quota-areas.js';
+import { selectedSubArea, subAreaDefinition, subAreaYield } from './quota-areas.js';
 import { coastFor } from './coasts.js';
 import { departureBriefing } from './preparation.js';
 import { terrainFor } from './career-terrain.js';
@@ -67,6 +67,10 @@ export function renderExpedition(ui, w, bind) {
       ...subAreaDefinition(id, selectedSubArea(w.career, id)),
       label: `${coastFor(id).name} / ${sectorDefinition(id).name}`,
     },
+    // October 8: show the live season-health yield and say why it is lower,
+    // instead of letting bags silently slow down on an over-fished map.
+    liveYield = subAreaYield(w.career, id, selectedSubArea(w.career, id)),
+    fishedHard = liveYield < subArea.yield * 0.95,
     actions = expeditionActions(ui, w),
     choices = actions.map((a) => a.label);
   const signature = JSON.stringify([
@@ -101,7 +105,7 @@ export function renderExpedition(ui, w, bind) {
     if (ui.screen === 'departure') {
       const brief = departureBriefing(w, id),
         f = brief.fuel;
-      detail = `<div class="travel-strip"><div>Arrive<strong>${formatClock(trip.arrival)}</strong></div><div>Leave by<strong>${formatClock(trip.depart)}</strong></div></div><h3>${access.open ? 'Area open' : access.reason} · ${seasonStatus(w.career, careerDayAt(w)).daysLeft} days left in season</h3><p><strong>${subArea.label} · ${subArea.difficulty}</strong><br>${subArea.hazards}<br>Ground potential ${Math.round(subArea.yield * 100)}% · price tier ${Math.round(subArea.price * 100)}%</p><p class="buyer-notice">Buyer: ${buyerNotice(w.career)}</p><h3>Fuel for the working day</h3><p>${w.boat.fuel.toFixed(1)} L aboard · outward ${f.outbound.toFixed(1)} L · home ${f.home.toFixed(1)} L<br>Reserve ${f.reserve.toFixed(1)} L · ~${f.workingMinutes >= 120 ? (f.workingMinutes / 60).toFixed(1) + ' h' : Math.floor(f.workingMinutes) + ' min'} local fuel endurance</p><div class="departure-warnings">${
+      detail = `<div class="travel-strip"><div>Arrive<strong>${formatClock(trip.arrival)}</strong></div><div>Leave by<strong>${formatClock(trip.depart)}</strong></div></div><h3>${access.open ? 'Area open' : access.reason} · ${seasonStatus(w.career, careerDayAt(w)).daysLeft} days left in season</h3><p><strong>${subArea.label} · ${subArea.difficulty}</strong><br>${subArea.hazards}<br>Ground potential ${Math.round(liveYield * 100)}% · price tier ${Math.round(subArea.price * 100)}%${fishedHard ? '<br>Fished hard last season: picking is slower here until the ground rests.' : ''}</p><p class="buyer-notice">Buyer: ${buyerNotice(w.career)}</p><h3>Fuel for the working day</h3><p>${w.boat.fuel.toFixed(1)} L aboard · outward ${f.outbound.toFixed(1)} L · home ${f.home.toFixed(1)} L<br>Reserve ${f.reserve.toFixed(1)} L · ~${f.workingMinutes >= 120 ? (f.workingMinutes / 60).toFixed(1) + ' h' : Math.floor(f.workingMinutes) + ' min'} local fuel endurance</p><div class="departure-warnings">${
         brief.notes
           .filter((n) => brief.guided || n.level === 'danger' || n.level === 'stop' || n.clock)
           .map((n) => `<p class="${n.level}">${n.text}</p>`)

@@ -6,6 +6,7 @@ import { createCareer } from '../src/career-state.js';
 import { chooseGround } from '../src/day.js';
 import { recordKnowledge, markPosition, markReport } from '../src/knowledge.js';
 import { renderExpedition } from '../src/career-chart.js';
+import { normalizeQuotaAreas, selectedSubArea } from '../src/quota-areas.js';
 import { updateWildlifeInteractions } from '../src/wildlife.js';
 import { inspectionDue } from '../src/inspection-schedule.js';
 import { finishInspection, patrolSkipper } from '../src/fishery.js';
@@ -17,7 +18,7 @@ function voyage(seed) {
   return w;
 }
 
-function chartMarkup(w) {
+function chartMarkup(w, screen = 'knowledge') {
   const previousDocument = globalThis.document,
     surface = {},
     choices = {
@@ -40,7 +41,7 @@ function chartMarkup(w) {
     }),
   };
   try {
-    renderExpedition({ screen: 'knowledge', index: 0, chartMode: 'vector', panel }, w, () => '');
+    renderExpedition({ screen, index: 0, chartMode: 'vector', panel }, w, () => '');
     return panel.innerHTML;
   } finally {
     globalThis.document = previousDocument;
@@ -189,4 +190,18 @@ test('taxi spawn offsets expire with actual onboarding days on an extended voyag
   // Onboarding days 1–3 widen the drive-by; day 4 uses the ordinary 14–22 m pass.
   assert(points[0] >= 20, `day 3 pass ${points[0]}`);
   assert(points[1] >= 14 && points[1] <= 32, `day 4 pass ${points[1]}`);
+});
+
+test('the voyage plan shows live ground potential and explains an over-fished map', () => {
+  const w = careerWorld(createCareer(5));
+  const fresh = chartMarkup(w, 'departure');
+  assert(!fresh.includes('Fished hard'));
+  const record = normalizeQuotaAreas(w.career).areas.near.subAreas.find(
+    (r) => r.id === selectedSubArea(w.career, 'near'),
+  );
+  record.health = 0.55;
+  const worked = chartMarkup(w, 'departure');
+  assert.match(worked, /Fished hard last season/);
+  const potential = (html) => Number(html.match(/Ground potential (\d+)%/)[1]);
+  assert(potential(worked) < potential(fresh));
 });
