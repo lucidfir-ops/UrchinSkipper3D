@@ -37,6 +37,11 @@ test('a nearby fast taxi is heard, louder and higher-pitched approaching than le
   assert(close.gain > coming.gain, 'louder when closer');
   assert.equal(trafficSound(w(TRAFFIC_SOUND.range + 1, -15)).gain, 0);
   assert(trafficSound(w(60, -5, 'tourist')).gain < coming.gain, 'slow tourist boats are quieter');
-  assert.equal(trafficSound(w(60, 0)).gain, 0, 'a stopped rival makes no engine noise');
+  assert.equal(trafficSound(w(60, 0)).gain, 0, 'a stopped taxi makes no engine noise');
+  const working = w(40, 0, 'rival');
+  working.traffic.actors[0].phase = 'fishing';
+  const idle = trafficSound(working);
+  assert(idle.gain > 0 && idle.gain < coming.gain, 'a rival working on station idles quietly');
+  assert(idle.rate < going.rate);
   assert.equal(trafficSound({ boat: { x: 0, y: 0 } }).gain, 0);
 });

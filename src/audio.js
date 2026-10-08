@@ -84,17 +84,30 @@ export function synthesize(kind, rate = 22050) {
   return samples;
 }
 
-export const TRAFFIC_SOUND = { range: 160, maxGain: 0.3, doppler: 0.35 };
+export const TRAFFIC_SOUND = {
+  range: 160,
+  maxGain: 0.3,
+  doppler: 0.35,
+  idleGain: 0.1,
+  idleRange: 90,
+};
 // Loudness and pitch of the loudest moving vessel, heard from the ownship.
 export function trafficSound(w) {
   let best = { gain: 0, rate: 1 };
   for (const a of w.traffic?.actors || []) {
     const speed = Math.hypot(a.vx || 0, a.vy || 0);
-    if (speed < 0.5) continue;
     const dx = a.x - w.boat.x,
       dy = a.y - w.boat.y,
       d = Math.hypot(dx, dy);
     if (d >= TRAFFIC_SOUND.range) continue;
+    if (speed < 0.5) {
+      // A working rival idles on station (its compressor and engine ticking
+      // over), a low cue that helps find it in fog. Other stopped boats are quiet.
+      const idle = a.kind === 'rival' && a.phase === 'fishing' ? TRAFFIC_SOUND.idleGain : 0,
+        gain = idle * (1 - d / TRAFFIC_SOUND.idleRange) ** 2;
+      if (d < TRAFFIC_SOUND.idleRange && gain > best.gain) best = { gain, rate: 0.55 };
+      continue;
+    }
     const near = (1 - d / TRAFFIC_SOUND.range) ** 2,
       gain =
         TRAFFIC_SOUND.maxGain *
