@@ -2,6 +2,21 @@
 
 October 5, 2026 (v2 notes) · torch-lit bubbles show at night as by day, the deck-load ghost becomes a flashing 3D picture of a full deck, diver bubbles are half as opaque and a quarter smaller, and night-menu Settings switches keep their text when ON. Earlier the same day: deck load, fuel and hull read from the boat, the bubble redesign, whistle only, phone text overflow, night menus, harbour-line action, bull kelp, render recovery, taxi drive-bys and touch auto-rotate. Claude (Claude Code) develops this project; entries from October 3 and earlier were written by Codex ("Astra"). Work, exports and publication belong only to this project and [lucidfir-ops/UrchinSkipper3D](https://github.com/lucidfir-ops/UrchinSkipper3D). The 2D edition is no longer developed.
 
+## October 8 autonomous improvement pass (branch `autonomous-improvements`, not merged)
+
+Source: the designer's October 8 request to improve the game autonomously on a branch (never `main`), logging each change. Built on `overnight-balance`. Nothing here is designer-approved; the Bible is unchanged. Running list with reasons and commits: [IMPROVEMENT_LOG.md](IMPROVEMENT_LOG.md).
+
+- **Safety.** Taxis keep a weather-limited lookout and swerve around surfaced divers they can see (fog, night, rough water and a close surfacing stay dangerous). An earlier radio call warns 1.5–7 s before a taxi passes close to a surfaced diver. A diver aboard shouts when the boat goes astern toward a surfaced diver.
+- **Balance.** Rival crews leave clumps at 30% of starting stock instead of stripping them, so marked beds outlast the first week. Hull repair costs at most half the boat's price. No landing fee on an empty trip.
+- **Readability.** The voyage plan shows live ground potential and says when a map was fished hard. On wide screens its actions are paired so all seven show.
+- **Audio.** Other boats are audible: one procedural engine loop with distance and Doppler, for the loudest nearby vessel.
+- **Performance.** Distant floating logs drift in staggered cohorts. New Auto graphics default steps down from High on sustained slow frames; explicit choices are kept.
+- **Input bug.** A key pressed just after the game suppressed input (Escape right after Continue) was lost; this was the flaky continuous-weather step.
+- **Code health.** Nine unused 2D-era modules removed.
+- **Tools.** `scripts/stock-model.js` (fast stock/rival model), `scripts/stress-performance.js` (night+fog+720 logs at three sizes), `scripts/voyage-plan-shots.js`.
+
+Verification: `npm run verify -- --unit-only` passes on every commit (665 tests at `55f90c7`, 1 intentional skip). Browser suites run where relevant: continuous-weather (6/6 after the fix), input, operations, traffic-fleet, voyage, strict menu-theme. Independent screenshot review of the voyage-plan note: [record](docs/review/independent-voyage-plan-note-2026-10-08.md). Limits: performance figures use Chromium CPU throttling and the Deck GPU, not a phone; the traffic sound and the Auto-graphics notice have not been heard or seen on a real device; bot comparisons use one or two seeds.
+
 ## October 6–7 overnight balance pass (branch `overnight-balance`, not merged)
 
 Source: the designer's overnight request of October 6 to play-test the career with a bot and tune its balance. Nothing here is designer-approved yet; the Bible is unchanged. [Record and findings](docs/review/career-balance-2026-10-06.md); [morning summary](MORNING_SUMMARY.md).
