@@ -195,13 +195,13 @@ test('taxi spawn offsets expire with actual onboarding days on an extended voyag
 test('the voyage plan shows live ground potential and explains an over-fished map', () => {
   const w = careerWorld(createCareer(5));
   const fresh = chartMarkup(w, 'departure');
-  assert(!fresh.includes('Fished hard'));
+  assert(!fresh.includes('fished hard'));
   const record = normalizeQuotaAreas(w.career).areas.near.subAreas.find(
     (r) => r.id === selectedSubArea(w.career, 'near'),
   );
   record.health = 0.55;
   const worked = chartMarkup(w, 'departure');
-  assert.match(worked, /Fished hard last season/);
+  assert.match(worked, /\(fished hard last season\)/);
   const potential = (html) => Number(html.match(/Ground potential (\d+)%/)[1]);
   assert(potential(worked) < potential(fresh));
 });
