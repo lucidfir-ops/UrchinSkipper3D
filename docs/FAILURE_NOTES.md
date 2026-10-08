@@ -391,3 +391,10 @@ Record reproducible causes and useful solutions; current tasks belong in `PROJEC
 - Guard every bot loop by simulated time *and* iteration count, and round-trip the save after each day: the round trip found a real save-validation bug (nine-goose flocks).
 - `pkill -f <pattern>` run from a shell whose own command line contains the pattern kills that shell. Select PIDs with `ps -eo pid,args | awk '$2=="node" …'` instead.
 - Long bot sweeps must pin the game code in a git worktree. Editing `src/` while a sweep runs is safe for processes that have already loaded their modules, but not for ones spawned later.
+
+## October 8 autonomous pass
+
+- `careerWorld()` and `createCareer()` without `{ chooseStarter: true }` grant every coast permit (test fixtures). A test of anything permit-dependent must set `c.coastAccess = ['home']` or it silently tests the unrestricted case.
+- `npm run verify -- --unit-only` rebuilds `dist`. Running it while a browser sweep serves `dist` swaps hashed bundles under the server. During a sweep, check with `npm test`, lint, format and `vite build --outDir <scratch>` instead.
+- `ui.screen` changes before the next frame paints the menu. A fixture that reads panel DOM straight after waiting on `ui.screen` races the render; wait for the elements themselves.
+- An input "suppress until released" gate must distinguish held-before from pressed-after. Treating every held key as stale dropped real presses that arrived before the next frame.
