@@ -224,3 +224,18 @@ test('hull repair is scaled to the boat, so a wrecked starter costs less than it
   Object.assign(w.boat, { configuration: 'twinjet', hullHealth: 0.5 });
   assert.equal(repairQuote(w), 9000, 'expensive hulls keep the former $18,000 full-hull rate');
 });
+test('an empty trip pays no landing fee; a landed catch still does', () => {
+  const w = careerWorld();
+  chooseGround(w, 'near');
+  w.day.minute = 900;
+  const empty = finish(w);
+  assert(empty.ok);
+  assert.equal(empty.landed, 0);
+  assert.equal(empty.career.landingFee, 0);
+  const full = careerWorld();
+  chooseGround(full, 'near');
+  full.day.minute = 900;
+  full.catch = 300;
+  full.bags = [{ weight: 300, quality: 0.8, harvestMinute: 850 }];
+  assert.equal(finish(full).career.landingFee, ECONOMY.landingFee);
+});

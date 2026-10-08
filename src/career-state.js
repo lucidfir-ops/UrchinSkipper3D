@@ -321,6 +321,8 @@ export function settleCareer(w, result) {
     record.earnings = cents((record.earnings || 0) + share.pay);
     record.trips = (record.trips || 0) + 1;
   }
+  // October 8: the landing fee is charged on landed catch; an empty trip lands nothing.
+  const landingFee = result.landed > 0 ? ECONOMY.landingFee : 0;
   const crewPay = shares.reduce((n, p) => n + p.pay, 0),
     interest = cents(c.debt * ECONOMY.interest),
     insurance =
@@ -330,7 +332,7 @@ export function settleCareer(w, result) {
   const cost = cents(
     (w.costs.fuel || 0) +
       (w.costs.rescue || 0) +
-      ECONOMY.landingFee +
+      landingFee +
       crewPay +
       interest +
       (w.day.inspectionFine || 0),
@@ -398,7 +400,7 @@ export function settleCareer(w, result) {
     day: c.day,
     shares,
     crewPay,
-    landingFee: ECONOMY.landingFee,
+    landingFee,
     interest,
     insurance,
     premium: w.day.insurancePaid || 0,
