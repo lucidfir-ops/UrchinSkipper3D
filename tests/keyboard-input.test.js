@@ -393,3 +393,19 @@ test('Escape cancels physical capture and naming even when a short press ends be
   input.poll();
   assert.equal(input.naming, null);
 });
+test('a key pressed after suppression counts at once; a key held across it waits for release', () => {
+  const { input, send } = setup();
+  input.poll();
+  send('keydown', 'Enter');
+  input.suppress();
+  send('keydown', 'Escape');
+  assert(!input.poll().pause, 'Enter held across suppress keeps input suppressed');
+  send('keyup', 'Enter');
+  send('keyup', 'Escape');
+  input.poll();
+  input.suppress();
+  send('keydown', 'Escape');
+  const action = input.poll();
+  assert(action.pause, 'Escape pressed after Continue opens the menu before any frame ran');
+  assert(action.keyboardEscape);
+});

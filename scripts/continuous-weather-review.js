@@ -71,6 +71,10 @@ function weatherRecord() {
 }
 
 async function forecastRecord(page) {
+  // ui.screen changes before the next frame paints the panel; wait for the DOM.
+  await page.waitForFunction(
+    () => document.querySelector('.day-footer') && document.querySelector('.expedition-copy'),
+  );
   return page.evaluate(() => ({
     minute: urchinDebug.world.day.minute,
     savedPlan: urchinDebug.world.career.weatherPlan,

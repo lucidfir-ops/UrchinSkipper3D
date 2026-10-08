@@ -176,6 +176,8 @@ export class Input {
     this.raw = {};
     this.resolved = {};
     this.keys = new Set();
+    // Keys pressed after the last suppress(): new intent, not input held across it.
+    this.freshKeys = new Set();
     this.taps = new Set();
     this.touchSources = new Map();
     this.touchTaps = new Set();
@@ -302,6 +304,7 @@ export class Input {
           if (!e.repeat && !editingKey(e)) {
             this.lastDevice = 'keyboard';
             this.keys.add(e.code);
+            this.freshKeys.add(e.code);
             this.taps.add(e.code);
           }
           return;
@@ -316,6 +319,7 @@ export class Input {
         if (e.repeat) return;
         this.lastDevice = 'keyboard';
         this.keys.add(e.code);
+        this.freshKeys.add(e.code);
         this.taps.add(e.code);
         if (
           this.capture?.device === 'keyboard' &&
@@ -347,6 +351,7 @@ export class Input {
           this.shiftKeys.delete(e.code);
         }
         this.keys.delete(e.code);
+        this.freshKeys.delete(e.code);
       },
       { capture: true },
     );
@@ -405,6 +410,8 @@ export class Input {
   suppress() {
     this.suppressed = true;
     if (this.shiftKeys?.size) this.shiftUsed = true;
+    this.freshKeys.clear();
+    this.queued?.clear();
     this.taps.clear();
     this.touchSources.clear();
     this.touchTaps.clear();
@@ -717,14 +724,18 @@ export class Input {
       );
       pressed[action] = raw[action] > 0.5 && !(this.previous[action] > 0.5);
     }
-    const released =
-      this.keys.size === 0 &&
-      this.touchSources.size === 0 &&
-      pads.every(
+    const padsReleased = pads.every(
         (p) =>
           p.buttons.every((b) => b.value < 0.3) &&
           axes.every((a) => Math.abs(a) <= C.input.deadZone),
-      );
+      ),
+      released = this.keys.size === 0 && this.touchSources.size === 0 && padsReleased,
+      // Only input held across suppress() keeps it; a key pressed since then
+      // (Escape right after Continue, before a frame ran) is a new command.
+      settled =
+        this.touchSources.size === 0 &&
+        padsReleased &&
+        [...this.keys].every((code) => this.freshKeys.has(code));
     const keyboardX =
       (this.keys.has('ArrowRight') || this.keys.has('KeyD') ? 1 : 0) -
       (this.keys.has('ArrowLeft') || this.keys.has('KeyA') ? 1 : 0);
@@ -852,8 +863,8 @@ export class Input {
     this.queued.clear();
     this.previous = raw;
     this.raw = raw;
+    if (this.suppressed && settled) this.suppressed = false;
     const suppress = this.suppressed || this.wasCapturing;
-    if (this.suppressed && released) this.suppressed = false;
     this.resolved =
       suppress || this.naming
         ? { throttle: 0, steer: 0, zoom: 0 }
