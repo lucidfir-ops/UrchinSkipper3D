@@ -23,6 +23,7 @@ import {
   credit,
   departureReady,
   changeDepartureTime,
+  repairQuote,
 } from '../src/career-state.js';
 import { ECONOMY } from '../src/career-data.js';
 import { diverSpec } from '../src/crew.js';
@@ -213,4 +214,13 @@ test('delayed shipping cannot finance a new departure before offload; harbour wa
   const afterMidnight = nextCareerDay(w);
   assert.equal(afterMidnight.career.day, 3);
   assert.equal(afterMidnight.day.minute, 540);
+});
+
+test('hull repair is scaled to the boat, so a wrecked starter costs less than it is worth', () => {
+  const w = careerWorld();
+  Object.assign(w.boat, { configuration: 'basic', hullHealth: 0.1, driveHealth: 1 });
+  assert.equal(repairQuote(w), 6750);
+  assert(repairQuote(w) < 15000 / 2);
+  Object.assign(w.boat, { configuration: 'twinjet', hullHealth: 0.5 });
+  assert.equal(repairQuote(w), 9000, 'expensive hulls keep the former $18,000 full-hull rate');
 });

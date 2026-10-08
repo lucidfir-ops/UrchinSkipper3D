@@ -20,7 +20,7 @@ import { weatherPlan } from './weather.js';
 import { assignCrew } from './crew.js';
 import { C } from './config.js';
 import { recoverCrewExposure } from './dive-exposure.js';
-import { boatSpec, boatDefinition } from './boats.js';
+import { boatSpec, boatDefinition, hullRepairRate } from './boats.js';
 import { equipmentAvailability, equipmentLocation } from './equipment-fit.js';
 import { careerDayAt } from './career-calendar.js';
 export const freshVessel = (id) => ({
@@ -200,7 +200,10 @@ export function buyAreaAccess(w, id) {
 
 export function repairQuote(w) {
   const def = boatDefinition(w.boat.configuration);
-  return cents((1 - w.boat.hullHealth) * 18000 + (1 - w.boat.driveHealth) * def.repairCost);
+  return cents(
+    (1 - w.boat.hullHealth) * hullRepairRate(w.boat.configuration) +
+      (1 - w.boat.driveHealth) * def.repairCost,
+  );
 }
 export function serviceBoat(w, kind) {
   const c = w.career;

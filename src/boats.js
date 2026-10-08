@@ -186,6 +186,13 @@ const DEFINITIONS = Object.fromEntries(
   ]),
 );
 export const boatDefinition = (id) => DEFINITIONS[id] || BOATS[0];
+// Cost of rebuilding the whole hull, scaled to what the boat is worth.
+export function hullRepairRate(configuration) {
+  const price = FLEET[configuration]?.price;
+  return price
+    ? Math.min(C.damage.hullRepairCost, price * C.damage.hullRepairShare)
+    : C.damage.hullRepairCost;
+}
 export function boatSpec(w) {
   const spec = { ...C.boat, ...boatDefinition(w.boat.configuration).spec };
   if (w.career) {

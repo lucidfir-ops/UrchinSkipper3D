@@ -1,4 +1,4 @@
-import { boatDefinition, boatSpec } from './boats.js';
+import { boatDefinition, boatSpec, hullRepairRate } from './boats.js';
 import { C } from './config.js';
 import { clamp } from './terrain.js';
 import { godmode } from './godmode.js';
@@ -49,7 +49,7 @@ export function collisionDamage(
   if (b.driveHealth < 0.06) b.driveHealth = 0;
   if (w.costs) {
     w.costs.repair += (oldDrive - b.driveHealth) * def.repairCost;
-    w.costs.hullRepair = (w.costs.hullRepair || 0) + hullLoss * t.hullRepairCost;
+    w.costs.hullRepair = (w.costs.hullRepair || 0) + hullLoss * hullRepairRate(b.configuration);
   }
   if (hullLoss > 0.01 || driveLoss > 0.01) {
     const text =

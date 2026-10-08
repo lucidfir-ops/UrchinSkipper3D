@@ -87,6 +87,9 @@ export const C = {
     driveCatastrophicEnergy: 16,
     driveCatastrophicChance: 0.025,
     hullRepairCost: 18000,
+    // October 8: a full hull rebuild costs at most half the boat's price, so a
+    // wrecked $15,000 starter no longer needs more than it is worth.
+    hullRepairShare: 0.5,
   },
   diverSafety: {
     radius: 0.2,
