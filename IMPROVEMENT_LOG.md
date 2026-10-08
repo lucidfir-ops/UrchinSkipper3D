@@ -37,3 +37,6 @@ Hard limits kept throughout: exactly two divers, rigid orthographic following ca
 - **October 8 — Early taxi heads-up radio** (`d66af09`). Projects each fast taxi's course; one call 1.5–7 s out if it will pass within 16 m of a surfaced diver ("Water taxi from the W, coming fast past Ada Chen!"), with the warning sound. Phone screenshot: fits one line under the instruments.
 - **October 8 — Dead 2D modules removed** (`d5c14e4`). Nine modules (~1,300 lines) imported by nothing.
 - **October 8 — Other boats are audible** (`e5935fe`). One procedural outboard loop follows the loudest moving vessel within 160 m with distance gain and Doppler pitch; capped at 0.3 of volume. Unit-tested model; traffic-fleet and voyage suites pass. Not checked by ear.
+- **October 8 — Stern watch** (`38c2ed1`). A fit diver aboard shouts "Ada's astern — neutral!" when the boat is under power astern with a surfaced diver within 9 m behind the stern; 8 s cooldown. Both bot fatalities in today's HEAD runs were own-stern reversals.
+- **October 8 — Voyage actions paired on wide screens** (`55f90c7`). At 1280×800 two of seven actions were hidden below a scroll; now all show. Strict menu-theme audit passes.
+- **October 8 — TEMP export** `exports/2026-10-08-autonomous-improvements/` (build at `6c5653e`; upload `UrchinSkipper3D-TEMP-ITCHIO.zip`, SHA-256 sidecars included).
