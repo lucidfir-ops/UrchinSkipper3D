@@ -158,10 +158,15 @@ export class MarineVegetation {
         attribute vec3 previousFlow;
         attribute vec2 plantSize;
         attribute float plantBlade;
-        attribute float plantPart;\n` + shader.vertexShader;
+        attribute float plantPart;
+        ${grass ? 'attribute float flowStamp;' : ''}\n` + shader.vertexShader;
       shader.vertexShader = shader.vertexShader.replace(
         '#include <begin_vertex>',
-        '#include <begin_vertex>\nvec3 flow = mix(previousFlow, plantFlow, uFlowBlend);\n' +
+        '#include <begin_vertex>\n' +
+          (grass
+            ? // Each grass cell eases from its last pose since its own refresh.
+              `vec3 flow = mix(previousFlow, plantFlow, clamp((uPlantTime - flowStamp) / ${VEGETATION_REFRESH.grassSeconds.toFixed(2)}, 0.0, 1.0));\n`
+            : 'vec3 flow = mix(previousFlow, plantFlow, uFlowBlend);\n') +
           (grass
             ? `
           float t = position.y;
@@ -243,7 +248,7 @@ export class MarineVegetation {
         `,
       );
     };
-    material.customProgramCacheKey = () => (grass ? 'eelgrass-flow-v2' : 'bull-kelp-flow-v4');
+    material.customProgramCacheKey = () => (grass ? 'eelgrass-flow-v3' : 'bull-kelp-flow-v4');
     const shapes = grass ? [grassBlade()] : [0, 1, 2].map(bullKelpGeometry);
     const cells = new Map();
     for (const p of plants) {
@@ -270,6 +275,13 @@ export class MarineVegetation {
           new THREE.InstancedBufferAttribute(motions.slice(), 3).setUsage(THREE.DynamicDrawUsage),
         );
       }
+      if (grass)
+        geometry.setAttribute(
+          'flowStamp',
+          new THREE.InstancedBufferAttribute(new Float32Array(cell.length), 1).setUsage(
+            THREE.DynamicDrawUsage,
+          ),
+        );
       const mesh = new THREE.InstancedMesh(geometry, material, cell.length);
       mesh.name = grass
         ? 'Separate eelgrass blades · 2–6 m'
@@ -343,10 +355,15 @@ export class MarineVegetation {
       p.angle = p.motion.angle;
       next.setXYZ(i, p.motion.angle, p.motion.extension, p.motion.tip);
     });
-    // Grass refreshes off the shared 0.1 s blend, so it shows its new pose
-    // directly; its slow change makes the step invisible.
-    if (initial || cell.grass) previous.array.set(next.array);
+    if (initial) previous.array.set(next.array);
     previous.needsUpdate = next.needsUpdate = true;
+    // Grass eases over its own refresh interval from this time stamp (an
+    // October 8 review saw clumps twitch when the new pose showed at once).
+    const stamp = mesh.geometry.attributes.flowStamp;
+    if (stamp) {
+      stamp.array.fill(initial ? elapsed - VEGETATION_REFRESH.grassSeconds : elapsed);
+      stamp.needsUpdate = true;
+    }
   }
   dispose() {
     for (const { mesh } of this.cells) mesh.geometry.dispose();
