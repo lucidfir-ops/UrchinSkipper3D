@@ -36,28 +36,33 @@ try {
       r.currentArrows.visible = false;
       original.divers.forEach((v) => (v.group.visible = false));
       const views = ids.map((id, i) => {
-        const v = new original.constructor(r.scene),
-          world = {
-            ...w,
-            boat: {
-              ...w.boat,
-              configuration: id,
-              x: origin.x + ((i % 4) - 1.5) * 19,
-              y: origin.y + (Math.floor(i / 4) - 1) * 26,
-              heading: -0.26,
-              throttle: 0,
+        const v = new original.constructor(r.scene);
+        // Each gallery copy would add two more shadow-casting work lights and
+        // two torches. Twelve copies exceed the GPU's varying limit ("Could not
+        // pack varying"); the game itself has one set. Keep the original's.
+        r.scene.remove(v.lightRig);
+        v.diverTorches.forEach((torch) => r.scene.remove(torch.group));
+        const world = {
+          ...w,
+          boat: {
+            ...w.boat,
+            configuration: id,
+            x: origin.x + ((i % 4) - 1.5) * 19,
+            y: origin.y + (Math.floor(i / 4) - 1) * 26,
+            heading: -0.26,
+            throttle: 0,
+          },
+          career: {
+            ...w.career,
+            fleet: {
+              [id]: { equipment: id.endsWith('-sister') ? equipment : [], disabledEquipment: [] },
             },
-            career: {
-              ...w.career,
-              fleet: {
-                [id]: { equipment: id.endsWith('-sister') ? equipment : [], disabledEquipment: [] },
-              },
-            },
-            traffic: { actors: [] },
-            bags: [],
-            catch: 0,
-            divers: w.divers.map((a) => ({ ...a, state: 'ready' })),
-          };
+          },
+          traffic: { actors: [] },
+          bags: [],
+          catch: 0,
+          divers: w.divers.map((a) => ({ ...a, state: 'ready' })),
+        };
         v.update(world, 0.016);
         return { v, world, id };
       });
