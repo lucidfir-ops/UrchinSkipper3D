@@ -18,7 +18,6 @@ Hard limits kept throughout: exactly two divers, rigid orthographic following ca
 11. **Audio — nobody has listened to the mix** (rain + traffic + engine + whistle). Needs the designer's ear.
 12. **UX — the voyage plan's detail text is still short on 1280×800** (Buyer paragraph scrolls); consider a smaller chart column on wide-but-short screens.
 
-14. **Visual review — eelgrass in motion after the round-robin refresh**: capture a few seconds of frames and have an independent reviewer look for stepping.
 15. **UX — phone-portrait action-feedback panel defaults to 46 px** (two lines); long notices are cut. Consider auto-height up to a cap.
 
 ## In progress
@@ -54,3 +53,4 @@ Hard limits kept throughout: exactly two divers, rigid orthographic following ca
 - **October 8 — Second full browser sweep: 43/43 pass** (dist built at `803a9e3`; `a7e05e2` is text-only and unit-checked).
 - **October 8 — TEMP export r2** `exports/2026-10-08-autonomous-improvements-r2/` (build at `a7e05e2` plus log commits).
 - **October 8 — Battery drops the shadow pass** (`1fb9ea9`). Phone-size profile at 4x throttle: render 11.6 → 7.3 ms; worst-case scene 18 → 32 fps, calm 23 → 27.5 (with the vegetation fix). Visual loss from the top-down camera: faint deck-hatch shading.
+- **October 8 — Eelgrass eases between refreshes** (`82afb28`). Independent review of the round-robin refresh found clumps snapping ~2 Hz (should-fix). Per-instance refresh stamp + shader easing; frame-difference bursts gone. Record: `docs/review/independent-eelgrass-motion-2026-10-08.md`.

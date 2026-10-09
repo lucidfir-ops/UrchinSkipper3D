@@ -10,7 +10,7 @@ Reviewer: a separate Claude subagent that did not write the change.
 - **Should-fix:** frame differences show grass changing in bursts, heavily in alternate 120 ms steps, consistent with cells snapping to new poses about twice a second. This would probably read as clumps twitching at about 2 Hz.
 - Note: grass right of the boat is sparse, which is a density difference, not a fault.
 
-Fix (`see the commit after 1fb9ea9`):
+Fix (`82afb28`):
 - Each grass instance stores the time of its cell's last refresh (`flowStamp`).
 - The grass shader eases from the previous pose to the new one over the 0.5 s refresh interval. Kelp is unchanged.
 - The CPU cost is unchanged: one extra float per blade is uploaded when its cell refreshes.
