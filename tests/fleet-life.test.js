@@ -134,3 +134,16 @@ test('several working days retain accounts, crew condition, stock and fleet repo
     assert(w.career.lastFleet.every((r) => w.career.stock[r.area]));
   }
 });
+test('quiet unexplained moments share the existing event slot and never change the boat', async () => {
+  const { quietMoment, QUIET_MOMENTS } = await import('../src/sea-events.js');
+  const w = careerWorld();
+  w.weather = { ...w.weather, night: true };
+  const seen = new Set();
+  for (let v = 0; v < 0.5; v += 0.01) seen.add(quietMoment(w, v));
+  assert.equal(seen.size, QUIET_MOMENTS.length, 'every moment is reachable');
+  assert.equal(quietMoment(w, 0.5), null, 'half of quiet days still fall through to the seal');
+  w.weather = { ...w.weather, night: false, sunlight: 1 };
+  assert(![...Array(50)].some((_, i) => /A light low/.test(quietMoment(w, i / 100) || '')));
+  // Frequency guard: the day still has exactly one event check.
+  assert(SEA_EVENTS.unusualChance === 0.07);
+});

@@ -51,6 +51,12 @@ export function stepSeaEvents(w, dt) {
       d.fatigue = Math.max(0, d.fatigue - 0.08);
       w.events.push(`CREW · ${d.name}: Give me a minute to warm my hands.`);
     } else {
+      const quiet = quietMoment(w, roll(c.seed, c.day + 5303));
+      if (quiet) {
+        w.events.push(quiet);
+        if (quiet.startsWith('RADIO')) w.effects.push({ type: 'radio' });
+        return;
+      }
       const point = { x: w.boat.x + 23, y: w.boat.y - 18 };
       if (
         depthAt(w, point.x, point.y) > 0 &&
@@ -59,4 +65,25 @@ export function stepSeaEvents(w, dt) {
         w.events.push('A seal surfaces, looks at the boat, and is gone.');
     }
   }
+}
+
+// October 8 (Bible §17: rare unexplained returns, lights, radio and objects
+// that need not be explained). These share the existing quiet-day slot, so the
+// overall event frequency is unchanged; half of those days still bring the seal.
+// Text only: nothing here changes the simulation or reveals hidden ground.
+export const QUIET_MOMENTS = [
+  () => 'SOUNDER · 212 m for one ping, then back to the bottom. The transducer is fine.',
+  (w) =>
+    w.weather?.night || (w.weather?.sunlight ?? 1) < 0.35
+      ? 'A light low on the water to seaward. Then nothing.'
+      : null,
+  () =>
+    'An old trawl float drifts past, crusted with barnacles. Stencilled: RETURN TO — and the rest is gone.',
+  () => 'RADIO · …static… “—anyone on sixteen, we have your—” …static. Nothing more.',
+  () => 'Every gull on the water lifts at once and heads inshore. The sea looks the same.',
+];
+export function quietMoment(w, value) {
+  if (value >= 0.5) return null;
+  const pick = QUIET_MOMENTS[Math.floor((value / 0.5) * QUIET_MOMENTS.length)];
+  return pick(w);
 }
