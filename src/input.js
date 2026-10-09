@@ -409,6 +409,7 @@ export class Input {
   }
   suppress() {
     this.suppressed = true;
+    this.suppressSerial = (this.suppressSerial || 0) + 1;
     if (this.shiftKeys?.size) this.shiftUsed = true;
     this.freshKeys.clear();
     this.queued?.clear();
@@ -631,6 +632,8 @@ export class Input {
     return true;
   }
   poll(dt = 1 / 60) {
+    // Input read this frame predates any suppress() raised while handling it.
+    const suppressSerial = this.suppressSerial;
     this.wasCapturing = !!this.capture;
     let pads = [];
     try {
@@ -863,8 +866,9 @@ export class Input {
     this.queued.clear();
     this.previous = raw;
     this.raw = raw;
-    if (this.suppressed && settled) this.suppressed = false;
-    const suppress = this.suppressed || this.wasCapturing;
+    const raisedNow = this.suppressSerial !== suppressSerial;
+    if (this.suppressed && settled && !raisedNow) this.suppressed = false;
+    const suppress = this.suppressed || this.wasCapturing || raisedNow;
     this.resolved =
       suppress || this.naming
         ? { throttle: 0, steer: 0, zoom: 0 }

@@ -409,3 +409,17 @@ test('a key pressed after suppression counts at once; a key held across it waits
   assert(action.pause, 'Escape pressed after Continue opens the menu before any frame ran');
   assert(action.keyboardEscape);
 });
+test('Escape that cancels button naming does not also act as a menu Back that frame', () => {
+  const { input, send } = setup();
+  input.poll();
+  input.nameButtons();
+  input.poll();
+  send('keydown', 'Escape');
+  send('keyup', 'Escape');
+  const action = input.poll();
+  assert.equal(input.naming, null, 'naming cancelled');
+  assert(!action.pause && !action.back && !action.keyboardEscape);
+  input.poll();
+  send('keydown', 'Escape');
+  assert(input.poll().pause, 'a later Escape works normally');
+});
