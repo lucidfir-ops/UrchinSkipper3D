@@ -117,3 +117,20 @@ At 1280×800 the plan showed five of its seven actions; Arrival approach and Loc
 ## Code health
 
 Nine modules imported by nothing (`d5c14e4`, about 1,300 lines of the retired Phaser presentation) were removed. Modules still exercised by tests were kept.
+
+## Full browser sweep and fixes
+
+All 43 browser suites were run at `100e084`; 38 passed. A rerun of the five failures on the branch base `a3803c8` separated today's regressions from earlier failures.
+
+- **menus: a regression from the input fix (`deaf111`).** Escape cancelled button naming, which calls `suppress()` inside the same poll. The reordered gate then let that frame's Escape through as Back. A suppression raised during a poll now suppresses that frame. Unit test added; the menus suite passes.
+- **fleet: a fixture fault, failing before today (`6f3715b`).** The gallery builds twelve extra vessel renderers, each with two shadow-casting work spotlights and two torch lights. Together they exceeded the GPU varying limit ("Could not pack varying"). The game has one set; the fixture now removes the copies' lights.
+- **touch: failing before today (`17b47e7`).**
+  - The lesson framing check expected the pre-September-29 off-centre boat; it now checks the Bible's centred view.
+  - The staged career (day 0, practice phase, finished intro) failed validation on every autosave; it now stages a valid working day.
+  - Investigating this exposed a real bug. The autosave failure notice went only to the action-message overlay, which every preset disables. A failing save at sea was therefore silent by default, against Bible §12. It now also goes to the HUD speech for 8 s, whatever the assists. The overlay lists its newest message first.
+  - A new save-storage step sails a real working day, makes storage writes fail and requires "SAVE FAILED" in the sea speech. It fails on the previous build and passes now; both sides were rebuilt, since `--browsers-only` does not rebuild.
+- **mobile-career: failing before today (`75eddd2`).** On an 844×390 phone the stacked harbour heading took about 150 px and pinned the top row of places with no room to pan. Short wide screens now keep the heading on one row (about 70 px). Portrait, tablet and desktop are unchanged.
+- **coastal-progression: failing before today (`803a9e3`).** A Frontier storm at the widest zoom ran at about 17 fps on the Deck. `vegetation.update` took 44 ms a frame recomputing current and motion for about 44,600 plants every 0.1 s, which at that frame rate was every frame. Kelp still updates at 10 Hz. Eelgrass refreshes cell by cell, up to 3,000 blades per frame and at most every 0.5 s per cell.
+  - The frontier-storm diagnostic now shows 52 fps, vegetation at 5.4 ms and draw p95 at 23 ms, and Auto graphics stays on High.
+  - Suites vegetation, bull-kelp, lighting-kelp and coastal-progression pass.
+  - Limit: grass now shows its new pose directly instead of blending, which should not be visible given how slowly it changes. No independent visual review was done.
