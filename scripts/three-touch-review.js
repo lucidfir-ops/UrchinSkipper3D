@@ -150,7 +150,9 @@ try {
     const d = urchinDebug;
     return {
       boat: d.three.project(d.world.boat.x, d.world.boat.y, 0),
-      expected: { x: innerWidth * 0.58, y: innerHeight * 0.37 },
+      // Bible §3 (September 29): the tutorial uses the same centred working
+      // view as career; compact touch may lift it clear of the lower controls.
+      expected: { x: innerWidth / 2, maxY: innerHeight / 2 },
       dialog: document.querySelector('#frankAboard').getBoundingClientRect().toJSON(),
       viewport: { width: innerWidth, height: innerHeight },
       scale: { width: d.three.host.scale.width, height: d.three.host.scale.height },
@@ -160,8 +162,14 @@ try {
       },
     };
   });
-  assert(Math.abs(lesson.boat.x - lesson.expected.x) < 2, 'Compact lesson horizontal framing');
-  assert(Math.abs(lesson.boat.y - lesson.expected.y) < 2, 'Compact lesson vertical framing');
+  assert(
+    Math.abs(lesson.boat.x - lesson.expected.x) < 2,
+    `Compact lesson horizontal framing ${JSON.stringify(lesson)}`,
+  );
+  assert(
+    lesson.boat.y < lesson.expected.maxY && lesson.boat.y > lesson.dialog.top,
+    'Compact lesson vertical framing',
+  );
   assert(lesson.dialog.right < lesson.boat.x - 25, 'Frank panel must clear the boat');
   results.push({ name: 'touch-lesson', ...lesson });
   await screenshot('touch-lesson');
@@ -171,6 +179,10 @@ try {
   await page.evaluate(() => {
     const d = urchinDebug;
     d.world.career.intro.status = 'complete';
+    // A completed tutorial is a day-one career; day 0 with a finished intro is
+    // (correctly) rejected by save validation and floods the feedback line.
+    d.world.career.day = Math.max(1, d.world.career.day);
+    d.world.day.phase = 'working';
     d.world.career.assists.controlsHelp = false;
     d.world.career.assists.pickingLegend = true;
     d.world.career.assists.feedbackOverlay = true;

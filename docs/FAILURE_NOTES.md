@@ -398,3 +398,4 @@ Record reproducible causes and useful solutions; current tasks belong in `PROJEC
 - `npm run verify -- --unit-only` rebuilds `dist`. Running it while a browser sweep serves `dist` swaps hashed bundles under the server. During a sweep, check with `npm test`, lint, format and `vite build --outDir <scratch>` instead.
 - `ui.screen` changes before the next frame paints the menu. A fixture that reads panel DOM straight after waiting on `ui.screen` races the render; wait for the elements themselves.
 - An input "suppress until released" gate must distinguish held-before from pressed-after. Treating every held key as stale dropped real presses that arrived before the next frame.
+- `npm run verify -- --browsers-only` serves the existing `dist` without rebuilding. A before/after comparison must rebuild `dist` for each side; otherwise both sides run the same bundle and the "before" run proves nothing.

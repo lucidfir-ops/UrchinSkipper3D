@@ -402,10 +402,13 @@ export function renderHud(scene, world, input, lockReason) {
       'pickup',
       key,
       notice || (actionable ? `${target.name} · ${state.status.replace(/ — [\d.]+s/, '')}` : ''),
-      2.6,
+      notice && ui.importantNotice?.always ? 8 : 2.6,
       compactText,
     );
   }
+  // Notices that must never be silent (a failed save) still speak with prompts off.
+  else if (notice && ui.importantNotice?.always && world.career?.intro?.status !== 'active')
+    seaMessage(ui, 'pickup', notice, notice, 8, '');
   // The full context remains available through the controls and diver cards.
   message.hidden = true;
   ui.hudMessageActive = false;

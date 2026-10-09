@@ -44,5 +44,14 @@ export function collectFeedback(world, a) {
     !!this.screen ||
     !assist(world, 'feedbackOverlay', this.realistic);
   if (!this.actionDisplay.hidden)
-    setText(this.actionDisplay, this.messages.map((m) => m.text).join('\n'));
+    // Newest first: the panel has a fixed maximum height, and listing oldest
+    // first clipped the latest message, which is the one that matters.
+    setText(
+      this.actionDisplay,
+      this.messages
+        .slice(-3)
+        .reverse()
+        .map((m) => m.text)
+        .join('\n'),
+    );
 }

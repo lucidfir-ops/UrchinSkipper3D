@@ -322,11 +322,18 @@ class Ocean extends Phaser.Scene {
               // Never let autosave fail silently at sea.
               if (!result.ok && performance.now() - saveWarned > 60000) {
                 saveWarned = performance.now();
-                this.playtest.notify(
-                  result.storageFull
-                    ? 'SAVE FAILED: browser storage is full. Pause → Logbook → Load saved day to delete old saves.'
-                    : 'SAVE FAILED: ' + (result.reason || 'storage unavailable'),
-                );
+                const text = result.storageFull
+                  ? 'SAVE FAILED: browser storage is full. Pause → Logbook → Load saved day to delete old saves.'
+                  : 'SAVE FAILED: ' + (result.reason || 'storage unavailable');
+                this.playtest.notify(text);
+                // October 8: the action-message overlay is off by default, so
+                // the notice also goes to the HUD speech, whatever the assists.
+                this.playtest.importantNotice = {
+                  text,
+                  urgent: true,
+                  always: true,
+                  until: performance.now() + 12000,
+                };
               }
             })
             .catch((error) => {

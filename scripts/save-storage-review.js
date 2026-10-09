@@ -118,6 +118,37 @@ try {
   await page.waitForFunction((n) => urchinDebug.ui.archives.length === n - 1, before);
   assert.equal(await page.evaluate((k) => localStorage.getItem(k), victim), null);
   await page.screenshot({ path: `${output}/after-delete.png` });
+
+  // October 8: a failed autosave at sea is announced even with the default
+  // assists, where the action-message overlay is off (Bible §12). Sail a real
+  // working day through the menu, then make every storage write fail.
+  await page.evaluate(() => {
+    urchinDebug.ui.chartGroundId = 'near';
+    urchinDebug.ui.open('departure');
+  });
+  await page.getByRole('button', { name: 'Begin working day' }).click();
+  await page.waitForFunction(
+    () => urchinDebug.world.day.phase === 'working' && !urchinDebug.ui.screen,
+    null,
+    { timeout: 60000 },
+  );
+  await page.evaluate(() => {
+    Storage.prototype.setItem = () => {
+      throw new DOMException('Quota exceeded', 'QuotaExceededError');
+    };
+  });
+  record.feedbackOverlayDefault = await page.evaluate(
+    () => !!urchinDebug.world.career.assists.feedbackOverlay,
+  );
+  await page.waitForFunction(
+    () => /SAVE FAILED/.test(document.querySelector('#seaSpeech:not([hidden])')?.textContent || ''),
+    null,
+    { timeout: 30000 },
+  );
+  record.seaSaveFailure = await page.evaluate(
+    () => document.querySelector('#seaSpeech').textContent,
+  );
+  await page.screenshot({ path: `${output}/save-failed-at-sea.png` });
   record.errors = errors;
   assert.deepEqual(errors, []);
   passed = true;
