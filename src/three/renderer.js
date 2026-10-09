@@ -202,6 +202,16 @@ export class MarineRenderer {
       this.quality
     ] || [1.6, 2048];
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, settings[0]));
+    // October 8: Battery drops the shadow pass entirely. On a 4x-throttled
+    // phone it was over a third of render submission; from the top-down camera
+    // its loss is faint deck shading. Materials recompile once on a change.
+    const shadows = this.quality !== 'Battery';
+    if (this.renderer.shadowMap.enabled !== shadows) {
+      this.renderer.shadowMap.enabled = shadows;
+      this.scene?.traverse((object) => {
+        for (const material of [].concat(object.material || [])) material.needsUpdate = true;
+      });
+    }
     this.sun.shadow.mapSize.set(settings[1], settings[1]);
     this.sun.shadow.map?.dispose();
     this.sun.shadow.map = null;

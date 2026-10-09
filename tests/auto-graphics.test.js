@@ -28,3 +28,25 @@ test('Auto graphics steps down one level on sustained slow working frames, never
   for (let i = 0; i < AUTO_QUALITY.frames * 2; i++) observe(80);
   assert.equal(view.quality, 'High', 'an explicit choice is never changed');
 });
+test('Battery quality turns the shadow pass off and refreshes materials once; others keep it', async () => {
+  globalThis.window ??= { devicePixelRatio: 2 };
+  const { MarineRenderer } = await import('../src/three/renderer.js');
+  const material = { needsUpdate: false },
+    view = {
+      quality: 'Battery',
+      renderer: { shadowMap: { enabled: true }, setPixelRatio() {} },
+      scene: { traverse: (visit) => visit({ material }) },
+      sun: { shadow: { mapSize: { set() {} }, map: null } },
+      resize() {},
+    };
+  MarineRenderer.prototype.applyQuality.call(view);
+  assert.equal(view.renderer.shadowMap.enabled, false);
+  assert.equal(material.needsUpdate, true);
+  material.needsUpdate = false;
+  view.quality = 'Battery';
+  MarineRenderer.prototype.applyQuality.call(view);
+  assert.equal(material.needsUpdate, false, 'no recompile when nothing changed');
+  view.quality = 'Balanced';
+  MarineRenderer.prototype.applyQuality.call(view);
+  assert.equal(view.renderer.shadowMap.enabled, true);
+});
