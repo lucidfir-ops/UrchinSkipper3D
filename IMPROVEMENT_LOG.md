@@ -18,6 +18,10 @@ Hard limits kept throughout: exactly two divers, rigid orthographic following ca
 11. **Audio — nobody has listened to the mix** (rain + traffic + engine + whistle). Needs the designer's ear.
 12. **UX — the voyage plan's detail text is still short on 1280×800** (Buyer paragraph scrolls); consider a smaller chart column on wide-but-short screens.
 
+13. **Performance — phone draw CPU** is the next bottleneck (stress test, 4x throttle: draw ~33 ms calm). Profile `coast.update` and the renderer at phone size.
+14. **Visual review — eelgrass in motion after the round-robin refresh**: capture a few seconds of frames and have an independent reviewer look for stepping.
+15. **UX — phone-portrait action-feedback panel defaults to 46 px** (two lines); long notices are cut. Consider auto-height up to a cap.
+
 ## In progress
 
 - (none)
@@ -49,3 +53,4 @@ Hard limits kept throughout: exactly two divers, rigid orthographic following ca
   - coastal-progression (`803a9e3`): **real performance bug** — Frontier storm at widest zoom ran ~17 fps on the Deck because every frame recomputed all ~44,600 plants. Eelgrass now refreshes round-robin: 52 fps, vegetation 44 → 5.4 ms.
 - **October 8 — Rare unexplained moments** (`a7e05e2`). Half of the existing 7% quiet-day event slot now brings one of five Bible §17 oddities (one-ping deep sounder return, light on the water at night, barnacled float, radio fragment, gulls lifting); the rest keep the seal. Frequency unchanged; text only.
 - **October 8 — Second full browser sweep: 43/43 pass** (dist built at `803a9e3`; `a7e05e2` is text-only and unit-checked).
+\n- **October 8 — TEMP export r2** `exports/2026-10-08-autonomous-improvements-r2/` (build at `a7e05e2` plus log commits).\n
