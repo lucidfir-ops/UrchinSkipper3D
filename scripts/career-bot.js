@@ -8,7 +8,7 @@
 // and what they brought up, forecast wave heights, prices and its own accounts.
 // It never reads live stock, unmarked bed positions or hidden quality.
 //
-//   node scripts/career-bot.js --style=average --seed=7 --days=60 [--boat=basic]
+//   node scripts/career-bot.js --style=average --seed=7 --days=60 [--boat=basic] [--cash=60000]
 //   node scripts/career-bot.js --sweep [--days=60] [--jobs=4]
 // Per-day rows go to test-results/career-bot/<run>.csv.
 import '../tests/matter-helper.js';
@@ -1039,11 +1039,15 @@ export async function playCareer({
   days = 60,
   boat = 'basic',
   out = null,
+  cash = null,
 } = {}) {
   const style = STYLES[styleName],
     run = `${styleName}-${boat}-s${seed}`;
   let w = careerWorld(createCareer(seed, { chooseStarter: true }));
   chooseFirstBoat(w, boat);
+  // Staged funding (--cash) lets a run reach later coasts early. It is not a
+  // natural career; say so with any result.
+  if (cash !== null) w.career.cash = cash;
   const mem = { spots: {}, dry: {}, areaDry: {}, areaValue: {}, daysOnTier: {} };
   const rows = [];
   const file = out ? `${out}/${run}.csv` : null;
@@ -1306,6 +1310,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
       days: +(a.days || 60),
       boat: a.boat || 'basic',
       out,
+      cash: a.cash === undefined ? null : +a.cash,
     });
     console.log(
       `${result.run}: day ${a.days || 60} cash ${Math.round(result.cash)} debt ${result.debt} in ${((Date.now() - t) / 60000).toFixed(1)} min`,
