@@ -114,6 +114,8 @@ function bullKelpGeometry(variant) {
   return geometry;
 }
 
+export const VEGETATION_REFRESH = { grassPerFrame: 3000, grassSeconds: 0.5 };
+
 export class MarineVegetation {
   constructor(parent, world) {
     this.group = new THREE.Group();
@@ -300,20 +302,24 @@ export class MarineVegetation {
     this.group.position.y = -tide;
     if (elapsed >= this.nextFlow) {
       const initial = this.lastFlow === null;
-      const dt = initial ? 0 : Math.min(0.25, elapsed - this.lastFlow);
       this.lastFlow = elapsed;
       this.nextFlow = elapsed + 0.1;
-      for (const { mesh, plants } of this.cells) {
-        const next = mesh.geometry.attributes.plantFlow;
-        const previous = mesh.geometry.attributes.previousFlow;
-        previous.array.set(next.array);
-        plants.forEach((p, i) => {
-          p.motion = kelpMotion(currentAt(world, p.x, p.z), p.variation, p.motion, dt);
-          p.angle = p.motion.angle;
-          next.setXYZ(i, p.motion.angle, p.motion.extension, p.motion.tip);
-        });
-        if (initial) previous.array.set(next.array);
-        previous.needsUpdate = next.needsUpdate = true;
+      // Kelp (a few thousand plants) follows the current ten times a second.
+      // Eelgrass meadows hold tens of thousands of short blades whose pose
+      // changes slowly, so they refresh round-robin within a per-frame budget
+      // (October 8: a Frontier storm at widest zoom spent ~45 ms a frame here).
+      for (const cell of this.cells)
+        if (initial || !cell.grass) this.refreshCell(world, cell, elapsed, initial);
+    }
+    if (this.lastFlow !== null) {
+      const grass = this.cells.filter((cell) => cell.grass);
+      let budget = VEGETATION_REFRESH.grassPerFrame;
+      for (let n = 0; n < grass.length && budget > 0; n++) {
+        this.grassCursor = ((this.grassCursor ?? -1) + 1) % grass.length;
+        const cell = grass[this.grassCursor];
+        if (elapsed - cell.lastFlow < VEGETATION_REFRESH.grassSeconds) continue;
+        this.refreshCell(world, cell, elapsed, false);
+        budget -= cell.plants.length;
       }
     }
     // Interpolate sampled poses in the vertex shader for smooth motion even
@@ -324,6 +330,23 @@ export class MarineVegetation {
       column.uniforms.uColumnTurbidity.value = waterTurbidity(world);
       column.uniforms.uColumnLight.value = world.weather?.sunlight ?? 1;
     }
+  }
+  refreshCell(world, cell, elapsed, initial) {
+    const { mesh, plants } = cell,
+      dt = initial ? 0 : Math.min(cell.grass ? 1 : 0.25, elapsed - (cell.lastFlow ?? elapsed));
+    cell.lastFlow = elapsed;
+    const next = mesh.geometry.attributes.plantFlow;
+    const previous = mesh.geometry.attributes.previousFlow;
+    previous.array.set(next.array);
+    plants.forEach((p, i) => {
+      p.motion = kelpMotion(currentAt(world, p.x, p.z), p.variation, p.motion, dt, p.motion);
+      p.angle = p.motion.angle;
+      next.setXYZ(i, p.motion.angle, p.motion.extension, p.motion.tip);
+    });
+    // Grass refreshes off the shared 0.1 s blend, so it shows its new pose
+    // directly; its slow change makes the step invisible.
+    if (initial || cell.grass) previous.array.set(next.array);
+    previous.needsUpdate = next.needsUpdate = true;
   }
   dispose() {
     for (const { mesh } of this.cells) mesh.geometry.dispose();

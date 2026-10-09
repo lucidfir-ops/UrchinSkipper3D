@@ -3,14 +3,16 @@ const difference = (a, b) => Math.atan2(Math.sin(a - b), Math.cos(a - b));
 
 // Presentation-only memory: the buoyant stipe relaxes before the trailing
 // blades catch a reversing current. All roots remain fixed on the seabed.
-export function kelpMotion(flow, variation = 0, previous, dt = 0) {
+// Pass `previous` again as `into` to update a plant's state in place: the
+// vegetation pass runs for tens of thousands of plants ten times a second.
+export function kelpMotion(flow, variation = 0, previous, dt = 0, into = null) {
   const speed = Math.hypot(flow.x, flow.y);
   const strength = 1 - Math.exp(-speed * 2.4);
   if (!previous) {
     const angle = speed > 0.015 ? -Math.atan2(flow.y, flow.x) : variation * TAU;
     return { angle, tip: angle, extension: strength, velocity: 0 };
   }
-  const state = { ...previous };
+  const state = into === previous ? previous : { ...previous };
   const target = speed > 0.015 ? -Math.atan2(flow.y, flow.x) : state.angle;
   let error = difference(target, state.angle);
   // At an exact reversal, give each plant a stable preferred swing direction.
