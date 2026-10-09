@@ -6,7 +6,6 @@ Hard limits kept throughout: exactly two divers, rigid orthographic following ca
 
 ## Backlog (ranked: player impact for size)
 
-1. **Regression sweep again** — rerun every browser suite after today's fixes (last sweep: 38/43 pass; all five failures since fixed individually).
 2. **Play pass — bot careers on later coasts and other hulls** (Stormbreak, Frontier; outboard and bigger boats) to find what's broken or dull there.
 3. **Balance — Home Coast unmarked beds still drain under rival pressure** (stock model: near all-bed stock 44% by day 60). Consider spreading off-map rivals more across coasts.
 4. **Remaining acceptance — compact forecasts/almanac and short landscape lessons require scrolling** on phone landscape.
@@ -48,3 +47,5 @@ Hard limits kept throughout: exactly two divers, rigid orthographic following ca
   - **Real bug found there** (`17b47e7`): with default assists, a failed autosave at sea was silent (Bible §12). Now announced in the HUD speech; the action-message overlay lists newest first. save-storage suite gained a check that fails before and passes after.
   - mobile-career (`75eddd2`): harbour heading took ~150 of 390 px on landscape phones and pinned the top row; now one row (~70 px).
   - coastal-progression (`803a9e3`): **real performance bug** — Frontier storm at widest zoom ran ~17 fps on the Deck because every frame recomputed all ~44,600 plants. Eelgrass now refreshes round-robin: 52 fps, vegetation 44 → 5.4 ms.
+- **October 8 — Rare unexplained moments** (`a7e05e2`). Half of the existing 7% quiet-day event slot now brings one of five Bible §17 oddities (one-ping deep sounder return, light on the water at night, barnacled float, radio fragment, gulls lifting); the rest keep the seal. Frequency unchanged; text only.
+- **October 8 — Second full browser sweep: 43/43 pass** (dist built at `803a9e3`; `a7e05e2` is text-only and unit-checked).
